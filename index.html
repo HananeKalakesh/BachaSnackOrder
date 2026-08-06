@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basha — Chicken and Snack | Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE4CE;
+    --paper-deep:#E4D8BB;
+    --card:#FBF6E9;
+    --ink:#2A2119;
+    --ink-soft:#5A4C3D;
+    --brick:#8A2313;
+    --brick-deep:#5E140A;
+    --gold:#B4893F;
+    --gold-soft:#D9C08A;
+    --stitch: rgba(42,33,25,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(0,0,0,0.05), transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Poppins', 'Cairo', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* subtle paper grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, transparent 1px, transparent 2px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.015) 0px, transparent 1px, transparent 2px);
+    opacity:0.6;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px; position:relative; z-index:1;}
+
+  /* ===== Header ===== */
+  header.top{
+    padding:26px 0 18px;
+    border-bottom:3px solid var(--ink);
+  }
+  .brand-row{
+    display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  }
+  .brand-id{display:flex; align-items:center; gap:16px;}
+  .chef-badge{
+    width:62px; height:62px; border-radius:50%;
+    background:var(--brick);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 3px var(--card), 0 0 0 5px var(--brick);
+    flex-shrink:0;
+  }
+  .chef-badge svg{width:34px; height:34px;}
+  .wordmark{line-height:0.95;}
+  .wordmark .eyebrow{
+    font-family:'Poppins',sans-serif; font-weight:600; letter-spacing:0.35em;
+    font-size:11px; color:var(--ink-soft); text-transform:uppercase;
+  }
+  .wordmark h1{
+    margin:2px 0 0; font-family:'Cairo',sans-serif; font-weight:900;
+    font-size:clamp(30px,5vw,46px); color:var(--ink); letter-spacing:-0.01em;
+  }
+  .wordmark h1 span{color:var(--brick); display:block; font-size:0.62em; margin-top:-6px;}
+  .wordmark .sub{font-size:12px; letter-spacing:0.25em; color:var(--ink-soft); text-transform:uppercase; margin-top:4px;}
+
+  .contact-chip{
+    background:var(--card); border:2px solid var(--ink);
+    border-radius:999px; padding:10px 18px; font-size:14px; font-weight:600;
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .contact-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--brick);}
+
+  /* ===== Nav ===== */
+  nav.cats{
+    position:sticky; top:0; z-index:20;
+    background:var(--paper);
+    padding:12px 0;
+    border-bottom:1px solid var(--stitch);
+    backdrop-filter:saturate(1.1);
+  }
+  nav.cats::before{
+    content:""; position:absolute; inset:0; background:var(--paper); z-index:-1;
+  }
+  .cat-scroll{
+    display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px;
+    scrollbar-width:none;
+  }
+  .cat-scroll::-webkit-scrollbar{display:none;}
+  .cat-pill{
+    flex:0 0 auto;
+    font-family:'Poppins',sans-serif; font-weight:600; font-size:13.5px;
+    padding:9px 18px; border-radius:999px;
+    border:1.5px solid var(--ink);
+    background:transparent; color:var(--ink);
+    cursor:pointer; transition:all .18s ease;
+    letter-spacing:0.02em;
+  }
+  .cat-pill.active, .cat-pill:hover{
+    background:var(--brick); border-color:var(--brick); color:var(--card);
+  }
+
+  /* ===== Section header (torn ticket style) ===== */
+  .section{padding:44px 0 8px;}
+  .section-head{
+    display:flex; align-items:center; gap:14px; margin-bottom:22px;
+  }
+  .section-head .line{flex:1; height:2px; background:repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 12px);}
+  .section-head h2{
+    margin:0; font-family:'Cairo',sans-serif; font-weight:800; font-size:clamp(22px,3vw,30px);
+    color:var(--brick-deep); white-space:nowrap; display:flex; align-items:baseline; gap:10px;
+  }
+  .section-head h2 .ar{font-size:0.82em; color:var(--ink); direction:rtl;}
+
+  /* ===== Grid & cards ===== */
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+    gap:14px; margin-bottom:8px;
+  }
+  .item{
+    background:var(--card);
+    border:1.5px solid rgba(42,33,25,0.14);
+    border-radius:14px;
+    padding:16px 16px 16px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    position:relative;
+    box-shadow:0 1px 0 rgba(0,0,0,0.03);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .item:hover{transform:translateY(-2px); box-shadow:0 8px 18px rgba(90,60,20,0.14); border-color:var(--gold);}
+  .item-name{min-width:0; flex:1;}
+  .item-name .en{
+    font-weight:600; font-size:15.5px; color:var(--ink); line-height:1.25;
+  }
+  .item-name .ar{
+    direction:rtl; font-family:'Cairo',sans-serif; font-weight:600; font-size:14px;
+    color:var(--ink-soft); margin-top:2px;
+  }
+  .item-name .tag{
+    display:inline-block; margin-top:5px; font-size:10.5px; font-weight:700;
+    color:var(--brick); background:rgba(138,35,19,0.09); border-radius:6px;
+    padding:2px 7px; letter-spacing:0.03em;
+  }
+  .item-name .ingredients{
+    font-size:10.5px; color:var(--ink-soft); font-style:italic; line-height:1.35; margin-top:3px;
+  }
+
+  .price{
+    flex:0 0 auto;
+    background:var(--brick);
+    color:#fff;
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:15px;
+    padding:9px 16px;
+    border-radius:999px;
+    min-width:64px; text-align:center;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
+    position:relative;
+  }
+  .price::after{
+    content:""; position:absolute; inset:2px; border-radius:999px;
+    border:1px dashed rgba(255,255,255,0.35); pointer-events:none;
+  }
+  .price .unit{font-size:0.62em; font-weight:600; opacity:0.85; margin-left:2px;}
+
+  /* ===== Order controls ===== */
+  .order-col{
+    flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  }
+  .item.active{border-color:var(--brick); box-shadow:0 0 0 2px rgba(138,35,19,0.12);}
+  .stepper{
+    display:flex; align-items:center; gap:9px;
+    background:rgba(42,33,25,0.05); border-radius:999px; padding:3px;
+  }
+  .stepper button{
+    width:24px; height:24px; border-radius:50%; border:none;
+    background:var(--ink); color:var(--card);
+    font-size:15px; font-weight:700; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .stepper button:hover{background:var(--brick);}
+  .stepper button:active{transform:scale(0.9);}
+  .stepper button.dec{background:transparent; color:var(--ink-soft); border:1.5px solid rgba(42,33,25,0.25);}
+  .stepper button.dec:hover{background:rgba(42,33,25,0.08); color:var(--ink);}
+  .stepper .qty{
+    min-width:16px; text-align:center; font-weight:700; font-size:14px; color:var(--ink);
+  }
+
+  .order-col-row{display:flex; align-items:center; gap:14px;}
+
+  /* ===== Cart bar ===== */
+  .cart-fab{
+    position:fixed; right:22px; bottom:22px; z-index:60;
+    display:flex; align-items:center; gap:12px;
+    background:var(--brick); color:#fff; text-decoration:none;
+    padding:14px 20px; border-radius:999px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.28), 0 0 0 3px var(--card);
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:14px;
+    border:none; cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    opacity:0; transform:translateY(14px) scale(0.9); pointer-events:none;
+  }
+  .cart-fab.visible{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+  .cart-fab:hover{transform:translateY(-2px) scale(1.02); box-shadow:0 14px 30px rgba(0,0,0,0.32), 0 0 0 3px var(--card);}
+  .cart-fab .count-badge{
+    background:#fff; color:var(--brick); font-weight:800; font-size:12.5px;
+    min-width:22px; height:22px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+    padding:0 6px;
+  }
+  .cart-fab svg{width:20px; height:20px; flex-shrink:0;}
+  .cart-fab .cart-total{opacity:0.9; font-weight:600; font-size:12.5px;}
+
+  .wa-fab{
+    position:fixed; right:22px; bottom:22px; z-index:50;
+    display:flex; align-items:center; gap:10px;
+    background:#25D366; color:#fff; text-decoration:none;
+    padding:14px 18px; border-radius:999px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25), 0 0 0 3px var(--card);
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:14px;
+    transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .wa-fab.hidden{opacity:0; pointer-events:none; transform:translateY(14px) scale(0.9);}
+  .wa-fab:hover{transform:translateY(-2px) scale(1.03); box-shadow:0 12px 26px rgba(0,0,0,0.3), 0 0 0 3px var(--card);}
+  .wa-fab svg{width:22px; height:22px; flex-shrink:0;}
+  .wa-fab .wa-label{white-space:nowrap;}
+
+  /* ===== Cart summary panel ===== */
+  .cart-panel-backdrop{
+    position:fixed; inset:0; background:rgba(20,15,10,0.4); z-index:65;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .cart-panel-backdrop.open{opacity:1; pointer-events:auto;}
+
+  .cart-panel{
+    position:fixed; left:0; right:0; bottom:0; z-index:70;
+    max-width:520px; margin:0 auto;
+    background:var(--card);
+    border-top-left-radius:22px; border-top-right-radius:22px;
+    box-shadow:0 -12px 34px rgba(0,0,0,0.28);
+    padding:20px 22px 24px;
+    max-height:72vh; overflow-y:auto;
+    transform:translateY(115%);
+    transition:transform .28s cubic-bezier(.2,.9,.3,1);
+  }
+  .cart-panel.open{transform:translateY(0);}
+
+  .cart-panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .cart-panel-head h3{margin:0; font-family:'Cairo',sans-serif; font-weight:800; font-size:18px; color:var(--brick-deep);}
+  .cart-panel-close{
+    background:none; border:none; font-size:24px; line-height:1; cursor:pointer;
+    color:var(--ink-soft); padding:2px 6px;
+  }
+  .cart-panel-close:hover{color:var(--brick);}
+
+  .cart-empty{padding:22px 0; text-align:center; color:var(--ink-soft); font-size:14px;}
+
+  .cart-line{
+    display:flex; align-items:center; gap:10px; padding:9px 0;
+    border-bottom:1px dotted rgba(42,33,25,0.15); font-size:14px;
+  }
+  .cart-line-name{flex:1; font-weight:600; color:var(--ink);}
+  .cart-line-amt{font-weight:700; color:var(--brick); white-space:nowrap; font-size:13.5px;}
+  .cart-line-remove{
+    background:none; border:none; font-size:19px; line-height:1; cursor:pointer;
+    color:var(--ink-soft); padding:2px 4px;
+  }
+  .cart-line-remove:hover{color:var(--brick);}
+
+  .cart-panel-total-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0 4px; margin-top:6px; font-weight:800; font-size:16.5px;
+    border-top:2px solid var(--ink); color:var(--ink);
+  }
+
+  .cart-panel-actions{display:flex; gap:10px; margin-top:16px;}
+  .cart-btn{
+    flex:1; padding:13px; border-radius:12px; border:none;
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+    transition:transform .12s ease, background .15s ease;
+  }
+  .cart-btn:active{transform:scale(0.97);}
+  .cart-btn.clear{background:transparent; border:1.5px solid var(--ink); color:var(--ink);}
+  .cart-btn.clear:hover{background:rgba(42,33,25,0.06);}
+  .cart-btn.send{background:#25D366; color:#fff;}
+  .cart-btn.send:hover{filter:brightness(1.06);}
+
+  /* ===== Extras banners ===== */
+  .banner{
+    margin-top:26px; background:var(--card);
+    border:1.5px dashed var(--gold);
+    border-radius:16px; padding:20px 22px;
+  }
+  .banner h3{
+    margin:0 0 12px; font-family:'Cairo',sans-serif; font-weight:800; font-size:17px; color:var(--brick-deep);
+  }
+  .banner h3 .banner-ar{
+    font-size:0.82em; color:var(--ink); direction:rtl; font-weight:600; margin-left:8px;
+  }
+  .banner .row{display:flex; justify-content:space-between; align-items:center; padding:7px 0; font-size:14.5px; border-bottom:1px dotted rgba(42,33,25,0.15);}
+  .banner .row:last-child{border-bottom:none;}
+  .banner .row .amt{font-weight:700; color:var(--brick);}
+
+  .included{
+    margin-top:16px; background:linear-gradient(135deg, var(--brick), var(--brick-deep));
+    color:#fff; border-radius:16px; padding:22px 24px;
+  }
+  .included h3{margin:0 0 4px; font-family:'Cairo',sans-serif; font-weight:800; font-size:17px;}
+  .included .ar{direction:rtl; font-family:'Cairo',sans-serif; font-size:15px; opacity:0.92; margin-bottom:12px;}
+  .included ul{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px;}
+  .included li{
+    background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.3);
+    border-radius:999px; padding:6px 14px; font-size:13px; font-weight:600;
+  }
+  .included .extra-line{margin-top:14px; font-size:13.5px; opacity:0.95;}
+
+  /* ===== Compact inline note (small, low visual weight) ===== */
+  .mini-note{
+    margin-top:14px;
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 10px;
+    background:rgba(180,137,63,0.08);
+    border-left:3px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    padding:7px 12px;
+    font-size:11.5px; line-height:1.4; color:var(--ink-soft);
+  }
+  .mini-note b{color:var(--brick-deep); font-weight:700;}
+  .mini-note .ar{direction:rtl; font-family:'Cairo',sans-serif; font-size:0.98em; color:var(--ink-soft);}
+
+  /* ===== Sub-category divider (splits a section into groups) ===== */
+  .subhead{
+    display:flex; align-items:center; gap:8px;
+    margin:20px 0 10px;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:14.5px; color:var(--brick-deep);
+  }
+  .subhead .ar{font-size:0.85em; color:var(--ink); direction:rtl; font-weight:600;}
+  .subhead::after{content:""; flex:1; height:1px; background:rgba(42,33,25,0.16);}
+  .section-head + .subhead{margin-top:0;}
+
+  /* ===== Footer ===== */
+  footer{
+    margin-top:50px; padding:26px 0 40px; border-top:3px solid var(--ink);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--ink-soft);
+  }
+  footer .ar{direction:rtl; font-family:'Cairo',sans-serif;}
+  footer strong{color:var(--ink);}
+  .closed{
+    background:var(--brick); color:#fff; padding:5px 12px; border-radius:999px; font-weight:700; font-size:12px;
+  }
+
+  @media (max-width:520px){
+    .item{padding:13px 14px;}
+    .price{font-size:13.5px; padding:8px 13px;}
+  }
+
+  /* ===== WhatsApp fallback button (responsive tweak) ===== */
+  @media (max-width:480px){
+    .wa-fab .wa-label{display:none;}
+    .wa-fab{padding:14px; right:16px; bottom:16px;}
+    .cart-fab .cart-total{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand-row">
+      <div class="brand-id">
+        <div class="chef-badge">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C9 2 7 4 7 6.5c0 1 .3 1.8.8 2.4C6.7 9.6 6 10.9 6 12.5V20h12v-7.5c0-1.6-.7-2.9-1.8-3.6.5-.6.8-1.4.8-2.4C17 4 15 2 12 2Z" stroke="#FBF6E9" stroke-width="1.4"/>
+            <path d="M6 20h12" stroke="#FBF6E9" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="wordmark">
+          <div class="eyebrow">Digital Menu</div>
+          <h1>MENU<span>basha</span></h1>
+          <div class="sub">chicken and snack</div>
+        </div>
+      </div>
+      <div class="contact-chip"><span class="dot"></span> 76 075 724</div>
+    </div>
+  </header>
+
+  <nav class="cats">
+    <div class="cat-scroll" id="catScroll">
+      <button class="cat-pill active" data-target="fries">Appetizers · مقبلات</button>
+      <button class="cat-pill" data-target="meals">Meals · وجبات</button>
+      <button class="cat-pill" data-target="sandwiches">Sandwiches · ساندويشات</button>
+      <button class="cat-pill" data-target="extras">Sauces &amp; Extras</button>
+    </div>
+  </nav>
+
+  <!-- APPETIZERS -->
+  <section class="section" id="fries">
+    <div class="section-head"><h2>Appetizers <span class="ar">مقبلات</span></h2><div class="line"></div></div>
+    <div class="grid">
+      <div class="item" data-name="Small Fries Box" data-price="100000"><div class="item-name"><div class="en">Small Fries Box</div><div class="ar">علبه بطاطه صغيره</div></div><div class="order-col"><div class="price">100,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Small Fries Box with Cheddar" data-price="200000"><div class="item-name"><div class="en">Small Fries Box with Cheddar</div><div class="ar">علبه بطاطه صغيره مع شدر</div></div><div class="order-col"><div class="price">200,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Large Fries Box with Sauce &amp; Cheddar" data-price="450000"><div class="item-name"><div class="en">Large Fries Box with Sauce &amp; Cheddar</div><div class="ar">علبه بطاطه كبيره مع صوص وشدر</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mozzarella Sticks" data-price="500000"><div class="item-name"><div class="en">Mozzarella Sticks</div><div class="ar">أصابع الموزاريلا</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar" data-price="700000"><div class="item-name"><div class="en">Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar</div><div class="ar">علبه بطاطه كبيره مع ٣ كرسبي وصوص وشدر</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+  </section>
+
+  <!-- MEALS -->
+  <section class="section" id="meals">
+    <div class="section-head"><h2>Meals <span class="ar">الوجبات</span></h2><div class="line"></div></div>
+    <div class="grid">
+      <div class="item" data-name="Crispy Meal 7 PCS" data-price="750000"><div class="item-name"><div class="en">Crispy Meal <span class="tag">7 PCS</span></div><div class="ar">كرسبي</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger Meal 7 PCS" data-price="750000"><div class="item-name"><div class="en">Zinger Meal <span class="tag">7 PCS</span></div><div class="ar">زنجر</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Escalope Meal 3 PCS" data-price="750000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">3 PCS</span></div><div class="ar">اسكالوب</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Wings Meal 14 PCS" data-price="750000"><div class="item-name"><div class="en">Wings Meal <span class="tag">14 PCS</span></div><div class="ar">جوانح</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Drumsticks Meal 4 PCS" data-price="750000"><div class="item-name"><div class="en">Drumsticks Meal <span class="tag">4 PCS</span></div><div class="ar">دبابيس</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Escalope Meal 1KG" data-price="1700000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">1KG</span></div><div class="ar">اسكالوب مقلي</div></div><div class="order-col"><div class="price">1,700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Tawouk Meal" data-price="700000"><div class="item-name"><div class="en">Tawouk Meal</div><div class="ar">طاووق</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Shawarma Meal" data-price="650000"><div class="item-name"><div class="en">Shawarma Meal</div><div class="ar">شاورما</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Broasted Meal 10 PCS" data-price="1350000"><div class="item-name"><div class="en">Broasted Meal <span class="tag">10 PCS</span></div><div class="ar">بروستد</div></div><div class="order-col"><div class="price">1,350,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+    <div class="mini-note">🍟 <b>Includes:</b> French Fries, Garlic Sauce, Pickles, Sauces &amp; Coleslaw Salad <span class="ar">تُقدَّم مع: بطاطا مقلية، ثوم، مخللات، صوصات، سلطة ملفوف</span></div>
+  </section>
+
+  <!-- SANDWICHES -->
+  <section class="section" id="sandwiches">
+    <div class="section-head"><h2>Sandwiches <span class="ar">ساندويشات</span></h2><div class="line"></div></div>
+
+    <div class="subhead">Sandwiches <span class="ar">ساندويشات</span></div>
+    <div class="grid">
+      <div class="item" data-name="Shawarma Sandwich" data-price="400000"><div class="item-name"><div class="en">Shawarma Sandwich</div><div class="ar">شاورما</div><div class="ingredients">Chicken shawarma, garlic paste, pickles, fries</div></div><div class="order-col"><div class="price">400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Tawook Sandwich" data-price="400000"><div class="item-name"><div class="en">Tawook Sandwich</div><div class="ar">طاووق</div><div class="ingredients">Tawook chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crispy Sandwich" data-price="450000"><div class="item-name"><div class="en">Crispy Sandwich</div><div class="ar">كرسبي</div><div class="ingredients">Crispy chicken, garlic paste, fries, coleslaw</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger Sandwich" data-price="450000"><div class="item-name"><div class="en">Zinger Sandwich</div><div class="ar">زنجر</div><div class="ingredients">Fried zinger chicken, cocktail sauce, pickles, lettuce, corn</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Francisco Sandwich" data-price="450000"><div class="item-name"><div class="en">Francisco Sandwich</div><div class="ar">فرنسيسكو</div><div class="ingredients">Chicken, mayo, lettuce, corn, pickles</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Escalope Sandwich" data-price="450000"><div class="item-name"><div class="en">Escalope Sandwich</div><div class="ar">ساندويش اسكالوب</div><div class="ingredients">Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Fahita Sandwich" data-price="600000"><div class="item-name"><div class="en">Fahita Sandwich</div><div class="ar">ساندويش فاهيتا</div><div class="ingredients">Chicken fajita, guacamole, pickles, cocktail sauce, cheese</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Chicken Quesadilla" data-price="650000"><div class="item-name"><div class="en">Chicken Quesadilla</div><div class="ar">كيساديا دجاج</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Philadelphia Sandwich" data-price="600000"><div class="item-name"><div class="en">Philadelphia Sandwich</div><div class="ar">ساندويش فيلادلفيا</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+
+    <div class="subhead">Burgers <span class="ar">برجر</span></div>
+    <div class="grid">
+      <div class="item" data-name="Chicken Classic Burger" data-price="450000"><div class="item-name"><div class="en">Chicken Classic Burger</div><div class="ar">برجر دجاج كلاسيك</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mozzarella Pati Burger" data-price="450000"><div class="item-name"><div class="en">Mozzarella Pati Burger</div><div class="ar">برجر موزاريلا</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Meat Burger" data-price="500000"><div class="item-name"><div class="en">Meat Burger</div><div class="ar">همبرغر لحمة</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Basha Burger" data-price="550000"><div class="item-name"><div class="en">Basha Burger</div><div class="ar">برجر باشا</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crunchy Burger" data-price="550000"><div class="item-name"><div class="en">Crunchy Burger</div><div class="ar">برجر كرنشي</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crunchy Burger with Mozzarella Pati" data-price="650000"><div class="item-name"><div class="en">Crunchy Burger with Mozzarella Pati</div><div class="ar">برجر كرنشي مع موزاريلا</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+
+    <div class="mini-note">🫓 <b>Tortilla bread</b> also available <span class="ar">يوجد خبز تورتيا</span></div>
+  </section>
+
+  <!-- EXTRAS -->
+  <section class="section" id="extras">
+    <div class="section-head"><h2>Sauces &amp; Extras <span class="ar">صوصات وإضافات</span></h2><div class="line"></div></div>
+    <div class="banner">
+      <h3>Sauce Cups <span class="banner-ar">كاسات الصوص</span></h3>
+      <div class="row" data-name="Buffalo Sauce" data-price="50000"><span>Buffalo Sauce</span><div class="order-col-row"><span class="amt">50,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Honey Mustard Sauce" data-price="50000"><span>Honey Mustard Sauce</span><div class="order-col-row"><span class="amt">50,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Barbecue Sauce" data-price="50000"><span>Barbecue Sauce</span><div class="order-col-row"><span class="amt">50,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Cocktail Sauce" data-price="50000"><span>Cocktail Sauce</span><div class="order-col-row"><span class="amt">50,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Cheddar Cup (Small)" data-price="75000"><span>Cheddar Cup (Small)</span><div class="order-col-row"><span class="amt">75,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Cheddar Cup (Big)" data-price="150000"><span>Cheddar Cup (Big)</span><div class="order-col-row"><span class="amt">150,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+    <div class="banner">
+      <h3>Drinks <span class="banner-ar">مشروبات</span></h3>
+      <div class="row" data-name="Pepsi" data-price="70000"><span>Pepsi</span><div class="order-col-row"><span class="amt">70,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="Pepsi Diet" data-price="70000"><span>Pepsi Diet</span><div class="order-col-row"><span class="amt">70,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="7UP" data-price="70000"><span>7UP</span><div class="order-col-row"><span class="amt">70,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="row" data-name="7UP Diet" data-price="70000"><span>7UP Diet</span><div class="order-col-row"><span class="amt">70,000 L.L.</span><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <div><strong>Basha — Chicken and Snacks</strong> <span class="ar" style="font-weight:600;">باشا - دجاج ومسليات</span></div>
+      <div>Managed by Hussein Al Basha · 76 075 724 <span class="ar">بإدارة حسين الباشا</span></div>
+      <div style="margin-top:6px;">Prices may change based on market rates. Please confirm your order in advance.</div>
+    </div>
+    <div style="text-align:right;">
+      <span class="closed">Closed on Mondays</span>
+      <div class="ar" style="margin-top:8px;">تتغير اسعارنا حسب السوق<br>لخدمتكم بشكل أفضل الرجاء الطلب مسبقا<br>نهار الاثنين يوم العطلة</div>
+    </div>
+  </footer>
+</div>
+
+<a class="wa-fab" id="waFallback" href="https://wa.me/96176075724?text=Hi%20Basha%2C%20I%27d%20like%20to%20order" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.47 14.38c-.29-.15-1.71-.84-1.97-.94-.27-.1-.46-.15-.65.15-.19.29-.75.94-.92 1.13-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.33-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.15-.65-1.57-.89-2.15-.23-.56-.47-.48-.65-.49-.17-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.19 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.71-.7 1.95-1.38.24-.68.24-1.26.17-1.38-.07-.12-.26-.19-.55-.34Z"/>
+    <path d="M12.02 2C6.5 2 2 6.48 2 12c0 1.85.51 3.58 1.39 5.07L2 22l5.06-1.33A9.96 9.96 0 0 0 12.02 22C17.52 22 22 17.52 22 12S17.52 2 12.02 2Zm0 18.18c-1.63 0-3.15-.47-4.44-1.28l-.32-.19-3 .79.8-2.92-.21-.3A8.16 8.16 0 0 1 3.82 12c0-4.53 3.68-8.2 8.2-8.2 4.52 0 8.19 3.67 8.19 8.2 0 4.52-3.67 8.18-8.19 8.18Z"/>
+  </svg>
+  <span class="wa-label">Order on WhatsApp</span>
+</a>
+
+<button class="cart-fab" id="cartFab" type="button">
+  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.47 14.38c-.29-.15-1.71-.84-1.97-.94-.27-.1-.46-.15-.65.15-.19.29-.75.94-.92 1.13-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.33-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.15-.65-1.57-.89-2.15-.23-.56-.47-.48-.65-.49-.17-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.19 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.71-.7 1.95-1.38.24-.68.24-1.26.17-1.38-.07-.12-.26-.19-.55-.34Z"/>
+    <path d="M12.02 2C6.5 2 2 6.48 2 12c0 1.85.51 3.58 1.39 5.07L2 22l5.06-1.33A9.96 9.96 0 0 0 12.02 22C17.52 22 22 17.52 22 12S17.52 2 12.02 2Zm0 18.18c-1.63 0-3.15-.47-4.44-1.28l-.32-.19-3 .79.8-2.92-.21-.3A8.16 8.16 0 0 1 3.82 12c0-4.53 3.68-8.2 8.2-8.2 4.52 0 8.19 3.67 8.19 8.2 0 4.52-3.67 8.18-8.19 8.18Z"/>
+  </svg>
+  <span>View Order</span>
+  <span class="count-badge" id="cartCount">0</span>
+</button>
+
+<div class="cart-panel-backdrop" id="cartBackdrop"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-panel-head">
+    <h3>Your Order</h3>
+    <button class="cart-panel-close" id="cartClose" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div id="cartItemsList"></div>
+  <div class="cart-panel-total-row"><span>Total</span><span id="cartPanelTotal">0 L.L.</span></div>
+  <div class="cart-panel-actions">
+    <button class="cart-btn clear" id="cartClearBtn" type="button">Clear order</button>
+    <button class="cart-btn send" id="cartSendBtn" type="button">Send via WhatsApp</button>
+  </div>
+</div>
+
+<script>
+  const pills = document.querySelectorAll('.cat-pill');
+  const sections = [...pills].map(p => document.getElementById(p.dataset.target));
+
+  pills.forEach(p => {
+    p.addEventListener('click', () => {
+      document.getElementById(p.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        pills.forEach(p => p.classList.toggle('active', p.dataset.target === entry.target.id));
+      }
+    });
+  }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+
+  sections.forEach(s => s && observer.observe(s));
+
+  /* ===== Ordering / WhatsApp cart ===== */
+  const WA_NUMBER = '96176075724';
+  const order = {}; // name -> { qty, price }
+
+  const cartFab = document.getElementById('cartFab');
+  const cartCountEl = document.getElementById('cartCount');
+  const waFallback = document.getElementById('waFallback');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartBackdrop = document.getElementById('cartBackdrop');
+  const cartItemsList = document.getElementById('cartItemsList');
+  const cartPanelTotal = document.getElementById('cartPanelTotal');
+
+  function formatLL(n){
+    return n.toLocaleString('en-US') + ' L.L.';
+  }
+
+  function updateCart(){
+    let totalQty = 0;
+    Object.values(order).forEach(o => { totalQty += o.qty; });
+    cartCountEl.textContent = totalQty;
+
+    if(totalQty > 0){
+      cartFab.classList.add('visible');
+      waFallback.classList.add('hidden');
+    } else {
+      cartFab.classList.remove('visible');
+      waFallback.classList.remove('hidden');
+      closeCartPanel();
+    }
+  }
+
+  function setQty(container, name, price, qty){
+    qty = Math.max(0, qty);
+    container.dataset.qty = qty;
+    if(qty === 0){
+      delete order[name];
+      container.classList.remove('active');
+    } else {
+      order[name] = { qty, price };
+      container.classList.add('active');
+    }
+    const qtyEl = container.querySelector('.qty');
+    if(qtyEl) qtyEl.textContent = qty;
+    updateCart();
+    if(cartPanel.classList.contains('open')) renderCartPanel();
+  }
+
+  document.querySelectorAll('[data-name][data-price]').forEach(container => {
+    container.dataset.qty = 0;
+    const name = container.dataset.name;
+    const price = parseInt(container.dataset.price, 10);
+    const incBtn = container.querySelector('.inc');
+    const decBtn = container.querySelector('.dec');
+
+    incBtn?.addEventListener('click', () => {
+      setQty(container, name, price, parseInt(container.dataset.qty, 10) + 1);
+    });
+    decBtn?.addEventListener('click', () => {
+      setQty(container, name, price, parseInt(container.dataset.qty, 10) - 1);
+    });
+  });
+
+  function findContainerByName(name){
+    return [...document.querySelectorAll('[data-name][data-price]')]
+      .find(c => c.dataset.name === name);
+  }
+
+  function removeFromOrder(name){
+    const container = findContainerByName(name);
+    if(container){
+      const price = parseInt(container.dataset.price, 10);
+      setQty(container, name, price, 0);
+    } else {
+      delete order[name];
+      updateCart();
+    }
+  }
+
+  function clearOrder(){
+    Object.keys(order).forEach(name => {
+      const container = findContainerByName(name);
+      if(container){
+        container.dataset.qty = 0;
+        container.classList.remove('active');
+        const qtyEl = container.querySelector('.qty');
+        if(qtyEl) qtyEl.textContent = 0;
+      }
+    });
+    for(const key in order) delete order[key];
+    updateCart();
+    renderCartPanel();
+  }
+
+  function renderCartPanel(){
+    cartItemsList.innerHTML = '';
+    const entries = Object.entries(order);
+
+    if(entries.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'cart-empty';
+      empty.textContent = 'No items selected yet.';
+      cartItemsList.appendChild(empty);
+    } else {
+      entries.forEach(([name, o]) => {
+        const line = document.createElement('div');
+        line.className = 'cart-line';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'cart-line-name';
+        nameSpan.textContent = `${o.qty}× ${name}`;
+
+        const amtSpan = document.createElement('span');
+        amtSpan.className = 'cart-line-amt';
+        amtSpan.textContent = formatLL(o.qty * o.price);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'cart-line-remove';
+        removeBtn.type = 'button';
+        removeBtn.setAttribute('aria-label', 'Remove ' + name);
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', () => {
+          removeFromOrder(name);
+          renderCartPanel();
+        });
+
+        line.appendChild(nameSpan);
+        line.appendChild(amtSpan);
+        line.appendChild(removeBtn);
+        cartItemsList.appendChild(line);
+      });
+    }
+
+    const total = entries.reduce((sum, [, o]) => sum + o.qty * o.price, 0);
+    cartPanelTotal.textContent = formatLL(total);
+  }
+
+  function openCartPanel(){
+    renderCartPanel();
+    cartPanel.classList.add('open');
+    cartBackdrop.classList.add('open');
+  }
+  function closeCartPanel(){
+    cartPanel.classList.remove('open');
+    cartBackdrop.classList.remove('open');
+  }
+
+  cartFab.addEventListener('click', () => {
+    if(cartPanel.classList.contains('open')) closeCartPanel();
+    else openCartPanel();
+  });
+  document.getElementById('cartClose').addEventListener('click', closeCartPanel);
+  cartBackdrop.addEventListener('click', closeCartPanel);
+
+  document.getElementById('cartClearBtn').addEventListener('click', clearOrder);
+
+  document.getElementById('cartSendBtn').addEventListener('click', () => {
+    const items = Object.entries(order);
+    if(items.length === 0) return;
+
+    let lines = ['Hi Basha! I\'d like to order:', ''];
+    let total = 0;
+    items.forEach(([name, o]) => {
+      const lineTotal = o.qty * o.price;
+      total += lineTotal;
+      lines.push(`${o.qty}x ${name} — ${formatLL(lineTotal)}`);
+    });
+    lines.push('');
+    lines.push(`Total: ${formatLL(total)}`);
+
+    const message = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${WA_NUMBER}?text=${message}`, '_blank', 'noopener');
+  });
+</script>
+
+</body>
+</html>
