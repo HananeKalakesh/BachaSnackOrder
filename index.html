@@ -346,6 +346,19 @@
   .subhead::after{content:""; flex:1; height:1px; background:rgba(42,33,25,0.16);}
   .section-head + .subhead{margin-top:0;}
 
+  .subhead2{
+    display:flex; align-items:center; gap:8px;
+    margin:12px 0 8px;
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .subhead2 .ar{font-size:0.92em; color:var(--ink-soft); direction:rtl; font-weight:600; text-transform:none;}
+  .subhead2::after{content:""; flex:1; height:1px; background:rgba(42,33,25,0.1);}
+
+  .icon-spicy, .icon-healthy{
+    display:inline-block; font-size:0.78em; margin-left:4px; vertical-align:middle;
+  }
+
   /* ===== Footer ===== */
   footer{
     margin-top:50px; padding:26px 0 40px; border-top:3px solid var(--ink);
@@ -396,6 +409,8 @@
     <div class="cat-scroll" id="catScroll">
       <button class="cat-pill active" data-target="fries">Appetizers · مقبلات</button>
       <button class="cat-pill" data-target="meals">Meals · وجبات</button>
+      <button class="cat-pill" data-target="family">Family Meals · وجبات عائلية</button>
+      <button class="cat-pill" data-target="light">Plates · أطباق</button>
       <button class="cat-pill" data-target="sandwiches">Sandwiches · ساندويشات</button>
       <button class="cat-pill" data-target="extras">Sauces &amp; Extras</button>
     </div>
@@ -404,12 +419,22 @@
   <!-- APPETIZERS -->
   <section class="section" id="fries">
     <div class="section-head"><h2>Appetizers <span class="ar">مقبلات</span></h2><div class="line"></div></div>
+
+    <div class="subhead">Fries <span class="ar">بطاطا</span></div>
     <div class="grid">
-      <div class="item" data-name="Small Fries Box" data-price="100000"><div class="item-name"><div class="en">Small Fries Box</div><div class="ar">علبه بطاطه صغيره</div></div><div class="order-col"><div class="price">100,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Small Fries Box with Cheddar" data-price="200000"><div class="item-name"><div class="en">Small Fries Box with Cheddar</div><div class="ar">علبه بطاطه صغيره مع شدر</div></div><div class="order-col"><div class="price">200,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Small Fries Box" data-price="150000"><div class="item-name"><div class="en">Small Fries Box</div><div class="ar">علبه بطاطه صغيره</div></div><div class="order-col"><div class="price">150,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Small Fries Box with Sauce &amp; Cheddar" data-price="200000"><div class="item-name"><div class="en">Small Fries Box with Sauce &amp; Cheddar</div><div class="ar">علبه بطاطه صغيره مع صوص وشدر</div></div><div class="order-col"><div class="price">200,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
       <div class="item" data-name="Large Fries Box with Sauce &amp; Cheddar" data-price="450000"><div class="item-name"><div class="en">Large Fries Box with Sauce &amp; Cheddar</div><div class="ar">علبه بطاطه كبيره مع صوص وشدر</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Mozzarella Sticks" data-price="500000"><div class="item-name"><div class="en">Mozzarella Sticks</div><div class="ar">أصابع الموزاريلا</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
       <div class="item" data-name="Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar" data-price="700000"><div class="item-name"><div class="en">Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar</div><div class="ar">علبه بطاطه كبيره مع ٣ كرسبي وصوص وشدر</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+
+    <div class="subhead">Other Appetizers <span class="ar">مقبلات أخرى</span></div>
+    <div class="grid">
+      <div class="item" data-name="Mozzarella Sticks 5 PCS" data-price="500000"><div class="item-name"><div class="en">Mozzarella Sticks <span class="tag">5 PCS</span></div><div class="ar">أصابع الموزاريلا</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Onion Rings 6 PCS" data-price="500000"><div class="item-name"><div class="en">Onion Rings <span class="tag">6 PCS</span></div><div class="ar">حلقات بصل</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger 1 PC" data-price="100000"><div class="item-name"><div class="en">Zinger <span class="tag">1 PC</span></div><div class="ar">زنجر</div></div><div class="order-col"><div class="price">100,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crispy 1 PC" data-price="100000"><div class="item-name"><div class="en">Crispy <span class="tag">1 PC</span></div><div class="ar">كرسبي</div></div><div class="order-col"><div class="price">100,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mix Appetizer Box" data-price="600000"><div class="item-name"><div class="en">Mix Appetizer Box</div><div class="ar">صندوق مقبلات متنوع</div><div class="ingredients">2 Nuggets, 2 Mozzarella Sticks, 2 Onion Rings, Fries</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
     </div>
   </section>
 
@@ -417,16 +442,38 @@
   <section class="section" id="meals">
     <div class="section-head"><h2>Meals <span class="ar">الوجبات</span></h2><div class="line"></div></div>
     <div class="grid">
-      <div class="item" data-name="Crispy Meal 7 PCS" data-price="750000"><div class="item-name"><div class="en">Crispy Meal <span class="tag">7 PCS</span></div><div class="ar">كرسبي</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Zinger Meal 7 PCS" data-price="750000"><div class="item-name"><div class="en">Zinger Meal <span class="tag">7 PCS</span></div><div class="ar">زنجر</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Escalope Meal 3 PCS" data-price="750000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">3 PCS</span></div><div class="ar">اسكالوب</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Wings Meal 14 PCS" data-price="750000"><div class="item-name"><div class="en">Wings Meal <span class="tag">14 PCS</span></div><div class="ar">جوانح</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Escalope Meal 1KG" data-price="1700000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">1KG</span></div><div class="ar">اسكالوب مقلي</div></div><div class="order-col"><div class="price">1,700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Tawouk Meal 10 PCS" data-price="700000"><div class="item-name"><div class="en">Tawouk Meal <span class="tag">10 PCS</span></div><div class="ar">طاووق</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Shawarma Meal 300G" data-price="650000"><div class="item-name"><div class="en">Shawarma Meal <span class="tag">300G</span></div><div class="ar">شاورما</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Broasted Meal 10 PCS" data-price="1350000"><div class="item-name"><div class="en">Broasted Meal <span class="tag">10 PCS</span></div><div class="ar">بروستد</div></div><div class="order-col"><div class="price">1,350,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crispy Meal 7 PCS" data-price="800000"><div class="item-name"><div class="en">Crispy Meal <span class="tag">7 PCS</span></div><div class="ar">كرسبي</div></div><div class="order-col"><div class="price">800,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger Meal 7 PCS" data-price="800000"><div class="item-name"><div class="en">Zinger Meal <span class="tag">7 PCS</span><span class="icon-spicy" title="Spicy">🌶️</span></div><div class="ar">زنجر</div></div><div class="order-col"><div class="price">800,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Escalope Meal 3 PCS" data-price="800000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">3 PCS</span></div><div class="ar">اسكالوب</div></div><div class="order-col"><div class="price">800,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Nuggets Meal 5 PCS" data-price="500000"><div class="item-name"><div class="en">Nuggets Meal <span class="tag">5 PCS</span></div><div class="ar">ناغتس</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Wings Meal 14 PCS" data-price="800000"><div class="item-name"><div class="en">Wings Meal <span class="tag">14 PCS</span></div><div class="ar">جوانح</div></div><div class="order-col"><div class="price">800,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Half Wings Meal 7 PCS" data-price="400000"><div class="item-name"><div class="en">Half Wings Meal <span class="tag">7 PCS</span></div><div class="ar">نص جوانح</div></div><div class="order-col"><div class="price">400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Chicken Quesadilla" data-price="700000"><div class="item-name"><div class="en">Chicken Quesadilla</div><div class="ar">كيساديا دجاج</div><div class="ingredients">Sandwich on tortilla bread cut into pieces</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Tawouk Meal" data-price="750000"><div class="item-name"><div class="en">Tawouk Meal</div><div class="ar">طاووق</div><div class="ingredients">Sandwich on tortilla bread cut into pieces</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Shawarma Meal" data-price="700000"><div class="item-name"><div class="en">Shawarma Meal</div><div class="ar">شاورما</div><div class="ingredients">Sandwich on tortilla bread cut into pieces</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
     </div>
     <div class="mini-note">🍟 <b>Includes:</b> French Fries, Garlic Sauce, Pickles, Sauces &amp; Coleslaw Salad <span class="ar">تُقدَّم مع: بطاطا مقلية، ثوم، مخللات، صوصات، سلطة ملفوف</span></div>
+  </section>
+
+  <!-- FAMILY MEALS -->
+  <section class="section" id="family">
+    <div class="section-head"><h2>Family Meals <span class="ar">وجبات عائلية</span></h2><div class="line"></div></div>
+    <div class="grid">
+      <div class="item" data-name="Escalope Meal 1KG" data-price="1750000"><div class="item-name"><div class="en">Escalope Meal <span class="tag">1KG</span></div><div class="ar">اسكالوب مقلي</div></div><div class="order-col"><div class="price">1,750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger Meal 1KG" data-price="2160000"><div class="item-name"><div class="en">Zinger Meal <span class="tag">1KG</span><span class="icon-spicy" title="Spicy">🌶️</span></div><div class="ar">زنجر</div></div><div class="order-col"><div class="price">2,160,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crispy Meal 1KG" data-price="2160000"><div class="item-name"><div class="en">Crispy Meal <span class="tag">1KG</span></div><div class="ar">كرسبي</div></div><div class="order-col"><div class="price">2,160,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Broasted Meal" data-price="1400000"><div class="item-name"><div class="en">Broasted Meal</div><div class="ar">بروستد</div></div><div class="order-col"><div class="price">1,400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+  </section>
+
+  <!-- PLATES -->
+  <section class="section" id="light">
+    <div class="section-head"><h2>Plates <span class="ar">أطباق</span></h2><div class="line"></div></div>
+    <div class="grid">
+      <div class="item" data-name="Shawarma Plate" data-price="700000"><div class="item-name"><div class="en">Shawarma Plate</div><div class="ar">صحن شاورما</div><div class="ingredients">Shawarma chicken, fries, garlic sauce, pickles</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Tawouk Plate" data-price="750000"><div class="item-name"><div class="en">Tawouk Plate</div><div class="ar">صحن طاووق</div><div class="ingredients">Tawouk chicken, fries, coleslaw, garlic sauce, pickles</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Grilled Chicken Plate" data-price="750000"><div class="item-name"><div class="en">Grilled Chicken Plate<span class="icon-healthy" title="Healthy">🥗</span></div><div class="ar">صحن دجاج مشوي</div><div class="ingredients">Grilled chicken, grilled vegetables, lettuce, corn, pickles</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
   </section>
 
   <!-- SANDWICHES -->
@@ -434,33 +481,49 @@
     <div class="section-head"><h2>Sandwiches <span class="ar">ساندويشات</span></h2><div class="line"></div></div>
 
     <div class="subhead">Sandwiches <span class="ar">ساندويشات</span></div>
+
+    <div class="subhead2">Chicken <span class="ar">دجاج</span></div>
     <div class="grid">
-      <div class="item" data-name="Shawarma Sandwich" data-price="400000"><div class="item-name"><div class="en">Shawarma Sandwich</div><div class="ar">شاورما</div><div class="ingredients">Chicken shawarma, garlic paste, pickles, fries</div></div><div class="order-col"><div class="price">400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Tawook Sandwich" data-price="400000"><div class="item-name"><div class="en">Tawook Sandwich</div><div class="ar">طاووق</div><div class="ingredients">Tawook chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">400,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Crispy Sandwich" data-price="450000"><div class="item-name"><div class="en">Crispy Sandwich</div><div class="ar">كرسبي</div><div class="ingredients">Crispy chicken, garlic paste, fries, coleslaw</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Zinger Sandwich" data-price="450000"><div class="item-name"><div class="en">Zinger Sandwich</div><div class="ar">زنجر</div><div class="ingredients">Fried zinger chicken, cocktail sauce, pickles, lettuce, corn</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Francisco Sandwich" data-price="450000"><div class="item-name"><div class="en">Francisco Sandwich</div><div class="ar">فرنسيسكو</div><div class="ingredients">Chicken, mayo, lettuce, corn, pickles</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Escalope Sandwich" data-price="450000"><div class="item-name"><div class="en">Escalope Sandwich</div><div class="ar">ساندويش اسكالوب</div><div class="ingredients">Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Fahita Sandwich" data-price="600000"><div class="item-name"><div class="en">Fahita Sandwich</div><div class="ar">ساندويش فاهيتا</div><div class="ingredients">Chicken fajita, guacamole, pickles, cocktail sauce, cheese</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Chicken Sub Sandwich" data-price="450000"><div class="item-name"><div class="en">Chicken Sub Sandwich</div><div class="ar">ساندويش تشيكن صب</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Chicken Quesadilla" data-price="650000"><div class="item-name"><div class="en">Chicken Quesadilla</div><div class="ar">كيساديا دجاج</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Philadelphia Sandwich" data-price="600000"><div class="item-name"><div class="en">Philadelphia Sandwich</div><div class="ar">ساندويش فيلادلفيا</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Shawarma Sandwich" data-price="450000"><div class="item-name"><div class="en">Shawarma Sandwich</div><div class="ar">شاورما</div><div class="ingredients">Chicken shawarma, garlic paste, pickles, fries</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Tawook Sandwich" data-price="450000"><div class="item-name"><div class="en">Tawook Sandwich</div><div class="ar">طاووق</div><div class="ingredients">Tawook chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crispy Sandwich" data-price="500000"><div class="item-name"><div class="en">Crispy Sandwich</div><div class="ar">كرسبي</div><div class="ingredients">Crispy chicken, garlic paste, fries, coleslaw</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Zinger Sandwich" data-price="500000"><div class="item-name"><div class="en">Zinger Sandwich<span class="icon-spicy" title="Spicy">🌶️</span></div><div class="ar">زنجر</div><div class="ingredients">Fried zinger chicken, cocktail sauce, pickles, lettuce, corn</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Francisco Sandwich" data-price="500000"><div class="item-name"><div class="en">Francisco Sandwich</div><div class="ar">فرنسيسكو</div><div class="ingredients">Chicken, mayo, lettuce, corn, pickles</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Escalope Sandwich" data-price="500000"><div class="item-name"><div class="en">Escalope Sandwich</div><div class="ar">ساندويش اسكالوب</div><div class="ingredients">Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Fahita Sandwich" data-price="650000"><div class="item-name"><div class="en">Fahita Sandwich</div><div class="ar">ساندويش فاهيتا</div><div class="ingredients">Chicken fajita, guacamole, pickles, cocktail sauce, cheese</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Chicken Sub Sandwich" data-price="500000"><div class="item-name"><div class="en">Chicken Sub Sandwich</div><div class="ar">ساندويش تشيكن صب</div><div class="ingredients">Chicken, mayo, garlic paste, lettuce, pickles on submarine</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Chicken Kebab Sandwich" data-price="500000"><div class="item-name"><div class="en">Chicken Kebab Sandwich</div><div class="ar">ساندويش كباب دجاج</div><div class="ingredients">Chicken kebab, garlic sauce, fries, pickles, on Arabic bread</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Broasted Sandwich" data-price="500000"><div class="item-name"><div class="en">Broasted Sandwich</div><div class="ar">ساندويش بروستد</div><div class="ingredients">Broasted chicken, fries, pickles, coleslaw, ketchup, garlic paste on Arabic bread</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Grilled Chicken Sandwich" data-price="500000"><div class="item-name"><div class="en">Grilled Chicken Sandwich<span class="icon-healthy" title="Healthy">🥗</span></div><div class="ar">ساندويش دجاج مشوي</div><div class="ingredients">Grilled chicken, grilled vegetables, lettuce, corn, pickles, on brown bread</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+
+    <div class="subhead2">Beef <span class="ar">بقر</span></div>
+    <div class="grid">
+      <div class="item" data-name="Philadelphia Sandwich" data-price="650000"><div class="item-name"><div class="en">Philadelphia Sandwich</div><div class="ar">ساندويش فيلادلفيا</div><div class="ingredients">Fillet steak, mixed peppers, onion, mozzarella, pickles, mayo on submarine</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mushroom Steak Sandwich" data-price="700000"><div class="item-name"><div class="en">Mushroom Steak Sandwich</div><div class="ar">ساندويش ستيك مشروم</div><div class="ingredients">Fillet steak, mushroom, cheese, pickles, mayo on submarine</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Vegetable Steak Sandwich" data-price="650000"><div class="item-name"><div class="en">Vegetable Steak Sandwich</div><div class="ar">ساندويش ستيك خضار</div><div class="ingredients">Steak, grilled onion, grilled tomato, pickles, mayo, rocca on submarine</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Hausa Sandwich" data-price="700000"><div class="item-name"><div class="en">Hausa Sandwich<span class="icon-spicy" title="Spicy">🌶️</span></div><div class="ar">ساندويش هاوسا</div><div class="ingredients">Spicy fillet steak, grilled tomato, grilled onion, rocca, mayo</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
     </div>
 
     <div class="subhead">Burgers <span class="ar">برجر</span></div>
+
+    <div class="subhead2">Chicken <span class="ar">دجاج</span></div>
     <div class="grid">
-      <div class="item" data-name="Chicken Classic Burger" data-price="450000"><div class="item-name"><div class="en">Chicken Classic Burger</div><div class="ar">برجر دجاج كلاسيك</div></div><div class="order-col"><div class="price">450,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Mozzarella Pati Burger" data-price="500000"><div class="item-name"><div class="en">Mozzarella Pati Burger</div><div class="ar">برجر موزاريلا</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Meat Burger" data-price="500000"><div class="item-name"><div class="en">Meat Burger</div><div class="ar">همبرغر لحمة</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Basha Burger" data-price="550000"><div class="item-name"><div class="en">Basha Burger</div><div class="ar">برجر باشا</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Crunchy Burger" data-price="550000"><div class="item-name"><div class="en">Crunchy Burger</div><div class="ar">برجر كرنشي</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Crunchy Burger with Mozzarella Pati" data-price="650000"><div class="item-name"><div class="en">Crunchy Burger with Mozzarella Pati</div><div class="ar">برجر كرنشي مع موزاريلا</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
-      <div class="item" data-name="Mushroom Burger" data-price="650000"><div class="item-name"><div class="en">Mushroom Burger</div><div class="ar">برجر مشروم</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Chicken Classic Burger" data-price="500000"><div class="item-name"><div class="en">Chicken Classic Burger</div><div class="ar">برجر دجاج كلاسيك</div><div class="ingredients">chicken burger, cocktail sauce, pickles, coleslaw, fries, ketchup on burger bun</div></div><div class="order-col"><div class="price">500,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mozzarella Pati Burger" data-price="550000"><div class="item-name"><div class="en">Mozzarella Pati Burger</div><div class="ar">برجر موزاريلا</div><div class="ingredients">chicken burger, mozarella pati, cocktail sauce, pickles, coleslaw, fries, ketchup on burger bun</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crunchy Burger" data-price="650000"><div class="item-name"><div class="en">Crunchy Burger</div><div class="ar">برجر كرنشي</div><div class="ingredients">fried chicken, cocktail sauce, pickles, lettuce, cheddar sauce on burger bun</div></div><div class="order-col"><div class="price">650,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Crunchy Burger with Mozzarella Pati" data-price="750000"><div class="item-name"><div class="en">Crunchy Burger with Mozzarella Pati</div><div class="ar">برجر كرنشي مع موزاريلا</div><div class="ingredients">fried chicken, mozarella burger, cocktail sauce, pickles, lettuce, cheddar sauce on burger bun</div></div><div class="order-col"><div class="price">750,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+    </div>
+
+    <div class="subhead2">Beef <span class="ar">بقر</span></div>
+    <div class="grid">
+      <div class="item" data-name="Classic Beef Burger" data-price="550000"><div class="item-name"><div class="en">Classic Beef Burger</div><div class="ar">برجر لحم بقري</div><div class="ingredients">Beef burger, fries, coleslaw, ketchup, cocktail sauce</div></div><div class="order-col"><div class="price">550,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Basha Burger" data-price="600000"><div class="item-name"><div class="en">Basha Burger</div><div class="ar">برجر باشا</div><div class="ingredients">Beef burger, caramelized onion, cheddar slice, cocktail sauce</div></div><div class="order-col"><div class="price">600,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Mushroom Burger" data-price="700000"><div class="item-name"><div class="en">Mushroom Burger</div><div class="ar">برجر مشروم</div><div class="ingredients">Beef burger, mushroom sauce, cheese, cocktail sauce</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
+      <div class="item" data-name="Philly Steak Burger" data-price="700000"><div class="item-name"><div class="en">Philly Steak Burger</div><div class="ar">برجر فيلي ستيك</div><div class="ingredients">Fillet steak, cocktail sauce, raw tomato, raw onion, lettuce, pickles</div></div><div class="order-col"><div class="price">700,000 <span class="unit">L.L.</span></div><div class="stepper"><button class="dec" aria-label="Remove one">&minus;</button><span class="qty">0</span><button class="inc" aria-label="Add one">+</button></div></div></div>
     </div>
 
     <div class="mini-note">🧀 Add <b>Mozzarella Pati</b> to any burger for <b>+100,000 L.L.</b> <span class="ar">أضف موزاريلا لأي برجر مقابل 100,000 ل.ل. إضافية</span></div>
-
-    <div class="mini-note">🫓 <b>Tortilla bread</b> also available <span class="ar">يوجد خبز تورتيا</span></div>
   </section>
 
   <!-- EXTRAS -->
@@ -559,6 +622,7 @@
   const cartBackdrop = document.getElementById('cartBackdrop');
   const cartItemsList = document.getElementById('cartItemsList');
   const cartPanelTotal = document.getElementById('cartPanelTotal');
+  const cartClose = document.getElementById('cartClose');
 
   function formatLL(n){
     return n.toLocaleString('en-US') + ' L.L.';
@@ -665,12 +729,10 @@
 
         const removeBtn = document.createElement('button');
         removeBtn.className = 'cart-line-remove';
-        removeBtn.type = 'button';
-        removeBtn.setAttribute('aria-label', 'Remove ' + name);
         removeBtn.innerHTML = '&times;';
+        removeBtn.setAttribute('aria-label', `Remove ${name}`);
         removeBtn.addEventListener('click', () => {
           removeFromOrder(name);
-          renderCartPanel();
         });
 
         line.appendChild(nameSpan);
@@ -680,7 +742,10 @@
       });
     }
 
-    const total = entries.reduce((sum, [, o]) => sum + o.qty * o.price, 0);
+    let total = 0;
+    Object.values(order).forEach(o => {
+      total += o.qty * o.price;
+    });
     cartPanelTotal.textContent = formatLL(total);
   }
 
@@ -689,38 +754,38 @@
     cartPanel.classList.add('open');
     cartBackdrop.classList.add('open');
   }
+
   function closeCartPanel(){
     cartPanel.classList.remove('open');
     cartBackdrop.classList.remove('open');
   }
 
-  cartFab.addEventListener('click', () => {
-    if(cartPanel.classList.contains('open')) closeCartPanel();
-    else openCartPanel();
+  cartFab?.addEventListener('click', openCartPanel);
+  cartClose?.addEventListener('click', closeCartPanel);
+  cartBackdrop?.addEventListener('click', closeCartPanel);
+
+  document.getElementById('cartClearBtn')?.addEventListener('click', () => {
+    clearOrder();
   });
-  document.getElementById('cartClose').addEventListener('click', closeCartPanel);
-  cartBackdrop.addEventListener('click', closeCartPanel);
 
-  document.getElementById('cartClearBtn').addEventListener('click', clearOrder);
+  document.getElementById('cartSendBtn')?.addEventListener('click', () => {
+    const entries = Object.entries(order);
+    if(entries.length === 0) return;
 
-  document.getElementById('cartSendBtn').addEventListener('click', () => {
-    const items = Object.entries(order);
-    if(items.length === 0) return;
-
-    let lines = ['Hi Basha! I\'d like to order:', ''];
     let total = 0;
-    items.forEach(([name, o]) => {
-      const lineTotal = o.qty * o.price;
-      total += lineTotal;
-      lines.push(`${o.qty}x ${name} — ${formatLL(lineTotal)}`);
-    });
-    lines.push('');
-    lines.push(`Total: ${formatLL(total)}`);
+    let message = "Hi Basha, I'd like to place an order:\n\n";
 
-    const message = encodeURIComponent(lines.join('\n'));
-    window.open(`https://wa.me/${WA_NUMBER}?text=${message}`, '_blank', 'noopener');
+    entries.forEach(([name, o]) => {
+      const itemTotal = o.qty * o.price;
+      total += itemTotal;
+      message += `• ${o.qty}x ${name} - ${formatLL(itemTotal)}\n`;
+    });
+
+    message += `\n*Total:* ${formatLL(total)}`;
+
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encoded}`, '_blank');
   });
 </script>
-
 </body>
 </html>
