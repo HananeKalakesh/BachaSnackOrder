@@ -14,7 +14,8 @@
 <div class="item" data-name="Small Fries Box" data-price="150000"><div class="name"><div class="en">Small Fries Box</div><div class="ar">علبة بطاطا صغيرة</div></div><div class="price">150,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div>
 <div class="item sauce-fries" data-name="Small Fries Box with Sauce &amp; Cheddar" data-price="200000"><div class="name"><div class="en">Small Fries Box with Sauce &amp; Cheddar</div><div class="ar">علبة بطاطا صغيرة مع صوص وشيدر</div><div class="tag">Choose your sauces</div></div><div class="price">200,000 L.L.</div><div class="actions"><button class="add" aria-label="Choose sauces">+</button></div></div>
 <div class="item sauce-fries" data-name="Large Fries Box with Sauce &amp; Cheddar" data-price="450000"><div class="name"><div class="en">Large Fries Box with Sauce &amp; Cheddar</div><div class="ar">علبة بطاطا كبيرة مع صوص وشيدر</div><div class="tag">Choose your sauces</div></div><div class="price">450,000 L.L.</div><div class="actions"><button class="add" aria-label="Choose sauces">+</button></div></div>
-<div class="item" data-name="Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar" data-price="700000"><div class="name"><div class="en">Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar</div><div class="ar">علبة بطاطا كبيرة، ٣ قطع كرسبي</div></div><div class="price">700,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div></div>
+<div class="item" data-name="Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar" data-price="700000"><div class="name"><div class="en">Large Fries Box, 3 Crispy Pieces, Sauce &amp; Cheddar</div><div class="ar">علبة بطاطا كبيرة، ٣ قطع كرسبي</div></div><div class="price">700,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div>
+</div>
 <div class="subhead">Other Appetizers <span class="ar">مقبلات أخرى</span></div><div class="grid"><div class="item" data-name="Mozzarella Sticks 5 PCS" data-price="500000"><div class="name"><div class="en">Mozzarella Sticks <span class="tag">5 PCS</span></div></div><div class="price">500,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div><div class="item" data-name="Onion Rings 6 PCS" data-price="500000"><div class="name"><div class="en">Onion Rings <span class="tag">6 PCS</span></div></div><div class="price">500,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div><div class="item" data-name="Zinger 1 PC" data-price="100000"><div class="name"><div class="en">Zinger <span class="tag">1 PC</span></div></div><div class="price">100,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div><div class="item" data-name="Crispy 1 PC" data-price="100000"><div class="name"><div class="en">Crispy <span class="tag">1 PC</span></div></div><div class="price">100,000 L.L.</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div></div></section>
 <section id="meals"><div class="head"><h2>Meals <span class="ar">الوجبات</span></h2></div><div class="grid" id="mealGrid"></div><div class="note">🍟 Meals include French fries, garlic sauce, pickles, sauces and coleslaw salad.</div></section>
 <section id="family"><div class="head"><h2>Family Meals <span class="ar">وجبات عائلية</span></h2></div><div class="grid" id="familyGrid"></div></section>
@@ -26,10 +27,71 @@
 <div id="choiceModal" class="choice-modal"><h3>Choose your sauces</h3><p>Select one or more sauces for your fries.</p><div class="choices"><label><input type="checkbox" value="Cocktail sauce">Cocktail sauce</label><label><input type="checkbox" value="Ketchup">Ketchup</label><label><input type="checkbox" value="Barbecue">Barbecue</label><label><input type="checkbox" value="Cheddar">Cheddar</label></div><div class="choice-actions"><button id="cancelChoice">Cancel</button><button id="confirmChoice" class="confirm">Add to order</button></div></div>
 <script>
 const order={};const fmt=n=>n.toLocaleString('en-US')+' L.L.';const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-const templates={mealGrid:[['Crispy Meal 7 PCS',800000],['Zinger Meal 7 PCS',800000],['Escalope Meal 3 PCS',800000],['Nuggets Meal 5 PCS',500000],['Wings Meal 14 PCS',800000],['Half Wings Meal 7 PCS',400000],['Chicken Quesadilla',700000],['Tawouk Meal',750000],['Shawarma Meal',700000]],familyGrid:[['Escalope Meal 1KG',1750000],['Zinger Meal 1KG',2160000],['Crispy Meal 1KG',2160000],['Broasted Meal',1400000]],plateGrid:[['Shawarma Plate',700000],['Tawouk Plate',750000],['Grilled Chicken Plate',750000]],sandwichGrid:[['Shawarma Sandwich',450000],['Tawook Sandwich',450000],['Crispy Sandwich',500000],['Zinger Sandwich',500000],['Francisco Sandwich',500000],['Escalope Sandwich',500000],['Fahita Sandwich',650000],['Chicken Sub Sandwich',500000],['Chicken Kebab Sandwich',500000],['Broasted Sandwich',500000],['Grilled Chicken Sandwich',500000],['Cordon Bleu Sandwich',600000,'Cordon bleu, cocktail sauce, lettuce, pickle, corn']],burgerGrid:[['Chicken Classic Burger',500000],['Mozzarella Pati Burger',550000],['Crunchy Burger',650000],['Classic Beef Burger',550000],['Basha Burger',600000],['Mushroom Burger',700000],['Philly Steak Burger',700000]],sauceGrid:[['Buffalo Sauce',50000],['Honey Mustard Sauce',50000],['Barbecue Sauce',50000],['Cocktail Sauce',50000],['Cheddar Cup (Small)',75000],['Cheddar Cup (Big)',150000]],drinkGrid:[['Pepsi',70000],['Pepsi Diet',70000],['7UP',70000],['7UP Diet',70000]]};
-function card([name,price,ingredients]){return `<div class="item" data-name="${name}" data-price="${price}"><div class="name"><div class="en">${name}</div>${ingredients?`<div class="ingredients">${ingredients}</div>`:''}</div><div class="price">${fmt(price)}</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div>`}for(const [id,items]of Object.entries(templates))$( '#'+id).innerHTML=items.map(card).join('');
+const templates={
+  mealGrid:[
+    ['Crispy Meal 7 PCS',800000,'Crispy chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Zinger Meal 7 PCS',800000,'Spicy zinger chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Escalope Meal 3 PCS',800000,'Escalope chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Nuggets Meal 5 PCS',500000,'Chicken nuggets, fries, garlic sauce, pickles'],
+    ['Wings Meal 14 PCS',800000,'Chicken wings, fries, garlic sauce, pickles, coleslaw'],
+    ['Half Wings Meal 7 PCS',400000,'Chicken wings, fries, garlic sauce, pickles, coleslaw'],
+    ['Chicken Quesadilla',700000,'Sandwich on tortilla bread cut into pieces'],
+    ['Tawouk Meal',750000,'Sandwich on tortilla bread cut into pieces'],
+    ['Shawarma Meal',700000,'Sandwich on tortilla bread cut into pieces']
+  ],
+  familyGrid:[
+    ['Escalope Meal 1KG',1750000,'Escalope chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Zinger Meal 1KG',2160000,'Zinger chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Crispy Meal 1KG',2160000,'Crispy chicken, fries, garlic sauce, pickles, coleslaw'],
+    ['Broasted Meal',1400000,'Broasted chicken, fries, garlic sauce, pickles, coleslaw']
+  ],
+  plateGrid:[
+    ['Shawarma Plate',700000,'Shawarma chicken, fries, garlic sauce, pickles'],
+    ['Tawouk Plate',750000,'Tawouk chicken, fries, coleslaw, garlic sauce, pickles'],
+    ['Grilled Chicken Plate',750000,'Grilled chicken, grilled vegetables, lettuce, corn, pickles']
+  ],
+  sandwichGrid:[
+    ['Shawarma Sandwich',450000,'Chicken shawarma, garlic paste, pickles, fries'],
+    ['Tawook Sandwich',450000,'Tawook chicken, garlic paste, pickles, fries, coleslaw, ketchup'],
+    ['Crispy Sandwich',500000,'Crispy chicken, garlic paste, fries, coleslaw'],
+    ['Zinger Sandwich',500000,'Fried zinger chicken, cocktail sauce, pickles, lettuce, corn'],
+    ['Francisco Sandwich',500000,'Chicken, mayo, lettuce, corn, pickles'],
+    ['Escalope Sandwich',500000,'Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup'],
+    ['Fahita Sandwich',650000,'Chicken fajita, guacamole, pickles, cocktail sauce, cheese'],
+    ['Chicken Sub Sandwich',500000,'Chicken, mayo, garlic paste, lettuce, pickles on submarine'],
+    ['Chicken Kebab Sandwich',500000,'Chicken kebab, garlic sauce, fries, pickles, on Arabic bread'],
+    ['Broasted Sandwich',500000,'Broasted chicken, fries, pickles, coleslaw, ketchup, garlic paste on Arabic bread'],
+    ['Grilled Chicken Sandwich',500000,'Grilled chicken, grilled vegetables, lettuce, corn, pickles, on brown bread'],
+    ['Cordon Bleu Sandwich',600000,'Cordon bleu, cocktail sauce, lettuce, pickle, corn']
+  ],
+  burgerGrid:[
+    ['Chicken Classic Burger',500000,'Chicken burger, cocktail sauce, pickles, coleslaw, fries, ketchup on burger bun'],
+    ['Mozzarella Pati Burger',550000,'Chicken burger, mozzarella pati, cocktail sauce, pickles, coleslaw, fries, ketchup on burger bun'],
+    ['Crunchy Burger',650000,'Fried chicken, cocktail sauce, pickles, lettuce, cheddar sauce on burger bun'],
+    ['Classic Beef Burger',550000,'Beef burger, fries, coleslaw, ketchup, cocktail sauce'],
+    ['Basha Burger',600000,'Beef burger, caramelized onion, cheddar slice, cocktail sauce'],
+    ['Mushroom Burger',700000,'Beef burger, mushroom sauce, cheese, cocktail sauce'],
+    ['Philly Steak Burger',700000,'Fillet steak, cocktail sauce, raw tomato, raw onion, lettuce, pickles']
+  ],
+  sauceGrid:[
+    ['Buffalo Sauce',50000],
+    ['Honey Mustard Sauce',50000],
+    ['Barbecue Sauce',50000],
+    ['Cocktail Sauce',50000],
+    ['Cheddar Cup (Small)',75000],
+    ['Cheddar Cup (Big)',150000]
+  ],
+  drinkGrid:[
+    ['Pepsi',70000],
+    ['Pepsi Diet',70000],
+    ['7UP',70000],
+    ['7UP Diet',70000]
+  ]
+};
+function card([name,price,ingredients]){return `<div class="item" data-name="${name}" data-price="${price}"><div class="name"><div class="en">${name}</div>${ingredients?`<div class="ingredients">${ingredients}</div>`:''}</div><div class="price">${fmt(price)}</div><div class="actions"><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div>`}
+for(const [id,items]of Object.entries(templates)){if(id==='sauceGrid'||id==='drinkGrid'){$('#'+id).innerHTML=items.map(([name,price])=>`<div class="row" data-name="${name}" data-price="${price}"><span>${name}</span><div class="actions"><span class="amount">${fmt(price)}</span><div class="stepper"><button class="dec">−</button><span class="qty">0</span><button class="inc">+</button></div></div></div>`).join('');continue}$('#'+id).innerHTML=items.map(card).join('');}
 function add(name,price,qty=1){order[name]??={qty:0,price};order[name].qty+=qty;if(order[name].qty<=0)delete order[name];render()}function render(){let count=Object.values(order).reduce((a,x)=>a+x.qty,0);$('#cartFab').classList.toggle('empty',!count);$('#cartFab').textContent=count?`View Order (${count})`:'Order on WhatsApp';let total=0;$('#cartItems').innerHTML=Object.entries(order).map(([n,o])=>{total+=o.qty*o.price;return `<div class="line"><strong>${o.qty}× ${n}</strong><em>${fmt(o.qty*o.price)}</em><button class="remove" data-remove="${n}">×</button></div>`}).join('')||'<div class="note">No items selected yet.</div>';$('#total').textContent=fmt(total)}
-function bind(){ $$('.item:not(.sauce-fries)').forEach(c=>{let n=c.dataset.name,p=+c.dataset.price;c.querySelector('.inc')?.addEventListener('click',()=>{add(n,p);c.querySelector('.qty').textContent=(+c.querySelector('.qty').textContent)+1});c.querySelector('.dec')?.addEventListener('click',()=>{let q=Math.max(0,+c.querySelector('.qty').textContent-1);c.querySelector('.qty').textContent=q;add(n,p,-1)})});$$('.sauce-fries').forEach(c=>c.querySelector('.add').addEventListener('click',()=>openChoice(c.dataset.name,+c.dataset.price)))}bind();
+function bind(){ $$('.item:not(.sauce-fries)').forEach(c=>{let n=c.dataset.name,p=+c.dataset.price;c.querySelector('.inc')?.addEventListener('click',()=>{add(n,p);c.querySelector('.qty').textContent=(+c.querySelector('.qty').textContent)+1});c.querySelector('.dec')?.addEventListener('click',()=>{let q=Math.max(0,+c.querySelector('.qty').textContent-1);c.querySelector('.qty').textContent=q;add(n,p,-1)})});$$('.sauce-fries').forEach(c=>c.querySelector('.add').addEventListener('click',()=>openChoice(c.dataset.name,+c.dataset.price)));$$('[data-name][data-price] .inc').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.row,.item');const name=item.dataset.name;const price=+item.dataset.price; const qty = item.querySelector('.qty'); const current = Number(qty.textContent||0)+1; qty.textContent=current; add(name,price,1);}));$$('[data-name][data-price] .dec').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.row,.item');const name=item.dataset.name;const price=+item.dataset.price; const qty = item.querySelector('.qty'); const current = Math.max(0, Number(qty.textContent||0)-1); qty.textContent=current; add(name,price,-1);}));}bind();
 let selected=null;function openChoice(name,price){selected={name,price};$('#choiceModal').classList.add('open');$('#backdrop').classList.add('open')}function closeChoice(){$('#choiceModal').classList.remove('open');if(!$('#cartPanel').classList.contains('open'))$('#backdrop').classList.remove('open');$$('#choiceModal input').forEach(x=>x.checked=false)}$('#cancelChoice').onclick=closeChoice;$('#confirmChoice').onclick=()=>{let sauces=$$('#choiceModal input:checked').map(x=>x.value);if(!sauces.length){alert('Please choose at least one sauce.');return}add(`${selected.name} [${sauces.join(', ')}]`,selected.price);closeChoice()};
 $('#cartFab').onclick=()=>{$('#cartPanel').classList.add('open');$('#backdrop').classList.add('open');render()};$('.close').onclick=()=>{$('#cartPanel').classList.remove('open');$('#backdrop').classList.remove('open')};$('.clear').onclick=()=>{for(const k in order)delete order[k];$$('.qty').forEach(x=>x.textContent=0);render()};$('#cartItems').onclick=e=>{let n=e.target.dataset.remove;if(n){delete order[n];render()}};$('.send').onclick=()=>{let msg="Hi Basha, I'd like to place an order:\n\n",total=0;for(const[n,o]of Object.entries(order)){total+=o.qty*o.price;msg+=`• ${o.qty}x ${n} - ${fmt(o.qty*o.price)}\n`}if(!total)return;window.open('https://wa.me/96176075724?text='+encodeURIComponent(msg+'\n*Total:* '+fmt(total)),'_blank')};
 $$('.pill').forEach(p=>p.onclick=()=>document.getElementById(p.dataset.target).scrollIntoView({behavior:'smooth'}));$('#backdrop').onclick=()=>{closeChoice();$('#cartPanel').classList.remove('open');$('#backdrop').classList.remove('open')};render();
