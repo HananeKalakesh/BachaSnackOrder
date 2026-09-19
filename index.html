@@ -26,7 +26,7 @@
     .contact{background:var(--card);border:2px solid var(--ink);border-radius:99px;padding:10px 18px;font-weight:600}
     nav{position:sticky;top:0;z-index:8;background:var(--paper);padding:12px 0;border-bottom:1px solid #2a211955}
     .nav{display:flex;gap:10px;overflow:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
-    .pill{white-space:nowrap;border:1.5px solid var(--ink);background:none;border-radius:99px;padding:9px 17px;font-weight:600;cursor:pointer}
+    .pill{white-space:nowrap;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:9px 17px;font-weight:600;cursor:pointer}
     .pill.active,.pill:hover{background:var(--red);color:#fff}
     section{padding:42px 0 8px}
     .head{display:flex;gap:14px;align-items:center;margin-bottom:20px}.head h2{margin:0;color:var(--deep);font:800 clamp(22px,3vw,30px) Cairo;white-space:nowrap}.head:after{content:'';height:2px;flex:1;background:repeating-linear-gradient(90deg,var(--gold) 0 6px,transparent 6px 12px)}
@@ -34,14 +34,18 @@
     .item,.row{background:var(--card);border:1.5px solid rgba(42,33,25,.15);border-radius:14px;padding:15px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:var(--shadow)}
     .item:hover{border-color:var(--gold);transform:translateY(-1px)}
     .name{flex:1;min-width:0}.en{font-weight:600;line-height:1.25}.ar{font:600 15px Cairo;color:var(--soft);direction:rtl}.ingredients{font-size:10.5px;color:var(--soft);font-style:italic;line-height:1.35;margin-top:5px}.tag{display:inline-block;color:var(--red);background:#8a23131a;border:1px solid #8a231333;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:800;margin:5px 3px 0 0}
+    .unit-highlight{display:inline-block;color:var(--red);background:#8a23131a;border:1px solid #8a231333;border-radius:6px;padding:1px 5px;margin-left:3px;font-size:.8em;font-weight:800}
     .actions{display:flex;align-items:center;gap:10px}.row .actions{display:flex;align-items:center;gap:8px}
+    .item .actions{flex-direction:column;align-items:flex-end;gap:8px}
+    .item .price{order:-1}
     .price{background:var(--red);color:#fff;border-radius:999px;padding:8px 12px;font-weight:700;white-space:nowrap;font-size:13px}
     .row .price{background:transparent;color:var(--red);padding:0;font-size:12px}
     .stepper{display:flex;align-items:center;gap:7px;background:#2a21190d;border-radius:999px;padding:3px}
     .stepper button,.add{border:0;border-radius:50%;width:25px;height:25px;background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
     .stepper .dec{background:transparent;color:var(--soft);border:1px solid #2a211944}
     .qty{min-width:14px;text-align:center;font-weight:700}.subhead{margin:20px 0 9px;font:800 15px Cairo;color:var(--deep);display:flex;gap:8px}
-    .banner{margin-top:24px;background:var(--card);border:1.5px dashed var(--gold);border-radius:16px;padding:18px 22px}.row{padding:12px 14px}.note{margin-top:14px;padding:8px 12px;border-left:3px solid var(--gold);background:#b4893f14;color:var(--soft);font-size:12px}footer{margin-top:50px;padding:26px 0 40px;border-top:3px solid var(--ink);color:var(--soft);font-size:13px}.fab{position:fixed;right:22px;bottom:22px;z-index:20;border:0;border-radius:999px;background:#25d366;color:#fff;padding:14px 20px;font-weight:700;cursor:pointer}.backdrop{position:fixed;inset:0;background:#140f0a66;z-index:30;display:none}.backdrop.open{display:block}.panel,.choice-modal{position:fixed;z-index:31;background:var(--card);border-radius:20px;padding:20px 22px}.panel{left:50%;bottom:0;transform:translate(-50%,110%);transition:.25s;max-width:520px;width:100%;max-height:80vh;overflow:auto}.panel.open{transform:translate(-50%,0)}.panel-head{display:flex;justify-content:space-between}.close{border:0;background:none;font-size:25px}.line{display:flex;gap:10px;padding:9px 0;border-bottom:1px dotted rgba(42,33,25,.2)}.line strong{flex:1}.line em{font-style:normal;color:var(--red);font-weight:700}.remove{border:0;background:none;font-size:20px}.total{display:flex;justify-content:space-between;border-top:2px solid var(--ink);padding-top:13px;margin-top:8px;font-weight:800}.panel-actions,.choice-actions{display:flex;gap:10px;margin-top:15px}.panel-actions button,.choice-actions button{flex:1;padding:12px;border:0;border-radius:10px;font-weight:700}.send,.confirm{background:#25d366;color:#fff}.choice-modal{z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92%,420px);display:none}.choice-modal.open{display:block}.choices{display:grid;gap:9px}.choices label{padding:9px;background:rgba(42,33,25,.05);border-radius:8px}.hidden{display:none!important}
+    .banner{margin-top:24px;background:var(--card);border:1.5px dashed var(--gold);border-radius:16px;padding:18px 22px}.row{padding:12px 14px}.note{margin-top:14px;padding:8px 12px;border-left:3px solid var(--gold);background:#b4893f14;color:var(--soft);font-size:12px}
+    footer{margin-top:50px;padding:26px 0 40px;border-top:3px solid var(--ink);color:var(--soft);font-size:13px}.fab{position:fixed;right:22px;bottom:22px;z-index:20;border:0;border-radius:999px;background:#25d366;color:#fff;padding:14px 20px;font-weight:700;cursor:pointer}.backdrop{position:fixed;inset:0;background:#140f0a66;z-index:30;display:none}.backdrop.open{display:block}.panel,.choice-modal{position:fixed;z-index:31;background:var(--card);border-radius:20px;padding:20px 22px}.panel{left:50%;bottom:0;transform:translate(-50%,110%);transition:.25s;max-width:520px;width:100%;max-height:80vh;overflow:auto}.panel.open{transform:translate(-50%,0)}.panel-head{display:flex;justify-content:space-between}.close{border:0;background:none;font-size:25px}.line{display:flex;gap:10px;padding:9px 0;border-bottom:1px dotted rgba(42,33,25,.2)}.line strong{flex:1}.line em{font-style:normal;color:var(--red);font-weight:700}.remove{border:0;background:none;font-size:20px}.total{display:flex;justify-content:space-between;border-top:2px solid var(--ink);padding-top:13px;margin-top:8px;font-weight:800}.panel-actions,.choice-actions{display:flex;gap:10px;margin-top:15px}.panel-actions button,.choice-actions button{flex:1;padding:12px;border:0;border-radius:10px;font-weight:700}.send,.confirm{background:#25d366;color:#fff}.choice-modal{z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92%,420px);display:none}.choice-modal.open{display:block}.choices{display:grid;gap:9px}.choices label{padding:9px;background:rgba(42,33,25,.05);border-radius:8px}.hidden{display:none!important}
     @media (max-width:520px){.item{padding:13px 12px}.price{font-size:12px;padding:7px 9px}.row{padding:11px 12px}}
   </style>
 </head>
@@ -217,7 +221,7 @@
         sectionAppetizers: 'المقبلات',
         sectionMeals: 'الوجبات',
         sectionFamily: 'الوجبات العائلية',
-        sectionPlates: 'الأط��اق',
+        sectionPlates: 'الأطباق',
         sectionSandwiches: 'الساندويشات',
         sectionBurgers: 'البرجر',
         sectionExtras: 'الصوصات والإضافات',
@@ -235,7 +239,7 @@
         sendWhatsapp: 'إرسال عبر واتساب',
         choiceTitle: 'اختر الصوصات',
         choiceText: 'اختر صوصًا واحدًا أو أكثر.',
-        cancelChoice: 'إلغاء',
+        cancelChoice: 'إلغا��',
         confirmChoice: 'أضف إلى الطلب',
         noItems: 'لا توجد عناصر مختارة بعد.',
         orderBtn: 'اطلب عبر واتساب',
@@ -247,7 +251,7 @@
 
     const menuData = {
       fries: [
-        { key: 'Small Fries Box', name: { en: 'Small Fries Box', ar: 'علبة بطاط�� صغيرة' }, desc: { en: '', ar: '' }, price: 150000, choice: false },
+        { key: 'Small Fries Box', name: { en: 'Small Fries Box', ar: 'علبة بطاطا صغيرة' }, desc: { en: '', ar: '' }, price: 150000, choice: false },
         { key: 'Small Fries Box with Sauce & Cheddar', name: { en: 'Small Fries Box with Sauce & Cheddar', ar: 'علبة بطاطا صغيرة مع صوص وشيدر' }, desc: { en: '', ar: '' }, price: 200000, choice: true },
         { key: 'Large Fries Box with Sauce & Cheddar', name: { en: 'Large Fries Box with Sauce & Cheddar', ar: 'علبة بطاطا كبيرة مع صوص وشيدر' }, desc: { en: '', ar: '' }, price: 450000, choice: true },
         { key: 'Large Fries Box, 3 Crispy Pieces, Sauce & Cheddar', name: { en: 'Large Fries Box, 3 Crispy Pieces, Sauce & Cheddar', ar: 'علبة بطاطا كبيرة، 3 قطع مقرمشة، صوص وشيدر' }, desc: { en: '', ar: '' }, price: 700000, choice: false }
@@ -260,7 +264,7 @@
       ],
       meals: [
         { key: 'Crispy Meal 7 PCS', name: { en: 'Crispy Meal 7 PCS', ar: 'وجبة كريسبي 7 قطع' }, desc: { en: 'Crispy chicken, fries, garlic sauce, pickles, coleslaw', ar: 'دجاج مقرمش، بطاطا، صوص ثوم، مخلل، كول سلاو' }, price: 800000, choice: false },
-        { key: 'Zinger Meal 7 PCS', name: { en: 'Zinger Meal 7 PCS', ar: 'وجبة زينجر 7 قطع' }, desc: { en: 'Spicy zinger chicken, fries, garlic sauce, pickles, coleslaw', ar: 'دجاج زينجر حار، بطاطا، صوص ثوم، مخلل، كول سلاو' }, price: 800000, choice: false },
+        { key: 'Zinger Meal 7 PCS', name: { en: 'Zinger Meal 7 PCS', ar: 'وجبة زينجر 7 قطع' }, desc: { en: 'Spicy zinger chicken, fries, garlic sauce, pickles, coleslaw', ar: 'دجاج زينجر حار، ��طاطا، صوص ثوم، مخلل، كول سلاو' }, price: 800000, choice: false },
         { key: 'Escalope Meal 3 PCS', name: { en: 'Escalope Meal 3 PCS', ar: 'وجبة اسكالوبي 3 قطع' }, desc: { en: 'Escalope chicken, fries, garlic sauce, pickles, coleslaw', ar: 'دجاج اسكالوبي، بطاطا، صوص ثوم، مخلل، كول سلاو' }, price: 800000, choice: false },
         { key: 'Nuggets Meal 5 PCS', name: { en: 'Nuggets Meal 5 PCS', ar: 'وجبة ناجتس 5 قطع' }, desc: { en: 'Chicken nuggets, fries, garlic sauce, pickles', ar: 'ناجتس دجاج، بطاطا، صوص ثوم، مخلل' }, price: 500000, choice: false },
         { key: 'Wings Meal 14 PCS', name: { en: 'Wings Meal 14 PCS', ar: 'وجبة جناح 14 قطع' }, desc: { en: 'Chicken wings, fries, garlic sauce, pickles, coleslaw', ar: 'أجنحة دجاج، بطاطا، صوص ثوم، مخلل، كول سلاو' }, price: 800000, choice: false },
@@ -284,16 +288,16 @@
         { key: 'Shawarma Sandwich', name: { en: 'Shawarma Sandwich', ar: 'ساندويش شاورما' }, desc: { en: 'Chicken shawarma, garlic paste, pickles, fries', ar: 'شاورما دجاج، صوص ثوم، مخلل، بطاطا' }, price: 450000, choice: false },
         { key: 'Tawouk Sandwich', name: { en: 'Tawouk Sandwich', ar: 'ساندويش تووك' }, desc: { en: 'Tawouk chicken, garlic paste, pickles, fries, coleslaw, ketchup', ar: 'دجاج تووك، صوص ثوم، مخلل، بطاطا، كول سلاو، كاتشب' }, price: 450000, choice: false },
         { key: 'Crispy Sandwich', name: { en: 'Crispy Sandwich', ar: 'ساندويش كريسبي' }, desc: { en: 'Crispy chicken, garlic paste, fries, coleslaw', ar: 'دجاج مقرمش، صوص ثوم، بطاطا، كول سلاو' }, price: 500000, choice: false },
-        { key: 'Zinger Sandwich', name: { en: 'Zinger Sandwich', ar: 'ساندويش زينجر' }, desc: { en: 'Fried zinger chicken, cocktail sauce, pickles, lettuce, corn', ar: 'دجاج زينجر مقلي، صوص كوكتيل، مخلل، خس، ذرة' }, price: 500000, choice: false },
-        { key: 'Escalope Sandwich', name: { en: 'Escalope Sandwich', ar: 'ساندويش اسكالوبي' }, desc: { en: 'Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup', ar: 'دجاج اسكالوبي، صوص ثوم، مخلل، بطاطا، كول سل��و، كاتشب' }, price: 500000, choice: false },
-        { key: 'Fahita Sandwich', name: { en: 'Fahita Sandwich', ar: 'ساندويش فاهيتا' }, desc: { en: 'Chicken fajita, guacamole, pickles, cocktail sauce, cheese', ar: 'فاهيتا دجاج، غواكامولي، مخلل، صوص كوكتيل، جبن' }, price: 650000, choice: false },
-        { key: 'Chicken Sub Sandwich', name: { en: 'Chicken Sub Sandwich', ar: 'ساندويش سوب دجاج' }, desc: { en: 'Chicken, mayo, garlic paste, lettuce, pickles on submarine', ar: 'دجاج، مايونيز، صوص ثوم، خس، مخلل على خبز سوب' }, price: 500000, choice: false },
-        { key: 'Broasted Sandwich', name: { en: 'Broasted Sandwich', ar: 'ساندويش بروستد' }, desc: { en: 'Broasted chicken, fries, pickles, coleslaw, ketchup, garlic paste on Arabic bread', ar: 'دجاج بروستد، بطاطا، مخلل، كول سلاو، كاتشب، صوص ثوم على خبز عربي' }, price: 500000, choice: false }
+        { key: 'Zinger Sandwich', name: { en: 'Zinger Sandwich', ar: 'ساندويش زينجر' }, desc: { en: 'Fried zinger chicken, cocktail sauce, pickles, lettuce, corn', ar: 'د��اج زينجر مقلي، صوص كوكتيل، مخلل، خس، ذرة' }, price: 500000, choice: false },
+        { key: 'Escalope Sandwich', name: { en: 'Escalope Sandwich', ar: 'ساندويش اسكالوبي' }, desc: { en: 'Escalope chicken, garlic paste, pickles, fries, coleslaw, ketchup', ar: 'دجاج اسكالوبي، صوص ثوم، مخلل، بطاطا، كول سلاو، كاتشب' }, price: 500000, choice: false },
+        { key: 'Fahita Sandwich', name: { en: 'Fahita Sandwich', ar: 'ساندويش فاهيتا' }, desc: { en: 'Chicken fajita, guacamole, pickles, cocktail sauce, cheese', ar: 'فاهيتا دجاج، جواكامولي، مخلل، صوص كوكتيل، جبن' }, price: 650000, choice: false },
+        { key: 'Chicken Sub Sandwich', name: { en: 'Chicken Sub Sandwich', ar: 'ساندويش سوب دجاج' }, desc: { en: 'Chicken, mayo, garlic paste, lettuce, pickles on submarine', ar: 'دجاج، مايونيز، صوص ثوم، خس، مخلل على خبز السوب مارين' }, price: 500000, choice: false },
+        { key: 'Broasted Sandwich', name: { en: 'Broasted Sandwich', ar: 'ساندويش بروستد' }, desc: { en: 'Broasted chicken, fries, pickles, coleslaw, ketchup, garlic paste on Arabic bread', ar: 'دجاج بروستد، بطاطا، مخلل، كول سلاو، كاتشب�� صوص ثوم على خبز عربي' }, price: 500000, choice: false }
       ],
       sandwichBeef: [
-        { key: 'Philadelphia Sandwich', name: { en: 'Philadelphia Sandwich', ar: 'ساندويش فيلادلفيا' }, desc: { en: 'Fillet steak, mixed peppers, onion, mozzarella, pickles, mayo on submarine', ar: 'شرائح لحم، فلفل مخلوط، بصل، موزاريلا، مخلل، مايونيز على خبز سوب' }, price: 650000, choice: false },
-        { key: 'Mushroom Steak Sandwich', name: { en: 'Mushroom Steak Sandwich', ar: 'ساندويش ستيك الفطر' }, desc: { en: 'Fillet steak, mushroom, cheese, pickles, mayo on submarine', ar: 'ستيك لحم، فطر، جبن، مخلل، مايونيز على خبز سوب' }, price: 700000, choice: false },
-        { key: 'Vegetable Steak Sandwich', name: { en: 'Vegetable Steak Sandwich', ar: 'ساندويش ستيك خضار' }, desc: { en: 'Steak, grilled onion, grilled tomato, pickles, mayo, rocca on submarine', ar: 'ستيك، بصل مشوي، طماطم مشوية، مخلل، مايونيز، روكا على خبز سوب' }, price: 650000, choice: false }
+        { key: 'Philadelphia Sandwich', name: { en: 'Philadelphia Sandwich', ar: 'ساندويش فيلادلفيا' }, desc: { en: 'Fillet steak, mixed peppers, onion, mozzarella, pickles, mayo on submarine', ar: 'شرائح ستيك، فلفل مخلوط، بصل، موزاريلا، مخلل، مايونيز على خبز السوب مارين' }, price: 650000, choice: false },
+        { key: 'Mushroom Steak Sandwich', name: { en: 'Mushroom Steak Sandwich', ar: 'ساندويش ستيك الفطر' }, desc: { en: 'Fillet steak, mushroom, cheese, pickles, mayo on submarine', ar: 'شرائح ستيك، فطر، جبن، مخلل، مايونيز على خبز السوب مارين' }, price: 700000, choice: false },
+        { key: 'Vegetable Steak Sandwich', name: { en: 'Vegetable Steak Sandwich', ar: 'ساندويش ستيك خضار' }, desc: { en: 'Steak, grilled onion, grilled tomato, pickles, mayo, rocca on submarine', ar: 'ستيك، بصل مشوي، طماطم مشوية، مخلل، مايونيز، رוקا على خبز السوب مارين' }, price: 650000, choice: false }
       ],
       burgerChicken: [
         { key: 'Chicken Classic Burger', name: { en: 'Chicken Classic Burger', ar: 'برجر كلاسيك دجاج' }, desc: { en: 'Chicken burger, cocktail sauce, pickles, coleslaw, fries, ketchup on burger bun', ar: 'برجر دجاج، صوص كوكتيل، مخلل، كول سلاو، بطاطا، كاتشب في خبز البرجر' }, price: 500000, choice: false },
@@ -302,7 +306,7 @@
       ],
       burgerBeef: [
         { key: 'Classic Beef Burger', name: { en: 'Classic Beef Burger', ar: 'برجر لحم كلاسيك' }, desc: { en: 'Beef burger, fries, coleslaw, ketchup, cocktail sauce', ar: 'برجر لحم، بطاطا، كول سلاو، كاتشب، صوص كوكتيل' }, price: 550000, choice: false },
-        { key: 'Basha Burger', name: { en: 'Basha Burger', ar: 'برجر باشا' }, desc: { en: 'Beef burger, caramelized onion, cheddar slice, cocktail sauce', ar: 'برجر لحم، بصل كراميل، شريحة شيدر، صوص كوكتيل' }, price: 600000, choice: false },
+        { key: 'Basha Burger', name: { en: 'Basha Burger', ar: 'برجر باشا' }, desc: { en: 'Beef burger, caramelized onion, cheddar slice, cocktail sauce', ar: 'برجر لحم، بصل محمص، شريحة شيدر، صوص كوكتيل' }, price: 600000, choice: false },
         { key: 'Mushroom Burger', name: { en: 'Mushroom Burger', ar: 'برجر الفطر' }, desc: { en: 'Beef burger, mushroom sauce, cheese, cocktail sauce', ar: 'برجر لحم، صوص فطر، جبن، صوص كوكتيل' }, price: 700000, choice: false }
       ],
       sauces: [
@@ -314,7 +318,7 @@
         { key: 'Cheddar Cup (Big)', name: { en: 'Cheddar Cup (Big)', ar: 'كوب شيدر كبير' }, price: 150000 }
       ],
       drinks: [
-        { key: 'Pepsi', name: { en: 'Pepsi', ar: 'بيبسي' }, price: 70000 },
+        { key: 'Pepsi', name: { en: 'Pepsi', ar: 'بيبس��' }, price: 70000 },
         { key: 'Pepsi Diet', name: { en: 'Pepsi Diet', ar: 'بيبسي دايت' }, price: 70000 },
         { key: '7UP', name: { en: '7UP', ar: '7UP' }, price: 70000 },
         { key: '7UP Diet', name: { en: '7UP Diet', ar: '7UP دايت' }, price: 70000 }
@@ -343,6 +347,7 @@
       const description = state.lang === 'ar' ? item.desc?.ar : item.desc?.en;
       const isChoice = !!item.choice;
       const spiceTag = /zinger|hausa/i.test(item.key) ? ' 🌶️' : '';
+      const highlightedName = name.replace(/\b(PCS|KGS)\b/gi, '<span class="unit-highlight">$1</span>');
       const qtyMarkup = isChoice
         ? '<button class="add" type="button">+</button>'
         : '<div class="stepper"><button class="dec" type="button">−</button><span class="qty">0</span><button class="inc" type="button">+</button></div>';
@@ -350,7 +355,7 @@
       return `
         <div class="item" data-key="${item.key}" data-price="${item.price}">
           <div class="name">
-            <div class="en">${name}${spiceTag}</div>
+            <div class="en">${highlightedName}${spiceTag}</div>
             ${description ? `<div class="ingredients">${description}</div>` : ''}
             ${isChoice ? '<div class="tag">'+t('chooseSauce')+'</div>' : ''}
           </div>
