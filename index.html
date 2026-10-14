@@ -78,41 +78,36 @@ section{padding:20px 16px 4px;scroll-margin-top:64px}
 section[hidden]{display:none}
 .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
 .head h2{margin:0;font:900 30px/1 var(--display);font-stretch:78%;text-transform:uppercase}
-.head .alt{font:800 19px Cairo,'Plus Jakarta Sans',sans-serif;color:var(--green)}
 .subhead{display:flex;align-items:center;gap:10px;margin:18px 0 10px;font-weight:800;font-size:15px;color:var(--green)}
 .subhead::after{content:'';flex:1;height:1px;background:var(--line)}
 .subhead[hidden]{display:none}
 .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.pgrid+.list{margin-top:12px}
-.list{display:grid;gap:10px}
-@media (min-width:700px){.pgrid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.list{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}}
+@media (min-width:700px){.pgrid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
 .noresults{margin:28px 16px;text-align:center;color:var(--soft);font-weight:600}
 .noresults[hidden]{display:none}
 
 /* item cards */
-.item{position:relative;background:var(--card);border-radius:18px;box-shadow:var(--shadow)}
+.item{position:relative;display:flex;flex-direction:column;background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:12px 10px 10px}
 .item[hidden]{display:none}
 .item.choosable{cursor:pointer}
-.item.has-photo{display:flex;flex-direction:column;padding:6px 6px 10px}
+.item.has-photo{padding:6px 6px 10px}
 .ph{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:var(--chip)}
 .photo{display:block;width:100%;height:100%;object-fit:cover}
 .stamp{position:absolute;inset-inline-start:8px;top:8px;background:var(--saffron);color:var(--ink);font:800 10.5px var(--display);letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:5px;transform:rotate(-4deg)}
-.has-photo .name{flex:1;padding:8px 4px 0}
-.item:not(.has-photo){display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px}
-.item:not(.has-photo) .name{flex:1;min-width:0}
+.name{flex:1;min-width:0;padding:0 2px}
+.has-photo .name{padding:8px 4px 0}
 .title{font-weight:800;font-size:14.5px;line-height:1.25}
-.alt{font:600 12.5px/1.4 Cairo,'Plus Jakarta Sans',sans-serif;color:var(--green)}
 .ingredients{margin-top:3px;font-size:12px;line-height:1.4;color:var(--soft)}
-.has-photo .ingredients{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ingredients{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.has-photo .ingredients{-webkit-line-clamp:2}
 .tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;background:var(--sand);color:var(--green);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
 .title .tag{margin:0;vertical-align:2px}
 .tag.pop{background:var(--saffron);color:var(--ink);margin-inline-end:6px}
 .tag.choose{background:transparent;padding:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .incart{display:inline-block;margin-top:6px;margin-inline-end:6px;padding:2px 8px;border-radius:999px;background:var(--green);color:#fff;font-size:11px;font-weight:700}
 .incart[hidden]{display:none}
-.actions{display:flex;align-items:center;gap:6px}
-.has-photo .actions{flex-wrap:wrap;justify-content:space-between;padding:8px 4px 0}
-.item:not(.has-photo) .actions{flex-direction:column;align-items:flex-end;gap:8px}
+.actions{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:10px 2px 0}
+.has-photo .actions{padding:8px 4px 0}
 .price{font-weight:800;font-size:13.5px;white-space:nowrap}
 .price bdi{font-weight:600;color:var(--soft)}
 .stepper{display:flex;align-items:center;gap:4px;background:var(--sand);border-radius:12px;padding:3px}
@@ -124,11 +119,10 @@ section[hidden]{display:none}
 .word{font-size:15px}
 .item.in .inc{padding:0}
 .item.in .inc .word{display:none}
-.has-photo .actions{flex-direction:column;align-items:stretch}
-.has-photo .add,.has-photo .stepper{width:100%}
-.has-photo .stepper{justify-content:space-between}
-.has-photo:not(.in) .stepper .inc{flex:1}
-.has-photo.in .stepper .inc{width:38px}
+.add,.item .stepper{width:100%}
+.item .stepper{justify-content:space-between}
+.item:not(.in) .stepper .inc{flex:1}
+.item.in .stepper .inc{width:38px}
 #popular h2::before,.pill[data-target=popular]::before{content:'★ ';color:var(--saffron)}
 #popular .pgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:44%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 10px}
 #popular .pgrid::-webkit-scrollbar{display:none}
@@ -570,7 +564,6 @@ function applyLang() {
   $$('[data-t]').forEach(e => e.textContent = t(e.dataset.en));
   $$('[data-tp]').forEach(e => e.placeholder = t(e.dataset.enp));
   $$('[data-ta]').forEach(e => e.setAttribute('aria-label', t(e.dataset.ta)));
-  $$('.head h2').forEach(h => { const a = h.parentNode.querySelector('.alt'); a.textContent = ar ? h.dataset.en : (AR.ui[h.dataset.en] || ''); a.lang = ar ? 'en' : 'ar' });
   document.title = t('Basha — Chicken and Snack | Menu');
   const b = $('#langBtn'); b.textContent = ar ? 'English' : 'عربي'; b.lang = ar ? 'en' : 'ar';
   render();
@@ -585,24 +578,23 @@ function card([name, price, desc, type]) {
   const pick = type === 'p', choice = !!type, label = esc(tName(name));
   const choiceText = {p: 'Choose 4-7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '';
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
-  const arName = inLang('ar', () => tName(name)), alt = lang === 'ar' ? name : arName;
-  const search = [name, arName, desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
+  const search = [name, inLang('ar', () => tName(name)), desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
   const pop = CONFIG.popular.includes(name), src = CONFIG.photos[name];
   const photo = src ? `<div class="ph"><img class="photo" src="${esc(src)}" alt="${label}" loading="lazy" width="640" height="640">${pop ? `<span class="stamp">★ ${t('Popular')}</span>` : ''}</div>` : '';
   const controls = choice
     ? `<button class="add" type="button" aria-haspopup="dialog" aria-label="${esc(t('Choose options for'))} ${label}">+<span class="word">${t('Add')}</span></button>`
     : `<div class="stepper"><button class="dec" type="button" aria-label="${esc(t('Remove one'))}: ${label}">−</button><span class="qty">0</span><button class="inc" type="button" aria-label="${esc(t('Add one'))}: ${label}">+<span class="word">${t('Add')}</span></button></div>`;
   return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
-    + `<div class="title">${qty(label)}${icon}</div>${alt !== tName(name) ? `<div class="alt" lang="${lang === 'ar' ? 'en' : 'ar'}">${esc(alt)}</div>` : ''}`
+    + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
     + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${t(choiceText)}</div>` : ''}</div>`
     + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${fmt(price)}${USD[name] ? ` <bdi dir="ltr">($${USD[name]})</bdi>` : ''}</div>${controls}</div></div>`;
 }
-// Items with a photo show as a 2-column photo grid, the rest as a list below it
+// All items show as cards, two per row; items with a photo come first so rows line up
 function render() {
   Object.entries(data).forEach(([id, items]) => {
-    const withPhoto = items.filter(it => CONFIG.photos[it[0]]), rest = items.filter(it => !CONFIG.photos[it[0]]);
-    $('#' + id).innerHTML = (withPhoto.length ? `<div class="pgrid">${withPhoto.map(card).join('')}</div>` : '') + (rest.length ? `<div class="list">${rest.map(card).join('')}</div>` : '');
+    const sorted = [...items.filter(it => CONFIG.photos[it[0]]), ...items.filter(it => !CONFIG.photos[it[0]])];
+    $('#' + id).innerHTML = `<div class="pgrid">${sorted.map(card).join('')}</div>`;
   });
   $('#popularGrid').innerHTML = `<div class="pgrid">${CONFIG.popular.map(n => ITEMS[n]).filter(Boolean).map(card).join('')}</div>`;
   cart();
@@ -855,7 +847,6 @@ function addStructuredData() {
 $$('[data-t]').forEach(e => e.dataset.en = e.textContent.trim());
 $$('[data-tp]').forEach(e => e.dataset.enp = e.placeholder);
 $$('a[data-phone=tel]').forEach(a => { a.href = 'tel:+' + CONFIG.phone; if (!a.classList.contains('cbtn')) a.textContent = CONFIG.phoneDisplay });
-$$('.head').forEach(h => h.insertAdjacentHTML('beforeend', '<span class="alt"></span>'));
 $$('a[data-phone=wa]').forEach(a => a.href = 'https://wa.me/' + CONFIG.phone);
 $('#langBtn').onclick = () => {
   lang = lang === 'ar' ? 'en' : 'ar';
