@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Lalezar&family=Gochi+Hand&family=Luckiest+Guy&family=Bagel+Fat+One&display=swap" rel="stylesheet">
+<style>*{margin:0}body{background:transparent}.l{display:inline-block}</style></head><body>
+<!-- 3D extruded wordmark (flat, gets warped afterwards) -->
+<div class="l" id="word"><svg width="1700" height="620" viewBox="0 0 1700 620">
+  <g font-family="Bowlby One" font-size="360" letter-spacing="-6" text-anchor="middle">
+    <g fill="#7E150E" stroke="#7E150E" stroke-width="22" stroke-linejoin="round" id="ext"></g>
+    <text x="850" y="430" fill="#FFC9D4" stroke="#7E150E" stroke-width="22" stroke-linejoin="round" paint-order="stroke">BASHA</text>
+  </g>
+</svg></div>
+<script>
+  const ext = document.getElementById('ext');
+  for (let i = 26; i >= 1; i--) { const t = document.createElementNS('http://www.w3.org/2000/svg', 'text'); t.setAttribute('x', 850 + i * .55); t.setAttribute('y', 430 + i); t.textContent = 'BASHA'; ext.appendChild(t); }
+</script>
+</body></html>
