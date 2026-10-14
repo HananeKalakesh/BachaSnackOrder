@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,700..900&family=Cairo:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#888}
+.logo{width:1080px;height:1080px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stripes::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(135deg,#ffffff0d 0 40px,transparent 40px 80px)}
+.logo>*{position:relative}
+.en{font:900 250px/.82 Archivo;font-stretch:75%;text-transform:uppercase;letter-spacing:-2px}
+.ar{font:900 200px/1.15 Cairo}
+.tag{font:800 46px Archivo;font-stretch:85%;letter-spacing:12px;text-transform:uppercase}
+/* A: green, stacked */
+#a{background:#1f4a37;color:#f5ecdc}
+#a .ar{color:#f2a516;margin-top:6px}
+#a .tag{margin-top:26px;color:#f5ecdc;opacity:.9}
+#a .ring{position:absolute;inset:70px;border:10px solid #f2a516;border-radius:50%}
+/* B: red with drumstick */
+#b{background:#c7361f;color:#fff}
+#b svg{width:330px;height:330px;margin:-20px 0 0}
+#b .en{font-size:230px}
+#b .ar{color:#f2a516;font-size:150px;line-height:1.1}
+/* C: saffron badge */
+#c{background:#f2a516;color:#1c1a15}
+#c .badge{width:860px;height:860px;border-radius:50%;background:#1f4a37;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 18px #c7361f}
+#c .en{color:#f5ecdc;font-size:240px}
+#c .ar{color:#f2a516;font-size:170px}
+#c .tag{color:#f5ecdc;font-size:38px;letter-spacing:10px;margin-top:14px}
+</style></head><body>
+<div class="logo stripes" id="a"><div class="ring"></div><div class="en">Basha</div><div class="ar">باشا</div><div class="tag">Chicken &amp; Snack</div></div>
+<div class="logo stripes" id="b">
+  <svg viewBox="0 0 200 200" aria-hidden="true"><g transform="rotate(40 100 100)">
+    <path d="M100 18c34 0 58 26 58 58 0 26-14 44-32 54l-6 22h-40l-6-22c-18-10-32-28-32-54 0-32 24-58 58-58z" fill="#f2a516"/>
+    <path d="M70 52c6-14 20-22 34-22" stroke="#ffd98a" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <path d="M84 120c4 10 28 10 32 0" stroke="#d8860c" stroke-width="6" stroke-linecap="round" fill="none" opacity=".7"/>
+    <rect x="89" y="146" width="22" height="30" rx="6" fill="#f5ecdc"/>
+    <circle cx="86" cy="182" r="14" fill="#f5ecdc"/><circle cx="114" cy="182" r="14" fill="#f5ecdc"/>
+  </g></svg>
+  <div class="en">Basha</div><div class="ar">باشا</div></div>
+<div class="logo" id="c"><div class="badge"><div class="en">Basha</div><div class="ar">باشا</div><div class="tag">Chicken &amp; Snack</div></div></div>
+</body></html>
