@@ -1,0 +1,59 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Pacifico&family=Lalezar&family=Archivo:wdth,wght@75..100,800..900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+.logo{width:1080px;height:1080px;position:relative;overflow:hidden}
+svg.full{position:absolute;inset:0;width:100%;height:100%}
+</style></head><body>
+
+<!-- reusable sub sandwich (side view): sesame bun, lettuce, tomato, crispy chicken, bottom bun -->
+<svg width="0" height="0" style="position:absolute"><defs>
+  <g id="sub">
+    <path d="M70 70 C28 70 18 112 30 128 L490 128 C502 112 492 70 450 70 Z" fill="#e3a14a" stroke="#1c1a15" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M70 92 C90 80 140 78 200 78" stroke="#f6cf8c" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <g fill="#fff6dc"><ellipse cx="120" cy="96" rx="7" ry="4" transform="rotate(-15 120 96)"/><ellipse cx="170" cy="86" rx="7" ry="4"/><ellipse cx="230" cy="90" rx="7" ry="4" transform="rotate(10 230 90)"/><ellipse cx="290" cy="84" rx="7" ry="4"/><ellipse cx="350" cy="92" rx="7" ry="4" transform="rotate(15 350 92)"/><ellipse cx="410" cy="88" rx="7" ry="4" transform="rotate(20 410 88)"/><ellipse cx="260" cy="108" rx="6" ry="4"/><ellipse cx="380" cy="110" rx="6" ry="4"/><ellipse cx="150" cy="112" rx="6" ry="4"/></g>
+    <path d="M22 128 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 q15 20 30 0 L502 138 L22 138 Z" fill="#7cbf3e" stroke="#1c1a15" stroke-width="8" stroke-linejoin="round"/>
+    <g stroke="#1c1a15" stroke-width="7"><rect x="60" y="136" width="120" height="18" rx="6" fill="#e2412b"/><rect x="200" y="136" width="120" height="18" rx="6" fill="#e2412b"/><rect x="340" y="136" width="120" height="18" rx="6" fill="#e2412b"/></g>
+    <path d="M28 154 h464 q10 0 7 10 l-5 14 q-3 8 -12 8 h-444 q-9 0 -12 -8 l-5 -14 q-3 -10 7 -10z" fill="#b8641e" stroke="#1c1a15" stroke-width="9" stroke-linejoin="round"/>
+    <g fill="#8a4512"><circle cx="80" cy="170" r="5"/><circle cx="140" cy="166" r="4"/><circle cx="200" cy="172" r="5"/><circle cx="270" cy="166" r="4"/><circle cx="330" cy="172" r="5"/><circle cx="400" cy="167" r="4"/><circle cx="450" cy="172" r="4"/></g>
+    <path d="M32 186 h456 q6 0 4 8 q-6 20 -36 20 h-392 q-30 0 -36 -20 q-2 -8 4 -8z" fill="#d48c38" stroke="#1c1a15" stroke-width="10" stroke-linejoin="round"/>
+  </g>
+  <pattern id="check" width="120" height="120" patternUnits="userSpaceOnUse"><rect width="120" height="120" fill="#fff"/><rect width="60" height="60" fill="#d62b20"/><rect x="60" y="60" width="60" height="60" fill="#d62b20"/></pattern>
+</defs></svg>
+
+<!-- 1: Retro diner — cream, script name, ribbon -->
+<div class="logo" id="d1"><svg class="full" viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#fbf1dc"/>
+  <circle cx="540" cy="540" r="470" fill="none" stroke="#c7361f" stroke-width="14"/>
+  <circle cx="540" cy="540" r="440" fill="none" stroke="#c7361f" stroke-width="4"/>
+  <use href="#sub" transform="translate(280 170) scale(1)"/>
+  <text x="540" y="615" text-anchor="middle" font-family="Pacifico" font-size="250" fill="#c7361f" stroke="#1c1a15" stroke-width="8" paint-order="stroke">Basha</text>
+  <text x="540" y="725" text-anchor="middle" font-family="Lalezar" font-size="120" fill="#1f4a37">باشا</text>
+  <path d="M190 785 h700 l-40 55 l40 55 h-700 l40 -55z" fill="#c7361f" stroke="#1c1a15" stroke-width="8" stroke-linejoin="round"/>
+  <text x="540" y="860" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="62" letter-spacing="8" fill="#fff" style="font-stretch:80%">CHICKEN &amp; SNACK</text>
+</svg></div>
+
+<!-- 2: Checkered paper — your red/white wrap, bold rounded letters -->
+<div class="logo" id="d2"><svg class="full" viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="url(#check)"/>
+  <circle cx="540" cy="540" r="420" fill="#fff8e8" stroke="#1c1a15" stroke-width="14"/>
+  <use href="#sub" transform="translate(272 200) scale(1.03)"/>
+  <text x="540" y="590" text-anchor="middle" font-family="Lilita One" font-size="230" fill="#d62b20" stroke="#1c1a15" stroke-width="14" paint-order="stroke" letter-spacing="4">BASHA</text>
+  <text x="540" y="710" text-anchor="middle" font-family="Lalezar" font-size="125" fill="#1c1a15">باشا</text>
+  <rect x="250" y="755" width="580" height="92" rx="46" fill="#1c1a15"/>
+  <text x="540" y="818" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="54" letter-spacing="7" fill="#ffd23f" style="font-stretch:80%">CHICKEN &amp; SNACK</text>
+</svg></div>
+
+<!-- 3: Street stamp — charcoal, circular text, line sandwich -->
+<div class="logo" id="d3"><svg class="full" viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#1c1a15"/>
+  <defs><path id="arcTop" d="M190 540 A350 350 0 0 1 890 540"/><path id="arcBot" d="M160 540 A380 380 0 0 0 920 540"/></defs>
+  <circle cx="540" cy="540" r="440" fill="none" stroke="#ffd23f" stroke-width="12"/>
+  <circle cx="540" cy="540" r="300" fill="#ffd23f"/>
+  <text font-family="Archivo" font-weight="900" font-size="70" letter-spacing="14" fill="#fbf1dc" style="font-stretch:80%"><textPath href="#arcTop" startOffset="50%" text-anchor="middle">CHICKEN &amp; SNACK</textPath></text>
+  <text font-family="Lalezar" font-size="76" fill="#fbf1dc"><textPath href="#arcBot" startOffset="50%" text-anchor="middle" side="left">· تشيكن آند سناك ·</textPath></text>
+  <use href="#sub" transform="translate(342 318) scale(.76)"/>
+  <text x="540" y="590" text-anchor="middle" font-family="Lilita One" font-size="170" fill="#1c1a15" letter-spacing="2">BASHA</text>
+  <text x="540" y="705" text-anchor="middle" font-family="Lalezar" font-size="110" fill="#c7361f">باشا</text>
+</svg></div>
+</body></html>
