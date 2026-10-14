@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Shrikhand&family=Modak&family=Chango&family=Titan+One&family=Gluten:wght@900&family=Lilita+One&family=Climate+Crisis&family=Bungee&family=Lalezar&family=Reem+Kufi+Fun:wght@700&family=Cairo+Play:wght@900&family=Badeen+Display&family=Blaka&family=Marhey:wght@700&family=Lemonada:wght@700&family=Rakkas&family=Fredoka:wght@700&display=swap" rel="stylesheet">
+<style>*{margin:0}body{background:#222;padding:12px;font-family:Fredoka}
+.g{display:grid;grid-template-columns:repeat(3,560px);gap:12px}.t{width:560px;height:340px;background:#E8402A;position:relative}
+.t p{position:absolute;left:14px;top:10px;font:700 20px Fredoka;color:#fff;background:#0006;padding:2px 10px;border-radius:8px;z-index:2}
+h1{color:#fff;font:700 28px Fredoka;margin:18px 4px 10px}</style></head><body>
+<h1>English font for BASHA (all free for commercial use, Google Fonts)</h1><div class="g" id="en"></div>
+<h1>Arabic font for the باشا sticker</h1><div class="g" id="ar"></div>
+<script>
+const NS='http://www.w3.org/2000/svg';
+const en=[['1','Bagel Fat One',300],['2','Shrikhand',250],['3','Modak',330],['4','Chango',200],['5','Titan One',290],['6','Gluten',260,900],['7','Lilita One',320],['8','Climate Crisis',230],['9','Bungee',260]];
+const ar=[['A','Lalezar',104],['B','Reem Kufi Fun',90,700],['C','Cairo Play',92,900],['D','Badeen Display',96],['E','Blaka',104],['F','Marhey',88,700],['G','Lemonada',80,700],['H','Rakkas',100]];
+function tile(parent,label,wf,ww,wsz,af,aw,asz){
+  const d=document.createElement('div');d.className='t';d.innerHTML=`<p>${label}</p><svg viewBox="0 0 1300 760" width="560" height="327" style="position:absolute;top:8px"><g></g></svg>`;parent.appendChild(d);
+  const g=d.querySelector('g');
+  const mk=(dx,dy,fill,stroke)=>{const t=document.createElementNS(NS,'text');Object.entries({x:650+dx,y:440+dy,'text-anchor':'middle','font-family':wf,'font-weight':ww||400,'font-size':wsz,fill}).forEach(([k,v])=>t.setAttribute(k,v));if(stroke){t.setAttribute('stroke',stroke);t.setAttribute('stroke-width',16);t.setAttribute('stroke-linejoin','round');t.setAttribute('paint-order','stroke')}t.textContent='BASHA';g.appendChild(t);return t};
+  for(let i=22;i>=1;i--)mk(i*.75,i,'#8E1A12','#8E1A12');const top=mk(0,0,'#FBF1DC','#8E1A12');
+  return ()=>{const b=top.getBBox();g.insertAdjacentHTML('beforeend',`<g transform="rotate(9 ${b.x+b.width-60} ${b.y+20})"><rect x="${b.x+b.width-200}" y="${b.y-55}" width="280" height="140" rx="70" fill="#FFC226" stroke="#1C1A15" stroke-width="8"/><text x="${b.x+b.width-60}" y="${b.y+15}" dominant-baseline="middle" text-anchor="middle" font-family="${af}" font-weight="${aw||400}" font-size="${asz}" fill="#1C1A15">باشا</text></g><text x="650" y="${b.y+b.height+85}" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="66" fill="#1C1A15">chicken &amp; snack</text>`)};
+}
+const fin=[];
+en.forEach(([n,f,s,w])=>fin.push(tile(document.getElementById('en'),`${n} · ${f}`,f,w,s,'Lalezar',400,104)));
+ar.forEach(([n,f,s,w])=>fin.push(tile(document.getElementById('ar'),`${n} · ${f}`,'Bagel Fat One',400,300,f,w,s)));
+document.fonts.ready.then(()=>setTimeout(()=>{fin.forEach(f=>f());document.fonts.ready.then(()=>setTimeout(()=>document.title=JSON.stringify([...new Set([...document.fonts].filter(x=>x.status==='loaded').map(x=>x.family))]),1500))},600));
+</script></body></html>
