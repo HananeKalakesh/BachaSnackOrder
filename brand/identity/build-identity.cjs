@@ -5,22 +5,25 @@ const fs = require('fs'), path = require('path');
 const OUT = __dirname, ROOT = path.join(__dirname, '..', '..');
 const photo = f => 'data:image/jpeg;base64,' + fs.readFileSync(path.join(ROOT, 'photos', f)).toString('base64');
 
-const C = {red: '#E8402A', cream: '#FBF1DC', yellow: '#FFC226', ink: '#1C1A15', deep: '#B92E1B'};
-const FONTS = '<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Fredoka:wght@500;600;700&family=Lalezar&family=Cairo:wght@600;700&display=swap" rel="stylesheet">';
+const C = {red: '#E8402A', cream: '#FBF1DC', yellow: '#FFC226', ink: '#1C1A15', deep: '#8E1A12'};
+const FONTS = '<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Fredoka:wght@500;600;700&family=Lalezar&family=Cairo:wght@600;700&display=swap" rel="stylesheet">';
 
 // ---------- the logo: BASHA on one line, باشا sticker on the last A, tagline below ----------
-function lockup({letters = C.cream, sticker = C.yellow, stickerText = C.ink, outline = C.ink, tag = C.ink, tagline = true, w = '100%'} = {}) {
-  return `<svg viewBox="0 0 1300 ${tagline ? 560 : 430}" width="${w}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible">
-  <text x="650" y="390" text-anchor="middle" font-family="Bowlby One" font-size="300" letter-spacing="-8" fill="${letters}">BASHA</text>
-  <g transform="rotate(9 1120 150)"><rect x="985" y="82" width="270" height="136" rx="68" fill="${sticker}" stroke="${outline}" stroke-width="8"/>
-  <text x="1120" y="186" text-anchor="middle" font-family="Lalezar" font-size="104" fill="${stickerText}">باشا</text></g>
-  ${tagline ? `<text x="650" y="510" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="72" letter-spacing="3" fill="${tag}">chicken &amp; snack</text>` : ''}
+function lockup({letters = C.cream, shadow = C.deep, sticker = C.yellow, stickerText = C.ink, outline = C.ink, tag = C.ink, tagline = true, showSticker = true, w = '100%'} = {}) {
+  const word = (x, y, fill, extra = '') => `<text x="${x}" y="${y}" text-anchor="middle" font-family="Bagel Fat One" font-size="330" fill="${fill}" ${extra}>BASHA</text>`;
+  let ext = '';
+  if (shadow) for (let i = 24; i >= 1; i--) ext += word(650 + i * .75, 392 + i, shadow, `stroke="${shadow}" stroke-width="16" stroke-linejoin="round"`);
+  return `<svg viewBox="0 0 1300 ${tagline ? 570 : 440}" width="${w}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible">
+  ${ext}${word(650, 392, letters, shadow ? `stroke="${shadow}" stroke-width="16" stroke-linejoin="round" paint-order="stroke"` : '')}
+  ${showSticker ? `<g transform="rotate(9 1120 150)"><rect x="985" y="82" width="270" height="136" rx="68" fill="${sticker}" stroke="${outline}" stroke-width="8"/>
+  <text x="1120" y="186" text-anchor="middle" font-family="Lalezar" font-size="104" fill="${stickerText}">باشا</text></g>` : ''}
+  ${tagline ? `<text x="650" y="528" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="72" letter-spacing="3" fill="${tag}">chicken &amp; snack</text>` : ''}
 </svg>`;
 }
 // submark: a big B with a mini sticker (favicon, stamps, small spaces)
 function submark({bg = C.red, letter = C.cream, round = false} = {}) {
   return `<svg viewBox="0 0 1000 1000" width="100%" style="display:block"><${round ? 'circle cx="500" cy="500" r="500"' : 'rect width="1000" height="1000" rx="0"'} fill="${bg}"/>
-  <text x="470" y="760" text-anchor="middle" font-family="Bowlby One" font-size="700" fill="${letter}">B</text>
+  ${Array.from({length: 30}, (_, i) => `<text x="${470 + (30 - i) * .8}" y="${740 + 30 - i}" text-anchor="middle" font-family="Bagel Fat One" font-size="700" fill="${C.deep}" stroke="${C.deep}" stroke-width="22" stroke-linejoin="round">B</text>`).join('')}<text x="470" y="740" text-anchor="middle" font-family="Bagel Fat One" font-size="700" fill="${letter}" stroke="${C.deep}" stroke-width="22" stroke-linejoin="round" paint-order="stroke">B</text>
   <g transform="rotate(9 700 745)"><rect x="560" y="680" width="290" height="140" rx="70" fill="${C.yellow}" stroke="${C.ink}" stroke-width="10"/>
   <text x="705" y="786" text-anchor="middle" font-family="Lalezar" font-size="106" fill="${C.ink}">باشا</text></g></svg>`;
 }
@@ -28,9 +31,9 @@ function submark({bg = C.red, letter = C.cream, round = false} = {}) {
 function pattern({bg = C.red, fg = C.cream, alt = C.yellow, size = 1600} = {}) {
   let rows = '';
   for (let i = 0; i < 14; i++) {
-    const y = i * 130, off = (i % 2) * -210;
+    const y = i * 130 - 40, off = (i % 2) * -210;
     let row = '';
-    for (let j = 0; j < 8; j++) row += `<tspan fill="${fg}" font-family="Bowlby One">BASHA</tspan><tspan fill="${alt}" font-family="Lalezar" font-size="104" dx="34" dy="0">باشا</tspan><tspan dx="34"> </tspan>`;
+    for (let j = 0; j < 8; j++) row += `<tspan fill="${fg}" font-family="Bagel Fat One">BASHA</tspan><tspan fill="${alt}" font-family="Lalezar" font-size="104" dx="34" dy="0">باشا</tspan><tspan dx="34"> </tspan>`;
     rows += `<text x="${off - 200}" y="${y}" font-size="96">${row}</text>`;
   }
   return `<svg viewBox="0 0 ${size} ${size}" width="100%" style="display:block"><rect width="${size}" height="${size}" fill="${bg}"/><g transform="rotate(-8 ${size / 2} ${size / 2}) translate(0 60)">${rows}</g></svg>`;
@@ -38,59 +41,54 @@ function pattern({bg = C.red, fg = C.cream, alt = C.yellow, size = 1600} = {}) {
 const page = (body, css = '') => `<!doctype html><html><head><meta charset="utf-8">${FONTS}<style>*{box-sizing:border-box;margin:0}body{font-family:Fredoka,sans-serif;color:${C.ink}}${css}</style></head><body>${body}</body></html>`;
 
 // ---------- applications ----------
+const qr = fs.readFileSync(path.join(ROOT, 'print', 'qr.svg'), 'utf8').replace(/<\?xml[^>]*>/, '').replace(/width="(\d+)" height="(\d+)"/, 'viewBox="0 0 $1 $2" width="100%" height="100%" shape-rendering="crispEdges"');
+const LOGO = {
+  red: {},
+  cream: {letters: C.red},
+  black: {shadow: C.red, tag: C.yellow, outline: C.yellow},
+  yellow: {letters: C.red, sticker: C.cream},
+  mono: {letters: C.ink, shadow: null, sticker: C.ink, stickerText: '#fff', tag: C.ink},
+};
+const BG = {red: C.red, cream: C.cream, black: C.ink, yellow: C.yellow, mono: '#fff'};
+
+// ---------- extra applications ----------
 const apps = {
-  profile: `<div style="width:1080px;height:1080px;background:${C.red};display:grid;place-items:center"><div style="width:880px">${lockup()}</div></div>`,
-  seal: `<div style="width:1080px;height:1080px;display:grid;place-items:center;background:transparent"><svg viewBox="0 0 1080 1080" width="1080" height="1080">
-    <circle cx="540" cy="540" r="530" fill="${C.red}"/><circle cx="540" cy="540" r="420" fill="none" stroke="${C.cream}" stroke-width="6" stroke-dasharray="2 18" stroke-linecap="round"/>
-    <defs><path id="ringT" d="M540 70 a470 470 0 1 1 -0.1 0"/></defs>
-    <text font-family="Bowlby One" font-size="58" fill="${C.cream}" letter-spacing="4"><textPath href="#ringT" textLength="2900" lengthAdjust="spacing">CHICKEN &amp; SNACK ✦ CHICKEN &amp; SNACK ✦ CHICKEN &amp; SNACK ✦</textPath></text>
-    <g transform="translate(150 360) scale(.6)">${lockup({tagline: false}).replace('<svg ', '<svg width="1300" height="430" ')}</g>
-    <text x="540" y="740" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="54" fill="${C.yellow}">freshly made · طازة</text></svg></div>`,
-  post: `<div style="width:1080px;height:1080px;background:${C.red};position:relative;overflow:hidden;font-family:Fredoka">
-    <div style="position:absolute;left:60px;top:56px;width:360px">${lockup({tagline: false})}</div>
-    <div style="position:absolute;right:60px;top:70px;background:${C.yellow};color:${C.ink};font:400 46px 'Bowlby One';padding:14px 34px;border-radius:99px;border:6px solid ${C.ink};transform:rotate(6deg)">NEW!</div>
-    <img src="${photo('crispy-meal.jpg')}" style="position:absolute;left:60px;top:230px;width:960px;height:560px;object-fit:cover;border-radius:40px;border:8px solid ${C.ink}">
-    <div style="position:absolute;left:60px;bottom:70px;color:${C.cream};font:400 92px/0.95 'Bowlby One'">CRISPY<br>MEAL</div>
-    <div style="position:absolute;right:60px;bottom:64px;width:250px;height:250px;border-radius:50%;background:${C.yellow};border:8px solid ${C.ink};display:grid;place-items:center;text-align:center;transform:rotate(-8deg)"><div style="font:400 30px 'Bowlby One'">from</div><div style="font:400 64px/1 'Bowlby One'">500K</div><div style="font:700 26px Fredoka">L.L.</div></div></div>`,
-  bag: `<div style="width:1080px;height:1080px;background:${C.cream};display:grid;place-items:center"><svg viewBox="0 0 1080 1080" width="1080" height="1080">
-    <ellipse cx="540" cy="1000" rx="330" ry="28" fill="#00000018"/>
-    <path d="M410 250 C410 120 670 120 670 250" stroke="#8a6a44" stroke-width="22" fill="none" stroke-linecap="round"/>
-    <path d="M250 240 h580 l50 750 h-680 z" fill="#c9a374"/><path d="M250 240 h580 l8 110 h-596 z" fill="#b8915f"/>
-    <path d="M300 240 l-30 750 M780 240 l30 750" stroke="#b8915f" stroke-width="6"/>
-    <g transform="translate(300 520) scale(.37)">${lockup({letters: C.red, sticker: C.yellow, tag: C.ink}).replace('<svg ', '<svg width="1300" height="560" ')}</g>
-    <text x="540" y="900" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="30" fill="${C.ink}" opacity=".7">WhatsApp 76 075 724</text></svg></div>`,
-  cup: `<div style="width:1080px;height:1080px;background:${C.yellow};display:grid;place-items:center"><svg viewBox="0 0 1080 1080" width="1080" height="1080">
-    <ellipse cx="540" cy="975" rx="230" ry="24" fill="#00000022"/>
-    <path d="M330 250 h420 l-50 720 h-320 z" fill="${C.red}"/>
-    <rect x="300" y="205" width="480" height="60" rx="20" fill="${C.cream}" stroke="${C.ink}" stroke-width="6"/>
-    <rect x="370" y="175" width="340" height="40" rx="16" fill="${C.cream}" stroke="${C.ink}" stroke-width="6"/>
-    <g transform="translate(372 520) scale(.26)">${lockup({tagline: false}).replace('<svg ', '<svg width="1300" height="430" ')}</g>
-    <text x="540" y="720" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="34" fill="${C.ink}">chicken &amp; snack</text></svg></div>`,
-  wrap: `<div style="width:1080px;height:1080px">${pattern({size: 1080})}</div>`,
+  profile: `<div style="width:1080px;height:1080px;background:${C.red};display:grid;place-items:center"><div style="width:860px">${lockup()}</div></div>`,
+  'card-front': `<div style="width:1050px;height:600px;background:${C.red};display:grid;place-items:center"><div style="width:720px">${lockup()}</div></div>`,
+  'card-back': `<div style="width:1050px;height:600px;background:${C.cream};position:relative;font-family:Fredoka;color:${C.ink}">
+    <div style="position:absolute;left:70px;top:70px;font:400 64px 'Bagel Fat One';color:${C.red}">yalla eat!</div>
+    <div style="position:absolute;left:70px;top:170px;font:600 30px/1.6 Fredoka">WhatsApp <b>76 075 724</b><br>Daily 1–5 PM &amp; 7–11:30 PM<br>Closed Mondays</div>
+    <div style="position:absolute;left:70px;bottom:60px;font:400 46px Lalezar;color:${C.red}">يلا كول!</div>
+    <div style="position:absolute;right:70px;top:150px;width:300px;height:300px;background:#fff;border-radius:24px;padding:22px;border:6px solid ${C.ink}">${qr}</div>
+    <div style="position:absolute;right:70px;top:470px;width:300px;text-align:center;font:700 24px Fredoka">scan for the menu</div></div>`,
+  sign: `<div style="width:1400px;height:900px;background:#3a332c;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,#0000 0 58px,#0003 58px 62px),repeating-linear-gradient(90deg,#0000 0 118px,#0002 118px 122px)"></div>
+    <div style="position:absolute;left:150px;top:90px;width:1100px;height:330px;background:${C.red};border-radius:26px;border:12px solid ${C.ink};display:grid;place-items:center;box-shadow:0 30px 60px #0007"><div style="width:820px">${lockup()}</div></div>
+    <div style="position:absolute;left:110px;top:470px;width:1180px;height:110px;background:repeating-linear-gradient(90deg,${C.red} 0 98px,${C.cream} 98px 196px);border-radius:0 0 40px 40px;box-shadow:0 20px 30px #0006"></div>
+    <div style="position:absolute;left:260px;top:620px;width:880px;height:320px;background:#ffd98a33;border:12px solid ${C.ink};border-bottom:0"></div>
+    <div style="position:absolute;left:440px;top:690px;padding:14px 40px;background:${C.yellow};border:6px solid ${C.ink};border-radius:99px;font:400 52px 'Bagel Fat One';transform:rotate(-4deg)">OPEN · فاتحين</div></div>`,
 };
 
 (async () => {
   const browser = await chromium.launch();
-  const pg = await browser.newPage({viewport: {width: 1400, height: 1400}, deviceScaleFactor: 1});
-  const shot = async (html, file, {transparent = false, scale = 1} = {}) => {
-    await pg.setViewportSize({width: 1400, height: 1400});
-    const p = scale === 1 ? pg : null;
+  const pg = await browser.newPage({viewport: {width: 1500, height: 1500}});
+  const shot = async (html, file, {transparent = false} = {}) => {
     await pg.setContent(page(`<div id="x" style="display:inline-block">${html}</div>`, 'body{background:transparent}'), {waitUntil: 'networkidle'});
     await pg.evaluate(() => document.fonts.ready);
     await (await pg.$('#x')).screenshot({path: path.join(OUT, file), omitBackground: transparent});
   };
-  fs.mkdirSync(path.join(OUT, 'logos'), {recursive: true});
-  fs.mkdirSync(path.join(OUT, 'applications'), {recursive: true});
-  const L = (o, bg) => `<div style="width:1300px;padding:70px 0;background:${bg || 'transparent'}"><div style="width:1100px;margin:auto">${lockup(o)}</div></div>`;
-  await shot(L({}, C.red), 'logos/basha-logo-on-red.png');
-  await shot(L({letters: C.red}, C.cream), 'logos/basha-logo-on-cream.png');
-  await shot(L({tag: C.yellow, outline: C.yellow}, C.ink), 'logos/basha-logo-on-black.png');
-  await shot(L({letters: C.red}), 'logos/basha-logo-red-transparent.png', {transparent: true});
+  for (const d of ['logos', 'applications']) fs.mkdirSync(path.join(OUT, d), {recursive: true});
+  for (const f of fs.readdirSync(path.join(OUT, 'logos'))) fs.unlinkSync(path.join(OUT, 'logos', f));
+  for (const f of fs.readdirSync(path.join(OUT, 'applications'))) fs.unlinkSync(path.join(OUT, 'applications', f));
+  const L = (o, bg) => `<div style="width:1300px;padding:80px 0 70px;background:${bg || 'transparent'}"><div style="width:1100px;margin:auto">${lockup(o)}</div></div>`;
+  for (const [k, o] of Object.entries(LOGO)) await shot(L(o, BG[k]), `logos/basha-logo-on-${k}.png`);
+  await shot(L(LOGO.cream), 'logos/basha-logo-red-transparent.png', {transparent: true});
   await shot(L({tag: C.cream}), 'logos/basha-logo-cream-transparent.png', {transparent: true});
-  await shot(L({letters: C.ink, sticker: C.ink, stickerText: '#fff', outline: C.ink, tag: C.ink}), 'logos/basha-logo-black-one-colour.png', {transparent: true});
+  await shot(L(LOGO.mono), 'logos/basha-logo-black-transparent.png', {transparent: true});
   await shot(`<div style="width:1080px">${submark()}</div>`, 'logos/basha-submark-B.png');
+  await shot(`<div style="width:1080px">${submark({round: true})}</div>`, 'logos/basha-submark-B-round.png', {transparent: true});
   await shot(`<div style="width:1080px">${pattern({size: 1080})}</div>`, 'logos/basha-pattern.png');
-  for (const [k, html] of Object.entries(apps)) await shot(html, `applications/${k}.png`, {transparent: k === 'seal'});
+  for (const [k, html] of Object.entries(apps)) await shot(html, `applications/${k}.png`);
   fs.copyFileSync(path.join(OUT, 'applications/profile.png'), path.join(OUT, 'logos/basha-whatsapp-profile.png'));
 
   // ---------- brand guide (A4 landscape) ----------
@@ -98,70 +96,123 @@ const apps = {
   const cmyk = hex => { const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255), k = 1 - Math.max(r, g, b);
     return [r, g, b].map(v => Math.round((1 - v - k) / (1 - k || 1) * 100)).concat(Math.round(k * 100)).join(' / '); };
   const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).join(', ');
-  const P = (inner, bg = C.cream, fg = C.ink, n = '') => `<section class="pg" style="background:${bg};color:${fg}">${inner}${n ? `<div class="pn">${n}</div>` : ''}</section>`;
-  const head = (n, t, sub) => `<div class="kick">${n}</div><h2>${t}</h2>${sub ? `<p class="lead">${sub}</p>` : ''}`;
+  let n = 0;
+  const P = (inner, bg = C.cream, fg = C.ink) => `<section class="pg" style="background:${bg};color:${fg}">${inner}<div class="pn">${++n > 1 ? 'Basha brand guidelines · ' + n : ''}</div></section>`;
+  const head = (k, t, sub) => `<div class="kick">${k}</div><h2>${t}</h2>${sub ? `<p class="lead">${sub}</p>` : ''}`;
+  const tile = (inner, bg, cls = '') => `<div class="tile ${cls}" style="background:${bg}">${inner}</div>`;
   const sw = (name, hex, ink, role) => `<div class="sw"><div class="chip" style="background:${hex};color:${ink}"><b>${name}</b><span>${role}</span></div><dl><dt>HEX</dt><dd>${hex}</dd><dt>RGB</dt><dd>${rgb(hex)}</dd><dt>CMYK</dt><dd>${cmyk(hex)}</dd></dl></div>`;
+  const fun = f => 'data:image/png;base64,' + fs.readFileSync(path.join(OUT, 'fun', f)).toString('base64');
+  const ph = f => 'data:image/jpeg;base64,' + fs.readFileSync(path.join(ROOT, 'photos', f)).toString('base64');
+  const fig = (src, cap, h = '60mm', fit = 'cover', bg = 'none', w = '') => `<figure style="${w ? 'width:' + w : ''}"><div class="tile img" style="height:${h};background:${bg}"><img src="${src}" style="object-fit:${fit}"></div><figcaption>${cap}</figcaption></figure>`;
+  const dont = (inner, cap, bg = C.red, style = '') => `<figure><div class="tile" style="background:${bg};height:44mm;position:relative;overflow:hidden"><div style="width:72%;${style}">${inner}</div><span class="x">✕</span></div><figcaption>${cap}</figcaption></figure>`;
+  const phrases = [['Yalla eat!', 'يلا كول!'], ['Crispy!', 'مقرمش!'], ['So good.', 'طيب كتير'], ['Hot & fresh', 'سخن وطازة'], ['Extra garlic?', 'زيادة توم؟'], ['Cool your heart', 'برّد قلبك']];
+
   const guide = page(`
-${P(`<div style="position:absolute;inset:0;display:grid;place-items:center"><div style="width:62%">${lockup()}</div></div><div class="foot" style="color:${C.ink}">Brand guidelines · 2026</div>`, C.red)}
-${P(`${head('01', 'The logo', 'Our name, loud and proud. BASHA in big friendly letters, with باشا stuck on like a sticker. It feels fun, bilingual and very us.')}
-  <div class="row"><div class="tile" style="background:${C.red};flex:1.4">${lockup()}</div>
-  <div class="notes"><h4>Anatomy</h4><p><b>Wordmark:</b> BASHA set in Bowlby One, always on one line.</p><p><b>Sticker:</b> باشا in Lalezar on a yellow pill, tilted 9°, overlapping the last A.</p><p><b>Tagline:</b> "chicken &amp; snack" in Fredoka, lowercase.</p>
-  <h4>Rules</h4><p>✓ Keep space around the logo at least the height of the sticker.</p><p>✓ Smallest size: 30 mm wide in print, 160 px on screen.</p><p>✗ Don't stretch, outline, add shadows, or change the sticker tilt or colour.</p><p>✗ Don't put it on photos without a solid colour block behind it.</p></div></div>`, C.cream, C.ink, '2')}
-${P(`${head('02', 'Logo versions', 'Pick the version that stands out best on its background.')}
-  <div class="grid3"><figure><div class="tile" style="background:${C.red}">${lockup()}</div><figcaption>Primary · on red</figcaption></figure>
-  <figure><div class="tile" style="background:${C.cream};border:1px solid #0001">${lockup({letters: C.red})}</div><figcaption>On cream / kraft / white</figcaption></figure>
-  <figure><div class="tile" style="background:${C.ink}">${lockup({tag: C.yellow, outline: C.yellow})}</div><figcaption>On black</figcaption></figure>
-  <figure><div class="tile" style="background:#fff;border:1px solid #0001">${lockup({letters: C.ink, sticker: C.ink, stickerText: '#fff', tag: C.ink})}</div><figcaption>One colour (stamps, receipts, fax)</figcaption></figure>
-  <figure><div class="tile sq" style="background:#fff;border:1px solid #0001"><div style="width:46%"><img src="${img('logos/basha-whatsapp-profile.png')}" style="width:100%;border-radius:50%"></div></div><figcaption>Profile picture (WhatsApp, Instagram)</figcaption></figure>
-  <figure><div class="tile sq" style="background:#fff;border:1px solid #0001"><div style="width:46%;border-radius:22%;overflow:hidden">${submark()}</div></div><figcaption>Submark "B" (app icon, stamps, tiny sizes)</figcaption></figure></div>`, C.cream, C.ink, '3')}
-${P(`${head('03', 'Colours', 'Bold, warm and appetising. Tomato red leads; cream, sunshine yellow and ink support it.')}
-  <div class="sws">${sw('Tomato Red', C.red, C.cream, 'Main colour · 60%')}${sw('Cream', C.cream, C.ink, 'Backgrounds · 25%')}${sw('Sunshine', C.yellow, C.ink, 'Highlights · 10%')}${sw('Ink', C.ink, C.cream, 'Text · 5%')}</div>
-  <p class="small">CMYK values are a starting point. Ask the printer for a proof and match it to the red on screen.</p>`, C.cream, C.ink, '4')}
-${P(`${head('04', 'Typography', 'Four free Google Fonts, so anyone can use them on any computer.')}
+${P(`<div style="position:absolute;inset:0;display:grid;place-items:center"><div style="width:64%">${lockup()}</div></div><div class="foot">Brand guidelines · 2026</div>`, C.red)}
+${P(`${head('00', 'Hello, we’re Basha', 'A Lebanese chicken &amp; snack spot with big flavour and a big smile. Everything we make, from a sandwich to a sticker, should feel generous, fun and a little bit cheeky, in English and in Arabic.')}
+  <div class="three">${[['Fun', 'We don’t take ourselves too seriously. Big letters, bright colours, a wink.', 'مهضومين'], ['Generous', 'Full sandwiches, extra sauce, friendly prices. No fine print.', 'كريمين'], ['Proudly Lebanese', 'We speak English and Arabic, often in the same sentence.', 'لبنانيين وعن جد']].map(([t, d, a]) => `<div class="card"><div class="big">${t}</div><div class="ar">${a}</div><p>${d}</p></div>`).join('')}</div>
+  <h3>How we talk</h3><div class="phr">${phrases.map(([e, a]) => `<span><b>${e}</b><i>${a}</i></span>`).join('')}</div>
+  <p class="small">Short, warm, like a friend at the counter. Mix languages freely. Never corporate (“Dear valued customer…”), never rude.</p>`)}
+${P(`${head('01', 'The logo', 'BASHA in big, bubbly letters with a 3D shadow, and باشا stuck on like a sticker. It’s our signature. Please don’t redraw it; always use the files in the kit.')}
+  <div class="row">${tile(`<div style="width:86%;outline:3px dashed ${C.cream}88;outline-offset:22px">${lockup()}</div>`, C.red, 'big')}
+  <div class="notes"><h4>Anatomy</h4><p><b>Wordmark:</b> BASHA in Bagel Fat One, on one line, with a deep-red 3D shadow.</p><p><b>Sticker:</b> باشا in Lalezar on a yellow pill, tilted 9°, sitting on the last A.</p><p><b>Tagline:</b> “chicken &amp; snack” in Fredoka. It can be left off when space is tight.</p>
+  <h4>Clear space</h4><p>Keep empty space around the logo at least as tall as the sticker (the dashed line).</p><h4>Minimum size</h4><p>Print: 30 mm wide. Screen: 160 px wide. Smaller than that? Use the “B” submark.</p></div></div>`)}
+${P(`${head('02', 'Logo versions', 'Choose the version that stands out best on its background.')}
+  <div class="grid3">${[['red', 'Primary · on tomato red'], ['cream', 'On cream, kraft or white'], ['black', 'On black / dark photos'], ['yellow', 'On sunshine yellow'], ['mono', 'One colour (stamps, receipts)']].map(([k, c]) => `<figure>${tile(`<div style="width:84%">${lockup(LOGO[k])}</div>`, BG[k], k === 'mono' || k === 'cream' ? 'bordered' : '')}<figcaption>${c}</figcaption></figure>`).join('')}
+  <figure>${tile(`<div style="height:84%;aspect-ratio:1;border-radius:24%;overflow:hidden">${submark()}</div>`, '#fff', 'bordered')}<figcaption>Submark “B” (profile, icon, tiny sizes)</figcaption></figure></div>`)}
+${P(`${head('03', 'Please don’t', 'Small changes break the magic. Keep the logo exactly as it comes.')}
+  <div class="grid3">
+  ${dont(lockup(), 'Stretch or squash it', C.red, 'transform:scaleX(1.35)')}
+  ${dont(lockup({letters: '#2F9E5B', shadow: '#1D5E37'}), 'Change its colours', C.red)}
+  ${dont(lockup({showSticker: false}), 'Remove or move the sticker', C.red)}
+  ${dont(lockup(), 'Tilt or rotate it', C.red, 'transform:rotate(-14deg)')}
+  ${dont(lockup(), 'Put it on a busy photo', `url(${ph('crispy-meal.jpg')}) center/cover`)}
+  ${dont(lockup(), 'Add glows, outlines or effects', C.red, 'filter:drop-shadow(0 0 10px #6cf) drop-shadow(0 0 18px #6cf)')}</div>`)}
+${P(`${head('04', 'Colours', 'Warm, loud and appetising. Tomato red leads; cream, sunshine and ink support it. Deep red is only for the 3D shadow; pink is for fun extras.')}
+  <div class="sws six">${sw('Tomato Red', C.red, C.cream, 'Main · 55%')}${sw('Cream', C.cream, C.ink, 'Backgrounds · 25%')}${sw('Sunshine', C.yellow, C.ink, 'Stickers · 10%')}${sw('Ink', C.ink, C.cream, 'Text · 5%')}${sw('Deep Red', C.deep, C.cream, 'Logo shadow')}${sw('Bubblegum', '#FF9BB3', C.ink, 'Fun extras · 5%')}</div>
+  <p class="small">CMYK values are a starting point. Ask the printer for a proof and match it to the red on screen.</p>`)}
+${P(`${head('05', 'Typography', 'Free Google Fonts, so anyone can use them on any computer or in Canva.')}
   <div class="types">
-  <div class="ty"><div class="spec" style="font:400 76px/1 'Bowlby One'">BASHA</div><b>Bowlby One</b><span>Headlines, logo, big prices. Always UPPERCASE.</span></div>
-  <div class="ty"><div class="spec" style="font:700 54px/1.1 Fredoka">chicken &amp; snack</div><b>Fredoka</b><span>Taglines, menu items, body text, buttons.</span></div>
-  <div class="ty"><div class="spec" style="font:400 76px/1.1 Lalezar;direction:rtl">باشا · وجبات</div><b>Lalezar</b><span>Arabic headlines and the sticker.</span></div>
-  <div class="ty"><div class="spec" style="font:700 52px/1.4 Cairo;direction:rtl">ساندويش زنجر</div><b>Cairo</b><span>Arabic menu items and body text.</span></div></div>`, C.cream, C.ink, '5')}
-${P(`${head('05', 'Graphic elements', 'The sticker and the name pattern are our signature. Use them to make anything feel Basha.')}
-  <div class="row"><div class="tile" style="flex:1;padding:0;overflow:hidden"><img src="${img('logos/basha-pattern.png')}" style="width:100%;display:block"></div>
-  <div class="notes" style="flex:1"><h4>The sticker</h4><div style="display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 20px">
-  ${['باشا', 'NEW!', 'HOT', 'جديد', '$15'].map((t, i) => `<span style="background:${C.yellow};border:4px solid ${C.ink};border-radius:99px;padding:6px 24px;font:400 30px ${/[a-z$!]/i.test(t) ? "'Bowlby One'" : 'Lalezar'};transform:rotate(${[9, -6, 5, -8, 7][i]}deg)">${t}</span>`).join('')}</div>
-  <p>Yellow pill, ink outline, slightly tilted. Use it for the Arabic name, "new", prices and offers.</p>
-  <h4>The pattern</h4><p>BASHA and باشا repeated on a slant. Use it for wrapping paper, bag sides, the back of menus, and Instagram highlights.</p></div></div>`, C.cream, C.ink, '6')}
-${P(`${head('06', 'In real life', 'How the identity comes together on everyday things.')}
-  <div class="grid3 apps">${[['post', 'Instagram post'], ['bag', 'Takeaway bag'], ['cup', 'Drink cup'], ['seal', 'Box seal sticker'], ['wrap', 'Wrapping paper'], ['profile', 'WhatsApp profile']].map(([f, t]) =>
-  `<figure><div class="tile sq" style="padding:0;overflow:hidden;background:${f === 'seal' ? C.cream : 'none'}"><img src="${img('applications/' + f + '.png')}" style="width:${f === 'seal' ? '80%' : '100%'};display:block;margin:auto;${f === 'profile' ? '' : ''}"></div><figcaption>${t}</figcaption></figure>`).join('')}</div>`, C.cream, C.ink, '7')}
-${P(`<div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><div style="width:520px;margin:0 auto 40px">${lockup({tag: C.yellow, outline: C.yellow})}</div>
+  <div class="ty"><div class="spec" style="font:400 74px/1 'Bagel Fat One'">YALLA!</div><b>Bagel Fat One</b><span>Logo, headlines, big prices and offers. Short words only.</span></div>
+  <div class="ty"><div class="spec" style="font:700 52px/1.1 Fredoka">chicken &amp; snack</div><b>Fredoka (SemiBold / Bold)</b><span>Taglines, menu items, captions, buttons and body text.</span></div>
+  <div class="ty"><div class="spec" style="font:400 76px/1.1 Lalezar;direction:rtl">يلا كول · باشا</div><b>Lalezar</b><span>Arabic headlines and the sticker.</span></div>
+  <div class="ty"><div class="spec" style="font:700 48px/1.4 Cairo;direction:rtl">ساندويش زنجر · ٥٠٠،٠٠٠</div><b>Cairo</b><span>Arabic menu items and body text.</span></div></div>
+  <p class="small">Fun extras for social posts only: Shrikhand (“yum!”, “saucy!”) and Marhey (playful Arabic).</p>`)}
+${P(`${head('06', 'Graphic elements', 'Our toolkit for making anything feel like Basha.')}
+  <div class="row"><div class="tile img" style="flex:1;height:120mm"><img src="${img('logos/basha-pattern.png')}"></div>
+  <div class="notes" style="flex:1.1"><h4>Stickers</h4><div class="stk">${['باشا', 'NEW!', 'HOT', 'جديد', '$15', 'yum!'].map((t, i) => `<span style="font-family:${/[a-z$!]/i.test(t) ? "'Bagel Fat One'" : 'Lalezar'};transform:rotate(${[9, -6, 5, -8, 7, -4][i]}deg);background:${i === 5 ? '#FF9BB3' : C.yellow}">${t}</span>`).join('')}</div>
+  <p>Yellow pill, ink outline, slightly tilted. Use them for the Arabic name, “new”, prices and offers. One or two per design, not ten.</p>
+  <h4>Starbursts</h4><p>For prices and shouts (“500K”, “SO GOOD”, “HOT!”). Yellow or pink with an ink outline.</p>
+  <h4>The name pattern</h4><p>BASHA and باشا on a slant. Use it for wrapping paper, bag sides, menu backs and Instagram highlight covers.</p>
+  <h4>Big cropped words</h4><p>Huge words that run off the edge (CRISPY, EAT!, MENU) make posts and packaging loud and fun.</p></div></div>`)}
+${P(`${head('07', 'Photography', 'Real food, close up, on our red-and-white checkered paper. Messy in a good way.')}
+  <div class="photos">${['zinger-sandwich.jpg', 'loaded-fries.jpg', 'crispy-meal.jpg', 'basha-burger.jpg', 'wings-meal.jpg', 'fajita-sandwich.jpg', 'mozzarella-sticks.jpg', 'shawarma-plate.jpg'].map(f => `<img src="${ph(f)}">`).join('')}</div>
+  <div class="cols2"><div><h4>Do</h4><p>✓ Shoot in daylight, close to the food, from above or at a 45° angle.<br>✓ Show the sauce, the cheese pull, the crunch.<br>✓ Keep the checkered paper in the shot; it’s our backdrop.</p></div>
+  <div><h4>Don’t</h4><p>✕ Dark or yellow kitchen light, flash.<br>✕ Cluttered backgrounds, hands with phones, other brands’ packaging.<br>✕ Heavy filters. A little warmth is enough.</p></div></div>`)}
+${P(`${head('08', 'Social media', 'One big word, one great photo or one offer per post. Logo small in a corner. Mix English and Arabic.').replace('class="lead"', 'class="lead" style="margin-bottom:4mm"')}
+  <div class="social">${fig(fun('post-crispy.png'), 'Word post: one big word + Arabic', '108mm', 'contain', C.red)}${fig(fun('post-yalla.png'), 'Mood post: phrase in both languages', '108mm', 'contain', C.yellow)}${fig(fun('post-product.png'), 'Product post: photo + name + price burst', '108mm', 'contain', C.red)}</div>`)}
+${P(`${head('09', 'Packaging', 'Every bag, cup and box is a little billboard.')}
+  <div class="grid4">${fig(fun('bag.png'), 'Takeaway bag', '62mm', 'cover')}${fig(fun('cup.png'), 'Drink cup', '62mm', 'cover')}${fig(fun('seal.png'), 'Box seal sticker', '62mm', 'contain', C.cream)}${fig(fun('wrap.png'), 'Wrapping paper', '62mm', 'cover')}</div>
+  <p class="small">Cheapest first step: a round “yum!” sticker on plain kraft bags and boxes, plus the pattern printed on greaseproof wrapping paper.</p>`)}
+${P(`${head('10', 'Print &amp; signage', 'Business cards, the shop sign and the menu all speak the same language.')}
+  <div class="sign">${fig(img('applications/sign.png'), 'Shop sign with striped awning', '78mm', 'cover')}
+  ${fig(img('applications/card-front.png'), 'Business card front (85 × 55 mm)', '37mm', 'contain', C.red)}${fig(img('applications/card-back.png'), 'Business card back, with QR to the online menu', '37mm', 'contain', C.cream)}</div>
+  ${fig(fun('menu-header.png'), 'Menu board header', '42mm', 'contain', C.red, '136mm')}`)}
+${P(`${head('11', 'Your brand kit', 'Everything in the Basha-identity.zip, and where to use it.')}
+  <table class="kit">${[
+    ['logos/basha-logo-on-red.png', 'Main logo, Instagram/WhatsApp posts, flyers'],
+    ['logos/basha-logo-on-cream / -black / -yellow.png', 'The logo on other backgrounds'],
+    ['logos/basha-logo-red-transparent.png', 'For printers: bags, cups, boxes, stickers on light colours'],
+    ['logos/basha-logo-cream-transparent.png', 'For printers: on red or dark colours'],
+    ['logos/basha-logo-black-transparent.png', 'One-colour printing: stamps, receipts, photocopies'],
+    ['logos/basha-whatsapp-profile.png', 'WhatsApp, Instagram and Facebook profile picture'],
+    ['logos/basha-submark-B.png / -round.png', 'Tiny sizes: app icon, website icon, stamps'],
+    ['logos/basha-pattern.png', 'Wrapping paper, bag sides, menu backs, highlight covers'],
+    ['fun/post-*.png', 'Ready-to-post Instagram designs (1080 × 1350)'],
+    ['fun/bag, cup, seal, wrap, menu-header.png', 'Packaging and signage mock-ups to show printers'],
+    ['applications/card-front / card-back.png', 'Business card artwork'],
+    ['Basha-brand-guide.pdf', 'This guide: send it with any print or design job']].map(([f, u]) => `<tr><td>${f}</td><td>${u}</td></tr>`).join('')}</table>
+  <p class="small">Fonts to install (free): Bagel Fat One, Fredoka, Lalezar, Cairo. Search them on fonts.google.com, or find them in Canva.</p>`)}
+${P(`<div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><div style="width:560px;margin:0 auto 40px">${lockup(LOGO.black)}</div>
   <p style="font:600 22px Fredoka;color:${C.cream};opacity:.85">WhatsApp 76 075 724 · Daily 1–5 PM &amp; 7–11:30 PM · Closed Mondays</p></div></div>`, C.ink, C.cream)}
 `, `@page{size:297mm 210mm;margin:0}
-.pg{width:297mm;height:210mm;position:relative;overflow:hidden;padding:16mm 18mm;page-break-after:always}
-.pn{position:absolute;right:18mm;bottom:10mm;font:600 12px Fredoka;opacity:.5}
-.foot{position:absolute;left:18mm;bottom:12mm;font:700 16px Fredoka}
-.kick{font:400 16px 'Bowlby One';color:${C.red}}
-h2{font:400 46px/1 'Bowlby One';text-transform:uppercase;margin:4px 0 8px}
-.lead{font:500 17px/1.45 Fredoka;max-width:180mm;margin-bottom:9mm;opacity:.85}
+.pg{width:297mm;height:210mm;position:relative;overflow:hidden;padding:15mm 18mm;page-break-after:always}
+.pn{position:absolute;right:18mm;bottom:9mm;font:600 11px Fredoka;opacity:.5}
+.foot{position:absolute;left:18mm;bottom:12mm;font:700 16px Fredoka;color:${C.ink}}
+.kick{font:400 16px 'Bagel Fat One';color:${C.red}}
+h2{font:400 44px/1 'Bagel Fat One';margin:3px 0 6px}
+h3{font:400 22px 'Bagel Fat One';color:${C.red};margin:8mm 0 3mm}
+.lead{font:500 16.5px/1.45 Fredoka;max-width:190mm;margin-bottom:7mm;opacity:.85}
 .row{display:flex;gap:10mm;align-items:stretch}
-.tile{border-radius:14px;padding:26px 34px;display:grid;place-items:center}
-.tile.sq{aspect-ratio:1/1;padding:0}
-.notes{flex:1;font:500 14.5px/1.5 Fredoka}.notes h4{font:400 17px 'Bowlby One';margin:8px 0 4px;color:${C.red}}.notes p{margin:3px 0}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm 9mm}
-.grid3 figure .tile{height:56mm;padding:16px 26px}.grid3 figure .tile.sq{height:56mm;aspect-ratio:auto}
-.grid3.apps{grid-template-columns:repeat(3,62mm);justify-content:center;gap:5mm 14mm}.apps figure .tile.sq{width:62mm;height:62mm}.apps img{height:100%;object-fit:contain}
-figcaption{font:600 13px Fredoka;margin-top:6px;opacity:.75}
-.sws{display:grid;grid-template-columns:repeat(4,1fr);gap:8mm}
-.chip{height:70mm;border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid #0001}.chip b{font:400 24px 'Bowlby One'}.chip span{font:600 14px Fredoka;opacity:.85}
-dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin-top:8px;font:500 14px Fredoka}dt{font-weight:700}
-.small{margin-top:8mm;font:500 13px Fredoka;opacity:.7}
-.types{display:grid;grid-template-columns:1fr 1fr;gap:10mm 12mm;margin-top:6mm}.ty{background:#fff8;border-radius:14px;padding:16px 20px;border:1px solid #0001}.ty b{display:block;font:400 17px 'Bowlby One';color:${C.red};margin-top:10px}.ty span{font:500 14px Fredoka;opacity:.8}
-.spec{height:34mm;display:flex;align-items:center}`);
+.tile{border-radius:14px;padding:18px 26px;display:grid;place-items:center}
+.tile.big{flex:1.35;padding:40px}.tile.bordered{border:1px solid #0002}
+.tile.img{padding:0;overflow:hidden}.tile.img img{width:100%;height:100%;display:block}
+.notes{flex:1;font:500 14px/1.5 Fredoka}.notes h4,.cols2 h4{font:400 17px 'Bagel Fat One';margin:9px 0 3px;color:${C.red}}.notes p{margin:2px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm 9mm}.grid3 .tile{height:52mm}
+.sign{display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:auto auto;gap:3mm 8mm;margin-bottom:3mm}.sign figure:first-child{grid-row:span 2}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:7mm}
+.social{display:grid;grid-template-columns:repeat(3,92mm);justify-content:center;gap:9mm}.social figure .tile{border:1px solid #0001}
+figure{margin:0}figcaption{font:600 12.5px Fredoka;margin-top:5px;opacity:.75}
+.x{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:${C.ink};color:#fff;display:grid;place-items:center;font:700 20px Fredoka}
+.sws{display:grid;gap:7mm}.sws.six{grid-template-columns:repeat(6,1fr)}
+.chip{height:62mm;border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid #0001}.chip b{font:400 19px 'Bagel Fat One'}.chip span{font:600 12.5px Fredoka;opacity:.85}
+dl{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;margin-top:7px;font:500 12.5px Fredoka}dt{font-weight:700}
+.small{margin-top:6mm;font:500 13px Fredoka;opacity:.7}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:8mm 12mm;margin-top:4mm}.ty{background:#fff9;border-radius:14px;padding:14px 20px;border:1px solid #0001}.ty b{display:block;font:400 17px 'Bagel Fat One';color:${C.red};margin-top:8px}.ty span{font:500 13.5px Fredoka;opacity:.8}
+.spec{height:30mm;display:flex;align-items:center}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}.card{background:${C.red};color:${C.cream};border-radius:16px;padding:16px 20px}.card .big{font:400 30px 'Bagel Fat One'}.card .ar{font:400 26px Lalezar;color:${C.yellow}}.card p{font:500 14px/1.45 Fredoka;margin-top:6px}
+.phr{display:flex;flex-wrap:wrap;gap:10px}.phr span{background:#fff;border:3px solid ${C.ink};border-radius:99px;padding:6px 18px;display:flex;gap:12px;align-items:baseline}.phr b{font:400 20px 'Bagel Fat One'}.phr i{font:400 22px Lalezar;font-style:normal;color:${C.red}}
+.stk{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 12px}.stk span{border:4px solid ${C.ink};border-radius:99px;padding:4px 20px;font-size:26px}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;width:205mm}.photos img{width:100%;aspect-ratio:1.5;object-fit:cover;border-radius:14px;display:block}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:10mm;font:500 14px/1.6 Fredoka;margin-top:5mm}
+.kit{width:100%;border-collapse:collapse;font:500 13.5px Fredoka}.kit td{padding:6px 8px;border-bottom:1px solid #0002}.kit td:first-child{font-weight:700;color:${C.red};width:44%}`);
   await pg.setViewportSize({width: 1123, height: 794});
   await pg.setContent(guide, {waitUntil: 'networkidle'});
   await pg.evaluate(() => document.fonts.ready);
   await pg.pdf({path: path.join(OUT, 'Basha-brand-guide.pdf'), width: '297mm', height: '210mm', printBackground: true});
-  // page previews
-  const n = await pg.$$eval('.pg', e => e.length);
-  for (let i = 0; i < n; i++) await (await pg.$$('.pg'))[i].screenshot({path: path.join(OUT, `guide-page-${i + 1}.png`)});
-  console.log('pages', n);
+  const pages = await pg.$$('.pg');
+  for (const f of fs.readdirSync(OUT)) if (/^guide-page-\d+\.png$/.test(f)) fs.unlinkSync(path.join(OUT, f));
+  for (let i = 0; i < pages.length; i++) await pages[i].screenshot({path: path.join(OUT, `guide-page-${i + 1}.png`)});
+  console.log('pages', pages.length);
   await browser.close();
 })();
