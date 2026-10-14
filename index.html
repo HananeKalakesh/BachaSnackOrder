@@ -52,8 +52,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .search input::-webkit-search-cancel-button{display:none}
 .search button{border:0;background:var(--chip);border-radius:8px;width:30px;height:30px;font-size:16px;cursor:pointer}
 .search button[hidden]{display:none}
-.icon-btn{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#ffffff1a;border:1.5px solid #f5ecdc44;color:#fff;text-decoration:none;font-size:19px}
-.icon-btn.wa{background:#25a35a;border-color:#25a35a}
+.contact-row{display:flex;gap:8px;margin-top:8px}
+.cbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:14px;background:#ffffff1a;border:1.5px solid #f5ecdc44;color:#fff;text-decoration:none;font-weight:800;font-size:15px}
+.cbtn.wa{background:#25a35a;border-color:#25a35a}
 .closed-banner{margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--red);color:#fff;font-weight:700;font-size:13px;text-align:center}
 .closed-banner[hidden]{display:none}
 
@@ -115,11 +116,33 @@ section[hidden]{display:none}
 .price{font-weight:800;font-size:13.5px;white-space:nowrap}
 .price bdi{font-weight:600;color:var(--soft)}
 .stepper{display:flex;align-items:center;gap:4px;background:var(--sand);border-radius:12px;padding:3px}
-.stepper button,.add{display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:10px;background:var(--ink);color:var(--saffron);font-size:21px;font-weight:800;line-height:1;cursor:pointer;touch-action:manipulation}
+.stepper button,.add{display:flex;align-items:center;justify-content:center;gap:5px;min-width:38px;padding:0 10px;height:38px;border:0;border-radius:10px;background:var(--ink);color:var(--saffron);font-size:21px;font-weight:800;line-height:1;cursor:pointer;touch-action:manipulation}
 .stepper .dec,.stepper .ldec{background:transparent;color:var(--ink);border:1.5px solid #1c1a1533}
 .qty{min-width:18px;text-align:center;font-weight:800}
 .item:not(.in) .stepper{background:transparent;padding:0}
 .item:not(.in) .stepper .dec,.item:not(.in) .stepper .qty{display:none}
+.word{font-size:15px}
+.item.in .inc{padding:0}
+.item.in .inc .word{display:none}
+.has-photo .actions{flex-direction:column;align-items:stretch}
+.has-photo .add,.has-photo .stepper{width:100%}
+.has-photo .stepper{justify-content:space-between}
+.has-photo:not(.in) .stepper .inc{flex:1}
+.has-photo.in .stepper .inc{width:38px}
+#popular h2::before,.pill[data-target=popular]::before{content:'★ ';color:var(--saffron)}
+#popular .pgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:44%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 10px}
+#popular .pgrid::-webkit-scrollbar{display:none}
+#popular .item{scroll-snap-align:start}
+#popular .stamp{display:none}
+@media (min-width:700px){#popular .pgrid{grid-auto-columns:minmax(210px,1fr)}}
+.send-modal{max-width:min(400px,calc(100vw - 30px));text-align:center}
+.send-modal p{margin:10px 0;color:var(--soft)}
+.send-modal p.big{color:var(--ink);font-weight:800;font-size:17px;line-height:1.35}
+.send-modal .choice-actions{justify-content:center}
+.wa-demo{display:flex;align-items:center;gap:8px;margin:14px auto;padding:8px;max-width:300px;border-radius:999px;background:#efeae2;direction:ltr}
+.wa-msg{flex:1;min-width:0;background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;color:#555;text-align:start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-send{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#25a35a;color:#fff;font-size:18px;animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #25a35a99}70%{box-shadow:0 0 0 14px #25a35a00}100%{box-shadow:0 0 0 0 #25a35a00}}
 
 /* footer */
 footer{margin:36px 16px 0;padding:24px 0 110px;border-top:1px solid var(--line);text-align:center;color:var(--soft);font-size:13px;line-height:1.7}
@@ -193,7 +216,7 @@ footer small{display:block;margin-top:6px;font-size:11px}
 html[dir=rtl] *{letter-spacing:0!important}
 html[dir=rtl] body{font-family:Cairo,'Plus Jakarta Sans',sans-serif}
 html[dir=rtl] .stepper{direction:ltr}
-html[dir=rtl] .panel{right:auto;left:18px}
+@media (min-width:641px){html[dir=rtl] .panel{right:auto;left:18px}}
 .promo .go i{display:inline-block;font-style:normal}
 html[dir=rtl] .promo .go i{transform:scaleX(-1)}
 a[data-phone=tel]{unicode-bidi:isolate}
@@ -208,15 +231,18 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div class="tagline"><span>Chicken &amp; Snack</span><span lang="ar">تشيكن آند سناك</span></div>
   <div class="hero-actions">
     <label class="search"><span aria-hidden="true">🔍</span><input id="search" type="search" placeholder="Search the menu" data-tp autocomplete="off" enterkeyhint="search"><button id="clearSearch" type="button" data-ta="Clear search" hidden>×</button></label>
-    <a class="icon-btn" href="tel:+96176075724" data-phone="tel" data-ta="Call us"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
-    <a class="icon-btn wa" href="https://wa.me/96176075724" data-phone="wa" data-ta="WhatsApp" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg></a>
+  </div>
+  <div class="contact-row">
+    <a class="cbtn" href="tel:+96176075724" data-phone="tel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-t>Call</span></a>
+    <a class="cbtn wa" href="https://wa.me/96176075724" data-phone="wa" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg><span data-t>WhatsApp</span></a>
   </div>
   <div id="closedBanner" class="closed-banner" role="status" hidden data-t>We're closed today (Monday). You can still browse the menu.</div>
 </header>
 <button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>1 KG Shawarma or Tawouk with fries</b></span><span class="go">$15 <i>→</i></span></button>
-<nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
+<nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
 <p id="noResults" class="noresults" hidden data-t>No items match your search.</p>
 <noscript><p class="note">Please turn on JavaScript to see the menu, or call us on 76 075 724.</p></noscript>
+<section id="popular"><div class="head"><h2 data-t>Most popular</h2></div><div id="popularGrid"></div></section>
 <section id="fries"><div class="head"><h2 data-t>Appetizers</h2></div><div class="subhead" data-t>Fries</div><div class="grid" id="friesGrid"></div><div class="subhead" data-t>Other Appetizers</div><div class="grid" id="appetizerGrid"></div></section>
 <section id="meals"><div class="head"><h2 data-t>Meals</h2></div><div class="grid" id="mealGrid"></div></section>
 <section id="family"><div class="head"><h2 data-t>Family Meals</h2></div><div class="grid" id="familyGrid"></div></section>
@@ -255,6 +281,14 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div id="choiceOptions" class="choices"></div>
   <div id="choiceErr" class="err" role="alert"></div>
   <div class="choice-actions"><button id="cancelChoice" type="button" data-t>Cancel</button><button id="confirmChoice" class="confirm" type="button" data-t>Add to order</button></div>
+</div>
+
+<div id="sendModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
+  <h3 id="sendTitle" data-t>Almost done!</h3>
+  <p data-t>WhatsApp will open with your order ready.</p>
+  <div class="wa-demo" aria-hidden="true"><span class="wa-msg" dir="auto" data-t>Hi Basha, I would like to place an order:</span><span class="wa-send">➤</span></div>
+  <p class="big" data-t>Press the green send button ➤ in WhatsApp to send it to us.</p>
+  <div class="choice-actions"><button id="backSend" type="button" data-t>Back</button><button id="goWhatsApp" class="confirm" type="button" data-t>Open WhatsApp</button></div>
 </div>
 
 <script>
@@ -394,7 +428,7 @@ drinkGrid: [
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
-  "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'مفتوحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · منفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · منفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · منفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 5:00 PM & 7:00 – 11:30 PM · Closed on Mondays':'كل يوم من 1:00 لـ 5:00 بعد الضهر ومن 7:00 لـ 11:30 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
+  "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'مفتوحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · منفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · منفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · منفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 5:00 PM & 7:00 – 11:30 PM · Closed on Mondays':'كل يوم من 1:00 لـ 5:00 بعد الضهر ومن 7:00 لـ 11:30 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
 names: {'Small Fries Box':'علبة بطاطا صغيرة','Small Fries Box with Sauce & Cheddar':'علبة بطاطا صغيرة مع صوص وتشيدر','Large Fries Box with Sauce & Cheddar':'علبة بطاطا كبيرة مع صوص وتشيدر','Loaded Fries':'لودد فرايز',
 'Mozzarella Sticks':'موزاريلا ستيكس','Onion Rings':'أونيون رينغز','Nuggets':'ناغتس','Mix Appetizer Box':'علبة ميكس مقبلات',
 'Crispy Meal':'وجبة كريسبي','Zinger Meal':'وجبة زنجر','Escalope Meal':'وجبة إسكالوب','Wings Meal':'وجبة وينغز','Half Wings Meal':'وجبة نصف وينغز','Chicken Quesadilla':'كيساديا دجاج','Tawouk Meal':'وجبة طاووق','Shawarma Meal':'وجبة شاورما',
@@ -556,8 +590,8 @@ function card([name, price, desc, type]) {
   const pop = CONFIG.popular.includes(name), src = CONFIG.photos[name];
   const photo = src ? `<div class="ph"><img class="photo" src="${esc(src)}" alt="${label}" loading="lazy" width="640" height="640">${pop ? `<span class="stamp">★ ${t('Popular')}</span>` : ''}</div>` : '';
   const controls = choice
-    ? `<button class="add" type="button" aria-haspopup="dialog" aria-label="${esc(t('Choose options for'))} ${label}">+</button>`
-    : `<div class="stepper"><button class="dec" type="button" aria-label="${esc(t('Remove one'))}: ${label}">−</button><span class="qty">0</span><button class="inc" type="button" aria-label="${esc(t('Add one'))}: ${label}">+</button></div>`;
+    ? `<button class="add" type="button" aria-haspopup="dialog" aria-label="${esc(t('Choose options for'))} ${label}">+<span class="word">${t('Add')}</span></button>`
+    : `<div class="stepper"><button class="dec" type="button" aria-label="${esc(t('Remove one'))}: ${label}">−</button><span class="qty">0</span><button class="inc" type="button" aria-label="${esc(t('Add one'))}: ${label}">+<span class="word">${t('Add')}</span></button></div>`;
   return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
     + `<div class="title">${qty(label)}${icon}</div>${alt !== tName(name) ? `<div class="alt" lang="${lang === 'ar' ? 'en' : 'ar'}">${esc(alt)}</div>` : ''}`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
@@ -570,6 +604,7 @@ function render() {
     const withPhoto = items.filter(it => CONFIG.photos[it[0]]), rest = items.filter(it => !CONFIG.photos[it[0]]);
     $('#' + id).innerHTML = (withPhoto.length ? `<div class="pgrid">${withPhoto.map(card).join('')}</div>` : '') + (rest.length ? `<div class="list">${rest.map(card).join('')}</div>` : '');
   });
+  $('#popularGrid').innerHTML = `<div class="pgrid">${CONFIG.popular.map(n => ITEMS[n]).filter(Boolean).map(card).join('')}</div>`;
   cart();
   filterMenu();
 }
@@ -580,6 +615,7 @@ function filterMenu() {
   $$('.item').forEach(i => i.hidden = !!q && !i.dataset.search.includes(q));
   $$('.subhead').forEach(h => h.hidden = !h.nextElementSibling.querySelector('.item:not([hidden])'));
   $$('section').forEach(sec => sec.hidden = !sec.querySelector('.item:not([hidden])'));
+  if (q) $('#popular').hidden = true;   // avoid showing popular items twice in results
   $('#noResults').hidden = !q || !!$('.item:not([hidden])');
   $('#promo').hidden = !!q;
   $('#clearSearch').hidden = !q;
@@ -644,7 +680,7 @@ function openLayer(el, opener) {
   if (f) f.focus({preventScroll: true});
 }
 function closeLayers() {
-  $('#choiceModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
+  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
   document.documentElement.classList.remove('lock');
   $$('#choiceModal input').forEach(i => i.checked = false);
   selectedChoice = null;
@@ -770,9 +806,18 @@ $('.send').onclick = () => {
   if (note) msg += '\n*' + t('Notes') + ':* ' + note;
   store.set('basha-last', orderQtys());
   const url = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(msg)}`;
-  const w = window.open(url, '_blank');
-  if (!w) location.href = url;   // popup blocked (e.g. Instagram / Facebook in-app browser)
+  pendingUrl = url;
+  $('#sendModal').classList.add('open');
+  $('#goWhatsApp').focus({preventScroll: true});
 };
+// Many people think the order is sent once WhatsApp opens, so remind them to press send there
+let pendingUrl = null;
+$('#goWhatsApp').onclick = () => {
+  $('#sendModal').classList.remove('open');
+  const w = window.open(pendingUrl, '_blank');
+  if (!w) location.href = pendingUrl;   // popup blocked (e.g. Instagram / Facebook in-app browser)
+};
+$('#backSend').onclick = () => { $('#sendModal').classList.remove('open'); $('.send').focus({preventScroll: true}) };
 
 /* ---------- section navigation ---------- */
 $$('.pill').forEach(btn => btn.onclick = () => document.getElementById(btn.dataset.target).scrollIntoView({behavior: 'smooth'}));
@@ -809,7 +854,7 @@ function addStructuredData() {
 /* ---------- start ---------- */
 $$('[data-t]').forEach(e => e.dataset.en = e.textContent.trim());
 $$('[data-tp]').forEach(e => e.dataset.enp = e.placeholder);
-$$('a[data-phone=tel]').forEach(a => { a.href = 'tel:+' + CONFIG.phone; if (!a.classList.contains('icon-btn')) a.textContent = CONFIG.phoneDisplay });
+$$('a[data-phone=tel]').forEach(a => { a.href = 'tel:+' + CONFIG.phone; if (!a.classList.contains('cbtn')) a.textContent = CONFIG.phoneDisplay });
 $$('.head').forEach(h => h.insertAdjacentHTML('beforeend', '<span class="alt"></span>'));
 $$('a[data-phone=wa]').forEach(a => a.href = 'https://wa.me/' + CONFIG.phone);
 $('#langBtn').onclick = () => {
@@ -822,7 +867,8 @@ $('#langBtn').onclick = () => {
 {
   const q = new URLSearchParams(location.search).get('lang');
   let sv = null; try { sv = localStorage.getItem('basha-lang') } catch (e) {}
-  lang = q === 'ar' || q === 'en' ? q : sv === 'ar' ? 'ar' : 'en';
+  const phoneLang = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+  lang = q === 'ar' || q === 'en' ? q : sv === 'ar' || sv === 'en' ? sv : phoneLang.startsWith('ar') ? 'ar' : 'en';   // link > own choice > phone language
 }
 restore();
 applyLang();
