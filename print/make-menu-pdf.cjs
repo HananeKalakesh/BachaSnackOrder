@@ -8,10 +8,10 @@ const root = path.join(__dirname, '..');
 const TEXT = {
   en: {order: 'Order on WhatsApp', tag: 'Chicken &amp; Snack', pcs: n => `${n} PCS`, scan: 'Scan to see photos &amp; order',
     hours: 'Daily 1:00 – 5:00 PM &amp; 7:00 – 11:30 PM · Closed on Mondays',
-    popular: '★ Most popular', currency: 'Prices in L.L.', market: 'Prices may change based on market rates'},
+    currency: 'Prices in L.L.', market: 'Prices may change based on market rates'},
   ar: {order: 'اطلب عبر واتساب', tag: 'تشيكن آند سناك', pcs: n => `${n} قطع`, scan: 'امسح الرمز لتشوف الصور وتطلب',
     hours: 'كل يوم من 1:00 لـ 5:00 بعد الضهر ومن 7:00 لـ 11:30 بالليل · مسكّرين يوم الاثنين',
-    popular: '★ الأكثر طلباً', currency: 'الأسعار بالليرة اللبنانية', market: 'الأسعار ممكن تتغيّر حسب أسعار السوق'}
+    currency: 'الأسعار بالليرة اللبنانية', market: 'الأسعار ممكن تتغيّر حسب أسعار السوق'}
 };
 // Sections split into three columns of about the same length
 const COLUMNS = [['fries', 'meals', 'plates'], ['sandwiches', 'extras'], ['family', 'burgers', 'drinks']];
@@ -46,7 +46,7 @@ const COLUMNS = [['fries', 'meals', 'plates'], ['sandwiches', 'extras'], ['famil
 
   function build(lang) {
     const T = TEXT[lang];
-    const row = it => `<div class="row"><span class="name">${it.pop ? '<b class="star">★</b> ' : ''}${esc(it.name[lang])}</span><span class="dots"></span>${it.price ? `<span class="price">${it.price}</span>` : ''}</div>`
+    const row = it => `<div class="row"><span class="name">${esc(it.name[lang])}</span><span class="dots"></span>${it.price ? `<span class="price">${it.price}</span>` : ''}</div>`
       + (it.pieces ? `<div class="pcs">${it.pieces.map(([n, p]) => `<span><b>${T.pcs(n)}</b> ${p}</span>`).join('')}</div>` : '');
     const sec = s => `<div class="sec"><h2>${esc(s.title[lang])}</h2>${s.groups.map(g =>
       `<div class="grp">${g.sub ? `<h3>${esc(g.sub[lang])}</h3>` : ''}${g.items.map(row).join('')}</div>`).join('')}</div>`;
@@ -78,10 +78,10 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0 
 .col+.col{border-inline-start:.3mm solid #1c1a1518;padding-inline-start:10mm;margin-inline-start:-5mm}
 .sec{margin-bottom:var(--gap)}
 h2{margin:0 0 1.6mm;padding:1.2mm 4mm .9mm;border-radius:2.5mm;background:#c7361f;color:#fff;border-inline-start:2.2mm solid #f2a516;font:900 var(--h)/1.1 ${lang === 'ar' ? 'Cairo' : 'Archivo'};font-stretch:78%;text-transform:uppercase}
-h3{margin:1.8mm 0 .4mm;color:#1f4a37;font-weight:800;font-size:var(--s);text-transform:uppercase;letter-spacing:${lang === 'ar' ? '0' : '.3mm'}}
+h3::after{content:'';flex:1;height:.6mm;background:#1f4a3740;border-radius:1mm}
+h3{display:flex;align-items:center;gap:3mm;margin:2.2mm 0 .6mm;color:#1f4a37;font-weight:900;font-size:var(--s);text-transform:uppercase;letter-spacing:${lang === 'ar' ? '0' : '.3mm'}}
 .row{display:flex;align-items:baseline;gap:2.5mm;padding:var(--pad) 0;font-size:var(--f);line-height:1.2}
 .name{font-weight:700}
-.star{color:#f2a516}
 .dots{flex:1;min-width:6mm;border-bottom:.4mm dotted #1c1a1560;transform:translateY(-.25em)}
 .price{font-weight:800;color:#c7361f;white-space:nowrap;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
 .pcs{display:grid;grid-template-columns:repeat(2,max-content);gap:.4mm 8mm;padding:0 0 var(--pad);padding-inline-start:4mm;font-size:calc(var(--f)*.8);font-family:'Plus Jakarta Sans'}
@@ -89,7 +89,6 @@ h3{margin:1.8mm 0 .4mm;color:#1f4a37;font-weight:800;font-size:var(--s);text-tra
 .pcs b{color:#c7361f;font-family:${lang === 'ar' ? 'Cairo' : 'inherit'}}
 footer{display:flex;justify-content:space-between;align-items:center;gap:8mm;margin-top:3mm;padding:3mm 12mm;background:#c7361f;color:#fff;font-size:4.2mm;font-weight:700}
 footer .note{background:#f2a516;border-radius:99mm;padding:1.2mm 6mm;color:#1c1a15}
-footer .star{color:#f2a516}
 </style></head><body><div class="page">
 <header>
   <div><div class="logo"><h1>Basha</h1><div class="ar" lang="ar">باشا</div></div><div class="tag">${T.tag}</div></div>
@@ -97,7 +96,7 @@ footer .star{color:#f2a516}
   <div class="qr"><div class="box">${qr}</div><p>${T.scan}</p></div>
 </header>
 <main>${body}</main>
-<footer><span><b class="star">★</b>${T.popular.slice(1)}</span><span class="note">${T.currency}</span><span>${T.market}</span></footer>
+<footer><span class="note">${T.currency}</span><span>${T.market}</span></footer>
 </div></body></html>`;
   }
 
@@ -109,7 +108,7 @@ footer .star{color:#f2a516}
     const size = await page.evaluate(() => {
       const cols = [...document.querySelectorAll('.col')], r = document.documentElement.style;
       let f = 8;
-      const set = () => { r.setProperty('--f', f + 'mm'); r.setProperty('--h', f * 1.6 + 'mm'); r.setProperty('--s', f * .85 + 'mm'); r.setProperty('--pad', f * .2 + 'mm'); r.setProperty('--gap', f * 1.05 + 'mm') };
+      const set = () => { r.setProperty('--f', f + 'mm'); r.setProperty('--h', f * 1.6 + 'mm'); r.setProperty('--s', f * 1.05 + 'mm'); r.setProperty('--pad', f * .2 + 'mm'); r.setProperty('--gap', f * 1.05 + 'mm') };
       set();
       while (cols.some(c => c.scrollHeight > c.clientHeight + 1) && f > 3) { f -= .05; set() }
       return f.toFixed(2);
