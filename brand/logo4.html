@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Mr+Dafoe&family=Archivo:wdth,wght@75..100,800..900&family=Marhey:wght@700&family=Fredoka:wght@700&display=swap" rel="stylesheet">
+<style>*{margin:0}.logo{width:1080px;height:1080px}svg{display:block;width:1080px;height:1080px}</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <!-- Basha rooster mascot (400x400 box, faces left) -->
+  <g id="rooster" stroke="#2a0a06" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M180 250 C170 300 190 350 230 380 L250 340 L268 384 L290 338 L318 372 L320 320 L352 340 C350 290 320 250 300 230 Z" fill="#9b1414"/>
+    <path d="M236 300 C246 320 252 336 250 340 M290 300 C296 316 296 330 290 338" fill="none" stroke-width="4"/>
+    <path d="M150 128 C120 80 160 50 186 92 C180 30 250 26 246 86 C262 36 330 52 300 108 C340 90 352 140 310 150 Z" fill="#d42a1e"/>
+    <path d="M150 140 C180 100 280 100 310 150 C335 200 320 262 280 284 C240 302 196 290 176 262 C156 236 140 180 150 140 Z" fill="#fff"/>
+    <path d="M286 130 C300 150 306 180 300 210" stroke="#e9e1d6" stroke-width="12" fill="none"/>
+    <path d="M152 236 C120 250 112 300 140 310 C166 318 178 286 174 252 Z" fill="#d42a1e"/>
+    <path d="M168 196 C140 192 92 204 66 222 C96 232 140 238 176 232 Z" fill="#f59a1b"/>
+    <path d="M174 232 C140 238 104 238 84 234 C104 252 146 258 178 250 Z" fill="#d97706"/>
+    <path d="M190 184 C196 176 222 172 234 180 C224 194 200 196 190 184 Z" fill="#2a0a06" stroke-width="3"/>
+    <circle cx="219" cy="182" r="3.5" fill="#fff" stroke="none"/>
+    <path d="M176 176 L240 156" stroke="#d42a1e" stroke-width="12"/>
+  </g>
+  <!-- same rooster as a one-colour silhouette -->
+  <g id="roosterFlat">
+    <path d="M180 250 C170 300 190 350 230 380 L250 340 L268 384 L290 338 L318 372 L320 320 L352 340 C350 290 320 250 300 230 Z"/>
+    <path d="M150 128 C120 80 160 50 186 92 C180 30 250 26 246 86 C262 36 330 52 300 108 C340 90 352 140 310 150 Z"/>
+    <path d="M150 140 C180 100 280 100 310 150 C335 200 320 262 280 284 C240 302 196 290 176 262 C156 236 140 180 150 140 Z"/>
+    <path d="M152 236 C120 250 112 300 140 310 C166 318 178 286 174 252 Z"/>
+    <path d="M168 196 C140 192 92 204 66 222 C96 232 140 238 176 232 Z M174 232 C140 238 104 238 84 234 C104 252 146 258 178 250 Z"/>
+  </g>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3 2.75"/><feComposite in="SourceGraphic" operator="in"/></filter>
+</defs></svg>
+
+<!-- R1: Mascot badge -->
+<div class="logo" id="r1"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#8a1010"/>
+  <circle cx="560" cy="420" r="270" fill="#f29a1f"/>
+  <use href="#rooster" transform="translate(300 150) scale(1.45)"/>
+  <text x="540" y="860" text-anchor="middle" font-family="Mr Dafoe" font-size="250" fill="#fff8ec">Basha</text>
+  <path d="M330 886 C470 864 640 860 790 874" stroke="#f29a1f" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <text x="540" y="952" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="44" letter-spacing="8" fill="#f29a1f" style="font-stretch:85%">CHICKEN &amp; SNACK · <tspan font-family="Marhey" font-weight="700" letter-spacing="0" fill="#fff8ec">باشا</tspan></text>
+  </svg></div>
+
+<!-- R2: Rooster on fire -->
+<div class="logo" id="r2"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#fbf1dc"/>
+  <g filter="url(#grain)">
+    <path transform="translate(240 40) scale(1.5)" d="M200 380 C110 380 70 300 100 230 C112 200 134 186 124 146 C164 168 170 196 168 214 C176 160 206 118 192 56 C246 98 266 150 254 202 C270 182 276 160 272 136 C316 178 334 242 312 300 C296 350 262 380 200 380 Z" fill="#f7a823"/>
+    <path transform="translate(300 160) scale(1.2)" d="M200 380 C140 380 116 320 136 270 C146 248 160 240 156 210 C182 226 186 248 184 260 C192 222 212 196 204 156 C240 186 252 222 244 258 C256 246 262 232 260 214 C288 246 296 290 282 326 C270 360 244 380 200 380 Z" fill="#ffd23f"/>
+    <use href="#roosterFlat" fill="#a3170f" transform="translate(330 250) scale(1.05)"/>
+    <circle cx="555" cy="443" r="9" fill="#fbf1dc"/>
+    <text x="540" y="850" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="190" fill="#a3170f" style="font-stretch:75%" letter-spacing="2">BASHA</text>
+    <text x="540" y="930" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="50" letter-spacing="14" fill="#a3170f" style="font-stretch:90%">CHICKEN &amp; SNACK</text>
+  </g>
+  <text x="540" y="1000" text-anchor="middle" font-family="Marhey" font-weight="700" font-size="56" fill="#e07a10">باشا</text>
+</svg></div>
+
+<!-- R3: Chicken with the name on its body -->
+<div class="logo" id="r3"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#16130f"/>
+  <g fill="#ffc226">
+    <path d="M330 500 C240 480 190 400 200 310 C246 370 290 400 350 420 Z"/><path d="M320 450 C256 400 246 320 280 250 C300 320 336 366 380 392 Z"/><path d="M370 410 C326 352 332 284 376 236 C374 304 396 348 432 374 Z"/>
+    <ellipse cx="520" cy="560" rx="290" ry="200"/>
+    <circle cx="730" cy="360" r="105"/>
+    <path d="M680 270 C660 220 700 190 724 222 C724 170 780 166 782 214 C800 176 852 196 832 240 C860 236 864 280 830 290 Z"/>
+    <path d="M826 340 L900 366 L826 392 Z"/>
+    <path d="M800 410 C800 450 820 470 842 456 C858 444 846 414 826 400 Z"/>
+    <rect x="420" y="740" width="34" height="110" rx="12"/><rect x="560" y="740" width="34" height="110" rx="12"/>
+    <rect x="390" y="830" width="96" height="30" rx="14"/><rect x="530" y="830" width="96" height="30" rx="14"/>
+  </g>
+  <circle cx="752" cy="340" r="16" fill="#16130f"/>
+  <text x="515" y="610" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="180" fill="#16130f" letter-spacing="-4">basha</text>
+  <text x="515" y="700" text-anchor="middle" font-family="Marhey" font-weight="700" font-size="76" fill="#16130f">باشا</text>
+  <text x="540" y="950" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="50" letter-spacing="12" fill="#ffc226" style="font-stretch:85%">CHICKEN &amp; SNACK</text>
+</svg></div>
+</body></html>
