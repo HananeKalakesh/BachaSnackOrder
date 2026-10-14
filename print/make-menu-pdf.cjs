@@ -77,18 +77,19 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0 
 .col{min-height:0;overflow:hidden}
 .col+.col{border-inline-start:.3mm solid #1c1a1518;padding-inline-start:10mm;margin-inline-start:-5mm}
 .sec{margin-bottom:var(--gap)}
-h2{margin:0 0 1.4mm;padding-bottom:1mm;border-bottom:.7mm solid #1f4a37;color:#1f4a37;font:900 var(--h)/1.1 ${lang === 'ar' ? 'Cairo' : 'Archivo'};font-stretch:78%;text-transform:uppercase}
-h3{margin:1.8mm 0 .4mm;color:#c7361f;font-weight:800;font-size:var(--s);text-transform:uppercase;letter-spacing:${lang === 'ar' ? '0' : '.3mm'}}
+h2{margin:0 0 1.6mm;padding:1.2mm 4mm .9mm;border-radius:2.5mm;background:#c7361f;color:#fff;border-inline-start:2.2mm solid #f2a516;font:900 var(--h)/1.1 ${lang === 'ar' ? 'Cairo' : 'Archivo'};font-stretch:78%;text-transform:uppercase}
+h3{margin:1.8mm 0 .4mm;color:#1f4a37;font-weight:800;font-size:var(--s);text-transform:uppercase;letter-spacing:${lang === 'ar' ? '0' : '.3mm'}}
 .row{display:flex;align-items:baseline;gap:2.5mm;padding:var(--pad) 0;font-size:var(--f);line-height:1.2}
 .name{font-weight:700}
 .star{color:#f2a516}
 .dots{flex:1;min-width:6mm;border-bottom:.4mm dotted #1c1a1560;transform:translateY(-.25em)}
-.price{font-weight:800;white-space:nowrap;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
+.price{font-weight:800;color:#c7361f;white-space:nowrap;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
 .pcs{display:grid;grid-template-columns:repeat(2,max-content);gap:.4mm 8mm;padding:0 0 var(--pad);padding-inline-start:4mm;font-size:calc(var(--f)*.8);font-family:'Plus Jakarta Sans'}
 .pcs span{white-space:nowrap}
-.pcs b{color:#1f4a37;font-family:${lang === 'ar' ? 'Cairo' : 'inherit'}}
-footer{display:flex;justify-content:space-between;align-items:center;gap:8mm;padding:2mm 12mm 4mm;font-size:4mm;color:#6b6455;font-weight:600}
-footer .note{background:#efe5d2;border-radius:99mm;padding:1.2mm 6mm;color:#1c1a15}
+.pcs b{color:#c7361f;font-family:${lang === 'ar' ? 'Cairo' : 'inherit'}}
+footer{display:flex;justify-content:space-between;align-items:center;gap:8mm;margin-top:3mm;padding:3mm 12mm;background:#c7361f;color:#fff;font-size:4.2mm;font-weight:700}
+footer .note{background:#f2a516;border-radius:99mm;padding:1.2mm 6mm;color:#1c1a15}
+footer .star{color:#f2a516}
 </style></head><body><div class="page">
 <header>
   <div><div class="logo"><h1>Basha</h1><div class="ar" lang="ar">باشا</div></div><div class="tag">${T.tag}</div></div>
@@ -96,7 +97,7 @@ footer .note{background:#efe5d2;border-radius:99mm;padding:1.2mm 6mm;color:#1c1a
   <div class="qr"><div class="box">${qr}</div><p>${T.scan}</p></div>
 </header>
 <main>${body}</main>
-<footer><span>${T.popular}</span><span class="note">${T.currency}</span><span>${T.market}</span></footer>
+<footer><span><b class="star">★</b>${T.popular.slice(1)}</span><span class="note">${T.currency}</span><span>${T.market}</span></footer>
 </div></body></html>`;
   }
 
