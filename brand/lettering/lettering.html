@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Luckiest+Guy&family=Baloo+Bhaijaan+2:wght@800&family=Lemonada:wght@700&family=Blaka&family=Patrick+Hand&family=Marhey:wght@700&family=Lalezar&display=swap" rel="stylesheet">
+<style>*{margin:0}.logo{width:1080px;height:1080px}svg{display:block;width:1080px;height:1080px}</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <!-- slight hand-drawn wobble on the edges -->
+  <filter id="hand" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
+  <path id="flames" d="M150 640 C120 560 150 470 210 430 C200 500 230 540 270 550 C250 450 300 350 380 300 C370 400 400 450 450 470 C440 330 500 220 600 170 C580 290 620 370 670 400 C680 330 720 290 770 270 C760 340 780 400 830 420 C850 370 890 340 940 330 C910 410 930 520 920 600 C900 700 760 760 540 760 C320 760 170 710 150 640 Z"/>
+</defs></svg>
+
+<!-- L1: groovy bubble letters in flames -->
+<div class="logo" id="l1"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#E8402A"/>
+  <g filter="url(#hand)">
+    <use href="#flames" fill="#9E1B12" transform="translate(0 -40)"/>
+    <text x="556" y="684" text-anchor="middle" font-family="Bagel Fat One" font-size="300" fill="#6E0F0A" letter-spacing="-6" transform="rotate(-6 540 600)">basha</text>
+    <text x="532" y="660" text-anchor="middle" font-family="Bagel Fat One" font-size="300" fill="#FFC6D3" stroke="#6E0F0A" stroke-width="12" paint-order="stroke" letter-spacing="-6" transform="rotate(-6 540 600)">basha</text>
+    <text x="250" y="330" text-anchor="middle" font-family="Lemonada" font-weight="700" font-size="120" fill="#FFC6D3" stroke="#9E1B12" stroke-width="10" paint-order="stroke" transform="rotate(-10 250 310)">باشا</text>
+  </g>
+  <defs><path id="arc1" d="M230 800 Q540 950 850 800"/></defs>
+  <text font-family="Luckiest Guy" font-size="60" fill="#6E0F0A" letter-spacing="5"><textPath href="#arc1" startOffset="50%" text-anchor="middle">CHICKEN &amp; SNACK</textPath></text>
+</svg></div>
+
+<!-- L2: stacked bilingual, Arabic on top -->
+<div class="logo" id="l2"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#FBF1DC"/>
+  <g filter="url(#hand)" fill="#1C1A15">
+    <text x="540" y="400" text-anchor="middle" style="font-family:'Baloo Bhaijaan 2';font-weight:800" font-size="300">باشا</text>
+    <text x="540" y="690" text-anchor="middle" font-family="Luckiest Guy" font-size="240" letter-spacing="6">BASHA</text>
+    <text x="540" y="815" text-anchor="middle" font-family="Luckiest Guy" font-size="92" letter-spacing="3"><tspan fill="#E8402A">CHICKEN</tspan> &amp; <tspan fill="#E8402A">SNACK</tspan></text>
+  </g>
+</svg></div>
+
+<!-- L3: blocky cut-out -->
+<div class="logo" id="l3"><svg viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#FFC226"/>
+  <g filter="url(#hand)">
+    <path d="M200 230 L560 250 L600 205 L640 255 L880 240 L860 690 L200 650 Z" fill="#1C1A15"/>
+    <text x="535" y="580" text-anchor="middle" font-family="Blaka" font-size="400" fill="#FBF1DC" transform="rotate(-3 540 460)">باشا</text>
+    <text x="545" y="830" text-anchor="middle" font-family="Luckiest Guy" font-size="230" fill="#E8402A" stroke="#1C1A15" stroke-width="14" paint-order="stroke" letter-spacing="2" transform="rotate(-4 540 780)">basha</text>
+  </g>
+  <text x="540" y="935" text-anchor="middle" font-family="Patrick Hand" font-size="58" fill="#1C1A15" letter-spacing="2">chicken &amp; snack · تشيكن آند سناك</text>
+</svg></div>
+</body></html>
