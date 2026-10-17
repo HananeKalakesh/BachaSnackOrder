@@ -6,6 +6,7 @@
  * Orders are written to the Orders and Order Items tabs. Prices come from the Menu tab.
  * Sauces chosen with an item go in the Order Items "Sauces" column and after " — " in the order's Items text.
  * The optional customer name and Pickup / Delivery go in the Orders columns P and Q.
+ * Payment is Cash, Whish or Unpaid; an unpaid order has nothing in Paid (L.L.) until it is changed to Cash or Whish.
  *
  * Links (same deployment):
  *   …/exec                                        the order screen
@@ -48,6 +49,36 @@ function getMenu() {
   return { rate: settings_().rate, items: items };
 }
 
+function payment_(p) { return p === 'Whish' || p === 'Unpaid' ? p : 'Cash' }
+
+/** Checks the items against the Menu tab (which sets the prices) and works out the total, item count and Items text. */
+function priced_(list) {
+  var menu = {};
+  getMenu().items.forEach(function (it) { menu[it.name] = it });
+  var items = (list || []).filter(function (x) { return x.qty > 0 }).map(function (x) {
+    return { name: String(x.name), qty: Math.floor(Number(x.qty)),
+      sauces: (x.sauces || []).slice(0, 4).map(function (s) { return String(s).slice(0, 40) }).filter(String) };
+  });
+  if (!items.length) throw new Error('The order is empty');
+  items.forEach(function (x) { if (!menu[x.name]) throw new Error('"' + x.name + '" is not on the menu any more. Reopen the order screen.') });
+  var total = 0, count = 0;
+  items.forEach(function (x) { total += x.qty * menu[x.name].price; count += x.qty });
+  var text = items.map(function (x) { return x.qty + ' × ' + x.name + (x.sauces.length ? ' — ' + x.sauces.join(' + ') : '') }).join(', ');
+  return { items: items, menu: menu, total: total, count: count, text: text };
+}
+
+/** Adds an order's lines to the Order Items tab. */
+function writeLines_(lines, num, day, p) {
+  var l = lines.getLastRow() + 1;
+  lines.getRange(l, 1, p.items.length, 8).setValues(p.items.map(function (x, i) {
+    return [num, day, x.name, p.menu[x.name].cat, x.qty, p.menu[x.name].price, '=E' + (l + i) + '*F' + (l + i), x.sauces.join(', ')];
+  }));
+}
+
+function nameType_(order) {
+  return [String(order.name || '').slice(0, 40), order.type === 'Delivery' || order.type === 'Pickup' ? order.type : ''];
+}
+
 /** Saves one order. Prices are taken from the Menu tab, not from the iPad. */
 function saveOrder(order) {
   var lock = LockService.getScriptLock();
@@ -67,15 +98,7 @@ function saveOrder(order) {
       }
     }
 
-    var menu = {};
-    getMenu().items.forEach(function (it) { menu[it.name] = it });
-    var items = (order.items || []).filter(function (x) { return x.qty > 0 });
-    items.forEach(function (x) {
-      x.sauces = (x.sauces || []).slice(0, 4).map(function (s) { return String(s).slice(0, 40) }).filter(String);
-    });
-    if (!items.length) throw new Error('The order is empty');
-    items.forEach(function (x) { if (!menu[x.name]) throw new Error('"' + x.name + '" is not on the menu any more. Reopen the order screen.') });
-
+    var p = priced_(order.items), pay = payment_(order.payment);
     var when = order.at ? new Date(order.at) : new Date();
     var day = Utilities.formatDate(when, tz, 'yyyy-MM-dd');
     var time = Utilities.formatDate(when, tz, 'HH:mm');
@@ -85,24 +108,43 @@ function saveOrder(order) {
     var num = props.getProperty('day') === day ? Number(props.getProperty('num')) + 1 : 1;
     props.setProperties({ day: day, num: String(num) });
 
-    var total = 0, count = 0;
-    items.forEach(function (x) { total += x.qty * menu[x.name].price; count += x.qty });
-    var text = items.map(function (x) { return x.qty + ' × ' + x.name + (x.sauces.length ? ' — ' + x.sauces.join(' + ') : '') }).join(', ');
-
     var r = orders.getLastRow() + 1;
     orders.getRange(r, 1, 1, 14).setValues([[
-      num, day, "'" + time, text, count, total, order.payment === 'Whish' ? 'Whish' : 'Cash',
-      0, total, rate,  // paid in full, at the menu total
+      num, day, "'" + time, p.text, p.count, p.total, pay,
+      0, pay === 'Unpaid' ? 0 : p.total, rate,  // paid in full at the menu total, or nothing yet
       '=H' + r + '*J' + r + '+I' + r, '=K' + r + '-F' + r, order.note || '', order.uid || ''
     ]]);
     if (orders.getMaxColumns() < 17) orders.insertColumnsAfter(orders.getMaxColumns(), 17 - orders.getMaxColumns());
-    orders.getRange(r, 16, 1, 2).setValues([[String(order.name || '').slice(0, 40), order.type === 'Delivery' || order.type === 'Pickup' ? order.type : '']]);
+    orders.getRange(r, 16, 1, 2).setValues([nameType_(order)]);
+    writeLines_(lines, num, day, p);
+    return { num: num, total: p.total };
+  } finally {
+    lock.releaseLock();
+  }
+}
 
-    var l = lines.getLastRow() + 1;
-    lines.getRange(l, 1, items.length, 8).setValues(items.map(function (x, i) {
-      return [num, day, x.name, menu[x.name].cat, x.qty, menu[x.name].price, '=E' + (l + i) + '*F' + (l + i), x.sauces.join(', ')];
-    }));
-    return { num: num, total: total };
+/** Changes a saved order: its items, payment, note, name and Pickup / Delivery. */
+function updateOrder(day, num, order) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var ss = book_(), orders = ss.getSheetByName('Orders'), lines = ss.getSheetByName('Order Items');
+    var p = priced_(order.items), pay = payment_(order.payment);
+    var last = orders.getLastRow(), from = Math.max(2, last - 299), row = 0, old;
+    var v = orders.getRange(from, 1, last - from + 1, 10).getValues();
+    for (var i = v.length - 1; i >= 0; i--) if (v[i][0] == num && dayKey_(v[i][1]) === day) { row = from + i; old = v[i]; break }
+    if (!row) throw new Error('Order #' + num + ' was not found. It may have been deleted.');
+
+    // Keep any dollars already typed in Paid ($); L.L. covers the rest, or nothing when unpaid.
+    var usd = pay === 'Unpaid' ? 0 : Number(old[7]) || 0, rate = Number(old[9]) || settings_().rate;
+    orders.getRange(row, 4, 1, 6).setValues([[p.text, p.count, p.total, pay, usd, pay === 'Unpaid' ? 0 : Math.max(0, p.total - usd * rate)]]);
+    orders.getRange(row, 13).setValue(order.note || '');
+    orders.getRange(row, 16, 1, 2).setValues([nameType_(order)]);
+
+    var lv = lines.getDataRange().getValues();
+    for (var k = lv.length - 1; k >= 1; k--) if (lv[k][0] == num && dayKey_(lv[k][1]) === day) lines.deleteRow(k + 1);
+    writeLines_(lines, Number(num), day, p);
+    return { num: num, total: p.total };
   } finally {
     lock.releaseLock();
   }
@@ -215,13 +257,15 @@ function getReport(pin, from, to) {
   var li = ss.getSheetByName('Order Items').getDataRange().getValues().slice(1);
   var inRange = function (d) { var k = dayKey_(d); return k >= from && k <= to };
 
-  var s = { orders: 0, items: 0, sales: 0, paidUsd: 0, paidLbp: 0, received: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0 };
+  var s = { orders: 0, items: 0, sales: 0, paidUsd: 0, paidLbp: 0, received: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0 };
   var days = {}, list = [];
   o.forEach(function (r) {
     if (r[0] === '' || !inRange(r[1])) return;
     var day = dayKey_(r[1]), got = Number(r[10]) || 0;
     s.orders++; s.sales += Number(r[5]) || 0; s.paidUsd += Number(r[7]) || 0; s.paidLbp += Number(r[8]) || 0; s.received += got;
-    if (r[6] === 'Whish') { s.whishOrders++; s.whishLbp += got } else { s.cashOrders++; s.cashLbp += got }
+    if (r[6] === 'Whish') { s.whishOrders++; s.whishLbp += got }
+    else if (r[6] === 'Unpaid') { s.unpaidOrders++; s.unpaidLbp += Number(r[5]) || 0 }  // what is still owed
+    else { s.cashOrders++; s.cashLbp += got }
     days[day] = days[day] || { date: day, orders: 0, sales: 0 };
     days[day].orders++; days[day].sales += Number(r[5]) || 0;
     list.push({ num: r[0], date: day, time: String(r[2]), items: r[3], total: Number(r[5]) || 0, payment: r[6], paidUsd: Number(r[7]) || 0, paidLbp: Number(r[8]) || 0 });
