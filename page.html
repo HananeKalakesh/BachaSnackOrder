@@ -13,45 +13,47 @@
 html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:700 16px/1.35 Cairo,system-ui,sans-serif;overscroll-behavior:none}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none;touch-action:manipulation}
-/* English subtitles under or beside the Arabic */
-.en{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-weight:700;font-size:.72em;opacity:.75;direction:ltr;unicode-bidi:isolate}
-.en.side{margin-right:6px}
-.stack .en{display:block;line-height:1.2}
+/* One language at a time: the AR/EN button in the top bar switches body.lang-ar / body.lang-en */
+.lang-ar .en,.lang-en .ar{display:none!important}
+.lang-en,.lang-en .en{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.lang-en .display{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-weight:800}
 .display{font-family:Lalezar,Cairo,sans-serif;font-weight:400;letter-spacing:0}
 .num{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
 
 /* top bar */
-.top{height:64px;display:flex;align-items:center;gap:16px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}
+.top{height:56px;display:flex;align-items:center;gap:16px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}
 .top img{height:40px;width:auto}
 .tabs{display:flex;gap:6px;background:var(--input);padding:4px;border-radius:999px;margin-inline-start:auto}
+.langbtn{height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--green);color:var(--green);font-weight:800}
+.langbtn .ar{font-family:Cairo,sans-serif}.langbtn .en{font-family:"Plus Jakarta Sans",sans-serif}
 .tabs button{padding:6px 16px;border-radius:999px;color:var(--muted)}
 .tabs button.on{background:var(--green);color:#fff}
 .net{font-size:13px;color:var(--red);white-space:nowrap}
 
-/* order screen */
-.order{display:grid;grid-template-columns:1fr 380px;height:calc(100% - 64px)}
+/* order screen: every section is a colored card; cards flow in columns so most of the menu fits on one screen */
+.order{display:grid;grid-template-columns:1fr 330px;height:calc(100% - 56px)}
 .left{display:flex;flex-direction:column;min-width:0;min-height:0}
-.cats{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;flex:none}
-.cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;padding:6px 16px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-size:15px;white-space:nowrap;text-align:center}
-.cats button.on{background:var(--green);border-color:var(--green);color:#fff}
-.grid{flex:1;overflow-y:auto;padding:4px 16px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;align-content:start;-webkit-overflow-scrolling:touch}
-.tile{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:12px 12px 10px;min-height:112px;display:flex;flex-direction:column;text-align:start;box-shadow:var(--shadow);transition:transform .08s}
-.tile:active{transform:scale(.97);background:var(--input)}
-.tile b{font-weight:800;font-size:16px;line-height:1.3}
-.tile .en{font-size:12px;color:var(--muted);opacity:1;margin-top:2px;text-align:start}
-.tile .pr{margin-top:auto;padding-top:8px;font-weight:800;color:var(--green);font-size:14px;text-align:start}
-.tile .q{position:absolute;top:-8px;inset-inline-end:-8px;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:var(--red);color:#fff;font:800 15px "Plus Jakarta Sans",sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -4px rgba(200,16,46,.6)}
-.sechead{grid-column:1/-1;margin:10px 2px 0;font-size:24px;color:var(--green)}
+.grid{flex:1;overflow-y:auto;padding:8px 10px 12px;-webkit-overflow-scrolling:touch}
+.flow{display:flex;gap:8px;align-items:flex-start}
+.flow > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.sec{background:#fff;border:1.5px solid var(--c);border-radius:14px;box-shadow:var(--shadow)}
+.sec h3{border-radius:12px 12px 0 0;margin:0;padding:2px 10px;background:var(--c);color:#fff;font-size:15px;font-weight:800;line-height:1.5}
+.tile{display:flex;align-items:center;gap:6px;width:100%;min-height:33px;padding:3px 8px;text-align:start;border-top:1px solid var(--line);transition:background .08s}
+.sec h3 + .tile{border-top:0}
+.tile:last-child{border-radius:0 0 12px 12px}
+.tile:active{background:var(--input)}
+.tile b{flex:1;min-width:0;font-weight:700;font-size:14px;line-height:1.25}
+.tile .pr{flex:none;font-weight:700;color:var(--muted);font-size:12px}
+.tile.has{background:var(--t)}
+.tile .q{flex:none;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:var(--c);color:#fff;font:800 13px/24px "Plus Jakarta Sans",sans-serif;text-align:center}
 
 .right{background:#fff;border-inline-start:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
 .ticket{flex:1;overflow-y:auto;padding:12px 16px}
-.ticket h2{margin:4px 0 10px;font-size:26px;color:var(--green);display:flex;justify-content:space-between;align-items:center}
+.ticket h2{margin:2px 0 6px;font-size:24px;color:var(--green);display:flex;justify-content:space-between;align-items:center}
 .ticket h2 button{font:700 15px Cairo,sans-serif;color:var(--red);padding:6px 4px}
 .empty{color:var(--muted);padding:24px 0;text-align:center}
-.line{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.line{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;padding-inline-start:10px;border-bottom:1px solid var(--line);border-inline-start:4px solid var(--c)}
 .line .n{font-weight:800;font-size:15px}
-.line .n .en{display:block;font-size:12px}
 .line .lt{font-weight:800}
 .stepper{display:flex;align-items:center;gap:6px;grid-column:1/-1}
 .stepper button{width:40px;height:36px;border-radius:12px;background:var(--input);font:800 22px/1 "Plus Jakarta Sans",sans-serif}
@@ -69,11 +71,10 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .methods button.on[data-m=Whish]{background:var(--whish);border-color:var(--whish);color:#fff}
 .note{width:100%;margin-top:8px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 12px;font-size:15px;outline:none}
 .save{margin-top:12px;width:100%;height:62px;border-radius:14px;background:var(--red);color:#fff;font-weight:800;font-size:21px;line-height:1.15;box-shadow:0 10px 24px -12px rgba(200,16,46,.7)}
-.save .en{display:block;font-size:13px}
 .save:disabled{background:#d9cfc0;box-shadow:none}
 
 /* report */
-.report{height:calc(100% - 64px);overflow-y:auto;padding:16px;display:none}
+.report{height:calc(100% - 56px);overflow-y:auto;padding:16px;display:none}
 .wrap{max-width:1100px;margin:0 auto}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-bottom:14px}
 .filters .q button{padding:6px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line)}
@@ -94,7 +95,6 @@ table{width:100%;border-collapse:collapse;font-size:15px}
 th{text-align:start;font-size:13px;color:var(--muted);padding:6px 4px;border-bottom:1.5px solid var(--line)}
 td{padding:8px 4px;border-bottom:1px solid var(--line);vertical-align:top}
 td.r,th.r{text-align:end}
-td .en{display:block;font-size:12px;color:var(--muted);opacity:1}
 .bar{height:6px;border-radius:3px;background:var(--mustard);margin-top:4px}
 .del{color:var(--red);font-size:14px;padding:4px 6px}
 .pin{max-width:340px;margin:60px auto;text-align:center}
@@ -106,34 +106,33 @@ td .en{display:block;font-size:12px;color:var(--muted);opacity:1}
 .pill.Whish{background:var(--whish)}
 
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:14px;font-weight:800;font-size:18px;text-align:center;transition:transform .25s;z-index:9;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
-.toast .en{display:block;font-size:13px}
 .toast.show{transform:translate(-50%,0)}
 
-@media (max-width:900px){.order{grid-template-columns:1fr 330px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.cols{grid-template-columns:1fr}}
-@media (max-width:700px){.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 64px)}.right{border-inline-start:0;border-top:1px solid var(--line)}.top img{height:32px}.tabs button{padding:6px 12px}}
+@media (max-width:900px){.order{grid-template-columns:1fr 300px}.cols{grid-template-columns:1fr}}
+@media (max-width:700px){.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 56px)}.right{border-inline-start:0;border-top:1px solid var(--line)}.top img{height:32px}.tabs button{padding:6px 12px}}
 </style>
 </head>
-<body>
+<body class="lang-ar">
 <div class="top">
   <img src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button class="on" data-view="order">طلب جديد<span class="en side">New order</span></button><button data-view="report">المبيعات<span class="en side">Sales</span></button></div>
+  <div class="tabs"><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button></div>
+  <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
 </div>
 
 <div class="order" id="orderView">
   <div class="left">
-    <div class="cats" id="cats"></div>
-    <div class="grid" id="grid"><div class="muted" style="padding:20px">عم يحمّل المنيو…<span class="en side">Loading menu…</span></div></div>
+    <div class="grid" id="grid"><div class="muted" style="padding:20px"><span class="ar">عم يحمّل المنيو…</span><span class="en">Loading menu…</span></div></div>
   </div>
   <div class="right">
     <div class="ticket">
-      <h2><span class="display">الطلب<span class="en side">Order</span></span> <button id="clear" type="button">مسح<span class="en side">Clear</span></button></h2>
+      <h2><span class="display"><span class="ar">الطلب</span><span class="en">Order</span></span> <button id="clear" type="button"><span class="ar">مسح</span><span class="en">Clear</span></button></h2>
       <div id="lines"></div>
     </div>
     <div class="pay">
-      <div class="total"><span class="display">المجموع<span class="en side">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
-      <div class="methods"><button data-m="Cash" class="stack">كاش<span class="en">Cash</span></button><button data-m="Whish" class="stack">ويش<span class="en">Whish</span></button></div>
-      <input class="note" id="note" placeholder="ملاحظة (اختياري) · Note" autocomplete="off">
+      <div class="total"><span class="display"><span class="ar">المجموع</span><span class="en">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
+      <div class="methods"><button data-m="Cash"><span class="ar">كاش</span><span class="en">Cash</span></button><button data-m="Whish"><span class="ar">ويش</span><span class="en">Whish</span></button></div>
+      <input class="note" id="note" placeholder="ملاحظة (اختياري)" autocomplete="off">
       <button class="save" id="save" disabled></button>
     </div>
   </div>
@@ -143,21 +142,36 @@ td .en{display:block;font-size:12px;color:var(--muted);opacity:1}
 <div class="toast" id="toast"></div>
 
 <script>
-var MENU = [], RATE = 89500, CATS = [], cart = {}, method = '', curCat = 'All';
-var QKEY = 'elbash-pos-queue', PKEY = 'elbash-pos-pin';
+var MENU = [], RATE = 89500, CATS = [], cart = {}, method = '';
+var QKEY = 'elbash-pos-queue', PKEY = 'elbash-pos-pin', LKEY = 'elbash-pos-lang';
 var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
   'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات وإضافات', 'Drinks': 'مشروبات'};
 var PAY_AR = {Cash: 'كاش', Whish: 'ويش'};
+// Section colors: [header and border, tint behind items already in the order]
+var CAT_COLOR = {'Fries': ['#B7791F', '#FBF1DD'], 'Appetizers': ['#D9480F', '#FDE8DD'], 'Meals': ['#C8102E', '#FBE3E7'], 'Family Meals': ['#7A1631', '#F5E1E6'],
+  'Plates': ['#0B7A75', '#DDF1F0'], 'Chicken Sandwiches': ['#1F4A37', '#E1EDE6'], 'Beef Sandwiches': ['#7A4B2A', '#F1E6DD'], 'Other Sandwiches': ['#5F7A1F', '#EAF0DA'],
+  'Chicken Burgers': ['#5B3FA8', '#E9E4F6'], 'Beef Burgers': ['#A3245E', '#F6E1EB'], 'Sauces & Extras': ['#4B5563', '#E8EAED'], 'Drinks': ['#1D6FB8', '#DFECF8']};
+var SPARE = [['#2F6F4F', '#E2EFE8'], ['#8A5A00', '#F6ECD9'], ['#3B5BA9', '#E3E9F6']];
+function catColor(c) { return CAT_COLOR[c] || SPARE[CATS.indexOf(c) % SPARE.length] }
+function catVars(c) { var k = catColor(c); return '--c:' + k[0] + ';--t:' + k[1] }
+// Words the colored section header already says are left off the menu buttons (the ticket keeps full names)
+var SANDWICH = [/^ساندويش\s+/, /\s+Sandwich$/];
+var TRIM = {'Family Meals': [/^وجبة عائلية\s+/, /\s+Family Meal/], 'Meals': [/^وجبة\s+/, /\s+Meal\b/], 'Plates': [/^صحن\s+/, /\s+Plate$/],
+  'Chicken Sandwiches': SANDWICH, 'Beef Sandwiches': SANDWICH, 'Other Sandwiches': SANDWICH, 'Sauces & Extras': [/^صوص\s+/, /\s+Sauce$/]};
+function trim(text, cat, k) { var t = TRIM[cat]; return t ? text.replace(t[k], '') || text : text }
+var lang = 'ar';
+function T(ar, en) { return lang === 'en' ? en : ar }
 function $(s) { return document.querySelector(s) }
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
 function fmt(n) { return Math.round(n).toLocaleString('en-US') }
+function short(n) { return n >= 1000 ? fmt(n / 1000) + 'K' : fmt(n) }  // 150,000 -> 150K, to keep menu buttons narrow
 function money(n) { return fmt(n) + ' L.L.' }
 function usd(n) { return '$' + (Math.round(n * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) }
-function bi(ar, en, cls) { return esc(ar) + '<span class="en' + (cls ? ' ' + cls : '') + '">' + esc(en) + '</span>' }
+function bi(ar, en) { return '<span class="ar">' + esc(ar) + '</span><span class="en">' + esc(en) + '</span>' }
 function arName(en) { for (var i = 0; i < MENU.length; i++) if (MENU[i].name === en) return MENU[i].ar || en; return en }
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v) } catch (e) { return null } }
-function toast(arHtml, en) { var el = $('#toast'); el.innerHTML = arHtml + '<span class="en">' + esc(en) + '</span>'; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('show') }, 2600) }
+function toast(arHtml, en) { var el = $('#toast'); el.innerHTML = '<span class="ar">' + arHtml + '</span><span class="en">' + esc(en) + '</span>'; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('show') }, 2600) }
 
 /* server calls: google.script.run wrapped in a promise */
 function call(fn) {
@@ -173,25 +187,35 @@ function loadMenu() {
   call('getMenu').then(function (m) {
     MENU = m.items; RATE = m.rate;
     CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) });
-    renderCats(); renderGrid(); renderCart();
-  }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.', 'side') + '<br><small>' + esc(e.message || e) + '</small></div>' });
-}
-function renderCats() {
-  $('#cats').innerHTML = ['All'].concat(CATS).map(function (c) { return '<button class="stack' + (c === curCat ? ' on' : '') + '" data-cat="' + esc(c) + '">' + bi(CAT_AR[c] || c, c) + '</button>' }).join('');
+    renderGrid(); renderCart();
+  }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.') + '<br><small>' + esc(e.message || e) + '</small></div>' });
 }
 function renderGrid() {
-  var h = '', last = '';
-  MENU.forEach(function (it, i) {
-    if (curCat !== 'All' && it.cat !== curCat) return;
-    if (curCat === 'All' && it.cat !== last) { h += '<div class="sechead display">' + bi(CAT_AR[it.cat] || it.cat, it.cat, 'side') + '</div>'; last = it.cat }
-    var q = cart[i] || 0;
-    h += '<button class="tile" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
-      '<b>' + esc(it.ar || it.name) + '</b><span class="en">' + esc(it.name) + '</span>' +
-      '<span class="pr num">' + fmt(it.price) + '</span></button>';
+  var grid = $('#grid'), top = grid.scrollTop;
+  var n = Math.max(1, Math.floor((grid.clientWidth - 24 + 8) / 168));
+  grid.innerHTML = '<div class="flow">' + new Array(n + 1).join('<div></div>') + '</div>';
+  var cols = [].slice.call(grid.firstChild.children);
+  CATS.forEach(function (c) {
+    var h = '<h3>' + bi(CAT_AR[c] || c, c) + '</h3>';
+    MENU.forEach(function (it, i) {
+      if (it.cat !== c) return;
+      var q = cart[i] || 0;
+      h += '<button class="tile' + (q ? ' has' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
+        '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b><span class="pr num">' + short(it.price) + '</span></button>';
+    });
+    cols[0].insertAdjacentHTML('beforeend', '<div class="sec" data-k="' + CATS.indexOf(c) + '" style="' + catVars(c) + '">' + h + '</div>');
   });
-  $('#grid').innerHTML = h;
+  // Sections stay whole. Biggest first, each goes into the shortest column, so the menu takes as little height as possible;
+  // then each column is put back in menu order.
+  var secs = [].slice.call(cols[0].children), hgt = cols.map(function () { return 0 }), put = cols.map(function () { return [] });
+  secs.map(function (el) { return {el: el, h: el.offsetHeight + 8} }).sort(function (a, b) { return b.h - a.h }).forEach(function (x) {
+    var k = hgt.indexOf(Math.min.apply(null, hgt)); hgt[k] += x.h; put[k].push(x.el);
+  });
+  put.forEach(function (list, k) { list.sort(function (a, b) { return a.dataset.k - b.dataset.k }).forEach(function (el) { cols[k].appendChild(el) }) });
+  grid.scrollTop = top;
 }
-$('#cats').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; curCat = b.dataset.cat; renderCats(); renderGrid(); $('#grid').scrollTop = 0 });
+var lastW = 0;
+window.addEventListener('resize', function () { var w = $('#grid').clientWidth; if (MENU.length && w !== lastW) { lastW = w; renderGrid() } });
 $('#grid').addEventListener('click', function (e) { var b = e.target.closest('.tile'); if (!b) return; var i = +b.dataset.i; cart[i] = (cart[i] || 0) + 1; renderGrid(); renderCart() });
 
 /* ---------- ticket ---------- */
@@ -200,9 +224,9 @@ function renderCart() {
   var keys = Object.keys(cart);
   $('#lines').innerHTML = keys.length ? keys.map(function (i) {
     var it = MENU[i];
-    return '<div class="line"><span class="n">' + bi(it.ar || it.name, it.name) + '</span><span class="lt num">' + fmt(cart[i] * it.price) + '</span>' +
-      '<div class="stepper"><button data-d="1" data-i="' + i + '" aria-label="زيد واحد">+</button><span class="num">' + cart[i] + '</span><button data-d="-1" data-i="' + i + '" aria-label="نقّص واحد">−</button>' +
-      '<small>الواحد <span class="num">' + fmt(it.price) + '</span></small></div></div>';
+    return '<div class="line" style="' + catVars(it.cat) + '"><span class="n">' + bi(it.ar || it.name, it.name) + '</span><span class="lt num">' + fmt(cart[i] * it.price) + '</span>' +
+      '<div class="stepper"><button data-d="1" data-i="' + i + '" aria-label="+1">+</button><span class="num">' + cart[i] + '</span><button data-d="-1" data-i="' + i + '" aria-label="-1">−</button>' +
+      '<small>' + bi('الواحد', 'each') + ' <span class="num">' + fmt(it.price) + '</span></small></div></div>';
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
   $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
@@ -213,7 +237,7 @@ $('#lines').addEventListener('click', function (e) {
   var i = b.dataset.i; cart[i] += +b.dataset.d; if (cart[i] <= 0) delete cart[i];
   renderGrid(); renderCart();
 });
-$('#clear').addEventListener('click', function () { if (!Object.keys(cart).length || confirm('تمسح هالطلب؟ · Clear this order?')) resetOrder() });
+$('#clear').addEventListener('click', function () { if (!Object.keys(cart).length || confirm(T('تمسح هالطلب؟', 'Clear this order?'))) resetOrder() });
 function resetOrder() { cart = {}; method = ''; $('#note').value = ''; setMethod(''); renderGrid(); renderCart() }
 
 function setMethod(m) { method = m; document.querySelectorAll('.methods button').forEach(function (b) { b.classList.toggle('on', b.dataset.m === m) }); updateSave() }
@@ -227,7 +251,7 @@ function updateSave() {
 /* ---------- saving, with an offline queue ---------- */
 function queue() { try { return JSON.parse(store(QKEY) || '[]') } catch (e) { return [] } }
 function setQueue(q) { store(QKEY, JSON.stringify(q)); showNet() }
-function showNet() { var n = queue().length; $('#net').innerHTML = n ? bi(n + ' ناطر ينبعت', n + (n > 1 ? ' orders' : ' order') + ' waiting to send', 'side') : '' }
+function showNet() { var n = queue().length; $('#net').innerHTML = n ? bi(n + ' ناطر ينبعت', n + (n > 1 ? ' orders' : ' order') + ' waiting to send') : '' }
 
 $('#save').addEventListener('click', function () {
   var order = {
@@ -288,30 +312,30 @@ function showReport() {
   loadReport();
 }
 function pinScreen(msg) {
-  $('#rep').innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:30px;margin:0">' + bi('المبيعات', 'Sales', 'side') + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN', 'side') + '</p>' +
-    '<input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="err">' + msg + '</div><button id="pinGo">' + bi('افتح', 'Open', 'side') + '</button></div>';
+  $('#rep').innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:30px;margin:0">' + bi('المبيعات', 'Sales') + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN') + '</p>' +
+    '<input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="err">' + msg + '</div><button id="pinGo">' + bi('افتح', 'Open') + '</button></div>';
   var go = function () { setPin($('#pinIn').value); showReport() };
   $('#pinGo').onclick = go; $('#pinIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#pinIn').focus();
 }
 function loadReport() {
-  $('#rep').innerHTML = filters() + '<p class="muted">' + bi('عم يحمّل…', 'Loading…', 'side') + '</p>'; bindFilters();
+  $('#rep').innerHTML = filters() + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; bindFilters();
   call('getReport', pin(), range.from, range.to).then(renderReport, function (e) {
-    if (/PIN/.test(e.message || '')) { var had = pin(); setPin(''); return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN', 'side') : '') }
-    $('#rep').innerHTML = filters() + '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report', 'side') + '<br><small>' + esc(e.message || e) + '</small></p>'; bindFilters();
+    if (/PIN/.test(e.message || '')) { var had = pin(); setPin(''); return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '') }
+    $('#rep').innerHTML = filters() + '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report') + '<br><small>' + esc(e.message || e) + '</small></p>'; bindFilters();
   });
 }
 function filters() {
   var q = [['today', 'اليوم', 'Today'], ['yesterday', 'مبارح', 'Yesterday'], ['week', 'هالجمعة', 'This week'], ['month', 'هالشهر', 'This month'], ['all', 'كل الوقت', 'All time']];
-  return '<div class="filters"><div class="q">' + q.map(function (x) { return '<button data-k="' + x[0] + '" class="stack' + (range.key === x[0] ? ' on' : '') + '">' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
-    '<div><label for="fFrom">' + bi('من', 'From', 'side') + '</label><input type="date" id="fFrom" value="' + range.from + '"></div>' +
-    '<div><label for="fTo">' + bi('لـ', 'To', 'side') + '</label><input type="date" id="fTo" value="' + range.to + '"></div></div>';
+  return '<div class="filters"><div class="q">' + q.map(function (x) { return '<button data-k="' + x[0] + '" class="' + (range.key === x[0] ? ' on' : '') + '">' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
+    '<div><label for="fFrom">' + bi('من', 'From') + '</label><input type="date" id="fFrom" value="' + range.from + '"></div>' +
+    '<div><label for="fTo">' + bi('لـ', 'To') + '</label><input type="date" id="fTo" value="' + range.to + '"></div></div>';
 }
 function bindFilters() {
   document.querySelectorAll('.filters .q button').forEach(function (b) { b.onclick = function () { preset(b.dataset.k); loadReport() } });
   var ch = function () { range = {from: $('#fFrom').value, to: $('#fTo').value, key: ''}; if (range.from && range.to) loadReport() };
   $('#fFrom').onchange = ch; $('#fTo').onchange = ch;
 }
-function kpi(ar, en, big, small, hero) { return '<div class="kpi' + (hero ? ' hero' : '') + '"><small>' + bi(ar, en, 'side') + '</small><b class="num">' + big + '</b>' + (small ? '<span>' + small + '</span>' : '') + '</div>' }
+function kpi(ar, en, big, small, hero) { return '<div class="kpi' + (hero ? ' hero' : '') + '"><small>' + bi(ar, en) + '</small><b class="num">' + big + '</b>' + (small ? '<span>' + small + '</span>' : '') + '</div>' }
 function itemsAr(text) {
   return String(text).split(', ').map(function (p) { var m = p.match(/^(\d+) × (.*)$/); return m ? m[1] + ' × ' + arName(m[2]) : p }).join('، ');
 }
@@ -319,34 +343,44 @@ function renderReport(r) {
   var s = r.summary, h = filters();
   h += '<div class="kpis">' +
     kpi('المبيعات', 'Sales', money(s.sales), '<span class="num">' + usd(s.sales / r.rate) + '</span>', true) +
-    kpi('الطلبات', 'Orders', fmt(s.orders), s.orders ? 'المعدل <span class="num">' + money(s.sales / s.orders) + '</span>' : '') +
+    kpi('الطلبات', 'Orders', fmt(s.orders), s.orders ? bi('المعدل', 'Average') + ' <span class="num">' + money(s.sales / s.orders) + '</span>' : '') +
     kpi('الأصناف', 'Items sold', fmt(s.items), '') +
-    kpi('كاش', 'Cash', money(s.cashLbp), '<span class="num">' + fmt(s.cashOrders) + '</span> طلب') +
-    kpi('ويش', 'Whish', money(s.whishLbp), '<span class="num">' + fmt(s.whishOrders) + '</span> طلب') +
+    kpi('كاش', 'Cash', money(s.cashLbp), '<span class="num">' + fmt(s.cashOrders) + '</span> ' + bi('طلب', 'orders')) +
+    kpi('ويش', 'Whish', money(s.whishLbp), '<span class="num">' + fmt(s.whishOrders) + '</span> ' + bi('طلب', 'orders')) +
     '</div>';
   var max = r.items.length ? r.items[0].qty : 1;
-  h += '<div class="cols"><div class="card"><h3 class="display">' + bi('الأصناف المباعة', 'Items sold', 'side') + '</h3>' + (r.items.length ?
-    '<table><tr><th>' + bi('الصنف', 'Item', 'side') + '</th><th class="r">' + bi('العدد', 'Qty', 'side') + '</th><th class="r">L.L.</th></tr>' + r.items.map(function (x) {
+  h += '<div class="cols"><div class="card"><h3 class="display">' + bi('الأصناف المباعة', 'Items sold') + '</h3>' + (r.items.length ?
+    '<table><tr><th>' + bi('الصنف', 'Item') + '</th><th class="r">' + bi('العدد', 'Qty') + '</th><th class="r">L.L.</th></tr>' + r.items.map(function (x) {
       return '<tr><td>' + bi(arName(x.name), x.name) + '<div class="bar" style="width:' + Math.max(4, x.qty / max * 100) + '%"></div></td><td class="r num"><b>' + fmt(x.qty) + '</b></td><td class="r num">' + fmt(x.sales) + '</td></tr>' }).join('') + '</table>'
-    : '<p class="muted">' + bi('ما في طلبات بهالتواريخ', 'No orders in these dates', 'side') + '</p>') + '</div><div>';
-  if (r.days.length > 1) h += '<div class="card"><h3 class="display">' + bi('حسب اليوم', 'By day', 'side') + '</h3><table><tr><th>' + bi('التاريخ', 'Date', 'side') + '</th><th class="r">' + bi('طلبات', 'Orders', 'side') + '</th><th class="r">L.L.</th></tr>' +
+    : '<p class="muted">' + bi('ما في طلبات بهالتواريخ', 'No orders in these dates') + '</p>') + '</div><div>';
+  if (r.days.length > 1) h += '<div class="card"><h3 class="display">' + bi('حسب اليوم', 'By day') + '</h3><table><tr><th>' + bi('التاريخ', 'Date') + '</th><th class="r">' + bi('طلبات', 'Orders') + '</th><th class="r">L.L.</th></tr>' +
     r.days.map(function (d) { return '<tr><td class="num">' + d.date + '</td><td class="r num">' + d.orders + '</td><td class="r num">' + fmt(d.sales) + '</td></tr>' }).join('') + '</table></div>';
-  if (r.orders) h += '<div class="card"><h3 class="display">' + bi('الطلبات', 'Orders', 'side') + '</h3>' + (r.orders.length ? '<table><tr><th>#</th><th>' + bi('الأصناف', 'Items', 'side') + '</th><th class="r">' + bi('المجموع', 'Total', 'side') + '</th><th></th></tr>' +
+  if (r.orders) h += '<div class="card"><h3 class="display">' + bi('الطلبات', 'Orders') + '</h3>' + (r.orders.length ? '<table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
     r.orders.map(function (o) {
-      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + o.time + '</div></td><td>' + esc(itemsAr(o.items)) + '<div><span class="pill ' + o.payment + '">' + (PAY_AR[o.payment] || o.payment) + '</span></div></td><td class="r num">' + fmt(o.total) +
-        '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete', 'side') + '</button></td></tr>' }).join('') + '</table>' : '<p class="muted">' + bi('لسا ما في طلبات', 'No orders yet', 'side') + '</p>') + '</div>';
+      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + o.time + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span></div></td><td class="r num">' + fmt(o.total) +
+        '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>' }).join('') + '</table>' : '<p class="muted">' + bi('لسا ما في طلبات', 'No orders yet') + '</p>') + '</div>';
   else h += '<div class="card"><p class="muted" style="margin:0">' + bi('اختار 3 أيام أو أقل لتشوف كل طلب', 'Pick up to 3 days to see each order') + '</p></div>';
   h += '</div></div>';
   $('#rep').innerHTML = h; bindFilters();
   document.querySelectorAll('.del').forEach(function (b) {
     b.onclick = function () {
-      if (!confirm('تمسح الطلب رقم ' + b.dataset.n + ' (' + b.dataset.d + ')؟ · Delete this order?')) return;
+      if (!confirm(T('تمسح الطلب رقم ' + b.dataset.n + ' (' + b.dataset.d + ')؟', 'Delete order #' + b.dataset.n + ' (' + b.dataset.d + ')?'))) return;
       call('deleteOrder', pin(), b.dataset.d, +b.dataset.n).then(function () { toast('انمسح الطلب', 'Order deleted'); loadReport() }, function (e) { alert(e.message || e) });
     };
   });
 }
 
-showNet(); updateSave(); loadMenu(); flush(true);
+/* ---------- language ---------- */
+function setLang(l) {
+  lang = l === 'en' ? 'en' : 'ar'; store(LKEY, lang);
+  document.body.className = 'lang-' + lang;
+  document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  $('#note').placeholder = T('ملاحظة (اختياري)', 'Note (optional)');
+  if (MENU.length) renderGrid();
+}
+$('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
+
+setLang(store(LKEY) || 'ar'); showNet(); updateSave(); loadMenu(); flush(true);
 </script>
 </body>
 </html>
