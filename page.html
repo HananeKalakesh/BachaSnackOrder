@@ -35,31 +35,27 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .net{font-size:14px;background:var(--mustard);color:var(--ink);padding:4px 12px;border-radius:999px;white-space:nowrap}
 .net:empty{display:none}
 
-/* order screen */
-.order{display:grid;grid-template-columns:1fr 350px;height:calc(100% - 68px)}
+/* order screen: section tabs on top (all visible, they wrap), then the menu as colored section cards
+   in balanced columns, in menu order, column by column */
+.order{display:grid;grid-template-columns:1fr 330px;height:calc(100% - 68px)}
 .left{display:flex;flex-direction:column;min-width:0;min-height:0}
-/* section pills: each in its section color; tapping one jumps to that section */
-.cats{display:flex;gap:10px;overflow-x:auto;padding:12px 18px;scrollbar-width:none;flex:none;background:rgba(250,245,236,.92);border-bottom:1px solid var(--hairline)}
-.cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;height:44px;padding:0 20px;border-radius:999px;background:var(--c);color:var(--f);font-size:16px;font-weight:600;white-space:nowrap;transition:box-shadow .15s}
-.lang-ar .cats button{font-weight:700}
-.cats button.on{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--c)}
-.grid{position:relative;flex:1;overflow-y:auto;padding:4px 18px 40vh;-webkit-overflow-scrolling:touch}
-.sec{padding-top:18px}
-.sec h3{display:flex;align-items:center;gap:12px;margin:0 2px 12px;font-size:30px;line-height:1.1;color:var(--ink)}
-.lang-en .sec h3{font-size:30px}
-.sec h3::before{content:"";width:12px;height:28px;border-radius:999px;background:var(--c);flex:none}
-.sec h3::after{content:"";flex:1;height:1px;background:var(--hairline)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
-.tile{position:relative;min-height:100px;padding:16px 14px 12px;border-radius:18px;background:var(--white);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:stretch;text-align:start;overflow:hidden;transition:transform .08s,background .12s}
-.tile::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--c)}
-.tile:active{transform:scale(.97)}
-.tile b{font-weight:700;font-size:18px;line-height:1.25;color:var(--ink)}
-.tile .pr{margin-top:auto;padding-top:8px;font:800 17px/1 "Plus Jakarta Sans",sans-serif;letter-spacing:.02em;color:var(--muted);text-align:start}
-.tile.has{background:var(--c)}
-.tile.has b,.tile.has .pr{color:var(--f)}
-.tile .q{position:absolute;top:12px;inset-inline-end:10px;min-width:36px;height:36px;padding:0 8px;border-radius:999px;background:var(--mustard);color:var(--ink);font:800 18px/36px "Plus Jakarta Sans",sans-serif;text-align:center;box-shadow:0 4px 10px -4px rgba(26,26,23,.3)}
-.tile.has b{padding-inline-end:42px}
+.cats{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;flex:none;border-bottom:1px solid var(--hairline)}
+.cats button{height:34px;padding:0 13px;border-radius:999px;background:var(--c);color:var(--f);font-size:14px;font-weight:700;white-space:nowrap}
+.cats button .n{display:inline-block;min-width:20px;height:20px;margin-inline-start:6px;padding:0 5px;border-radius:999px;background:var(--paper);color:var(--ink);font:800 12px/20px "Plus Jakarta Sans",sans-serif;text-align:center}
+.grid{position:relative;flex:1;overflow-y:auto;padding:10px 12px 24px;-webkit-overflow-scrolling:touch}
+.flow{display:flex;gap:10px;align-items:flex-start}
+.flow > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.sec{background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
+.sec.flash{box-shadow:0 0 0 4px var(--c),var(--shadow-sm)}
+.sec h3{margin:0;padding:5px 12px;background:var(--c);color:var(--f);font-size:19px;line-height:1.3}
+.lang-en .sec h3{font-size:17px;line-height:1.4}
+.tile{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:5px 12px;text-align:start;border-top:1px solid var(--hairline);transition:background .1s}
+.sec h3 + .tile{border-top:0}
+.tile:active{background:var(--sand)}
+.tile b{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.25;color:var(--ink)}
+.tile .pr{flex:none;font:800 13px "Plus Jakarta Sans",sans-serif;color:var(--muted)}
+.tile.has{background:var(--t)}
+.tile .q{flex:none;min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:var(--c);color:var(--f);font:800 15px/28px "Plus Jakarta Sans",sans-serif;text-align:center}
 
 .right{background:var(--white);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0;z-index:1}
 .ticket{flex:1;overflow-y:auto;padding:14px 18px}
@@ -91,29 +87,86 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .save{margin-top:12px;width:100%;height:70px;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:22px;box-shadow:var(--shadow-cta)}
 .save:disabled{background:var(--sand);color:var(--muted);box-shadow:none}
 
-/* report */
-.report{height:calc(100% - 68px);overflow-y:auto;padding:18px;display:none}
-.wrap{max-width:1100px;margin:0 auto}
-.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px}
-.filters .q button{height:44px;padding:0 20px;border-radius:999px;background:var(--sand);font-weight:600}
-.filters .q button.on{background:var(--green);color:var(--paper)}
-.filters label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
-.filters input{height:44px;border-radius:16px;border:0;background:var(--input);padding:0 12px;font-family:"Plus Jakarta Sans",sans-serif}
-.q{display:flex;flex-wrap:wrap;gap:8px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--white);border-radius:24px;padding:18px 20px;box-shadow:var(--shadow)}
-.kpi small{display:block;font-size:14px;color:var(--muted)}
-.kpi b{display:block;font-size:24px;font-weight:800;margin-top:6px;text-align:start}
-.kpi > span{display:block;color:var(--muted);font-size:14px;margin-top:2px}
-.kpi.hero{background:var(--green);color:var(--paper)}.kpi.hero small,.kpi.hero span{color:rgba(250,245,236,.8)}
-.cols{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
-.card{background:var(--white);border-radius:24px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:16px}
-.card h3{margin:0 0 10px;font-size:26px;color:var(--ink)}
+/* sales: amounts in $ (big) with L.L. (small) under them; one green ramp for "how much" */
+.report{height:calc(100% - 68px);overflow-y:auto;padding:16px 18px 40px;display:none;-webkit-overflow-scrolling:touch}
+.wrap{max-width:1180px;margin:0 auto}
+:root{--g1:#E3EDE7;--g2:#C3D9CB;--g3:#94BBA4;--g4:#5E957A;--g5:#336B51;--g6:#1F4A37;--whish-bar:#E4007C}
+.usd{display:block;font-size:28px;font-weight:800;line-height:1.15;margin-top:4px}
+.ll{display:block;font-size:13px;font-weight:600;color:var(--muted)}
+.shead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.shead h2{margin:0 6px;font-size:36px;color:var(--ink);min-width:0}
+.lang-en .shead h2{font-size:34px}
+.nav{width:48px;height:48px;border-radius:999px;background:var(--white);box-shadow:var(--shadow-sm);color:var(--green);font:800 30px/1 "Plus Jakarta Sans",sans-serif}
+[dir=rtl] .chev{display:inline-block;transform:scaleX(-1)}
+.today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
+.kpi > small:first-child{display:block;font-size:14px;color:var(--muted);font-weight:700}
+.kpi.hero{background:var(--green);color:var(--paper)}
+.kpi.hero > small:first-child,.kpi.hero .ll{color:rgba(250,245,236,.75)}
+.kpi.hero .usd{font-size:34px}
+.card{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px;min-width:0}
+.card h3{margin:0 0 12px;font-size:24px;color:var(--ink)}
+.lang-en .card h3{font-size:20px}
+.chead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.chead .tot{text-align:end}.chead .tot .usd{font-size:24px;margin:0}
+/* year strip */
+.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px}
+.mo{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;border-radius:14px;min-width:0}
+.mo.on{background:var(--sand)}
+.mo .track{position:relative;width:100%;max-width:34px;height:70px;display:flex;align-items:flex-end}
+.mo .track i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--g3)}
+.mo.on .track i{background:var(--green)}
+.mo .mn{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.mo b{font-size:12px;font-weight:800;color:var(--ink)}
+/* calendar */
+.cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;align-items:start}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.wd{font-size:12px;color:var(--muted);text-align:center;padding-bottom:4px;white-space:nowrap;overflow:hidden}
+.day{position:relative;min-height:78px;border-radius:12px;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 2px 6px;min-width:0;color:var(--ink)}
+.day .dn{position:absolute;top:5px;inset-inline-start:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.day b{font-size:16px;font-weight:800;line-height:1.1}
+.day small{font-size:10px;font-weight:600;opacity:.8;white-space:nowrap}
+.day.s1{background:var(--g1)}.day.s2{background:var(--g2)}.day.s3{background:var(--g3)}
+.day.s4{background:var(--g4);color:#fff}.day.s5{background:var(--g5);color:#fff}.day.s6{background:var(--g6);color:var(--paper)}
+.day.s4 .dn,.day.s5 .dn,.day.s6 .dn{color:rgba(255,255,255,.8)}
+.day.future{opacity:.45}
+.day.today{box-shadow:inset 0 0 0 2px var(--mustard)}
+.day.sel{box-shadow:0 0 0 3px var(--white),0 0 0 5px var(--ink)}
+.legend{display:flex;align-items:center;gap:4px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend i{width:16px;height:12px;border-radius:3px}
+.legend i.s1{background:var(--g1)}.legend i.s2{background:var(--g2)}.legend i.s3{background:var(--g3)}.legend i.s4{background:var(--g4)}.legend i.s5{background:var(--g5)}.legend i.s6{background:var(--g6)}
+.legend .hint{margin-inline-start:auto}
+/* cash and whish */
+.split{display:flex;gap:2px;height:16px;border-radius:999px;overflow:hidden;margin-bottom:12px;background:var(--sand)}
+.split i{display:block;height:100%}
+.split .cash,.dot.cash{background:var(--green)}.split .whish,.dot.whish{background:var(--whish-bar)}
+.pay2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pay2 .usd{font-size:22px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:999px;margin-inline-end:6px}
+/* best sellers */
+.seller{padding:6px 0;border-bottom:1px solid var(--hairline)}
+.seller:last-child{border-bottom:0}
+.tn{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+.tq{font-weight:800}
+.tb{height:8px;margin:4px 0 2px;border-radius:4px;background:var(--sand)}
+.tb i{display:block;height:100%;border-radius:4px;background:var(--g4)}
+/* the selected day */
+.dstats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-bottom:6px;color:var(--muted);font-size:15px}
+.dstats b{color:var(--ink);font-size:18px}
+.dayc h4{margin:16px 0 8px;font-size:15px;color:var(--green)}
+.readout{min-height:24px;font-size:15px;margin-bottom:6px}
+.hours{display:flex;gap:4px;align-items:flex-end}
+.hr{flex:1;max-width:56px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted);padding:0}
+.hr .track{position:relative;width:100%;height:120px;display:flex;align-items:flex-end;justify-content:center}
+.hr .track i{display:block;width:70%;border-radius:4px 4px 0 0;background:var(--g4)}
+.hr.on .track i{background:var(--green)}
+.hr em{position:absolute;top:-2px;font-style:normal;font-weight:800;color:var(--ink);font-size:12px}
+.dayc table td .usd{font-size:17px;margin:0}
 table{width:100%;border-collapse:collapse;font-size:15px}
 th{text-align:start;font-size:13px;color:var(--muted);padding:6px 4px;border-bottom:1px solid var(--hairline)}
 td{padding:8px 4px;border-bottom:1px solid var(--hairline);vertical-align:top}
 td.r,th.r{text-align:end}
-.bar{height:6px;border-radius:3px;background:var(--mustard);margin-top:4px}
 .del{color:var(--red);font-size:14px;padding:4px 6px}
 .pin{max-width:340px;margin:60px auto;text-align:center}
 .pin input{width:100%;height:60px;font-size:28px;text-align:center;letter-spacing:.4em;border-radius:16px;border:0;background:var(--input);margin:12px 0;outline:none;direction:ltr}
@@ -127,7 +180,7 @@ td.r,th.r{text-align:end}
 .toast.show{transform:translate(-50%,0)}
 
 @media (max-width:1000px){.order{grid-template-columns:1fr 310px}.tiles{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}.cols{grid-template-columns:1fr}}
-@media (max-width:700px){.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 68px)}.top .logo{height:38px}.tabs button{padding:0 12px}.grid{padding-bottom:20px}}
+@media (max-width:700px){.kpis{grid-template-columns:1fr 1fr}.months{grid-template-columns:repeat(6,minmax(0,1fr))}.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 68px)}.top .logo{height:38px}.tabs button{padding:0 12px}.grid{padding-bottom:20px}}
 </style>
 </head>
 <body class="lang-ar">
@@ -167,13 +220,15 @@ var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبل�
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
   'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات وإضافات', 'Drinks': 'مشروبات'};
 var PAY_AR = {Cash: 'كاش', Whish: 'ويش'};
-// Section colors, one El Bash color per food group: [background, text on it]
-var MUSTARD = ['#F2B705', '#1A1A17'], RED = ['#C8102E', '#FFFFFF'], GREEN = ['#1F4A37', '#FAF5EC'], INK = ['#1A1A17', '#FAF5EC'], SAND = ['#EFE6D6', '#1A1A17'];
+// Section colors, one El Bash color per food group
+// [background, text on it, tint behind items already in the order]
+var MUSTARD = ['#F2B705', '#1A1A17', '#FDF1CC'], RED = ['#C8102E', '#FFFFFF', '#FBE4E8'], GREEN = ['#1F4A37', '#FAF5EC', '#E2ECE6'],
+  INK = ['#1A1A17', '#FAF5EC', '#E9E7E2'], SAND = ['#EFE6D6', '#1A1A17', '#F6EFE2'];
 var CAT_COLOR = {'Fries': MUSTARD, 'Appetizers': MUSTARD, 'Meals': RED, 'Family Meals': RED, 'Plates': RED,
   'Chicken Sandwiches': GREEN, 'Beef Sandwiches': GREEN, 'Other Sandwiches': GREEN, 'Chicken Burgers': INK, 'Beef Burgers': INK,
   'Sauces & Extras': SAND, 'Drinks': SAND};
 function catColor(c) { return CAT_COLOR[c] || SAND }
-function catVars(c) { var k = catColor(c); return '--c:' + k[0] + ';--f:' + k[1] }
+function catVars(c) { var k = catColor(c); return '--c:' + k[0] + ';--f:' + k[1] + ';--t:' + k[2] }
 // Words the colored section header already says are left off the menu buttons (the ticket keeps full names)
 var SANDWICH = [/^ساندويش\s+/, /\s+Sandwich$/];
 var TRIM = {'Family Meals': [/^وجبة عائلية\s+/, /\s+Family Meal/], 'Meals': [/^وجبة\s+/, /\s+Meal\b/], 'Plates': [/^صحن\s+/, /\s+Plate$/],
@@ -206,41 +261,48 @@ function loadMenu() {
   call('getMenu').then(function (m) {
     MENU = m.items; RATE = m.rate;
     CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) });
-    renderGrid(); renderCats(); renderCart();
+    renderGrid(); renderCart();
   }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.') + '<br><small>' + esc(e.message || e) + '</small></div>' });
 }
 function renderGrid() {
   var grid = $('#grid'), top = grid.scrollTop;
-  grid.innerHTML = CATS.map(function (c, k) {
-    var h = '<section class="sec" id="sec' + k + '" style="' + catVars(c) + '"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3><div class="tiles">';
+  var n = Math.max(1, Math.floor((grid.clientWidth - 24 + 10) / 195));
+  grid.innerHTML = '<div class="flow">' + new Array(n + 1).join('<div></div>') + '</div>';
+  var cols = [].slice.call(grid.firstChild.children);
+  cols[0].innerHTML = CATS.map(function (c, k) {
+    var h = '<div class="sec" id="sec' + k + '" style="' + catVars(c) + '"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3>';
     MENU.forEach(function (it, i) {
       if (it.cat !== c) return;
       var q = cart[i] || 0;
       h += '<button class="tile' + (q ? ' has' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
-        '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b><span class="pr">' + short(it.price) + '</span></button>';
+        '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b><span class="pr num">' + short(it.price) + '</span></button>';
     });
-    return h + '</div></section>';
+    return h + '</div>';
   }).join('');
+  // Sections stay whole and in menu order, filling the columns one after the other.
+  // Find the shortest column height that still fits every section into the columns.
+  var secs = [].slice.call(cols[0].children), hs = secs.map(function (el) { return el.offsetHeight + 10 });
+  function cut(limit) { var out = [[]], sum = 0; hs.forEach(function (h, k) { if (sum + h > limit && out[out.length - 1].length) { out.push([]); sum = 0 } out[out.length - 1].push(secs[k]); sum += h }); return out }
+  var lo = Math.max.apply(null, hs), hi = hs.reduce(function (a, b) { return a + b }, 0);
+  while (lo < hi) { var mid = Math.floor((lo + hi) / 2); if (cut(mid).length <= n) hi = mid; else lo = mid + 1 }
+  cut(lo).forEach(function (list, k) { list.forEach(function (el) { cols[k].appendChild(el) }) });
   grid.scrollTop = top;
 }
+// Section tabs, with how many of that section's items are in the order
 function renderCats() {
-  $('#cats').innerHTML = CATS.map(function (c, k) { return '<button data-k="' + k + '" style="' + catVars(c) + '">' + bi(CAT_AR[c] || c, c) + '</button>' }).join('');
-  spy();
+  $('#cats').innerHTML = CATS.map(function (c, k) {
+    var q = 0; for (var i in cart) if (MENU[i].cat === c) q += cart[i];
+    return '<button data-k="' + k + '" style="' + catVars(c) + '">' + bi(CAT_AR[c] || c, c) + (q ? '<span class="n">' + q + '</span>' : '') + '</button>';
+  }).join('');
 }
-// Highlight the chip of the section at the top of the menu
-function spy() {
-  var grid = $('#grid'), cur = 0;
-  CATS.forEach(function (c, k) { var el = document.getElementById('sec' + k); if (el && el.offsetTop - grid.scrollTop <= 40) cur = k });
-  document.querySelectorAll('.cats button').forEach(function (b) {
-    var on = +b.dataset.k === cur;
-    if (on && !b.classList.contains('on')) b.scrollIntoView({block: 'nearest', inline: 'nearest'});
-    b.classList.toggle('on', on);
-  });
-}
-$('#grid').addEventListener('scroll', spy, {passive: true});
+var lastW = 0;
+window.addEventListener('resize', function () { var w = $('#grid').clientWidth; if (MENU.length && w !== lastW) { lastW = w; renderGrid() } });
 $('#cats').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
-  $('#grid').scrollTo({top: document.getElementById('sec' + b.dataset.k).offsetTop - 4, behavior: 'smooth'});
+  var grid = $('#grid'), el = document.getElementById('sec' + b.dataset.k);
+  var y = el.offsetTop - 8;
+  if (y < grid.scrollTop || y + 60 > grid.scrollTop + grid.clientHeight) grid.scrollTo({top: y, behavior: 'smooth'});
+  el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash') }, 900);
 });
 $('#grid').addEventListener('click', function (e) { var b = e.target.closest('.tile'); if (!b) return; var i = +b.dataset.i; cart[i] = (cart[i] || 0) + 1; renderGrid(); renderCart() });
 
@@ -256,7 +318,7 @@ function renderCart() {
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
   $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
-  updateSave();
+  renderCats(); updateSave();
 }
 $('#lines').addEventListener('click', function (e) {
   var b = e.target.closest('button[data-d]'); if (!b) return;
@@ -319,81 +381,188 @@ document.querySelectorAll('.tabs button').forEach(function (b) {
   });
 });
 
-/* ---------- sales report ---------- */
-var range = {from: '', to: '', key: 'today'};
-function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) }
-function preset(k) {
-  var d = new Date(), f = new Date(d), t = new Date(d);
-  if (k === 'yesterday') { f.setDate(d.getDate() - 1); t = new Date(f) }
-  if (k === 'week') { f.setDate(d.getDate() - ((d.getDay() + 6) % 7)) }
-  if (k === 'month') { f = new Date(d.getFullYear(), d.getMonth(), 1) }
-  if (k === 'all') { f = new Date(2020, 0, 1) }
-  range = {from: ymd(f), to: ymd(t), key: k};
-}
+/* ---------- sales: month calendar, year strip, month and day details; amounts in $ with L.L. under them ---------- */
+var MONTHS_AR = ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'];
+var MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var WEEK_AR = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'], WEEK_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+// y, m (0-11): the month shown; sel: the day opened below the calendar; years / months / days: report data by period
+var S = {y: 0, m: 0, sel: '', rate: 89500, years: {}, months: {}, days: {}, busy: {}, locked: false, err: '', hour: -1};
+
+function pad(n) { return ('0' + n).slice(-2) }
+function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) }
+function monthKey(y, m) { return y + '-' + pad(m + 1) }
+function daysIn(y, m) { return new Date(y, m + 1, 0).getDate() }
+function usdOf(lbp) { return lbp / S.rate }
+function $usd(lbp) { var v = usdOf(lbp); return '$' + (v > 0 && v < 100 ? v.toFixed(2) : fmt(v)) }
+function ll(lbp) { return fmt(lbp) + ' L.L.' }
+function llShort(lbp) { return lbp >= 1e6 ? (Math.round(lbp / 1e5) / 10) + 'M' : fmt(lbp / 1000) + 'K' }
+function amount(lbp) { return '<b class="usd num">' + $usd(lbp) + '</b><small class="ll num">' + ll(lbp) + '</small>' }
+function dayName(d) { var w = (new Date(d + 'T12:00').getDay() + 6) % 7, k = +d.slice(8), m = +d.slice(5, 7) - 1; return bi(WEEK_AR[w] + ' ' + k + ' ' + MONTHS_AR[m], WEEK_EN[w] + ' ' + k + ' ' + MONTHS_EN[m]) }
+
 function pin() { try { return sessionStorage.getItem(PKEY) || '' } catch (e) { return '' } }
 function setPin(p) { try { sessionStorage.setItem(PKEY, p) } catch (e) {} }
-
-function showReport() {
-  if (!range.from) preset('today');
-  loadReport();
-}
 function pinScreen(msg) {
-  $('#rep').innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:30px;margin:0">' + bi('المبيعات', 'Sales') + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN') + '</p>' +
+  $('#rep').innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:34px;margin:0">' + bi('المبيعات', 'Sales') + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN') + '</p>' +
     '<input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="err">' + msg + '</div><button id="pinGo">' + bi('افتح', 'Open') + '</button></div>';
   var go = function () { setPin($('#pinIn').value); showReport() };
   $('#pinGo').onclick = go; $('#pinIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#pinIn').focus();
 }
-function loadReport() {
-  $('#rep').innerHTML = filters() + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; bindFilters();
-  call('getReport', pin(), range.from, range.to).then(renderReport, function (e) {
-    if (/PIN/.test(e.message || '')) { var had = pin(); setPin(''); return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '') }
-    $('#rep').innerHTML = filters() + '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report') + '<br><small>' + esc(e.message || e) + '</small></p>'; bindFilters();
+
+/* Each period is fetched once per visit to the tab; the page redraws as each arrives */
+function fetchR(kind, key, from, to) {
+  if (S[kind][key] || S.busy[kind + key]) return;
+  S.busy[kind + key] = 1;
+  call('getReport', pin(), from, to).then(function (r) {
+    delete S.busy[kind + key]; S.rate = r.rate || S.rate; S[kind][key] = r; drawSales();
+  }, function (e) {
+    delete S.busy[kind + key];
+    if (/PIN/.test(e.message || '')) { if (S.locked) return; S.locked = true; var had = pin(); setPin(''); return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '') }
+    S.err = e.message || String(e); drawSales();
   });
 }
-function filters() {
-  var q = [['today', 'اليوم', 'Today'], ['yesterday', 'مبارح', 'Yesterday'], ['week', 'هالجمعة', 'This week'], ['month', 'هالشهر', 'This month'], ['all', 'كل الوقت', 'All time']];
-  return '<div class="filters"><div class="q">' + q.map(function (x) { return '<button data-k="' + x[0] + '" class="' + (range.key === x[0] ? ' on' : '') + '">' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
-    '<div><label for="fFrom">' + bi('من', 'From') + '</label><input type="date" id="fFrom" value="' + range.from + '"></div>' +
-    '<div><label for="fTo">' + bi('لـ', 'To') + '</label><input type="date" id="fTo" value="' + range.to + '"></div></div>';
+function showReport() {
+  S.years = {}; S.months = {}; S.days = {}; S.err = ''; S.locked = false;
+  if (!S.y) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
+  drawSales();
 }
-function bindFilters() {
-  document.querySelectorAll('.filters .q button').forEach(function (b) { b.onclick = function () { preset(b.dataset.k); loadReport() } });
-  var ch = function () { range = {from: $('#fFrom').value, to: $('#fTo').value, key: ''}; if (range.from && range.to) loadReport() };
-  $('#fFrom').onchange = ch; $('#fTo').onchange = ch;
+
+function drawSales() {
+  if (S.locked) return;
+  var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(new Date());
+  fetchR('years', y, y + '-01-01', y + '-12-31');
+  fetchR('months', mk, mk + '-01', mk + '-' + pad(daysIn(y, m)));
+  if (S.sel) fetchR('days', S.sel, S.sel, S.sel);
+  if (S.locked) return;
+  var Y = S.years[y], M = S.months[mk], D = S.sel && S.days[S.sel], wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
+
+  // daily totals for the whole year come from one call; the month and the year strip are built from them
+  var byDay = {}, byMonth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  if (Y) Y.days.forEach(function (d) { byDay[d.date] = d; byMonth[+d.date.slice(5, 7) - 1] += d.sales });
+  var mSales = 0, mOrders = 0, best = null;
+  for (var k = 1; k <= daysIn(y, m); k++) {
+    var d = byDay[mk + '-' + pad(k)]; if (!d) continue;
+    mSales += d.sales; mOrders += d.orders; if (!best || d.sales > best.sales) best = d;
+  }
+
+  var h = '<div class="shead">' +
+    '<button class="nav" data-mv="-1" aria-label="' + T('الشهر الماضي', 'Previous month') + '"><span class="chev">‹</span></button>' +
+    '<h2 class="display">' + bi(MONTHS_AR[m] + ' ' + y, MONTHS_EN[m] + ' ' + y) + '</h2>' +
+    '<button class="nav" data-mv="1" aria-label="' + T('الشهر الجاي', 'Next month') + '"><span class="chev">›</span></button>' +
+    (mk !== today.slice(0, 7) ? '<button class="today" data-today="1">' + bi('هالشهر', 'This month') + '</button>' : '') + '</div>';
+  if (S.err) h += '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report') + ' · <small>' + esc(S.err) + '</small></p>';
+
+  // headline numbers for the month
+  h += '<div class="kpis">' +
+    '<div class="kpi hero"><small>' + bi('مبيعات الشهر', 'Month sales') + '</small>' + (Y ? amount(mSales) : wait) + '</div>' +
+    '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + (Y ? fmt(mOrders) : '…') + '</b>' +
+      (mOrders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(mSales / mOrders) + '</span></small>' : '') + '</div>' +
+    '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + '</small>' : '<b class="usd">–</b>') + '</div>' +
+    '<div class="kpi"><small>' + bi('الأصناف المباعة', 'Items sold') + '</small><b class="usd num">' + (M ? fmt(M.summary.items) : '…') + '</b></div>' +
+    '</div>';
+
+  // the year strip: one bar per month, tap to open it
+  var maxM = Math.max.apply(null, byMonth) || 1, yTotal = byMonth.reduce(function (a, b) { return a + b }, 0);
+  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('السنة ' + y, y + ' by month') + '</h3>' +
+    (Y ? '<span class="tot">' + amount(yTotal) + '</span>' : '') + '</div><div class="months">' +
+    byMonth.map(function (v, i) {
+      return '<button class="mo' + (i === m ? ' on' : '') + '" data-m="' + i + '"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxM * 100) : 0) + '%"></i></span>' +
+        '<span class="mn">' + bi(MONTHS_AR[i], MONTHS_EN[i].slice(0, 3)) + '</span><b class="num">' + (v ? $usd(v) : '–') + '</b></button>';
+    }).join('') + '</div></div>';
+
+  // the month calendar, Monday first; each day shaded by its sales (one green, darker = more)
+  var first = (new Date(y, m, 1).getDay() + 6) % 7, maxD = 0;
+  for (k = 1; k <= daysIn(y, m); k++) { d = byDay[mk + '-' + pad(k)]; if (d && d.sales > maxD) maxD = d.sales }
+  var cal = '<div class="card calcard"><div class="cal">' + WEEK_AR.map(function (w, i) { return '<span class="wd">' + bi(w, WEEK_EN[i]) + '</span>' }).join('');
+  for (k = 0; k < first; k++) cal += '<span></span>';
+  for (k = 1; k <= daysIn(y, m); k++) {
+    var key = mk + '-' + pad(k); d = byDay[key];
+    var step = d && d.sales ? Math.min(6, 1 + Math.floor(d.sales / maxD * 5.999)) : 0;
+    cal += '<button class="day s' + step + (key === today ? ' today' : '') + (key === S.sel ? ' sel' : '') + (key > today ? ' future' : '') + '" data-d="' + key + '">' +
+      '<span class="dn num">' + k + '</span>' + (d && d.sales ? '<b class="num">' + $usd(d.sales) + '</b><small class="num">' + llShort(d.sales) + ' L.L.</small>' : '') + '</button>';
+  }
+  cal += '</div><div class="legend">' + bi('أقل', 'Less') + '<i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i>' + bi('أكتر', 'More') +
+    '<span class="hint">' + bi('دق على يوم لتشوف طلباتو', 'Tap a day to see its orders') + '</span></div></div>';
+
+  // payment split and best sellers for the month
+  var side = '<div class="card"><h3 class="display">' + bi('كاش وويش', 'Cash and Whish') + '</h3>';
+  if (M && M.summary.orders) {
+    var s = M.summary, all = (s.cashLbp + s.whishLbp) || 1;
+    side += '<div class="split"><i class="cash" style="width:' + (s.cashLbp / all * 100) + '%"></i><i class="whish" style="width:' + (s.whishLbp / all * 100) + '%"></i></div>' +
+      '<div class="pay2"><div><span class="dot cash"></span>' + bi('كاش', 'Cash') + ' <small class="muted num">' + Math.round(s.cashLbp / all * 100) + '%</small>' + amount(s.cashLbp) + '<small class="ll">' + fmt(s.cashOrders) + ' ' + bi('طلب', 'orders') + '</small></div>' +
+      '<div><span class="dot whish"></span>' + bi('ويش', 'Whish') + ' <small class="muted num">' + Math.round(s.whishLbp / all * 100) + '%</small>' + amount(s.whishLbp) + '<small class="ll">' + fmt(s.whishOrders) + ' ' + bi('طلب', 'orders') + '</small></div></div>';
+  } else side += M ? '<p class="muted">' + bi('ما في طلبات بهالشهر', 'No orders this month') + '</p>' : wait;
+  side += '</div><div class="card"><h3 class="display">' + bi('الأكتر مبيعاً', 'Best sellers') + '</h3>';
+  if (M && M.items.length) {
+    var top = M.items.slice(0, 8), maxQ = top[0].qty;
+    side += top.map(function (x) {
+      return '<div class="seller"><div class="tn">' + bi(arName(x.name), x.name) + '<span class="tq num">' + fmt(x.qty) + '</span></div>' +
+        '<div class="tb"><i style="width:' + Math.max(3, x.qty / maxQ * 100) + '%"></i></div><small class="ll num">' + $usd(x.sales) + ' · ' + ll(x.sales) + '</small></div>';
+    }).join('');
+  } else side += M ? '<p class="muted">–</p>' : wait;
+  side += '</div>';
+  h += '<div class="cols">' + cal + '<div>' + side + '</div></div>';
+
+  // the selected day: total, sales by hour, every order
+  if (S.sel) {
+    h += '<div class="card dayc" id="dayCard"><div class="chead"><h3 class="display">' + dayName(S.sel) + '</h3>' + (D ? '<span class="tot">' + amount(D.summary.sales) + '</span>' : '') + '</div>';
+    if (!D) h += wait;
+    else if (!D.orders || !D.orders.length) h += '<p class="muted">' + bi('ما في طلبات بهاليوم', 'No orders on this day') + '</p>';
+    else {
+      var hours = {}, lo = 24, hi = -1;
+      D.orders.forEach(function (o) { var hr = +String(o.time).slice(0, 2); if (isNaN(hr)) return; hours[hr] = hours[hr] || {sales: 0, orders: 0}; hours[hr].sales += o.total; hours[hr].orders++; lo = Math.min(lo, hr); hi = Math.max(hi, hr) });
+      var maxH = 0; for (k = lo; k <= hi; k++) if (hours[k] && hours[k].sales > maxH) maxH = hours[k].sales;
+      var pick = S.hour >= lo && S.hour <= hi ? S.hour : -1;
+      h += '<div class="dstats"><span><b class="num">' + fmt(D.summary.orders) + '</b> ' + bi('طلب', 'orders') + '</span><span>' + bi('المعدّل', 'Average') + ' <b class="num">' + $usd(D.summary.sales / D.summary.orders) + '</b></span>' +
+        '<span>' + bi('كاش', 'Cash') + ' <b class="num">' + $usd(D.summary.cashLbp) + '</b></span><span>' + bi('ويش', 'Whish') + ' <b class="num">' + $usd(D.summary.whishLbp) + '</b></span></div>';
+      if (hi >= lo) {
+        h += '<h4>' + bi('المبيعات حسب الساعة', 'Sales by hour') + '</h4><div class="readout">' + (pick >= 0 && hours[pick] ?
+          '<b class="num">' + pad(pick) + ':00–' + pad(pick + 1) + ':00</b> · <b class="num">' + $usd(hours[pick].sales) + '</b> <small class="num">' + ll(hours[pick].sales) + '</small> · ' + fmt(hours[pick].orders) + ' ' + bi('طلب', 'orders')
+          : '<span class="muted">' + bi('دق على ساعة لتشوف رقمها', 'Tap an hour to see its numbers') + '</span>') + '</div><div class="hours">';
+        for (k = lo; k <= hi; k++) {
+          var v = hours[k] ? hours[k].sales : 0;
+          h += '<button class="hr' + (k === pick ? ' on' : '') + '" data-h="' + k + '"><span class="track">' + (v === maxH && v ? '<em class="num">' + $usd(v) + '</em>' : '') + '<i style="height:' + (v ? Math.max(3, v / maxH * 100) : 0) + '%"></i></span><span class="num">' + pad(k) + '</span></button>';
+        }
+        h += '</div>';
+      }
+      h += '<h4>' + bi('الطلبات', 'Orders') + '</h4><table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
+        D.orders.map(function (o) {
+          return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + esc(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span></div></td>' +
+            '<td class="r">' + amount(o.total) + '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
+        }).join('') + '</table>';
+    }
+    h += '</div>';
+  }
+  $('#rep').innerHTML = h;
 }
-function kpi(ar, en, big, small, hero) { return '<div class="kpi' + (hero ? ' hero' : '') + '"><small>' + bi(ar, en) + '</small><b class="num">' + big + '</b>' + (small ? '<span>' + small + '</span>' : '') + '</div>' }
+
+$('#rep').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b || S.locked) return;
+  if (b.dataset.mv) { moveMonth(+b.dataset.mv); return }
+  if (b.dataset.today) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t); drawSales(); return }
+  if (b.dataset.m) { S.m = +b.dataset.m; S.sel = ''; drawSales(); return }
+  if (b.dataset.h) { S.hour = +b.dataset.h === S.hour ? -1 : +b.dataset.h; drawSales(); return }
+  if (b.dataset.d && b.classList.contains('day')) {
+    S.sel = b.dataset.d; S.hour = -1; drawSales();
+    var c = $('#dayCard'); if (c) c.scrollIntoView({behavior: 'smooth', block: 'start'});
+    return;
+  }
+  if (b.classList.contains('del')) {
+    if (!confirm(T('تمسح الطلب رقم ' + b.dataset.n + ' (' + b.dataset.d + ')؟', 'Delete order #' + b.dataset.n + ' (' + b.dataset.d + ')?'))) return;
+    call('deleteOrder', pin(), b.dataset.d, +b.dataset.n).then(function () { toast('انمسح الطلب', 'Order deleted'); showReport() }, function (e) { alert(e.message || e) });
+  }
+});
+function moveMonth(k) { S.m += k; if (S.m < 0) { S.m = 11; S.y-- } if (S.m > 11) { S.m = 0; S.y++ } S.sel = ''; drawSales() }
+// swipe the calendar sideways to change month
+(function () {
+  var x0 = null, y0 = 0;
+  $('#rep').addEventListener('touchstart', function (e) { x0 = e.target.closest('.cal') ? e.touches[0].clientX : null; y0 = e.touches[0].clientY }, {passive: true});
+  $('#rep').addEventListener('touchend', function (e) {
+    if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) moveMonth((dx < 0) === (lang === 'ar') ? -1 : 1);
+  });
+})();
 function itemsAr(text) {
   return String(text).split(', ').map(function (p) { var m = p.match(/^(\d+) × (.*)$/); return m ? m[1] + ' × ' + arName(m[2]) : p }).join('، ');
-}
-function renderReport(r) {
-  var s = r.summary, h = filters();
-  h += '<div class="kpis">' +
-    kpi('المبيعات', 'Sales', money(s.sales), '<span class="num">' + usd(s.sales / r.rate) + '</span>', true) +
-    kpi('الطلبات', 'Orders', fmt(s.orders), s.orders ? bi('المعدل', 'Average') + ' <span class="num">' + money(s.sales / s.orders) + '</span>' : '') +
-    kpi('الأصناف', 'Items sold', fmt(s.items), '') +
-    kpi('كاش', 'Cash', money(s.cashLbp), '<span class="num">' + fmt(s.cashOrders) + '</span> ' + bi('طلب', 'orders')) +
-    kpi('ويش', 'Whish', money(s.whishLbp), '<span class="num">' + fmt(s.whishOrders) + '</span> ' + bi('طلب', 'orders')) +
-    '</div>';
-  var max = r.items.length ? r.items[0].qty : 1;
-  h += '<div class="cols"><div class="card"><h3 class="display">' + bi('الأصناف المباعة', 'Items sold') + '</h3>' + (r.items.length ?
-    '<table><tr><th>' + bi('الصنف', 'Item') + '</th><th class="r">' + bi('العدد', 'Qty') + '</th><th class="r">L.L.</th></tr>' + r.items.map(function (x) {
-      return '<tr><td>' + bi(arName(x.name), x.name) + '<div class="bar" style="width:' + Math.max(4, x.qty / max * 100) + '%"></div></td><td class="r num"><b>' + fmt(x.qty) + '</b></td><td class="r num">' + fmt(x.sales) + '</td></tr>' }).join('') + '</table>'
-    : '<p class="muted">' + bi('ما في طلبات بهالتواريخ', 'No orders in these dates') + '</p>') + '</div><div>';
-  if (r.days.length > 1) h += '<div class="card"><h3 class="display">' + bi('حسب اليوم', 'By day') + '</h3><table><tr><th>' + bi('التاريخ', 'Date') + '</th><th class="r">' + bi('طلبات', 'Orders') + '</th><th class="r">L.L.</th></tr>' +
-    r.days.map(function (d) { return '<tr><td class="num">' + d.date + '</td><td class="r num">' + d.orders + '</td><td class="r num">' + fmt(d.sales) + '</td></tr>' }).join('') + '</table></div>';
-  if (r.orders) h += '<div class="card"><h3 class="display">' + bi('الطلبات', 'Orders') + '</h3>' + (r.orders.length ? '<table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
-    r.orders.map(function (o) {
-      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + o.time + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span></div></td><td class="r num">' + fmt(o.total) +
-        '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>' }).join('') + '</table>' : '<p class="muted">' + bi('لسا ما في طلبات', 'No orders yet') + '</p>') + '</div>';
-  else h += '<div class="card"><p class="muted" style="margin:0">' + bi('اختار 3 أيام أو أقل لتشوف كل طلب', 'Pick up to 3 days to see each order') + '</p></div>';
-  h += '</div></div>';
-  $('#rep').innerHTML = h; bindFilters();
-  document.querySelectorAll('.del').forEach(function (b) {
-    b.onclick = function () {
-      if (!confirm(T('تمسح الطلب رقم ' + b.dataset.n + ' (' + b.dataset.d + ')؟', 'Delete order #' + b.dataset.n + ' (' + b.dataset.d + ')?'))) return;
-      call('deleteOrder', pin(), b.dataset.d, +b.dataset.n).then(function () { toast('انمسح الطلب', 'Order deleted'); loadReport() }, function (e) { alert(e.message || e) });
-    };
-  });
 }
 
 /* ---------- language ---------- */

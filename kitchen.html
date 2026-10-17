@@ -70,7 +70,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 <body class="lang-ar">
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
-  <h1 class="display"><span class="ar">المطبخ · </span><span class="en">Kitchen · </span><span id="stName"></span></h1>
+  <h1 class="display" id="stName"></h1>
   <span class="count num" id="count">0</span>
   <span class="clock num" id="clock"></span>
   <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
@@ -85,12 +85,13 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 <div class="toast" id="toast"></div>
 
 <script>
-var STATION = 'Sandwiches', STATION_AR = {'Sandwiches': 'ساندويشات'};
+var STATION = 'Kitchen', STATION_AR = {'Kitchen': 'المطبخ', 'Sandwiches': 'ساندويشات'};
 var LKEY = 'elbash-kitchen-lang', TKEY = 'elbash-kitchen-ticks';
 var orders = [], seen = null, hidden = {}, offset = 0, YELLOW = 10, RED = 20, lang = 'ar', audio = null;
 
 function $(s) { return document.querySelector(s) }
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
+function T(ar, en) { return lang === 'en' ? en : ar }
 function bi(ar, en) { return '<span class="ar">' + esc(ar) + '</span><span class="en">' + esc(en) + '</span>' }
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v) } catch (e) { return null } }
 function call(fn) {
@@ -193,7 +194,7 @@ function setLang(l) {
   lang = l === 'en' ? 'en' : 'ar'; store(LKEY, lang);
   document.body.className = 'lang-' + lang;
   document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
-  $('#stName').textContent = lang === 'en' ? STATION : (STATION_AR[STATION] || STATION);
+  $('#stName').textContent = STATION === 'Kitchen' ? T('المطبخ', 'Kitchen') : T('المطبخ · ' + (STATION_AR[STATION] || STATION), 'Kitchen · ' + STATION);
 }
 $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
 
@@ -212,7 +213,7 @@ function begin(station) {
   setInterval(load, 6000);
   setInterval(function () { tick(); render() }, 30000);
 }
-// The station comes from the link (…/exec?screen=kitchen&station=Sandwiches); Sandwiches when none is given
+// The station comes from the link (…/exec?screen=kitchen&station=Sandwiches); the whole kitchen when none is given
 try { google.script.url.getLocation(function (loc) { begin(loc.parameter && loc.parameter.station) }) } catch (e) { begin() }
 </script>
 </body>

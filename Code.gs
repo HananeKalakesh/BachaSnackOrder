@@ -7,8 +7,8 @@
  *
  * Links (same deployment):
  *   …/exec                                        the order screen
- *   …/exec?screen=kitchen                         the kitchen screen for sandwiches
- *   …/exec?screen=kitchen&station=Sandwiches      the same, naming the station
+ *   …/exec?screen=kitchen                         the kitchen screen (every item of every order)
+ *   …/exec?screen=kitchen&station=Sandwiches      a screen for one station, if the Menu tab names stations
  */
 
 // The screens live on GitHub, so they can be updated (or new ones added) without touching this script.
@@ -103,7 +103,7 @@ function saveOrder(order) {
 
 /* ---------- kitchen ---------- */
 
-/** The Orders column "<station> done" (e.g. "Sandwiches done"); 0 if it doesn't exist and create is false. */
+/** The Orders column "<station> done" (e.g. "Kitchen done"); 0 if it doesn't exist and create is false. */
 function doneCol_(sheet, station, create) {
   var name = station + ' done', w = sheet.getLastColumn();
   var head = sheet.getRange(1, 1, 1, w).getValues()[0];
@@ -115,12 +115,12 @@ function doneCol_(sheet, station, create) {
 }
 
 /**
- * Open orders for one kitchen station, oldest first, with only that station's items to make.
+ * Open orders for one kitchen station, oldest first, with that station's items to make.
  * An item belongs to a station when the Menu tab's "Kitchen screen" column (G) names it;
- * if that column is empty everywhere, sandwiches and burgers go to "Sandwiches".
+ * if that column is empty everywhere, every item goes to every station.
  */
 function getKitchen(station) {
-  station = String(station || 'Sandwiches');
+  station = String(station || 'Kitchen');
   var ss = book_(), tz = tz_(), st = settings_(), now = Date.now();
 
   // Only orders placed after this station's screen was first opened, so old orders don't flood it.
@@ -135,7 +135,7 @@ function getKitchen(station) {
   });
   function here(name) {
     var m = info[name]; if (!m) return false;
-    return named ? m.station === station : station === 'Sandwiches' && /Sandwich|Burger/.test(m.cat);
+    return named ? m.station === station : true;
   }
 
   var orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), list = [], open = {};
@@ -166,7 +166,7 @@ function markDone(station, day, num, undo) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    var orders = book_().getSheetByName('Orders'), col = doneCol_(orders, String(station || 'Sandwiches'), true);
+    var orders = book_().getSheetByName('Orders'), col = doneCol_(orders, String(station || 'Kitchen'), true);
     var last = orders.getLastRow(), from = Math.max(2, last - 299);
     var v = orders.getRange(from, 1, last - from + 1, 2).getValues();
     for (var i = v.length - 1; i >= 0; i--) if (v[i][0] == num && dayKey_(v[i][1]) === day) {
