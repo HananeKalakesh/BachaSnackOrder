@@ -93,9 +93,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .note{width:100%;margin-top:10px;height:52px;border-radius:16px;border:0;background:var(--input);padding:0 18px;font-size:16px;outline:none}
 .note::placeholder{color:var(--placeholder)}
 .note:focus{box-shadow:0 0 0 2px var(--green)}
-.who{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-.who .note{margin-top:0}
-.kind{display:flex;gap:4px;padding:4px;border-radius:16px;background:var(--input)}
+.kind{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;padding:4px;border-radius:16px;background:var(--input)}
 .kind button{height:44px;padding:0 12px;border-radius:12px;font-weight:700;color:var(--muted)}
 .kind button.on{background:var(--green);color:var(--paper)}
 .save{margin-top:12px;width:100%;height:70px;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:22px;box-shadow:var(--shadow-cta)}
@@ -221,6 +219,7 @@ td.r,th.r{text-align:end}
 .ord.done .obody,.ord.done .oside{opacity:.55}
 .ohead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .ohead b{font-size:18px}
+.tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .otype{padding:1px 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:13px;font-weight:800}
 .oitems{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:15px}
 .oitems small{color:var(--green);font-weight:700}
@@ -283,8 +282,8 @@ td.r,th.r{text-align:end}
     <div class="pay">
       <div class="total"><span class="display"><span class="ar">المجموع</span><span class="en">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
       <div class="methods"><button data-m="Cash"><span class="ar">كاش</span><span class="en">Cash</span></button><button data-m="Whish"><span class="ar">ويش</span><span class="en">Whish</span></button><button data-m="Unpaid"><span class="ar">ما دفع</span><span class="en">Not paid</span></button></div>
-      <div class="who"><input class="note" id="cname" placeholder="الاسم" autocomplete="off" maxlength="40">
-        <div class="kind"><button data-k="Pickup" type="button"><span class="ar">استلام</span><span class="en">Pickup</span></button><button data-k="Delivery" type="button"><span class="ar">توصيل</span><span class="en">Delivery</span></button></div></div>
+      <div class="kind"><button data-k="Pickup" type="button"><span class="ar">استلام</span><span class="en">Pickup</span></button><button data-k="Delivery" type="button"><span class="ar">توصيل</span><span class="en">Delivery</span></button></div>
+      <input class="note" id="cname" placeholder="الاسم (اختياري)" autocomplete="off" maxlength="40">
       <input class="note" id="note" placeholder="ملاحظة (اختياري)" autocomplete="off">
       <button class="save" id="save" disabled></button>
     </div>
@@ -539,7 +538,15 @@ function flush(announce) {
     flush(announce);
   }, function (e) {
     flushing = false; showNet();
-    if (/not on the menu/i.test(e.message || '')) { alert(e.message); setQueue(queue().slice(1)); return }
+    var msg = e.message || String(e);
+    // A dropped connection or a busy sheet: keep the order and try again. Anything else would fail forever and
+    // hold up every order behind it, so say what went wrong and take it off the waiting list.
+    if (!/network|connection|HTTP 0|timed? ?out|lock|busy|try again|server error|too many|quota|exceeded/i.test(msg)) {
+      setQueue(queue().filter(function (o) { return o.uid !== q[0].uid }));
+      alert(T('ما انحفظ هالطلب: ', 'This order could not be saved: ') + msg + '\n\n' + q[0].items.map(function (x) { return x.qty + ' × ' + x.name }).join(', ') +
+        '\n\n' + T('دخّلو مرة تانية.', 'Please enter it again.'));
+      return flush(announce);
+    }
     if (announce) toast('ما في إنترنت، الطلب محفوظ وبينبعت لحالو', 'No internet: the order is kept and will send by itself');
   });
 }
@@ -870,13 +877,13 @@ function drawOrders() {
       '<div class="onum"><b class="num">#' + o.num + '</b><span class="num">' + esc(o.time) + '</span>' +
         (o.done ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
       '<div class="obody">' +
-        (o.name || o.type ? '<div class="ohead">' + (o.name ? '<b>' + esc(o.name) + '</b>' : '') +
-          (o.type ? '<span class="otype">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '') + '</div>' : '') +
+        (o.name ? '<div class="ohead"><b>' + esc(o.name) + '</b></div>' : '') +
         '<div class="oitems">' + o.items.map(function (x) {
           return '<span>' + bi(x.qty + ' × ' + (x.ar || x.name), x.qty + ' × ' + x.name) + (x.sauces.length ? ' <small>(' + sauceList(x.sauces) + ')</small>' : '') + '</span>';
         }).join('') + '</div>' +
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
-      '<div class="oside">' + amount(o.total) + '<span class="pill ' + esc(o.payment) + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span></div>' +
+      '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + esc(o.payment) + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
+        (o.type ? '<span class="otype">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '') + '</span></div>' +
       '<div class="oacts"><button class="switch' + (o.done ? ' on' : '') + '" data-done="' + esc(o.key) + '" role="switch" aria-checked="' + !!o.done + '"><i></i>' +
           (o.done ? bi('خلص ' + o.done, 'Done ' + o.done) : bi('خلص؟', 'Done?')) + '</button>' +
         '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
@@ -918,7 +925,7 @@ function setLang(l) {
   document.body.className = 'lang-' + lang;
   document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
   $('#note').placeholder = T('ملاحظة (اختياري)', 'Note (optional)');
-  $('#cname').placeholder = T('الاسم', 'Name');
+  $('#cname').placeholder = T('الاسم (اختياري)', 'Name (optional)');
   if (TD.loaded) drawOrders();
   if (MENU.length) renderGrid();
 }

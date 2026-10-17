@@ -22,7 +22,15 @@ function doGet(e) {
   var screen = String((e && e.parameter.screen) || 'order').toLowerCase();
   if (!/^[a-z]+$/.test(screen)) screen = 'order';
   var file = screen === 'order' ? 'page.html' : screen + '.html';
-  var page = UrlFetchApp.fetch(PAGE_BASE + file + '?v=' + Math.floor(Date.now() / 60000)).getContentText('UTF-8');
+  // The last copy that loaded is kept for 6 hours, so the screens still open if GitHub can't be reached for a moment.
+  var cache = CacheService.getScriptCache(), page;
+  try {
+    page = UrlFetchApp.fetch(PAGE_BASE + file + '?v=' + Math.floor(Date.now() / 60000)).getContentText('UTF-8');
+    try { cache.put('page:' + file, page, 21600) } catch (e) {}
+  } catch (e) {
+    page = cache.get('page:' + file);
+    if (!page) throw e;
+  }
   return HtmlService.createHtmlOutput(page)
     .setTitle(TITLES[screen] || 'El Bash')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
@@ -187,9 +195,10 @@ function recentOrders_(ss, station, keep) {
   var hhmm = function (v) { return v instanceof Date ? Utilities.formatDate(v, tz, 'HH:mm') : String(v) };
   orders.getRange(from, 1, last - from + 1, Math.max(17, col)).getValues().forEach(function (r) {
     if (r[0] === '') return;
-    var day = dayKey_(r[1]), time = hhmm(r[2]);
+    var day = dayKey_(r[1]), time = hhmm(r[2]), at;
+    try { at = Utilities.parseDate(day + ' ' + time, tz, 'yyyy-MM-dd HH:mm').getTime() } catch (e) { return }  // a row typed in by hand without a proper date or time
     var o = {
-      key: day + '#' + r[0], num: r[0], day: day, time: time, at: Utilities.parseDate(day + ' ' + time, tz, 'yyyy-MM-dd HH:mm').getTime(),
+      key: day + '#' + r[0], num: r[0], day: day, time: time, at: at,
       total: Number(r[5]) || 0, payment: String(r[6]), note: String(r[12] || ''), name: String(r[15] || ''), type: String(r[16] || ''),
       done: col && r[col - 1] !== '' ? hhmm(r[col - 1]) : '', items: [], other: []
     };

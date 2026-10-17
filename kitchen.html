@@ -110,6 +110,8 @@ function call(fn) {
 }
 
 /* ticked items are kept on this iPad, so a reload doesn't lose them */
+// an item is ticked by what it is (name and sauces), so changing the order afterwards can't move a tick
+function tickId(x) { return x.name + '|' + (x.sauces || []).join('+') }
 function ticks() { try { return JSON.parse(store(TKEY) || '{}') } catch (e) { return {} } }
 function setTicks(t) {
   var keep = {}; orders.forEach(function (o) { if (t[o.key]) keep[o.key] = t[o.key] });
@@ -152,13 +154,14 @@ function render(fresh) {
   $('#count').textContent = orders.length;
   $('#board').innerHTML = orders.length ? orders.map(function (o) {
     var m = age(o), cls = m >= RED ? 'over' : m >= YELLOW ? 'late' : 'fresh', tk = t[o.key] || {};
-    var all = o.items.every(function (x, i) { return tk[i] });
+    var all = o.items.every(function (x) { return tk[tickId(x)] });
     return '<article class="card ' + cls + (fresh && fresh.indexOf(o.key) >= 0 ? ' new' : '') + '" data-key="' + esc(o.key) + '">' +
       '<header><span class="who"><span class="n num">#' + o.num + '</span>' + (o.name ? '<span class="nm2">' + esc(o.name) + '</span>' : '') + '</span>' +
         (o.type ? '<span class="tag">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '') + '<span class="t"><b class="num">' + esc(o.time) + '</b><small>' +
         bi(m < 1 ? 'هلّق' : 'من ' + m + ' دقيقة', m < 1 ? 'just now' : m + ' min ago') + '</small></span></header>' +
       '<div class="items">' + o.items.map(function (x, i) {
-        return '<button class="it' + (tk[i] ? ' ok' : '') + '" data-i="' + i + '"><span class="box">' + (tk[i] ? '✓' : '') + '</span>' +
+        var ok = tk[tickId(x)];
+        return '<button class="it' + (ok ? ' ok' : '') + '" data-i="' + i + '"><span class="box">' + (ok ? '✓' : '') + '</span>' +
           '<span class="qty num">' + x.qty + '</span><span class="nm">' + bi(x.ar || x.name, x.name) +
           (x.sauces && x.sauces.length ? '<small class="sc">' + bi(x.sauces.map(function (s) { return SAUCE_AR[s] || s }).join('، '), x.sauces.join(', ')) + '</small>' : '') + '</span></button>';
       }).join('') + '</div>' +
@@ -174,7 +177,7 @@ $('#board').addEventListener('click', function (e) {
   var key = card.dataset.key, o = orders.filter(function (x) { return x.key === key })[0]; if (!o) return;
   var it = e.target.closest('.it');
   if (it) {
-    var t = ticks(); t[key] = t[key] || {}; t[key][it.dataset.i] = !t[key][it.dataset.i]; setTicks(t); render();
+    var id = tickId(o.items[+it.dataset.i]), t = ticks(); t[key] = t[key] || {}; t[key][id] = !t[key][id]; setTicks(t); render();
     return;
   }
   if (e.target.closest('.done')) finish(o);
