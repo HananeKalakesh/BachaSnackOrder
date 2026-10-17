@@ -5,6 +5,7 @@
  * Leave the PIN in Settings empty for no lock, or type one to lock the Sales tab.
  * Orders are written to the Orders and Order Items tabs. Prices come from the Menu tab.
  * Sauces chosen with an item go in the Order Items "Sauces" column and after " — " in the order's Items text.
+ * The optional customer name and Pickup / Delivery go in the Orders columns P and Q.
  *
  * Links (same deployment):
  *   …/exec                                        the order screen
@@ -94,6 +95,8 @@ function saveOrder(order) {
       0, total, rate,  // paid in full, at the menu total
       '=H' + r + '*J' + r + '+I' + r, '=K' + r + '-F' + r, order.note || '', order.uid || ''
     ]]);
+    if (orders.getMaxColumns() < 17) orders.insertColumnsAfter(orders.getMaxColumns(), 17 - orders.getMaxColumns());
+    orders.getRange(r, 16, 1, 2).setValues([[String(order.name || '').slice(0, 40), order.type === 'Delivery' || order.type === 'Pickup' ? order.type : '']]);
 
     var l = lines.getLastRow() + 1;
     lines.getRange(l, 1, items.length, 8).setValues(items.map(function (x, i) {
@@ -118,51 +121,70 @@ function doneCol_(sheet, station, create) {
   return w + 1;
 }
 
-/**
- * Open orders for one kitchen station, oldest first, with that station's items to make.
- * An item belongs to a station when the Menu tab's "Kitchen screen" column (G) names it;
- * if that column is empty everywhere, every item goes to every station.
- */
-function getKitchen(station) {
-  station = String(station || 'Kitchen');
-  var ss = book_(), tz = tz_(), st = settings_(), now = Date.now();
-
-  // Only orders placed after this station's screen was first opened, so old orders don't flood it.
-  var props = PropertiesService.getScriptProperties(), since = Number(props.getProperty('since:' + station));
-  if (!since) { since = now - 60000; props.setProperty('since:' + station, String(since)) }
-
+/** Menu facts by item name (Arabic name, category, kitchen station), and whether any station is named. */
+function menuInfo_(ss) {
   var info = {}, named = false;
   ss.getSheetByName('Menu').getDataRange().getValues().slice(1).forEach(function (r) {
     if (!r[1]) return;
     info[r[1]] = { ar: String(r[2] || ''), cat: String(r[0]), station: String(r[6] || '').trim() };
     if (info[r[1]].station) named = true;
   });
-  function here(name) {
-    var m = info[name]; if (!m) return false;
-    return named ? m.station === station : true;
-  }
+  return { info: info, named: named };
+}
 
-  var orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), list = [], open = {};
-  if (last > 1) {
-    var col = doneCol_(orders, station, false), from = Math.max(2, last - 299);
-    orders.getRange(from, 1, last - from + 1, Math.max(14, col)).getValues().forEach(function (r) {
-      if (r[0] === '' || (col && r[col - 1] !== '')) return;
-      var day = dayKey_(r[1]), time = r[2] instanceof Date ? Utilities.formatDate(r[2], tz, 'HH:mm') : String(r[2]);
-      var at = Utilities.parseDate(day + ' ' + time, tz, 'yyyy-MM-dd HH:mm').getTime();
-      if (at < since - 60000 || now - at > 12 * 3600000) return;
-      var o = { key: day + '#' + r[0], num: r[0], day: day, time: time, at: at, note: String(r[12] || ''), items: [], other: [] };
-      open[o.key] = o; list.push(o);
-    });
-  }
+/**
+ * Orders from the last 300 rows that keep(order) accepts, oldest first, with their items.
+ * Items for the station go in items, the rest in other. order.done is the station's done time, or ''.
+ * An item belongs to a station when the Menu tab's "Kitchen screen" column (G) names it;
+ * if that column is empty everywhere, every item goes to every station.
+ */
+function recentOrders_(ss, station, keep) {
+  var tz = tz_(), menu = menuInfo_(ss), orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), list = [], byKey = {};
+  if (last < 2) return list;
+  var col = doneCol_(orders, station, false), from = Math.max(2, last - 299);
+  var hhmm = function (v) { return v instanceof Date ? Utilities.formatDate(v, tz, 'HH:mm') : String(v) };
+  orders.getRange(from, 1, last - from + 1, Math.max(17, col)).getValues().forEach(function (r) {
+    if (r[0] === '') return;
+    var day = dayKey_(r[1]), time = hhmm(r[2]);
+    var o = {
+      key: day + '#' + r[0], num: r[0], day: day, time: time, at: Utilities.parseDate(day + ' ' + time, tz, 'yyyy-MM-dd HH:mm').getTime(),
+      total: Number(r[5]) || 0, payment: String(r[6]), note: String(r[12] || ''), name: String(r[15] || ''), type: String(r[16] || ''),
+      done: col && r[col - 1] !== '' ? hhmm(r[col - 1]) : '', items: [], other: []
+    };
+    if (!keep(o)) return;
+    byKey[o.key] = o; list.push(o);
+  });
   if (list.length) {
     var li = ss.getSheetByName('Order Items'), ll = li.getLastRow(), lf = Math.max(2, ll - 999);
     li.getRange(lf, 1, ll - lf + 1, 8).getValues().forEach(function (r) {
-      var o = open[dayKey_(r[1]) + '#' + r[0]]; if (!o) return;
-      var x = { name: String(r[2]), ar: (info[r[2]] || {}).ar || '', qty: Number(r[4]) || 0, sauces: r[7] ? String(r[7]).split(', ') : [] };
-      (here(x.name) ? o.items : o.other).push(x);
+      var o = byKey[dayKey_(r[1]) + '#' + r[0]]; if (!o) return;
+      var m = menu.info[r[2]] || {};
+      var x = { name: String(r[2]), ar: m.ar || '', cat: m.cat || '', qty: Number(r[4]) || 0, sauces: r[7] ? String(r[7]).split(', ') : [] };
+      (!menu.named || m.station === station ? o.items : o.other).push(x);
     });
   }
+  return list;
+}
+
+/** Open orders for one kitchen station, oldest first, with that station's items to make. */
+function getKitchen(station) {
+  station = String(station || 'Kitchen');
+  var ss = book_(), st = settings_(), now = Date.now();
+
+  // Only orders placed after this station's screen was first opened, so old orders don't flood it.
+  var props = PropertiesService.getScriptProperties(), since = Number(props.getProperty('since:' + station));
+  if (!since) { since = now - 60000; props.setProperty('since:' + station, String(since)) }
+
+  var list = recentOrders_(ss, station, function (o) { return !o.done && o.at >= since - 60000 && now - o.at <= 12 * 3600000 });
   return { now: now, yellow: st.yellow, red: st.red, orders: list.filter(function (o) { return o.items.length }) };
+}
+
+/** Every order placed today, oldest first, with its kitchen done time (for the Today's orders tab). */
+function getToday() {
+  var ss = book_(), st = settings_(), now = Date.now(), day = Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd');
+  var list = recentOrders_(ss, 'Kitchen', function (o) { return o.day === day });
+  list.forEach(function (o) { o.items = o.items.concat(o.other); delete o.other });
+  return { now: now, yellow: st.yellow, red: st.red, rate: st.rate, orders: list };
 }
 
 /** Marks an order done for a station (writes the time), or clears it again when undo is true. */

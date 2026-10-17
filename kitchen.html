@@ -29,19 +29,23 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 .net{background:var(--mustard);color:var(--ink);text-align:center;padding:8px;font-size:16px}
 .net:empty{display:none}
 
-.board{height:calc(100% - 68px);overflow-y:auto;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;align-content:start;-webkit-overflow-scrolling:touch}
-.card{background:var(--white);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.board{height:calc(100% - 68px);overflow-y:auto;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;align-content:start;align-items:start;-webkit-overflow-scrolling:touch}
+/* a long order scrolls inside its card, so the number and the Done button always stay in view */
+.card{background:var(--white);border-radius:24px;box-shadow:var(--shadow);display:flex;flex-direction:column}
 .card.fresh{--age:var(--green);--on-age:var(--paper)}
 .card.late{--age:var(--mustard);--on-age:var(--ink)}
 .card.over{--age:var(--red);--on-age:#fff}
 .card.new{animation:pop 1s ease-out 3}
 @keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.03)}100%{transform:scale(1)}}
-.card header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--age);color:var(--on-age)}
+.card header{border-radius:24px 24px 0 0;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--age);color:var(--on-age)}
 .card header .n{font-size:40px;line-height:1}
+.card header .who{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.card header .nm2{font-size:19px;line-height:1.1;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{display:inline-block;padding:1px 10px;border-radius:999px;background:var(--paper);color:var(--ink);font-size:14px;font-weight:800}
 .card header .t{margin-inline-start:auto;text-align:end;line-height:1.2}
 .card header .t b{display:block;font-size:22px}
 .card header .t small{font-size:15px;opacity:.9}
-.items{padding:6px 10px}
+.items{padding:6px 10px;max-height:calc(100vh - 330px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .it{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 6px;border-bottom:1px solid var(--hairline);text-align:start}
 .it:last-child{border-bottom:0}
 .it .box{flex:none;width:34px;height:34px;border-radius:10px;border:2.5px solid var(--green);display:flex;align-items:center;justify-content:center;color:var(--paper);font-size:22px}
@@ -150,7 +154,8 @@ function render(fresh) {
     var m = age(o), cls = m >= RED ? 'over' : m >= YELLOW ? 'late' : 'fresh', tk = t[o.key] || {};
     var all = o.items.every(function (x, i) { return tk[i] });
     return '<article class="card ' + cls + (fresh && fresh.indexOf(o.key) >= 0 ? ' new' : '') + '" data-key="' + esc(o.key) + '">' +
-      '<header><span class="n num">#' + o.num + '</span><span class="t"><b class="num">' + esc(o.time) + '</b><small>' +
+      '<header><span class="who"><span class="n num">#' + o.num + '</span>' + (o.name ? '<span class="nm2">' + esc(o.name) + '</span>' : '') + '</span>' +
+        (o.type ? '<span class="tag">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '') + '<span class="t"><b class="num">' + esc(o.time) + '</b><small>' +
         bi(m < 1 ? 'هلّق' : 'من ' + m + ' دقيقة', m < 1 ? 'just now' : m + ' min ago') + '</small></span></header>' +
       '<div class="items">' + o.items.map(function (x, i) {
         return '<button class="it' + (tk[i] ? ' ok' : '') + '" data-i="' + i + '"><span class="box">' + (tk[i] ? '✓' : '') + '</span>' +
