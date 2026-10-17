@@ -323,6 +323,8 @@ function call(fn) {
   var args = [].slice.call(arguments, 1);
   return new Promise(function (ok, fail) {
     var r = google.script.run.withSuccessHandler(ok).withFailureHandler(fail);
+    // a function missing here means the Apps Script hasn't been updated and redeployed yet
+    if (typeof r[fn] !== 'function') return fail(new Error('SCRIPT_UPDATE'));
     r[fn].apply(r, args);
   });
 }
@@ -802,7 +804,9 @@ function drawOrders() {
   var open = TD.list.filter(function (o) { return !o.done }).sort(byTime), done = TD.list.filter(function (o) { return o.done }).sort(byTime);
   var h = '<div class="shead"><h2 class="display">' + bi('طلبات اليوم', 'Today\'s orders') + '</h2>' +
     (TD.loaded ? '<span class="since"><b class="num">' + open.length + '</b> ' + bi('عم ينعمل', 'open') + ' · <b class="num">' + done.length + '</b> ' + bi('خلص', 'done') + '</span>' : '') + '</div>';
-  if (TD.err) h += '<p class="err">' + bi('ما قدرنا نحمّل الطلبات', 'Could not load the orders') + ' · <small>' + esc(TD.err) + '</small></p>';
+  if (TD.err === 'SCRIPT_UPDATE') h += '<p class="err">' + bi('لازم تحدّث السكريبت: الصق الكود الجديد بـ Apps Script وانشر نسخة جديدة (Deploy › Manage deployments › New version).',
+    'The Apps Script needs updating: paste the new code and deploy a new version (Deploy › Manage deployments › New version).') + '</p>';
+  else if (TD.err) h += '<p class="err">' + bi('ما قدرنا نحمّل الطلبات', 'Could not load the orders') + ' · <small>' + esc(TD.err) + '</small></p>';
   if (!TD.loaded) { $('#ord').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   if (!TD.list.length) { $('#ord').innerHTML = h + '<p class="muted">' + bi('لسا ما في طلبات اليوم', 'No orders yet today') + '</p>'; return }
   h += '<div class="olist">' + open.concat(done).map(function (o) {
