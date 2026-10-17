@@ -47,6 +47,8 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 .it .box{flex:none;width:34px;height:34px;border-radius:10px;border:2.5px solid var(--green);display:flex;align-items:center;justify-content:center;color:var(--paper);font-size:22px}
 .it .qty{flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:24px;line-height:40px;text-align:center}
 .it .nm{font-size:21px;line-height:1.25}
+.it .sc{display:block;margin-top:2px;font-size:16px;color:var(--green)}
+.it .sc::before{content:"+ "}
 .it.ok .box{background:var(--green)}
 .it.ok .nm,.it.ok .qty{opacity:.4;text-decoration:line-through}
 .other{margin:0 14px 8px;font-size:15px;color:var(--muted)}
@@ -86,6 +88,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 
 <script>
 var STATION = 'Kitchen', STATION_AR = {'Kitchen': 'المطبخ', 'Sandwiches': 'ساندويشات'};
+var SAUCE_AR = {'Cocktail Sauce': 'كوكتيل', 'Ketchup': 'كاتشاب', 'Barbecue Sauce': 'باربكيو', 'Cheddar Sauce': 'تشيدر', 'Buffalo Sauce': 'بوفالو', 'Honey Mustard Sauce': 'هني ماستارد'};
 var LKEY = 'elbash-kitchen-lang', TKEY = 'elbash-kitchen-ticks';
 var orders = [], seen = null, hidden = {}, offset = 0, YELLOW = 10, RED = 20, lang = 'ar', audio = null;
 
@@ -151,7 +154,8 @@ function render(fresh) {
         bi(m < 1 ? 'هلّق' : 'من ' + m + ' دقيقة', m < 1 ? 'just now' : m + ' min ago') + '</small></span></header>' +
       '<div class="items">' + o.items.map(function (x, i) {
         return '<button class="it' + (tk[i] ? ' ok' : '') + '" data-i="' + i + '"><span class="box">' + (tk[i] ? '✓' : '') + '</span>' +
-          '<span class="qty num">' + x.qty + '</span><span class="nm">' + bi(x.ar || x.name, x.name) + '</span></button>';
+          '<span class="qty num">' + x.qty + '</span><span class="nm">' + bi(x.ar || x.name, x.name) +
+          (x.sauces && x.sauces.length ? '<small class="sc">' + bi(x.sauces.map(function (s) { return SAUCE_AR[s] || s }).join('، '), x.sauces.join(', ')) + '</small>' : '') + '</span></button>';
       }).join('') + '</div>' +
       (o.note ? '<div class="note">' + esc(o.note) + '</div>' : '') +
       (o.other.length ? '<div class="other">' + bi('مع الطلب: ' + o.other.map(function (x) { return x.qty + ' × ' + (x.ar || x.name) }).join('، '),

@@ -4,6 +4,7 @@
  * then Deploy > Manage deployments > edit > Version: New version > Deploy.
  * Leave the PIN in Settings empty for no lock, or type one to lock the Sales tab.
  * Orders are written to the Orders and Order Items tabs. Prices come from the Menu tab.
+ * Sauces chosen with an item go in the Order Items "Sauces" column and after " — " in the order's Items text.
  *
  * Links (same deployment):
  *   …/exec                                        the order screen
@@ -68,6 +69,9 @@ function saveOrder(order) {
     var menu = {};
     getMenu().items.forEach(function (it) { menu[it.name] = it });
     var items = (order.items || []).filter(function (x) { return x.qty > 0 });
+    items.forEach(function (x) {
+      x.sauces = (x.sauces || []).slice(0, 4).map(function (s) { return String(s).slice(0, 40) }).filter(String);
+    });
     if (!items.length) throw new Error('The order is empty');
     items.forEach(function (x) { if (!menu[x.name]) throw new Error('"' + x.name + '" is not on the menu any more. Reopen the order screen.') });
 
@@ -82,7 +86,7 @@ function saveOrder(order) {
 
     var total = 0, count = 0;
     items.forEach(function (x) { total += x.qty * menu[x.name].price; count += x.qty });
-    var text = items.map(function (x) { return x.qty + ' × ' + x.name }).join(', ');
+    var text = items.map(function (x) { return x.qty + ' × ' + x.name + (x.sauces.length ? ' — ' + x.sauces.join(' + ') : '') }).join(', ');
 
     var r = orders.getLastRow() + 1;
     orders.getRange(r, 1, 1, 14).setValues([[
@@ -92,8 +96,8 @@ function saveOrder(order) {
     ]]);
 
     var l = lines.getLastRow() + 1;
-    lines.getRange(l, 1, items.length, 7).setValues(items.map(function (x, i) {
-      return [num, day, x.name, menu[x.name].cat, x.qty, menu[x.name].price, '=E' + (l + i) + '*F' + (l + i)];
+    lines.getRange(l, 1, items.length, 8).setValues(items.map(function (x, i) {
+      return [num, day, x.name, menu[x.name].cat, x.qty, menu[x.name].price, '=E' + (l + i) + '*F' + (l + i), x.sauces.join(', ')];
     }));
     return { num: num, total: total };
   } finally {
@@ -152,9 +156,9 @@ function getKitchen(station) {
   }
   if (list.length) {
     var li = ss.getSheetByName('Order Items'), ll = li.getLastRow(), lf = Math.max(2, ll - 999);
-    li.getRange(lf, 1, ll - lf + 1, 5).getValues().forEach(function (r) {
+    li.getRange(lf, 1, ll - lf + 1, 8).getValues().forEach(function (r) {
       var o = open[dayKey_(r[1]) + '#' + r[0]]; if (!o) return;
-      var x = { name: String(r[2]), ar: (info[r[2]] || {}).ar || '', qty: Number(r[4]) || 0 };
+      var x = { name: String(r[2]), ar: (info[r[2]] || {}).ar || '', qty: Number(r[4]) || 0, sauces: r[7] ? String(r[7]).split(', ') : [] };
       (here(x.name) ? o.items : o.other).push(x);
     });
   }

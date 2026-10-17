@@ -35,24 +35,27 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .net{font-size:14px;background:var(--mustard);color:var(--ink);padding:4px 12px;border-radius:999px;white-space:nowrap}
 .net:empty{display:none}
 
-/* order screen: section tabs on top (all visible, they wrap), then the menu as colored section cards
-   in balanced columns, in menu order, column by column */
-.order{display:grid;grid-template-columns:1fr 330px;height:calc(100% - 68px)}
+/* order screen: the menu as colored section cards in four fixed columns, small rows so it fits on one screen */
+.order{display:grid;grid-template-columns:1fr 320px;height:calc(100% - 68px)}
 .left{display:flex;flex-direction:column;min-width:0;min-height:0}
-.cats{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;flex:none;border-bottom:1px solid var(--hairline)}
-.cats button{height:34px;padding:0 13px;border-radius:999px;background:var(--c);color:var(--f);font-size:14px;font-weight:700;white-space:nowrap}
-.cats button .n{display:inline-block;min-width:20px;height:20px;margin-inline-start:6px;padding:0 5px;border-radius:999px;background:var(--paper);color:var(--ink);font:800 12px/20px "Plus Jakarta Sans",sans-serif;text-align:center}
-.grid{position:relative;flex:1;overflow-y:auto;padding:10px 12px 24px;-webkit-overflow-scrolling:touch}
+.grid{position:relative;flex:1;overflow-y:auto;padding:8px 10px 16px;-webkit-overflow-scrolling:touch}
 .flow{display:flex;gap:10px;align-items:flex-start}
 .flow > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
 .sec{background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
-.sec.flash{box-shadow:0 0 0 4px var(--c),var(--shadow-sm)}
-.sec h3{margin:0;padding:5px 12px;background:var(--c);color:var(--f);font-size:19px;line-height:1.3}
-.lang-en .sec h3{font-size:17px;line-height:1.4}
-.tile{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:5px 12px;text-align:start;border-top:1px solid var(--hairline);transition:background .1s}
-.sec h3 + .tile{border-top:0}
+.sec h3{margin:0;padding:3px 12px;background:var(--c);color:var(--f);font-size:18px;line-height:1.3}
+.lang-en .sec h3{font-size:16px;line-height:1.45}
+.tile{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;padding:2px 10px;text-align:start;border-top:1px solid var(--hairline);transition:background .1s}
+.rows > .tile:first-child{border-top:0}
+.paired .rows{display:grid;grid-template-columns:1fr 1fr}
+.paired .rows > .tile:nth-child(2){border-top:0}
+.paired .rows > .tile:nth-child(even){border-inline-start:1px solid var(--hairline)}
+.paired .tile{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;min-height:38px;padding:2px 8px;position:relative}
+.paired .tile .q{position:absolute;top:6px;inset-inline-end:6px;min-width:22px;height:22px;font-size:13px;line-height:22px;padding:0 5px}
+.paired .tile .pr{font-size:12px}
 .tile:active{background:var(--sand)}
-.tile b{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.25;color:var(--ink)}
+.tile b{flex:1;min-width:0;font-weight:700;font-size:14.5px;line-height:1.2;color:var(--ink)}
+.paired .tile b{flex:none;font-size:13.5px;line-height:1.15}
+.paired .tile.has b{padding-inline-end:24px}
 .tile .pr{flex:none;font:800 13px "Plus Jakarta Sans",sans-serif;color:var(--muted)}
 .tile.has{background:var(--t)}
 .tile .q{flex:none;min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:var(--c);color:var(--f);font:800 15px/28px "Plus Jakarta Sans",sans-serif;text-align:center}
@@ -66,6 +69,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .line{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:start;padding:12px 0;border-bottom:1px solid var(--hairline)}
 .line i{width:10px;height:10px;border-radius:999px;background:var(--c);margin-top:8px}
 .line .n{font-weight:700;font-size:17px}
+.line .sauces{display:block;font-size:13px;font-weight:700;color:var(--green)}
 .line .lt{font-weight:800;font-size:17px}
 .stepper{display:flex;align-items:center;gap:8px;grid-column:2/-1}
 .stepper button{width:52px;height:46px;border-radius:14px;background:var(--sand);color:var(--green);font:800 24px/1 "Plus Jakarta Sans",sans-serif}
@@ -75,7 +79,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .pay{padding:14px 18px 18px;background:var(--paper);border-top:1px solid var(--hairline)}
 .total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .total .display{font-size:30px;color:var(--ink)}
-.total b{display:block;font-size:28px;font-weight:800}
+.total b{display:block;font-size:25px;font-weight:800;white-space:nowrap}
 .total small{display:block;color:var(--muted);font-weight:700;text-align:end}
 .methods{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .methods button{height:64px;border-radius:14px;background:var(--sand);color:var(--ink);font-size:21px;font-weight:800}
@@ -98,6 +102,17 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .lang-en .shead h2{font-size:34px}
 .nav{width:48px;height:48px;border-radius:999px;background:var(--white);box-shadow:var(--shadow-sm);color:var(--green);font:800 30px/1 "Plus Jakarta Sans",sans-serif}
 [dir=rtl] .chev{display:inline-block;transform:scaleX(-1)}
+.modes{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--sand);margin-inline-end:6px}
+.modes button{height:40px;padding:0 16px;border-radius:999px;font-weight:700;color:var(--ink)}
+.modes button.on{background:var(--green);color:var(--paper)}
+.since{color:var(--muted);font-weight:600;font-size:15px}
+.months.all{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px}
+.months.all .mo{flex:0 0 100px}
+.months.week{grid-template-columns:repeat(7,minmax(0,1fr))}
+.months.week .track{max-width:44px;height:120px}
+.months.week .mn{font-size:13px}
+.months.week b{font-size:14px}
+.note2{margin:10px 0 0;font-size:13px}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -131,8 +146,9 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .day.s4{background:var(--g4);color:#fff}.day.s5{background:var(--g5);color:#fff}.day.s6{background:var(--g6);color:var(--paper)}
 .day.s4 .dn,.day.s5 .dn,.day.s6 .dn{color:rgba(255,255,255,.8)}
 .day.future{opacity:.45}
-.day.today{box-shadow:inset 0 0 0 2px var(--mustard)}
-.day.sel{box-shadow:0 0 0 3px var(--white),0 0 0 5px var(--ink)}
+.day.today .dn{background:var(--mustard);color:var(--ink);border-radius:999px;padding:0 6px;top:4px;inset-inline-start:5px}
+.day.sel{box-shadow:inset 0 0 0 3px var(--ink)}
+.day.sel.s6{box-shadow:inset 0 0 0 3px var(--mustard)}
 .legend{display:flex;align-items:center;gap:4px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
 .legend i{width:16px;height:12px;border-radius:3px}
 .legend i.s1{background:var(--g1)}.legend i.s2{background:var(--g2)}.legend i.s3{background:var(--g3)}.legend i.s4{background:var(--g4)}.legend i.s5{background:var(--g5)}.legend i.s6{background:var(--g6)}
@@ -176,6 +192,19 @@ td.r,th.r{text-align:end}
 .pill{display:inline-block;padding:0 10px;border-radius:999px;font-size:13px;color:var(--paper);background:var(--green)}
 .pill.Whish{background:var(--whish);color:#fff}
 
+/* sauce picker */
+.sheet{position:fixed;inset:0;z-index:8;background:rgba(26,26,23,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.sheet[hidden]{display:none}
+.sheet .box{width:min(460px,100%);background:var(--white);border-radius:24px;padding:22px;box-shadow:var(--shadow)}
+.sheet h3{margin:0;font-size:22px}
+.sheet p{margin:4px 0 16px;color:var(--muted);font-weight:600}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{height:58px;border-radius:14px;background:var(--sand);color:var(--ink);font-size:18px;font-weight:700}
+.chip.on{background:var(--green);color:var(--paper)}
+.acts{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:18px}
+.acts button{height:58px;border-radius:14px;font-size:18px;font-weight:800;background:var(--sand);color:var(--ink)}
+.acts #shOk{background:var(--green);color:var(--paper)}
+.acts #shOk:disabled{opacity:.4}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,140px);background:var(--green-deep);color:var(--paper);padding:14px 24px;border-radius:18px;font-weight:800;font-size:19px;text-align:center;transition:transform .25s;z-index:9;box-shadow:var(--shadow)}
 .toast.show{transform:translate(-50%,0)}
 
@@ -193,7 +222,6 @@ td.r,th.r{text-align:end}
 
 <div class="order" id="orderView">
   <div class="left">
-    <div class="cats" id="cats"></div>
     <div class="grid" id="grid"><div class="muted" style="padding:20px"><span class="ar">عم يحمّل المنيو…</span><span class="en">Loading menu…</span></div></div>
   </div>
   <div class="right">
@@ -211,6 +239,10 @@ td.r,th.r{text-align:end}
 </div>
 
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
+<div class="sheet" id="sheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="shT">
+  <h3 id="shT"></h3><p id="shH"></p><div class="chips" id="shC"></div>
+  <div class="acts"><button id="shX" type="button"><span class="ar">إلغاء</span><span class="en">Cancel</span></button><button id="shOk" type="button"><span class="ar">زيد عالطلب</span><span class="en">Add to order</span></button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -257,6 +289,18 @@ function call(fn) {
 }
 
 /* ---------- menu ---------- */
+// Four fixed columns: sides with sauces and drinks under them, meals, family meals and burgers, sandwiches.
+// A section not listed here joins the column with the fewest items.
+var LAYOUT = [['Fries', 'Appetizers', 'Sauces & Extras', 'Drinks'], ['Meals', 'Plates'], ['Family Meals', 'Chicken Burgers', 'Beef Burgers'],
+  ['Chicken Sandwiches', 'Beef Sandwiches', 'Other Sandwiches']];
+var PAIRED = ['Sauces & Extras', 'Drinks'];  // short names: two buttons per row
+// Items that come with sauces to choose, the same as on the website: [sauces, fewest, most]
+var SAUCES = {fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'], wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce']};
+var CHOICE = {'Small Fries Box with Sauce & Cheddar': ['fries', 1, 4], 'Large Fries Box with Sauce & Cheddar': ['fries', 1, 4], 'Loaded Fries': ['fries', 1, 4],
+  'Wings Meal 14 PCS': ['wings', 1, 2], 'Half Wings Meal 7 PCS': ['wings', 1, 1]};
+var SAUCE_AR = {'Cocktail Sauce': 'كوكتيل', 'Ketchup': 'كاتشاب', 'Barbecue Sauce': 'باربكيو', 'Cheddar Sauce': 'تشيدر', 'Buffalo Sauce': 'بوفالو', 'Honey Mustard Sauce': 'هني ماستارد'};
+function sauceList(list) { return bi(list.map(function (s) { return SAUCE_AR[s] || s }).join('، '), list.map(function (s) { return s.replace(/ Sauce$/, '') }).join(', ')) }
+
 function loadMenu() {
   call('getMenu').then(function (m) {
     MENU = m.items; RATE = m.rate;
@@ -264,65 +308,104 @@ function loadMenu() {
     renderGrid(); renderCart();
   }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.') + '<br><small>' + esc(e.message || e) + '</small></div>' });
 }
-function renderGrid() {
-  var grid = $('#grid'), top = grid.scrollTop;
-  var n = Math.max(1, Math.floor((grid.clientWidth - 24 + 10) / 195));
-  grid.innerHTML = '<div class="flow">' + new Array(n + 1).join('<div></div>') + '</div>';
-  var cols = [].slice.call(grid.firstChild.children);
-  cols[0].innerHTML = CATS.map(function (c, k) {
-    var h = '<div class="sec" id="sec' + k + '" style="' + catVars(c) + '"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3>';
-    MENU.forEach(function (it, i) {
-      if (it.cat !== c) return;
-      var q = cart[i] || 0;
-      h += '<button class="tile' + (q ? ' has' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
-        '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b><span class="pr num">' + short(it.price) + '</span></button>';
-    });
-    return h + '</div>';
-  }).join('');
-  // Sections stay whole and in menu order, filling the columns one after the other.
-  // Find the shortest column height that still fits every section into the columns.
-  var secs = [].slice.call(cols[0].children), hs = secs.map(function (el) { return el.offsetHeight + 10 });
-  function cut(limit) { var out = [[]], sum = 0; hs.forEach(function (h, k) { if (sum + h > limit && out[out.length - 1].length) { out.push([]); sum = 0 } out[out.length - 1].push(secs[k]); sum += h }); return out }
-  var lo = Math.max.apply(null, hs), hi = hs.reduce(function (a, b) { return a + b }, 0);
-  while (lo < hi) { var mid = Math.floor((lo + hi) / 2); if (cut(mid).length <= n) hi = mid; else lo = mid + 1 }
-  cut(lo).forEach(function (list, k) { list.forEach(function (el) { cols[k].appendChild(el) }) });
-  grid.scrollTop = top;
+/* The cart is {key: qty}; the key is the item's index in MENU, plus "|sauce+sauce" when sauces were chosen */
+function lineOf(k) { var p = String(k).split('|'); return {i: +p[0], it: MENU[+p[0]], sauces: p[1] ? p[1].split('+') : []} }
+function qtyOf(i) { var q = 0; for (var k in cart) if (lineOf(k).i === i) q += cart[k]; return q }
+
+function section(c) {
+  var h = '<div class="sec' + (PAIRED.indexOf(c) >= 0 ? ' paired' : '') + '" style="' + catVars(c) + '"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3><div class="rows">';
+  MENU.forEach(function (it, i) {
+    if (it.cat !== c) return;
+    var q = qtyOf(i);
+    h += '<button class="tile' + (q ? ' has' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
+      '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b><span class="pr num">' + short(it.price) + '</span></button>';
+  });
+  return h + '</div></div>';
 }
-// Section tabs, with how many of that section's items are in the order
-function renderCats() {
-  $('#cats').innerHTML = CATS.map(function (c, k) {
-    var q = 0; for (var i in cart) if (MENU[i].cat === c) q += cart[i];
-    return '<button data-k="' + k + '" style="' + catVars(c) + '">' + bi(CAT_AR[c] || c, c) + (q ? '<span class="n">' + q + '</span>' : '') + '</button>';
-  }).join('');
+function renderGrid() {
+  var grid = $('#grid'), top = grid.scrollTop, w = grid.clientWidth - 20;
+  var cols = LAYOUT.map(function (col) { return col.filter(function (c) { return CATS.indexOf(c) >= 0 }) });
+  var count = function (col) { return col.reduce(function (a, c) { return a + MENU.filter(function (it) { return it.cat === c }).length }, 0) };
+  CATS.forEach(function (c) {
+    if (cols.some(function (col) { return col.indexOf(c) >= 0 })) return;
+    cols.reduce(function (a, b) { return count(b) < count(a) ? b : a }).push(c);
+  });
+  if (w >= 4 * 165) {
+    grid.innerHTML = '<div class="flow">' + cols.map(function (col) { return '<div>' + col.map(section).join('') + '</div>' }).join('') + '</div>';
+  } else {
+    // Narrow screen: the same order, split into as many balanced columns as fit
+    var n = Math.max(1, Math.floor((w + 10) / 190));
+    grid.innerHTML = '<div class="flow">' + new Array(n + 1).join('<div></div>') + '</div>';
+    var holders = [].slice.call(grid.firstChild.children);
+    holders[0].innerHTML = [].concat.apply([], cols).map(section).join('');
+    var secs = [].slice.call(holders[0].children), hs = secs.map(function (el) { return el.offsetHeight + 8 });
+    var cut = function (limit) { var out = [[]], sum = 0; hs.forEach(function (h, k) { if (sum + h > limit && out[out.length - 1].length) { out.push([]); sum = 0 } out[out.length - 1].push(secs[k]); sum += h }); return out };
+    var lo = Math.max.apply(null, hs), hi = hs.reduce(function (a, b) { return a + b }, 0);
+    while (lo < hi) { var mid = Math.floor((lo + hi) / 2); if (cut(mid).length <= n) hi = mid; else lo = mid + 1 }
+    cut(lo).forEach(function (list, k) { list.forEach(function (el) { holders[k].appendChild(el) }) });
+  }
+  grid.scrollTop = top;
 }
 var lastW = 0;
 window.addEventListener('resize', function () { var w = $('#grid').clientWidth; if (MENU.length && w !== lastW) { lastW = w; renderGrid() } });
-$('#cats').addEventListener('click', function (e) {
-  var b = e.target.closest('button'); if (!b) return;
-  var grid = $('#grid'), el = document.getElementById('sec' + b.dataset.k);
-  var y = el.offsetTop - 8;
-  if (y < grid.scrollTop || y + 60 > grid.scrollTop + grid.clientHeight) grid.scrollTo({top: y, behavior: 'smooth'});
-  el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash') }, 900);
+$('#grid').addEventListener('click', function (e) {
+  var b = e.target.closest('.tile'); if (!b) return;
+  var i = +b.dataset.i;
+  if (CHOICE[MENU[i].name]) return askSauces(i);
+  add(String(i));
 });
-$('#grid').addEventListener('click', function (e) { var b = e.target.closest('.tile'); if (!b) return; var i = +b.dataset.i; cart[i] = (cart[i] || 0) + 1; renderGrid(); renderCart() });
+function add(key) { cart[key] = (cart[key] || 0) + 1; renderGrid(); renderCart() }
+
+/* ---------- sauce picker ---------- */
+var picking = null;  // {i, chosen: []}
+function askSauces(i) {
+  var rule = CHOICE[MENU[i].name];
+  picking = {i: i, chosen: []};
+  $('#shT').innerHTML = bi(MENU[i].ar || MENU[i].name, MENU[i].name);
+  $('#shH').innerHTML = rule[2] === 1 ? bi('اختار صوص واحد', 'Choose 1 sauce') : rule[2] === 2 ? bi('اختار صوص أو تنين', 'Choose 1 or 2 sauces') : bi('اختار صوص أو أكتر', 'Choose one or more sauces');
+  drawSauces();
+  $('#sheet').hidden = false;
+}
+function drawSauces() {
+  var rule = CHOICE[MENU[picking.i].name];
+  $('#shC').innerHTML = SAUCES[rule[0]].map(function (s) {
+    return '<button class="chip' + (picking.chosen.indexOf(s) >= 0 ? ' on' : '') + '" data-s="' + esc(s) + '">' + sauceList([s]) + '</button>';
+  }).join('');
+  $('#shOk').disabled = picking.chosen.length < rule[1];
+}
+$('#shC').addEventListener('click', function (e) {
+  var b = e.target.closest('.chip'); if (!b) return;
+  var s = b.dataset.s, max = CHOICE[MENU[picking.i].name][2], at = picking.chosen.indexOf(s);
+  if (at >= 0) picking.chosen.splice(at, 1);
+  else if (max === 1) picking.chosen = [s];
+  else if (picking.chosen.length < max) picking.chosen.push(s);
+  drawSauces();
+});
+$('#shX').addEventListener('click', function () { $('#sheet').hidden = true; picking = null });
+$('#sheet').addEventListener('click', function (e) { if (e.target.id === 'sheet') { $('#sheet').hidden = true; picking = null } });
+$('#shOk').addEventListener('click', function () {
+  var list = SAUCES[CHOICE[MENU[picking.i].name][0]].filter(function (s) { return picking.chosen.indexOf(s) >= 0 });  // menu order, so equal choices share a line
+  $('#sheet').hidden = true; add(picking.i + '|' + list.join('+')); picking = null;
+});
 
 /* ---------- ticket ---------- */
-function total() { var t = 0; for (var i in cart) t += cart[i] * MENU[i].price; return t }
+function total() { var t = 0; for (var k in cart) t += cart[k] * lineOf(k).it.price; return t }
 function renderCart() {
   var keys = Object.keys(cart);
-  $('#lines').innerHTML = keys.length ? keys.map(function (i) {
-    var it = MENU[i];
-    return '<div class="line" style="' + catVars(it.cat) + '"><i></i><span class="n">' + bi(it.ar || it.name, it.name) + '</span><span class="lt num">' + fmt(cart[i] * it.price) + '</span>' +
-      '<div class="stepper"><button data-d="1" data-i="' + i + '" aria-label="+1">+</button><span class="num">' + cart[i] + '</span><button data-d="-1" data-i="' + i + '" aria-label="-1">−</button>' +
+  $('#lines').innerHTML = keys.length ? keys.map(function (k) {
+    var l = lineOf(k), it = l.it;
+    return '<div class="line" style="' + catVars(it.cat) + '"><i></i><span class="n">' + bi(it.ar || it.name, it.name) +
+      (l.sauces.length ? '<small class="sauces">' + sauceList(l.sauces) + '</small>' : '') + '</span><span class="lt num">' + fmt(cart[k] * it.price) + '</span>' +
+      '<div class="stepper"><button data-d="1" data-k="' + esc(k) + '" aria-label="+1">+</button><span class="num">' + cart[k] + '</span><button data-d="-1" data-k="' + esc(k) + '" aria-label="-1">−</button>' +
       '<small>' + bi('الواحد', 'each') + ' <span class="num">' + fmt(it.price) + '</span></small></div></div>';
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
   $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
-  renderCats(); updateSave();
+  updateSave();
 }
 $('#lines').addEventListener('click', function (e) {
   var b = e.target.closest('button[data-d]'); if (!b) return;
-  var i = b.dataset.i; cart[i] += +b.dataset.d; if (cart[i] <= 0) delete cart[i];
+  var k = b.dataset.k; cart[k] += +b.dataset.d; if (cart[k] <= 0) delete cart[k];
   renderGrid(); renderCart();
 });
 $('#clear').addEventListener('click', function () { if (!Object.keys(cart).length || confirm(T('تمسح هالطلب؟', 'Clear this order?'))) resetOrder() });
@@ -345,7 +428,7 @@ $('#save').addEventListener('click', function () {
   var order = {
     uid: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
     at: new Date().toISOString(),
-    items: Object.keys(cart).map(function (i) { return {name: MENU[i].name, qty: cart[i]} }),
+    items: Object.keys(cart).map(function (k) { var l = lineOf(k); return {name: l.it.name, qty: cart[k], sauces: l.sauces} }),
     payment: method, note: $('#note').value.trim()
   };
   var q = queue(); q.push(order); setQueue(q);
@@ -386,7 +469,7 @@ var MONTHS_AR = ['كانون الثاني', 'شباط', 'آذار', 'نيسان'
 var MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 var WEEK_AR = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'], WEEK_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 // y, m (0-11): the month shown; sel: the day opened below the calendar; years / months / days: report data by period
-var S = {y: 0, m: 0, sel: '', rate: 89500, years: {}, months: {}, days: {}, busy: {}, locked: false, err: '', hour: -1};
+var S = {mode: 'month', y: 0, m: 0, sel: '', rate: 89500, years: {}, months: {}, days: {}, all: {}, busy: {}, locked: false, err: '', hour: -1};
 
 function pad(n) { return ('0' + n).slice(-2) }
 function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) }
@@ -421,13 +504,87 @@ function fetchR(kind, key, from, to) {
   });
 }
 function showReport() {
-  S.years = {}; S.months = {}; S.days = {}; S.err = ''; S.locked = false;
+  S.years = {}; S.months = {}; S.days = {}; S.all = {}; S.err = ''; S.locked = false;
   if (!S.y) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
   drawSales();
 }
 
+// The two views, side by side at the top of the tab
+function modeSwitch() {
+  return '<div class="modes"><button data-mode="month"' + (S.mode === 'month' ? ' class="on"' : '') + '>' + bi('الشهر', 'Month') + '</button>' +
+    '<button data-mode="all"' + (S.mode === 'all' ? ' class="on"' : '') + '>' + bi('كل الوقت', 'All time') + '</button></div>';
+}
+// Cash vs Whish and the 4 best sellers, for whatever period R covers
+function sideCards(R, none) {
+  var wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
+  var side = '<div class="card"><h3 class="display">' + bi('كاش وويش', 'Cash and Whish') + '</h3>';
+  if (R && R.summary.orders) {
+    var s = R.summary, all = (s.cashLbp + s.whishLbp) || 1;
+    side += '<div class="split"><i class="cash" style="width:' + (s.cashLbp / all * 100) + '%"></i><i class="whish" style="width:' + (s.whishLbp / all * 100) + '%"></i></div>' +
+      '<div class="pay2"><div><span class="dot cash"></span>' + bi('كاش', 'Cash') + ' <small class="muted num">' + Math.round(s.cashLbp / all * 100) + '%</small>' + amount(s.cashLbp) + '<small class="ll">' + fmt(s.cashOrders) + ' ' + bi('طلب', 'orders') + '</small></div>' +
+      '<div><span class="dot whish"></span>' + bi('ويش', 'Whish') + ' <small class="muted num">' + Math.round(s.whishLbp / all * 100) + '%</small>' + amount(s.whishLbp) + '<small class="ll">' + fmt(s.whishOrders) + ' ' + bi('طلب', 'orders') + '</small></div></div>';
+  } else side += R ? '<p class="muted">' + none + '</p>' : wait;
+  side += '</div><div class="card"><h3 class="display">' + bi('الأكتر مبيعاً', 'Best sellers') + '</h3>';
+  if (R && R.items.length) {
+    var top = R.items.slice(0, 4), maxQ = top[0].qty;
+    side += top.map(function (x) {
+      return '<div class="seller"><div class="tn">' + bi(arName(x.name), x.name) + '<span class="tq num">' + fmt(x.qty) + '</span></div>' +
+        '<div class="tb"><i style="width:' + Math.max(3, x.qty / maxQ * 100) + '%"></i></div><small class="ll num">' + $usd(x.sales) + ' · ' + ll(x.sales) + '</small></div>';
+    }).join('');
+  } else side += R ? '<p class="muted">–</p>' : wait;
+  return side + '</div>';
+}
+
+/* All time: the same numbers for every order so far, by month and by day of the week */
+function drawAll() {
+  var today = ymd(new Date());
+  fetchR('all', 'all', '2020-01-01', today);
+  if (S.locked) return;
+  var A = S.all.all, wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
+  var h = '<div class="shead">' + modeSwitch() + '<h2 class="display">' + bi('كل الوقت', 'All time') + '</h2>' +
+    (A && A.days.length ? '<span class="since">' + bi('من ', 'Since ') + dayName(A.days[0].date) + ' <span class="num">' + A.days[0].date.slice(0, 4) + '</span></span>' : '') + '</div>';
+  if (S.err) h += '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report') + ' · <small>' + esc(S.err) + '</small></p>';
+  if (!A) { $('#rep').innerHTML = h + wait; return }
+  var s = A.summary, best = null, months = {}, wk = [0, 0, 0, 0, 0, 0, 0], wkDays = [0, 0, 0, 0, 0, 0, 0];
+  A.days.forEach(function (d) {
+    if (!best || d.sales > best.sales) best = d;
+    months[d.date.slice(0, 7)] = (months[d.date.slice(0, 7)] || 0) + d.sales;
+    var w = (new Date(d.date + 'T12:00').getDay() + 6) % 7; wk[w] += d.sales; wkDays[w]++;
+  });
+  h += '<div class="kpis">' +
+    '<div class="kpi hero"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
+    '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
+      (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.sales / s.orders) + '</span></small>' : '') + '</div>' +
+    '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + ' <span class="num">' + best.date.slice(0, 4) + '</span></small>' : '<b class="usd">–</b>') + '</div>' +
+    '<div class="kpi"><small>' + bi('الأصناف المباعة', 'Items sold') + '</small><b class="usd num">' + fmt(s.items) + '</b></div></div>';
+
+  // every month since the first order, tap one to open it
+  var keys = [], k0 = A.days.length ? A.days[0].date.slice(0, 7) : today.slice(0, 7);
+  var y = +k0.slice(0, 4), m = +k0.slice(5) - 1;
+  while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
+  var maxM = Math.max.apply(null, keys.map(function (k) { return months[k] || 0 })) || 1;
+  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('حسب الشهر', 'By month') + '</h3></div><div class="months all">' +
+    keys.map(function (k) {
+      var v = months[k] || 0, mi = +k.slice(5) - 1;
+      return '<button class="mo" data-goto="' + k + '"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxM * 100) : 0) + '%"></i></span>' +
+        '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span><b class="num">' + (v ? $usd(v) : '–') + '</b></button>';
+    }).join('') + '</div></div>';
+
+  // average sales on each day of the week (days with orders only)
+  var avg = wk.map(function (v, i) { return wkDays[i] ? v / wkDays[i] : 0 }), maxW = Math.max.apply(null, avg) || 1;
+  var week = '<div class="card"><h3 class="display">' + bi('معدّل المبيعات حسب أيام الأسبوع', 'Average sales by day of the week') + '</h3><div class="months week">' +
+    avg.map(function (v, i) {
+      return '<div class="mo"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxW * 100) : 0) + '%"></i></span><span class="mn">' + bi(WEEK_AR[i], WEEK_EN[i]) + '</span><b class="num">' + (v ? $usd(v) : '–') + '</b></div>';
+    }).join('') + '</div><p class="muted note2">' + bi('معدّل الأيام اللي فيها طلبات', 'Average of days with orders') + '</p></div>';
+  h += '<div class="cols">' + week + '<div>' + sideCards(A, bi('لسا ما في طلبات', 'No orders yet')) + '</div></div>';
+  $('#rep').innerHTML = h;
+  var strip = document.querySelector('.months.all');  // open the month strip on the latest months
+  if (strip && strip.lastElementChild) strip.lastElementChild.scrollIntoView({block: 'nearest', inline: 'nearest'});
+}
+
 function drawSales() {
   if (S.locked) return;
+  if (S.mode === 'all') return drawAll();
   var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(new Date());
   fetchR('years', y, y + '-01-01', y + '-12-31');
   fetchR('months', mk, mk + '-01', mk + '-' + pad(daysIn(y, m)));
@@ -444,7 +601,7 @@ function drawSales() {
     mSales += d.sales; mOrders += d.orders; if (!best || d.sales > best.sales) best = d;
   }
 
-  var h = '<div class="shead">' +
+  var h = '<div class="shead">' + modeSwitch() +
     '<button class="nav" data-mv="-1" aria-label="' + T('الشهر الماضي', 'Previous month') + '"><span class="chev">‹</span></button>' +
     '<h2 class="display">' + bi(MONTHS_AR[m] + ' ' + y, MONTHS_EN[m] + ' ' + y) + '</h2>' +
     '<button class="nav" data-mv="1" aria-label="' + T('الشهر الجاي', 'Next month') + '"><span class="chev">›</span></button>' +
@@ -483,23 +640,7 @@ function drawSales() {
   cal += '</div><div class="legend">' + bi('أقل', 'Less') + '<i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i>' + bi('أكتر', 'More') +
     '<span class="hint">' + bi('دق على يوم لتشوف طلباتو', 'Tap a day to see its orders') + '</span></div></div>';
 
-  // payment split and best sellers for the month
-  var side = '<div class="card"><h3 class="display">' + bi('كاش وويش', 'Cash and Whish') + '</h3>';
-  if (M && M.summary.orders) {
-    var s = M.summary, all = (s.cashLbp + s.whishLbp) || 1;
-    side += '<div class="split"><i class="cash" style="width:' + (s.cashLbp / all * 100) + '%"></i><i class="whish" style="width:' + (s.whishLbp / all * 100) + '%"></i></div>' +
-      '<div class="pay2"><div><span class="dot cash"></span>' + bi('كاش', 'Cash') + ' <small class="muted num">' + Math.round(s.cashLbp / all * 100) + '%</small>' + amount(s.cashLbp) + '<small class="ll">' + fmt(s.cashOrders) + ' ' + bi('طلب', 'orders') + '</small></div>' +
-      '<div><span class="dot whish"></span>' + bi('ويش', 'Whish') + ' <small class="muted num">' + Math.round(s.whishLbp / all * 100) + '%</small>' + amount(s.whishLbp) + '<small class="ll">' + fmt(s.whishOrders) + ' ' + bi('طلب', 'orders') + '</small></div></div>';
-  } else side += M ? '<p class="muted">' + bi('ما في طلبات بهالشهر', 'No orders this month') + '</p>' : wait;
-  side += '</div><div class="card"><h3 class="display">' + bi('الأكتر مبيعاً', 'Best sellers') + '</h3>';
-  if (M && M.items.length) {
-    var top = M.items.slice(0, 8), maxQ = top[0].qty;
-    side += top.map(function (x) {
-      return '<div class="seller"><div class="tn">' + bi(arName(x.name), x.name) + '<span class="tq num">' + fmt(x.qty) + '</span></div>' +
-        '<div class="tb"><i style="width:' + Math.max(3, x.qty / maxQ * 100) + '%"></i></div><small class="ll num">' + $usd(x.sales) + ' · ' + ll(x.sales) + '</small></div>';
-    }).join('');
-  } else side += M ? '<p class="muted">–</p>' : wait;
-  side += '</div>';
+  var side = sideCards(M, bi('ما في طلبات بهالشهر', 'No orders this month'));
   h += '<div class="cols">' + cal + '<div>' + side + '</div></div>';
 
   // the selected day: total, sales by hour, every order
@@ -538,6 +679,8 @@ function drawSales() {
 $('#rep').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || S.locked) return;
   if (b.dataset.mv) { moveMonth(+b.dataset.mv); return }
+  if (b.dataset.mode) { S.mode = b.dataset.mode; S.err = ''; drawSales(); return }
+  if (b.dataset.goto) { S.mode = 'month'; S.y = +b.dataset.goto.slice(0, 4); S.m = +b.dataset.goto.slice(5) - 1; S.sel = ''; drawSales(); return }
   if (b.dataset.today) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t); drawSales(); return }
   if (b.dataset.m) { S.m = +b.dataset.m; S.sel = ''; drawSales(); return }
   if (b.dataset.h) { S.hour = +b.dataset.h === S.hour ? -1 : +b.dataset.h; drawSales(); return }
@@ -562,7 +705,11 @@ function moveMonth(k) { S.m += k; if (S.m < 0) { S.m = 11; S.y-- } if (S.m > 11)
   });
 })();
 function itemsAr(text) {
-  return String(text).split(', ').map(function (p) { var m = p.match(/^(\d+) × (.*)$/); return m ? m[1] + ' × ' + arName(m[2]) : p }).join('، ');
+  // "2 × Loaded Fries — Ketchup + Cheddar Sauce, 1 × Pepsi"
+  return String(text).split(', ').map(function (p) {
+    var m = p.match(/^(\d+) × (.*?)(?: — (.*))?$/); if (!m) return p;
+    return m[1] + ' × ' + arName(m[2]) + (m[3] ? ' (' + m[3].split(' + ').map(function (s) { return SAUCE_AR[s] || s }).join('، ') + ')' : '');
+  }).join('، ');
 }
 
 /* ---------- language ---------- */
@@ -571,7 +718,7 @@ function setLang(l) {
   document.body.className = 'lang-' + lang;
   document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
   $('#note').placeholder = T('ملاحظة (اختياري)', 'Note (optional)');
-  if (MENU.length) { renderGrid(); renderCats() }
+  if (MENU.length) renderGrid();
 }
 $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
 
