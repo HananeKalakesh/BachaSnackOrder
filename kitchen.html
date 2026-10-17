@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>El Bash Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87,900&family=Cairo:wght@600;700;800&family=Lalezar&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* El Bash design system v4. Card color shows how long an order has waited: green, then mustard, then red */
+:root{--green:#1F4A37;--green-deep:#173A2B;--paper:#FAF5EC;--white:#fff;--sand:#EFE6D6;--red:#C8102E;--mustard:#F2B705;--ink:#1A1A17;--muted:#6B655C;--hairline:#E6DDCC;
+  --shadow:0 1px 2px rgba(31,74,55,.06),0 12px 32px -16px rgba(31,74,55,.18)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:700 17px/1.35 Cairo,system-ui,sans-serif;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+.lang-ar .en,.lang-en .ar{display:none!important}
+.lang-en,.lang-en .en{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.display{font-family:Lalezar,Cairo,sans-serif;font-weight:400}
+.lang-en .display{font-family:Archivo,"Arial Narrow",sans-serif;font-weight:900;font-stretch:87%;text-transform:uppercase}
+.num{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+
+.top{height:68px;display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--green);color:var(--paper)}
+.top .logo{height:48px;width:auto;flex:none}
+.top h1{margin:0;font-size:28px;line-height:1}
+.count{min-width:40px;height:40px;padding:0 10px;border-radius:999px;background:var(--mustard);color:var(--ink);font-size:22px;line-height:40px;text-align:center}
+.clock{margin-inline-start:auto;font-size:28px}
+.langbtn{height:44px;padding:0 18px;border-radius:999px;border:1.5px solid rgba(250,245,236,.3);background:rgba(250,245,236,.08);color:var(--paper);font-weight:800}
+.langbtn .ar{font-family:Cairo,sans-serif}.langbtn .en{font-family:"Plus Jakarta Sans",sans-serif}
+.net{background:var(--mustard);color:var(--ink);text-align:center;padding:8px;font-size:16px}
+.net:empty{display:none}
+
+.board{height:calc(100% - 68px);overflow-y:auto;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;align-content:start;-webkit-overflow-scrolling:touch}
+.card{background:var(--white);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.card.fresh{--age:var(--green);--on-age:var(--paper)}
+.card.late{--age:var(--mustard);--on-age:var(--ink)}
+.card.over{--age:var(--red);--on-age:#fff}
+.card.new{animation:pop 1s ease-out 3}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.03)}100%{transform:scale(1)}}
+.card header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--age);color:var(--on-age)}
+.card header .n{font-size:40px;line-height:1}
+.card header .t{margin-inline-start:auto;text-align:end;line-height:1.2}
+.card header .t b{display:block;font-size:22px}
+.card header .t small{font-size:15px;opacity:.9}
+.items{padding:6px 10px}
+.it{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 6px;border-bottom:1px solid var(--hairline);text-align:start}
+.it:last-child{border-bottom:0}
+.it .box{flex:none;width:34px;height:34px;border-radius:10px;border:2.5px solid var(--green);display:flex;align-items:center;justify-content:center;color:var(--paper);font-size:22px}
+.it .qty{flex:none;min-width:46px;height:40px;padding:0 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:24px;line-height:40px;text-align:center}
+.it .nm{font-size:21px;line-height:1.25}
+.it.ok .box{background:var(--green)}
+.it.ok .nm,.it.ok .qty{opacity:.4;text-decoration:line-through}
+.other{margin:0 14px 8px;font-size:15px;color:var(--muted)}
+.note{margin:0 14px 10px;padding:8px 12px;border-radius:12px;background:var(--mustard);color:var(--ink);font-size:18px}
+.done{margin:auto 12px 12px;height:64px;border-radius:14px;background:var(--sand);color:var(--green);font-size:24px;font-weight:800}
+.lang-en .done{font-family:"Plus Jakarta Sans",sans-serif}
+.done.ready{background:var(--green);color:var(--paper);box-shadow:0 10px 24px -10px rgba(31,74,55,.6)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:80px 20px}
+.empty .display{font-size:48px;color:var(--green);display:block}
+
+.start{position:fixed;inset:0;z-index:10;background:var(--green);color:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:20px}
+.start .logo{width:220px;height:auto}
+.start button{height:84px;padding:0 54px;border-radius:999px;background:var(--red);color:#fff;font-size:30px;font-weight:800;box-shadow:0 10px 24px -8px rgba(200,16,46,.45)}
+.start p{margin:0;font-size:18px;max-width:460px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,160px);background:var(--green-deep);color:var(--paper);padding:10px 12px 10px 22px;border-radius:18px;font-size:20px;display:flex;align-items:center;gap:16px;transition:transform .25s;z-index:9;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.toast button{height:52px;padding:0 22px;border-radius:14px;background:var(--mustard);color:var(--ink);font-weight:800}
+@media (max-width:600px){.top h1{font-size:22px}.clock{display:none}}
+</style>
+</head>
+<body class="lang-ar">
+<div class="top">
+  <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
+  <h1 class="display"><span class="ar">المطبخ · </span><span class="en">Kitchen · </span><span id="stName"></span></h1>
+  <span class="count num" id="count">0</span>
+  <span class="clock num" id="clock"></span>
+  <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
+</div>
+<div class="net" id="net"></div>
+<div class="board" id="board"></div>
+<div class="start" id="start">
+  <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
+  <button id="go" type="button"><span class="ar">افتح شاشة المطبخ</span><span class="en">Open the kitchen screen</span></button>
+  <p><span class="ar">بيرن صوت كل ما يوصل طلب جديد. خلّي صوت الآيباد مفتوح.</span><span class="en">A sound plays for every new order. Keep the iPad volume up.</span></p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var STATION = 'Sandwiches', STATION_AR = {'Sandwiches': 'ساندويشات'};
+var LKEY = 'elbash-kitchen-lang', TKEY = 'elbash-kitchen-ticks';
+var orders = [], seen = null, hidden = {}, offset = 0, YELLOW = 10, RED = 20, lang = 'ar', audio = null;
+
+function $(s) { return document.querySelector(s) }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
+function bi(ar, en) { return '<span class="ar">' + esc(ar) + '</span><span class="en">' + esc(en) + '</span>' }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v) } catch (e) { return null } }
+function call(fn) {
+  var args = [].slice.call(arguments, 1);
+  return new Promise(function (ok, fail) {
+    var r = google.script.run.withSuccessHandler(ok).withFailureHandler(fail);
+    r[fn].apply(r, args);
+  });
+}
+
+/* ticked items are kept on this iPad, so a reload doesn't lose them */
+function ticks() { try { return JSON.parse(store(TKEY) || '{}') } catch (e) { return {} } }
+function setTicks(t) {
+  var keep = {}; orders.forEach(function (o) { if (t[o.key]) keep[o.key] = t[o.key] });
+  store(TKEY, JSON.stringify(keep));
+}
+
+/* new-order chime: three short rising notes, made in the browser so no sound file is needed */
+function chime() {
+  if (!audio) return;
+  try {
+    var t = audio.currentTime;
+    [660, 880, 1175].forEach(function (f, i) {
+      var o = audio.createOscillator(), g = audio.createGain();
+      o.type = 'sine'; o.frequency.value = f; o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(0.0001, t + i * 0.18); g.gain.exponentialRampToValueAtTime(0.6, t + i * 0.18 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.18 + 0.4);
+      o.start(t + i * 0.18); o.stop(t + i * 0.18 + 0.45);
+    });
+  } catch (e) {}
+}
+
+function load() {
+  return call('getKitchen', STATION).then(function (r) {
+    $('#net').innerHTML = '';
+    offset = r.now - Date.now(); YELLOW = r.yellow; RED = r.red;
+    var fresh = [];
+    orders = r.orders.filter(function (o) { return !hidden[o.key] });
+    if (seen) orders.forEach(function (o) { if (!seen[o.key]) fresh.push(o.key) });
+    seen = {}; r.orders.forEach(function (o) { seen[o.key] = 1 });
+    render(fresh);
+    if (fresh.length) chime();
+  }, function () {
+    $('#net').innerHTML = bi('ما في اتصال. عم نحاول من جديد…', 'No connection. Trying again…');
+  });
+}
+
+function age(o) { return Math.max(0, Math.floor((Date.now() + offset - o.at) / 60000)) }
+function render(fresh) {
+  var t = ticks();
+  $('#count').textContent = orders.length;
+  $('#board').innerHTML = orders.length ? orders.map(function (o) {
+    var m = age(o), cls = m >= RED ? 'over' : m >= YELLOW ? 'late' : 'fresh', tk = t[o.key] || {};
+    var all = o.items.every(function (x, i) { return tk[i] });
+    return '<article class="card ' + cls + (fresh && fresh.indexOf(o.key) >= 0 ? ' new' : '') + '" data-key="' + esc(o.key) + '">' +
+      '<header><span class="n num">#' + o.num + '</span><span class="t"><b class="num">' + esc(o.time) + '</b><small>' +
+        bi(m < 1 ? 'هلّق' : 'من ' + m + ' دقيقة', m < 1 ? 'just now' : m + ' min ago') + '</small></span></header>' +
+      '<div class="items">' + o.items.map(function (x, i) {
+        return '<button class="it' + (tk[i] ? ' ok' : '') + '" data-i="' + i + '"><span class="box">' + (tk[i] ? '✓' : '') + '</span>' +
+          '<span class="qty num">' + x.qty + '</span><span class="nm">' + bi(x.ar || x.name, x.name) + '</span></button>';
+      }).join('') + '</div>' +
+      (o.note ? '<div class="note">' + esc(o.note) + '</div>' : '') +
+      (o.other.length ? '<div class="other">' + bi('مع الطلب: ' + o.other.map(function (x) { return x.qty + ' × ' + (x.ar || x.name) }).join('، '),
+        'Also in this order: ' + o.other.map(function (x) { return x.qty + ' × ' + x.name }).join(', ')) + '</div>' : '') +
+      '<button class="done' + (all ? ' ready' : '') + '">' + bi('خلص ✓', 'Done ✓') + '</button></article>';
+  }).join('') : '<div class="empty">' + '<span class="display">' + bi('ما في طلبات', 'No orders') + '</span>' + bi('الطلبات الجديدة بتطلع هون لحالها.', 'New orders show up here by themselves.') + '</div>';
+}
+
+$('#board').addEventListener('click', function (e) {
+  var card = e.target.closest('.card'); if (!card) return;
+  var key = card.dataset.key, o = orders.filter(function (x) { return x.key === key })[0]; if (!o) return;
+  var it = e.target.closest('.it');
+  if (it) {
+    var t = ticks(); t[key] = t[key] || {}; t[key][it.dataset.i] = !t[key][it.dataset.i]; setTicks(t); render();
+    return;
+  }
+  if (e.target.closest('.done')) finish(o);
+});
+
+function finish(o) {
+  hidden[o.key] = 1;
+  orders = orders.filter(function (x) { return x.key !== o.key }); render();
+  call('markDone', STATION, o.day, o.num, false).catch(function () { delete hidden[o.key]; load() });
+  var el = $('#toast');
+  el.innerHTML = bi('الطلب #' + o.num + ' خلص', 'Order #' + o.num + ' done') + '<button type="button">' + bi('رجّعه', 'Undo') + '</button>';
+  el.classList.add('show'); clearTimeout(finish.t);
+  finish.t = setTimeout(function () { el.classList.remove('show') }, 6000);
+  el.querySelector('button').onclick = function () {
+    el.classList.remove('show');
+    call('markDone', STATION, o.day, o.num, true).then(function () { delete hidden[o.key]; load() });
+  };
+}
+
+function tick() {
+  var d = new Date(Date.now() + offset);
+  $('#clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+}
+
+function setLang(l) {
+  lang = l === 'en' ? 'en' : 'ar'; store(LKEY, lang);
+  document.body.className = 'lang-' + lang;
+  document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  $('#stName').textContent = lang === 'en' ? STATION : (STATION_AR[STATION] || STATION);
+}
+$('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
+
+// iPads only play sound after a tap, so the screen starts with one big button
+$('#go').addEventListener('click', function () {
+  try { audio = new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) {}
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function () {}) } catch (e) {}
+  $('#start').style.display = 'none';
+  chime();
+});
+
+function begin(station) {
+  if (station) STATION = station;
+  setLang(store(LKEY) || 'ar'); tick();
+  load();
+  setInterval(load, 6000);
+  setInterval(function () { tick(); render() }, 30000);
+}
+// The station comes from the link (…/exec?screen=kitchen&station=Sandwiches); Sandwiches when none is given
+try { google.script.url.getLocation(function (loc) { begin(loc.parameter && loc.parameter.station) }) } catch (e) { begin() }
+</script>
+</body>
+</html>
