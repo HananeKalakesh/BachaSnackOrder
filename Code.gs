@@ -109,6 +109,7 @@ function doneCol_(sheet, station, create) {
   var head = sheet.getRange(1, 1, 1, w).getValues()[0];
   for (var i = 0; i < head.length; i++) if (String(head[i]).trim() === name) return i + 1;
   if (!create) return 0;
+  if (sheet.getMaxColumns() <= w) sheet.insertColumnAfter(w);
   sheet.getRange(1, w + 1).setValue(name);
   return w + 1;
 }
