@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>El Bash Orders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Lalezar&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#1F4A37;--paper:#FAF5EC;--input:#F3EBDD;--red:#C8102E;--mustard:#F2B705;--ink:#1A1A17;--body:#3F3B35;--muted:#6B655C;--line:#E6DDCC;--whish:#E4007C;
+  --shadow:0 1px 2px rgba(31,74,55,.06),0 12px 32px -16px rgba(31,74,55,.18)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:700 16px/1.35 Cairo,system-ui,sans-serif;overscroll-behavior:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;touch-action:manipulation}
+/* English subtitles under or beside the Arabic */
+.en{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-weight:700;font-size:.72em;opacity:.75;direction:ltr;unicode-bidi:isolate}
+.en.side{margin-right:6px}
+.stack .en{display:block;line-height:1.2}
+.display{font-family:Lalezar,Cairo,sans-serif;font-weight:400;letter-spacing:0}
+.num{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+
+/* top bar */
+.top{height:64px;display:flex;align-items:center;gap:16px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}
+.top img{height:40px;width:auto}
+.tabs{display:flex;gap:6px;background:var(--input);padding:4px;border-radius:999px;margin-inline-start:auto}
+.tabs button{padding:6px 16px;border-radius:999px;color:var(--muted)}
+.tabs button.on{background:var(--green);color:#fff}
+.net{font-size:13px;color:var(--red);white-space:nowrap}
+
+/* order screen */
+.order{display:grid;grid-template-columns:1fr 380px;height:calc(100% - 64px)}
+.left{display:flex;flex-direction:column;min-width:0;min-height:0}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;flex:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;padding:6px 16px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-size:15px;white-space:nowrap;text-align:center}
+.cats button.on{background:var(--green);border-color:var(--green);color:#fff}
+.grid{flex:1;overflow-y:auto;padding:4px 16px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;align-content:start;-webkit-overflow-scrolling:touch}
+.tile{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:12px 12px 10px;min-height:112px;display:flex;flex-direction:column;text-align:start;box-shadow:var(--shadow);transition:transform .08s}
+.tile:active{transform:scale(.97);background:var(--input)}
+.tile b{font-weight:800;font-size:16px;line-height:1.3}
+.tile .en{font-size:12px;color:var(--muted);opacity:1;margin-top:2px;text-align:start}
+.tile .pr{margin-top:auto;padding-top:8px;font-weight:800;color:var(--green);font-size:14px;text-align:start}
+.tile .q{position:absolute;top:-8px;inset-inline-end:-8px;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:var(--red);color:#fff;font:800 15px "Plus Jakarta Sans",sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -4px rgba(200,16,46,.6)}
+.sechead{grid-column:1/-1;margin:10px 2px 0;font-size:24px;color:var(--green)}
+
+.right{background:#fff;border-inline-start:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.ticket{flex:1;overflow-y:auto;padding:12px 16px}
+.ticket h2{margin:4px 0 10px;font-size:26px;color:var(--green);display:flex;justify-content:space-between;align-items:center}
+.ticket h2 button{font:700 15px Cairo,sans-serif;color:var(--red);padding:6px 4px}
+.empty{color:var(--muted);padding:24px 0;text-align:center}
+.line{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.line .n{font-weight:800;font-size:15px}
+.line .n .en{display:block;font-size:12px}
+.line .lt{font-weight:800}
+.stepper{display:flex;align-items:center;gap:6px;grid-column:1/-1}
+.stepper button{width:40px;height:36px;border-radius:12px;background:var(--input);font:800 22px/1 "Plus Jakarta Sans",sans-serif}
+.stepper span{min-width:28px;text-align:center;font-weight:800}
+.stepper small{margin-inline-start:auto;color:var(--muted);font-size:13px}
+
+.pay{border-top:1px solid var(--line);padding:12px 16px 16px;background:var(--paper)}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.total .display{font-size:26px;color:var(--green)}
+.total b{display:block;font-size:26px;font-weight:800}
+.total small{display:block;color:var(--muted);font-weight:700;text-align:end}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.methods button{height:60px;border-radius:14px;background:#fff;border:2px solid var(--line);font-size:19px;font-weight:800;line-height:1.15}
+.methods button.on[data-m=Cash]{background:var(--green);border-color:var(--green);color:#fff}
+.methods button.on[data-m=Whish]{background:var(--whish);border-color:var(--whish);color:#fff}
+.note{width:100%;margin-top:8px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 12px;font-size:15px;outline:none}
+.save{margin-top:12px;width:100%;height:62px;border-radius:14px;background:var(--red);color:#fff;font-weight:800;font-size:21px;line-height:1.15;box-shadow:0 10px 24px -12px rgba(200,16,46,.7)}
+.save .en{display:block;font-size:13px}
+.save:disabled{background:#d9cfc0;box-shadow:none}
+
+/* report */
+.report{height:calc(100% - 64px);overflow-y:auto;padding:16px;display:none}
+.wrap{max-width:1100px;margin:0 auto}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-bottom:14px}
+.filters .q button{padding:6px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line)}
+.filters .q button.on{background:var(--green);color:#fff;border-color:var(--green)}
+.filters label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+.filters input{height:44px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 10px;font-family:"Plus Jakarta Sans",sans-serif}
+.q{display:flex;flex-wrap:wrap;gap:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:24px;padding:16px 18px;box-shadow:var(--shadow)}
+.kpi small{display:block;font-size:14px;color:var(--muted)}
+.kpi b{display:block;font-size:24px;font-weight:800;margin-top:6px;text-align:start}
+.kpi > span{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.kpi.hero{background:var(--green);color:#fff}.kpi.hero small,.kpi.hero span{color:rgba(255,255,255,.8)}
+.cols{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+.card{background:#fff;border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h3{margin:0 0 10px;font-size:22px;color:var(--green)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:start;font-size:13px;color:var(--muted);padding:6px 4px;border-bottom:1.5px solid var(--line)}
+td{padding:8px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+td.r,th.r{text-align:end}
+td .en{display:block;font-size:12px;color:var(--muted);opacity:1}
+.bar{height:6px;border-radius:3px;background:var(--mustard);margin-top:4px}
+.del{color:var(--red);font-size:14px;padding:4px 6px}
+.pin{max-width:340px;margin:60px auto;text-align:center}
+.pin input{width:100%;height:60px;font-size:28px;text-align:center;letter-spacing:.4em;border-radius:14px;border:2px solid var(--line);margin:12px 0;outline:none;direction:ltr}
+.pin button{width:100%;height:54px;border-radius:14px;background:var(--green);color:#fff;font-size:18px}
+.err{color:var(--red);min-height:22px}
+.muted{color:var(--muted)}
+.pill{display:inline-block;padding:0 10px;border-radius:999px;font-size:13px;color:#fff;background:var(--green)}
+.pill.Whish{background:var(--whish)}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:14px;font-weight:800;font-size:18px;text-align:center;transition:transform .25s;z-index:9;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+.toast .en{display:block;font-size:13px}
+.toast.show{transform:translate(-50%,0)}
+
+@media (max-width:900px){.order{grid-template-columns:1fr 330px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.cols{grid-template-columns:1fr}}
+@media (max-width:700px){.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 64px)}.right{border-inline-start:0;border-top:1px solid var(--line)}.top img{height:32px}.tabs button{padding:6px 12px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
+  <span class="net" id="net"></span>
+  <div class="tabs"><button class="on" data-view="order">طلب جديد<span class="en side">New order</span></button><button data-view="report">المبيعات<span class="en side">Sales</span></button></div>
+</div>
+
+<div class="order" id="orderView">
+  <div class="left">
+    <div class="cats" id="cats"></div>
+    <div class="grid" id="grid"><div class="muted" style="padding:20px">عم يحمّل المنيو…<span class="en side">Loading menu…</span></div></div>
+  </div>
+  <div class="right">
+    <div class="ticket">
+      <h2><span class="display">الطلب<span class="en side">Order</span></span> <button id="clear" type="button">مسح<span class="en side">Clear</span></button></h2>
+      <div id="lines"></div>
+    </div>
+    <div class="pay">
+      <div class="total"><span class="display">المجموع<span class="en side">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
+      <div class="methods"><button data-m="Cash" class="stack">كاش<span class="en">Cash</span></button><button data-m="Whish" class="stack">ويش<span class="en">Whish</span></button></div>
+      <input class="note" id="note" placeholder="ملاحظة (اختياري) · Note" autocomplete="off">
+      <button class="save" id="save" disabled></button>
+    </div>
+  </div>
+</div>
+
+<div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var MENU = [], RATE = 89500, CATS = [], cart = {}, method = '', curCat = 'All';
+var QKEY = 'elbash-pos-queue', PKEY = 'elbash-pos-pin';
+var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
+  'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
+  'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات وإضافات', 'Drinks': 'مشروبات'};
+var PAY_AR = {Cash: 'كاش', Whish: 'ويش'};
+function $(s) { return document.querySelector(s) }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
+function fmt(n) { return Math.round(n).toLocaleString('en-US') }
+function money(n) { return fmt(n) + ' L.L.' }
+function usd(n) { return '$' + (Math.round(n * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) }
+function bi(ar, en, cls) { return esc(ar) + '<span class="en' + (cls ? ' ' + cls : '') + '">' + esc(en) + '</span>' }
+function arName(en) { for (var i = 0; i < MENU.length; i++) if (MENU[i].name === en) return MENU[i].ar || en; return en }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v) } catch (e) { return null } }
+function toast(arHtml, en) { var el = $('#toast'); el.innerHTML = arHtml + '<span class="en">' + esc(en) + '</span>'; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('show') }, 2600) }
+
+/* server calls: google.script.run wrapped in a promise */
+function call(fn) {
+  var args = [].slice.call(arguments, 1);
+  return new Promise(function (ok, fail) {
+    var r = google.script.run.withSuccessHandler(ok).withFailureHandler(fail);
+    r[fn].apply(r, args);
+  });
+}
+
+/* ---------- menu ---------- */
+function loadMenu() {
+  call('getMenu').then(function (m) {
+    MENU = m.items; RATE = m.rate;
+    CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) });
+    renderCats(); renderGrid(); renderCart();
+  }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.', 'side') + '<br><small>' + esc(e.message || e) + '</small></div>' });
+}
+function renderCats() {
+  $('#cats').innerHTML = ['All'].concat(CATS).map(function (c) { return '<button class="stack' + (c === curCat ? ' on' : '') + '" data-cat="' + esc(c) + '">' + bi(CAT_AR[c] || c, c) + '</button>' }).join('');
+}
+function renderGrid() {
+  var h = '', last = '';
+  MENU.forEach(function (it, i) {
+    if (curCat !== 'All' && it.cat !== curCat) return;
+    if (curCat === 'All' && it.cat !== last) { h += '<div class="sechead display">' + bi(CAT_AR[it.cat] || it.cat, it.cat, 'side') + '</div>'; last = it.cat }
+    var q = cart[i] || 0;
+    h += '<button class="tile" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
+      '<b>' + esc(it.ar || it.name) + '</b><span class="en">' + esc(it.name) + '</span>' +
+      '<span class="pr num">' + fmt(it.price) + '</span></button>';
+  });
+  $('#grid').innerHTML = h;
+}
+$('#cats').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; curCat = b.dataset.cat; renderCats(); renderGrid(); $('#grid').scrollTop = 0 });
+$('#grid').addEventListener('click', function (e) { var b = e.target.closest('.tile'); if (!b) return; var i = +b.dataset.i; cart[i] = (cart[i] || 0) + 1; renderGrid(); renderCart() });
+
+/* ---------- ticket ---------- */
+function total() { var t = 0; for (var i in cart) t += cart[i] * MENU[i].price; return t }
+function renderCart() {
+  var keys = Object.keys(cart);
+  $('#lines').innerHTML = keys.length ? keys.map(function (i) {
+    var it = MENU[i];
+    return '<div class="line"><span class="n">' + bi(it.ar || it.name, it.name) + '</span><span class="lt num">' + fmt(cart[i] * it.price) + '</span>' +
+      '<div class="stepper"><button data-d="1" data-i="' + i + '" aria-label="زيد واحد">+</button><span class="num">' + cart[i] + '</span><button data-d="-1" data-i="' + i + '" aria-label="نقّص واحد">−</button>' +
+      '<small>الواحد <span class="num">' + fmt(it.price) + '</span></small></div></div>';
+  }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
+  var t = total();
+  $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
+  updateSave();
+}
+$('#lines').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-d]'); if (!b) return;
+  var i = b.dataset.i; cart[i] += +b.dataset.d; if (cart[i] <= 0) delete cart[i];
+  renderGrid(); renderCart();
+});
+$('#clear').addEventListener('click', function () { if (!Object.keys(cart).length || confirm('تمسح هالطلب؟ · Clear this order?')) resetOrder() });
+function resetOrder() { cart = {}; method = ''; $('#note').value = ''; setMethod(''); renderGrid(); renderCart() }
+
+function setMethod(m) { method = m; document.querySelectorAll('.methods button').forEach(function (b) { b.classList.toggle('on', b.dataset.m === m) }); updateSave() }
+document.querySelectorAll('.methods button').forEach(function (b) { b.addEventListener('click', function () { setMethod(b.dataset.m) }) });
+function updateSave() {
+  var t = total();
+  $('#save').disabled = !(t && method);
+  $('#save').innerHTML = !t || method ? bi('احفظ الطلب', 'Save order') : bi('اختار كاش أو ويش', 'Choose Cash or Whish');
+}
+
+/* ---------- saving, with an offline queue ---------- */
+function queue() { try { return JSON.parse(store(QKEY) || '[]') } catch (e) { return [] } }
+function setQueue(q) { store(QKEY, JSON.stringify(q)); showNet() }
+function showNet() { var n = queue().length; $('#net').innerHTML = n ? bi(n + ' ناطر ينبعت', n + (n > 1 ? ' orders' : ' order') + ' waiting to send', 'side') : '' }
+
+$('#save').addEventListener('click', function () {
+  var order = {
+    uid: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    at: new Date().toISOString(),
+    items: Object.keys(cart).map(function (i) { return {name: MENU[i].name, qty: cart[i]} }),
+    payment: method, note: $('#note').value.trim()
+  };
+  var q = queue(); q.push(order); setQueue(q);
+  resetOrder();
+  flush(true);
+});
+
+var flushing = false;
+function flush(announce) {
+  if (flushing) return; var q = queue(); if (!q.length) return;
+  flushing = true;
+  call('saveOrder', q[0]).then(function (r) {
+    setQueue(queue().filter(function (o) { return o.uid !== q[0].uid }));
+    flushing = false;
+    if (announce) toast('انحفظ الطلب رقم <span class="num">' + r.num + '</span> · <span class="num">' + money(r.total) + '</span>', 'Order #' + r.num + ' saved');
+    flush(announce);
+  }, function (e) {
+    flushing = false; showNet();
+    if (/not on the menu/i.test(e.message || '')) { alert(e.message); setQueue(queue().slice(1)); return }
+    if (announce) toast('ما في إنترنت، الطلب محفوظ وبينبعت لحالو', 'No internet: the order is kept and will send by itself');
+  });
+}
+setInterval(function () { flush(false) }, 20000);
+window.addEventListener('online', function () { flush(true) });
+
+/* ---------- views ---------- */
+document.querySelectorAll('.tabs button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === b) });
+    var rep = b.dataset.view === 'report';
+    $('#orderView').style.display = rep ? 'none' : ''; $('#reportView').style.display = rep ? 'block' : 'none';
+    if (rep) showReport();
+  });
+});
+
+/* ---------- sales report ---------- */
+var range = {from: '', to: '', key: 'today'};
+function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) }
+function preset(k) {
+  var d = new Date(), f = new Date(d), t = new Date(d);
+  if (k === 'yesterday') { f.setDate(d.getDate() - 1); t = new Date(f) }
+  if (k === 'week') { f.setDate(d.getDate() - ((d.getDay() + 6) % 7)) }
+  if (k === 'month') { f = new Date(d.getFullYear(), d.getMonth(), 1) }
+  if (k === 'all') { f = new Date(2020, 0, 1) }
+  range = {from: ymd(f), to: ymd(t), key: k};
+}
+function pin() { try { return sessionStorage.getItem(PKEY) || '' } catch (e) { return '' } }
+function setPin(p) { try { sessionStorage.setItem(PKEY, p) } catch (e) {} }
+
+function showReport() {
+  if (!range.from) preset('today');
+  loadReport();
+}
+function pinScreen(msg) {
+  $('#rep').innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:30px;margin:0">' + bi('المبيعات', 'Sales', 'side') + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN', 'side') + '</p>' +
+    '<input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="err">' + msg + '</div><button id="pinGo">' + bi('افتح', 'Open', 'side') + '</button></div>';
+  var go = function () { setPin($('#pinIn').value); showReport() };
+  $('#pinGo').onclick = go; $('#pinIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#pinIn').focus();
+}
+function loadReport() {
+  $('#rep').innerHTML = filters() + '<p class="muted">' + bi('عم يحمّل…', 'Loading…', 'side') + '</p>'; bindFilters();
+  call('getReport', pin(), range.from, range.to).then(renderReport, function (e) {
+    if (/PIN/.test(e.message || '')) { var had = pin(); setPin(''); return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN', 'side') : '') }
+    $('#rep').innerHTML = filters() + '<p class="err">' + bi('ما قدرنا نحمّل المبيعات', 'Could not load the report', 'side') + '<br><small>' + esc(e.message || e) + '</small></p>'; bindFilters();
+  });
+}
+function filters() {
+  var q = [['today', 'اليوم', 'Today'], ['yesterday', 'مبارح', 'Yesterday'], ['week', 'هالجمعة', 'This week'], ['month', 'هالشهر', 'This month'], ['all', 'كل الوقت', 'All time']];
+  return '<div class="filters"><div class="q">' + q.map(function (x) { return '<button data-k="' + x[0] + '" class="stack' + (range.key === x[0] ? ' on' : '') + '">' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
+    '<div><label for="fFrom">' + bi('من', 'From', 'side') + '</label><input type="date" id="fFrom" value="' + range.from + '"></div>' +
+    '<div><label for="fTo">' + bi('لـ', 'To', 'side') + '</label><input type="date" id="fTo" value="' + range.to + '"></div></div>';
+}
+function bindFilters() {
+  document.querySelectorAll('.filters .q button').forEach(function (b) { b.onclick = function () { preset(b.dataset.k); loadReport() } });
+  var ch = function () { range = {from: $('#fFrom').value, to: $('#fTo').value, key: ''}; if (range.from && range.to) loadReport() };
+  $('#fFrom').onchange = ch; $('#fTo').onchange = ch;
+}
+function kpi(ar, en, big, small, hero) { return '<div class="kpi' + (hero ? ' hero' : '') + '"><small>' + bi(ar, en, 'side') + '</small><b class="num">' + big + '</b>' + (small ? '<span>' + small + '</span>' : '') + '</div>' }
+function itemsAr(text) {
+  return String(text).split(', ').map(function (p) { var m = p.match(/^(\d+) × (.*)$/); return m ? m[1] + ' × ' + arName(m[2]) : p }).join('، ');
+}
+function renderReport(r) {
+  var s = r.summary, h = filters();
+  h += '<div class="kpis">' +
+    kpi('المبيعات', 'Sales', money(s.sales), '<span class="num">' + usd(s.sales / r.rate) + '</span>', true) +
+    kpi('الطلبات', 'Orders', fmt(s.orders), s.orders ? 'المعدل <span class="num">' + money(s.sales / s.orders) + '</span>' : '') +
+    kpi('الأصناف', 'Items sold', fmt(s.items), '') +
+    kpi('كاش', 'Cash', money(s.cashLbp), '<span class="num">' + fmt(s.cashOrders) + '</span> طلب') +
+    kpi('ويش', 'Whish', money(s.whishLbp), '<span class="num">' + fmt(s.whishOrders) + '</span> طلب') +
+    '</div>';
+  var max = r.items.length ? r.items[0].qty : 1;
+  h += '<div class="cols"><div class="card"><h3 class="display">' + bi('الأصناف المباعة', 'Items sold', 'side') + '</h3>' + (r.items.length ?
+    '<table><tr><th>' + bi('الصنف', 'Item', 'side') + '</th><th class="r">' + bi('العدد', 'Qty', 'side') + '</th><th class="r">L.L.</th></tr>' + r.items.map(function (x) {
+      return '<tr><td>' + bi(arName(x.name), x.name) + '<div class="bar" style="width:' + Math.max(4, x.qty / max * 100) + '%"></div></td><td class="r num"><b>' + fmt(x.qty) + '</b></td><td class="r num">' + fmt(x.sales) + '</td></tr>' }).join('') + '</table>'
+    : '<p class="muted">' + bi('ما في طلبات بهالتواريخ', 'No orders in these dates', 'side') + '</p>') + '</div><div>';
+  if (r.days.length > 1) h += '<div class="card"><h3 class="display">' + bi('حسب اليوم', 'By day', 'side') + '</h3><table><tr><th>' + bi('التاريخ', 'Date', 'side') + '</th><th class="r">' + bi('طلبات', 'Orders', 'side') + '</th><th class="r">L.L.</th></tr>' +
+    r.days.map(function (d) { return '<tr><td class="num">' + d.date + '</td><td class="r num">' + d.orders + '</td><td class="r num">' + fmt(d.sales) + '</td></tr>' }).join('') + '</table></div>';
+  if (r.orders) h += '<div class="card"><h3 class="display">' + bi('الطلبات', 'Orders', 'side') + '</h3>' + (r.orders.length ? '<table><tr><th>#</th><th>' + bi('الأصناف', 'Items', 'side') + '</th><th class="r">' + bi('المجموع', 'Total', 'side') + '</th><th></th></tr>' +
+    r.orders.map(function (o) {
+      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + o.time + '</div></td><td>' + esc(itemsAr(o.items)) + '<div><span class="pill ' + o.payment + '">' + (PAY_AR[o.payment] || o.payment) + '</span></div></td><td class="r num">' + fmt(o.total) +
+        '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete', 'side') + '</button></td></tr>' }).join('') + '</table>' : '<p class="muted">' + bi('لسا ما في طلبات', 'No orders yet', 'side') + '</p>') + '</div>';
+  else h += '<div class="card"><p class="muted" style="margin:0">' + bi('اختار 3 أيام أو أقل لتشوف كل طلب', 'Pick up to 3 days to see each order') + '</p></div>';
+  h += '</div></div>';
+  $('#rep').innerHTML = h; bindFilters();
+  document.querySelectorAll('.del').forEach(function (b) {
+    b.onclick = function () {
+      if (!confirm('تمسح الطلب رقم ' + b.dataset.n + ' (' + b.dataset.d + ')؟ · Delete this order?')) return;
+      call('deleteOrder', pin(), b.dataset.d, +b.dataset.n).then(function () { toast('انمسح الطلب', 'Order deleted'); loadReport() }, function (e) { alert(e.message || e) });
+    };
+  });
+}
+
+showNet(); updateSave(); loadMenu(); flush(true);
+</script>
+</body>
+</html>
