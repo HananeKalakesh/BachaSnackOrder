@@ -317,7 +317,10 @@ const CONFIG = {
   closedDay: 1,                  // day off (Beirut time): 0=Sun 1=Mon 2=Tue ... 6=Sat, or null for none
   hours: [['13:00', '17:00'], ['19:00', '23:30']], // opening hours each open day (Beirut time)
   timeZone: 'Asia/Beirut',
-  pieces: {4: 500000, 5: 600000, 6: 700000, 7: 800000}, // Crispy / Zinger meal price per number of pieces
+  pieces: {4: 500000, 5: 600000, 6: 700000, 7: 800000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
+  // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
+  // Empty = use only the menu written in this page.
+  menuUrl: '',
   popular: ['Zinger Sandwich', 'Crispy Meal', 'Basha Burger', 'Loaded Fries'], // items tagged "★ Popular"
   deliveryNote: {en: '', ar: ''},// optional line in the cart, e.g. {en: 'Delivery fee: 100,000 L.L.', ar: 'كلفة التوصيل: 100,000 ل.ل.'}
   photos: {                      // item photos (square, in the photos folder)
@@ -490,6 +493,51 @@ Object.values(data).flat().forEach(it => {
   ITEMS[it[0]] = it;
 });
 
+/* ---------- items and prices from the shop's sheet ----------
+   The Menu tab is the one place to change items and prices. Descriptions, photos and sauce choices stay here.
+   A row the sheet unticks ("On order screen") is hidden; a row the page doesn't know yet is added to its section. */
+const GRID_OF = {'Fries': 'friesGrid', 'Appetizers': 'appetizerGrid', 'Meals': 'mealGrid', 'Family Meals': 'familyGrid', 'Plates': 'plateGrid',
+  'Chicken Sandwiches': 'sandwichChickenGrid', 'Beef Sandwiches': 'sandwichBeefGrid', 'Other Sandwiches': 'sandwichOtherGrid',
+  'Chicken Burgers': 'burgerChickenGrid', 'Beef Burgers': 'burgerBeefGrid', 'Sauces & Extras': 'sauceGrid', 'Drinks': 'drinkGrid'};
+const PIECES = {};              // 'Crispy Meal' -> {4: price, 5: price, ...}, from the sheet's "Crispy Meal 4 PCS" rows
+const piecesOf = name => PIECES[name] || CONFIG.pieces;
+function applySheet(sheet) {
+  if (!sheet || !Array.isArray(sheet.items) || !sheet.items.length) return false;
+  const rate = sheet.rate || CONFIG.usdRate, rows = {}, used = new Set();
+  sheet.items.forEach(r => { if (r && r.name) rows[r.name] = r });
+  Object.keys(data).forEach(id => {
+    data[id] = data[id].filter(it => {
+      const name = it[0];
+      if (it[3] === 'p') {           // one card for "Crispy Meal 4 PCS" … "7 PCS"
+        const re = new RegExp('^' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ' (\\d+) PCS$'), pcs = {};
+        let seen = false;
+        Object.values(rows).forEach(r => { const m = r.name.match(re); if (m) { seen = true; used.add(r.name); if (r.on && r.price) pcs[m[1]] = r.price } });
+        if (!seen) return true;      // the sheet doesn't list it: keep the page's
+        if (!Object.keys(pcs).length) return false;
+        PIECES[name] = pcs; it[1] = Math.min(...Object.values(pcs));
+        return true;
+      }
+      const r = rows[name];
+      if (!r) return true;
+      used.add(name);
+      if (!r.on || !(r.price || r.usd)) return false;
+      if (r.usd) { USD[name] = r.usd; it[1] = r.price || r.usd * rate } else { delete USD[name]; it[1] = r.price }
+      return true;
+    });
+  });
+  // new items: added at the end of their section
+  Object.values(rows).forEach(r => {
+    if (used.has(r.name) || !r.on || !(r.price || r.usd) || !GRID_OF[r.cat] || !data[GRID_OF[r.cat]]) return;
+    if (r.usd) USD[r.name] = r.usd;
+    data[GRID_OF[r.cat]].push([r.name, r.price || r.usd * rate, '']);
+    const m = r.name.match(/^(.*?)\s+\d+(?:-\d+)?\s*(PCS|PC|KG)$/i);
+    if (r.ar && AR.names[m ? m[1] : r.name] === undefined) AR.names[m ? m[1] : r.name] = m ? r.ar.replace(/\s+\d+(?:-\d+)?\s*\S+$/, '') : r.ar;
+  });
+  Object.keys(ITEMS).forEach(k => delete ITEMS[k]);
+  Object.values(data).flat().forEach(it => ITEMS[it[0]] = it);
+  return true;
+}
+
 /* ---------- saved data (cart, customer details, last order) ---------- */
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)) } catch (e) { return null } },
@@ -499,7 +547,7 @@ const store = {
 function priceOf(key) {
   const m = key.match(/^(.*?) \[(.*)\]$/), item = ITEMS[m ? m[1] : key];
   if (!item) return null;
-  if (item[3] === 'p') return m ? CONFIG.pieces[parseInt(m[2])] || null : null;
+  if (item[3] === 'p') return m ? piecesOf(item[0])[parseInt(m[2])] || null : null;
   return item[1];
 }
 function orderQtys() { const o = {}; Object.entries(order).forEach(([k, x]) => o[k] = x.qty); return o }
@@ -736,7 +784,7 @@ function renderChoiceOptions() {
   $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : 'Choose your sauces');
   if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
-    $('#choiceOptions').innerHTML = Object.entries(CONFIG.pieces).map(([n, pr]) => `<label><input type="radio" name="pcs" value="${n}"> <span>${n} ${pcsWord(n)} — ${fmt(pr)}</span></label>`).join('');
+    $('#choiceOptions').innerHTML = Object.entries(piecesOf(selectedChoice.name)).map(([n, pr]) => `<label><input type="radio" name="pcs" value="${n}"> <span>${n} ${pcsWord(n)} — ${fmt(pr)}</span></label>`).join('');
   } else if (ty === 's') {
     $('#choiceHint').textContent = t('Select one or more sauces.');
     $('#choiceOptions').innerHTML = SAUCES.fries.map(v => box(v, tSauce(v))).join('');
@@ -757,7 +805,7 @@ $('#confirmChoice').onclick = () => {
   if (selectedChoice.type === 'p') {
     if (!checked.length) return err('Please choose the number of pieces.');
     const n = checked[0].value;
-    add(selectedChoice.name + ' [' + n + ' PCS]', CONFIG.pieces[n]);
+    add(selectedChoice.name + ' [' + n + ' PCS]', piecesOf(selectedChoice.name)[n]);
     added(selectedChoice.name + ' [' + n + ' PCS]');
   } else {
     if (!checked.length) return err(selectedChoice.type === 's1' ? 'Please choose 1 sauce.' : 'Please choose at least one sauce.');
@@ -900,10 +948,19 @@ $('#langBtn').onclick = () => {
   const phoneLang = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
   lang = q === 'ar' || q === 'en' ? q : sv === 'ar' || sv === 'en' ? sv : phoneLang.startsWith('ar') ? 'ar' : 'en';   // link > own choice > phone language
 }
+applySheet(store.get('basha-sheet-menu'));   // the last menu loaded from the sheet, so offline visits match it
 restore();
 applyLang();
 addStructuredData();
 spy();
+if (CONFIG.menuUrl) {
+  fetch(CONFIG.menuUrl).then(r => r.json()).then(sheet => {
+    if (!applySheet(sheet)) return;
+    store.set('basha-sheet-menu', sheet);
+    Object.keys(order).forEach(k => { const p = priceOf(k); if (p) order[k].price = p; else delete order[k] });   // today's prices in the cart
+    render();
+  }).catch(() => {});                          // no connection: the menu above stays
+}
 </script>
 </body>
 </html>
