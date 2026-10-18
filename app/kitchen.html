@@ -135,6 +135,7 @@ function chime() {
 
 // Only orders placed after this screen was first opened on this iPad, so old orders don't flood it
 var SINCE = Number(store('elbash-kitchen-since')) || (store('elbash-kitchen-since', String(Date.now())), Date.now());
+if (EB.demo) SINCE = Date.now() - 2 * 3600000;   // demo: the made-up open orders too
 
 function loadMenu() {
   var use = function (r) { var st = EB.settings(r); YELLOW = st.yellow; RED = st.red; DAY_END = st.dayEnd; MENU_ALL = EB.menu(r) };

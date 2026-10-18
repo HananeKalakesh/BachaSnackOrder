@@ -5,9 +5,12 @@
 var EB = (function () {
   var API = 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec';
   var EB = {onChange: null, onError: null, onKey: null};
+  // Demo mode (?demo in the link): a pretend sheet on this device (demo.js), kept apart from the real one
+  var DEMO = /[?&]demo\b/.test(location.search), PRE = DEMO ? 'demo-' : '', HERE = (document.currentScript && document.currentScript.src || '').replace(/[^\/]*$/, '');
+  EB.demo = DEMO;
 
-  function get(k) { try { return JSON.parse(localStorage.getItem(k)) } catch (e) { return null } }
-  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true } catch (e) { return false } }
+  function get(k) { try { return JSON.parse(localStorage.getItem(PRE + k)) } catch (e) { return null } }
+  function put(k, v) { try { localStorage.setItem(PRE + k, JSON.stringify(v)); return true } catch (e) { return false } }
   function pad(n) { return ('0' + n).slice(-2) }
   function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) }
   function num(v) { return Number(String(v == null ? '' : v).replace(/[^0-9.\-]/g, '')) || 0 }
@@ -15,7 +18,7 @@ var EB = (function () {
   EB.ymd = ymd; EB.pad = pad;
 
   /* ---------- the app key, typed once on each iPad ---------- */
-  EB.key = function (k) { if (k !== undefined) put('eb-key', String(k).trim()); return get('eb-key') || '' };
+  EB.key = function (k) { if (DEMO) return 'demo'; if (k !== undefined) put('eb-key', String(k).trim()); return get('eb-key') || '' };
 
   /* ---------- talking to the sheet ---------- */
   // A network problem (or a busy sheet) is "offline": the change stays in the outbox and is tried again.
@@ -23,7 +26,9 @@ var EB = (function () {
   function remote(req) {
     req.key = EB.key();
     var run = window.google && google.script && google.script.run, p;
-    if (run && run.api) {
+    if (DEMO) {
+      p = demo().then(function (d) { return JSON.parse(JSON.stringify(d.post(req))) });
+    } else if (run && run.api) {
       p = new Promise(function (ok, fail) { run.withSuccessHandler(ok).withFailureHandler(function (e) { fail(offline(e && e.message)) }).api(req) });
     } else {
       p = fetch(API, {method: 'POST', body: JSON.stringify(req)}).then(function (r) {
@@ -43,6 +48,24 @@ var EB = (function () {
       return r;
     });
   }
+
+  var demoP = null;
+  function demo() {
+    return demoP || (demoP = new Promise(function (ok, fail) {
+      var s = document.createElement('script'); s.src = HERE + 'demo.js';
+      s.onload = function () { EBDemo.server().then(ok, function (e) { demoP = null; fail(offline(e.message)) }) };
+      s.onerror = function () { demoP = null; fail(offline('demo.js')) };
+      document.head.appendChild(s);
+    }));
+  }
+  if (DEMO) addEventListener('DOMContentLoaded', function () {
+    demo().then(function () {
+      EBDemo.banner(function () {
+        Object.keys(localStorage).forEach(function (k) { if (k.indexOf('demo-') === 0) localStorage.removeItem(k) });
+        location.reload();
+      });
+    }, function () {});
+  });
 
   /* ---------- reading: the newest copy, kept on the iPad for offline use ---------- */
   var clock = get('eb-clock') || 0;  // the sheet's clock minus this iPad's
@@ -135,7 +158,11 @@ var EB = (function () {
   function outbox() { return get('eb-outbox') || [] }
   function drop(id) { put('eb-outbox', outbox().filter(function (c) { return c.id !== id })) }
   function changed() { if (EB.onChange) EB.onChange() }
-  EB.pending = outbox;
+  // Changes the sheet can't take until its Apps Script is updated (e.g. expenses) wait on this iPad, without holding up the rest
+  function held(c) { return c.held && Date.now() - c.held < 10 * 60e3 }
+  function waitsForScript(e) { return /Unknown tab|Unknown action/i.test(e.message) }
+  EB.pending = function () { return outbox().filter(function (c) { return !c.held }) };
+  EB.held = function () { return outbox().filter(function (c) { return c.held }) };
   EB.send = function (ops, effect) {
     var q = outbox();
     q.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ops: ops, effect: effect, at: Date.now()});
@@ -145,7 +172,7 @@ var EB = (function () {
   var flushing = false;
   EB.flush = function () {
     if (flushing) return;
-    var q = outbox(); if (!q.length) return;
+    var q = outbox().filter(function (c) { return !held(c) }); if (!q.length) return;
     flushing = true;
     remote({action: 'write', ops: q[0].ops}).then(function () {
       drop(q[0].id); remember(q[0]); flushing = false; changed(); EB.flush();
@@ -153,6 +180,10 @@ var EB = (function () {
       flushing = false;
       if (e.offline) return changed();
       if (e.badKey) return EB.onKey && EB.onKey();
+      if (waitsForScript(e)) {
+        put('eb-outbox', outbox().map(function (c) { if (c.id === q[0].id) c.held = Date.now(); return c }));
+        changed(); return EB.flush();
+      }
       // The sheet refused it for good (not a connection problem): take it out so it doesn't hold up the rest.
       drop(q[0].id); changed();
       if (EB.onError) EB.onError(q[0], e);

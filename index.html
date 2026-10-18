@@ -887,6 +887,18 @@ $$('input[name=otype]').forEach(r => r.onchange = () => { $('#custAddr').hidden 
 $('.form').addEventListener('input', () => { $('#formErr').textContent = ''; saveCustomer(); saveCart() });
 $('.form').addEventListener('change', saveCustomer);
 
+/* ---------- demo mode (?demo): orders go to a pretend sheet on this device (app/demo.js), shared with the app opened with ?demo ---------- */
+const DEMO = /[?&]demo\b/.test(location.search);
+let demoP = null;
+function demoServer() {
+  return demoP ||= new Promise((ok, fail) => {
+    const s = document.createElement('script'); s.src = 'app/demo.js';
+    s.onload = () => EBDemo.server().then(d => { EBDemo.banner(null, true); ok(d) }, fail); s.onerror = fail;
+    document.head.appendChild(s);
+  });
+}
+if (DEMO) demoServer();
+
 /* ---------- send the order: straight to the shop's order screen, or on WhatsApp if that doesn't work ---------- */
 // A cart key as the sheet names it: 'Crispy Meal [5 PCS]' -> 'Crispy Meal 5 PCS'; 'Loaded Fries [Ketchup, Cheddar Sauce]' -> its sauces
 function sheetItem(key, qty) {
@@ -938,14 +950,15 @@ $('.send').onclick = () => {
   const ctl = 'AbortController' in window ? new AbortController() : null, timer = ctl && setTimeout(() => ctl.abort(), 20000);
   const done = () => { clearTimeout(timer); sending = false; btn.disabled = false; btn.textContent = t('Send order') };
   const body = JSON.stringify({action: 'webOrder', order: {name, phone, type, address: addr, note, lang, items: entries.map(([k, it]) => sheetItem(k, it.qty))}});
-  fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
-    .then(r => r.json()).then(res => {
+  (DEMO ? demoServer().then(d => d.post(JSON.parse(body))) : fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
+    .then(r => r.json())).then(res => {
       done();
       if (res && res.ok) return sentOrder(res.num, type);
       // the shop said no: say why when it's something the customer can fix, otherwise offer WhatsApp
       const e = String(res && res.error || '');
       if (/not available/.test(e)) return fail('Some items are not available right now. Please remove them and send again.');
       if (/^(Too many|We are very busy|Please)/.test(e)) return fail(e);
+      if (/app key|Unknown action/i.test(e)) return viaWhatsApp(msg);   // the shop's script doesn't take website orders yet: WhatsApp, as before
       offer();
     }).catch(() => { done(); offer() });
 };
@@ -1015,7 +1028,7 @@ applyLang();
 addStructuredData();
 spy();
 if (CONFIG.menuUrl) {
-  fetch(CONFIG.menuUrl).then(r => r.json()).then(sheet => {
+  (DEMO ? demoServer().then(d => d.menu()) : fetch(CONFIG.menuUrl).then(r => r.json())).then(sheet => {
     if (!applySheet(sheet)) return;
     store.set('basha-sheet-menu', sheet);
     Object.keys(order).forEach(k => { const p = priceOf(k); if (p) order[k].price = p; else delete order[k] });   // today's prices in the cart

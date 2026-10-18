@@ -11,6 +11,17 @@
 <meta name="theme-color" content="#1F4A37">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>El Bash Orders</title>
+<script>
+// Two apps from this one page: the cashier's (new order, today's orders) and, with ?app=manage, the management one
+// (sales, expenses, orders), each with its own home-screen icon
+var MANAGE = /[?&]app=manage\b/.test(location.search);
+if (MANAGE) {
+  document.documentElement.classList.add('manage');
+  document.querySelector('link[rel=manifest]').href = 'manage.webmanifest';
+  document.querySelector('meta[name=apple-mobile-web-app-title]').content = 'Bash Admin';
+  document.title = 'El Bash Management';
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87,900&family=Cairo:wght@600;700;800&family=Lalezar&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -37,6 +48,8 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .tabs{display:flex;gap:4px;background:rgba(250,245,236,.08);border:1.5px solid rgba(250,245,236,.3);padding:4px;border-radius:999px;margin-inline-start:auto}
 .tabs button{height:42px;padding:0 20px;border-radius:999px;color:var(--paper);font-size:17px}
 .tabs button.on{background:var(--paper);color:var(--green)}
+html:not(.manage) .tabs [data-view=report],html:not(.manage) .tabs [data-view=exp],html.manage .tabs [data-view=order]{display:none}
+html.manage .tabs [data-view=report]{order:-2}html.manage .tabs [data-view=exp]{order:-1}
 .langbtn{height:44px;padding:0 18px;border-radius:999px;border:1.5px solid rgba(250,245,236,.3);background:rgba(250,245,236,.08);color:var(--paper);font-weight:800}
 .langbtn .ar{font-family:Cairo,sans-serif}.langbtn .en{font-family:"Plus Jakarta Sans",sans-serif}
 .net{font-size:14px;background:var(--mustard);color:var(--ink);padding:4px 12px;border-radius:999px;white-space:nowrap}
@@ -228,7 +241,14 @@ td.r,th.r{text-align:end}
 .xform .save,.xform .err{grid-column:1/-1}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
 #exp .kpis{margin-top:14px}
-@media (max-width:600px){.xform{grid-template-columns:1fr}}
+@media (max-width:600px){.xform{grid-template-columns:1fr}
+  /* phones (the management app): a tighter top bar and headings */
+  .top{padding:0 10px;gap:6px}.top .logo{display:none}.tabs{margin-inline-start:0;min-width:0}
+  .tabs{padding:3px;gap:2px}.tabs button{height:38px;padding:0 10px;font-size:14px;white-space:nowrap}
+  .langbtn{height:38px;padding:0 10px;font-size:13px}
+  .report{padding:12px 12px 70px}.shead{flex-wrap:wrap;gap:8px}.shead h2,.lang-en .shead h2{font-size:26px}
+  #exp .shead{flex-wrap:nowrap}#exp .shead h2{flex:1;font-size:21px;text-align:center}
+  .kpi{padding:12px 14px;border-radius:20px}.kpi .usd{font-size:22px}.kpi.hero .usd{font-size:26px}}
 
 .pin{max-width:340px;margin:60px auto;text-align:center}
 .pin input{width:100%;height:60px;font-size:28px;text-align:center;letter-spacing:.4em;border-radius:16px;border:0;background:var(--input);margin:12px 0;outline:none;direction:ltr}
@@ -426,8 +446,12 @@ function loadMenu() {
   });
 }
 function useMenu(r) {
-  SET = EB.settings(r); RATE = SET.rate; DAY_END = SET.dayEnd; S.rate = RATE;
+  var first = !SET.loaded;
+  SET = EB.settings(r); SET.loaded = true; RATE = SET.rate; DAY_END = SET.dayEnd; S.rate = RATE;
   MENU_ALL = EB.menu(r);
+  // Sales and Expenses waited for the Settings (the PIN is there)
+  if (first && $('#reportView').style.display === 'block') showReport();
+  if (first && $('#expView').style.display === 'block') showExpenses();
   // sold-out items stay on the screen (greyed) so they can be brought back
   var next = MENU_ALL.filter(function (m) { return (m.on || m.soldOut) && m.price > 0 }), old = MENU;
   // keep what's already in the order, by item name, in case the menu changed
@@ -649,7 +673,7 @@ function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + p
 function monthKey(y, m) { return y + '-' + pad(m + 1) }
 function daysIn(y, m) { return new Date(y, m + 1, 0).getDate() }
 function usdOf(lbp) { return lbp / S.rate }
-function $usd(lbp) { var v = usdOf(lbp); return '$' + (v > 0 && v < 100 ? v.toFixed(2) : fmt(v)) }
+function $usd(lbp) { if (lbp < 0) return '−' + $usd(-lbp); var v = usdOf(lbp); return '$' + (v > 0 && v < 100 ? v.toFixed(2) : fmt(v)) }
 function ll(lbp) { return fmt(lbp) + ' L.L.' }
 function llShort(lbp) { return lbp >= 1e6 ? (Math.round(lbp / 1e5) / 10) + 'M' : fmt(lbp / 1000) + 'K' }
 function amount(lbp) { return '<b class="usd num">' + $usd(lbp) + '</b><small class="ll num">' + ll(lbp) + '</small>' }
@@ -683,6 +707,7 @@ function fetchR(kind, key, from, to) {
   S[kind][key] = EB.report(salesOrders(), from, to);
 }
 function showReport() {
+  if (!SET.loaded) { $('#rep').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   S.years = {}; S.months = {}; S.days = {}; S.all = {}; S.err = ''; S.locked = false; S.rate = RATE;
   if (SET.pin && pin() !== SET.pin && !(/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin))) {
     S.locked = true; var had = pin(); setPin('');
@@ -1106,7 +1131,7 @@ function checkWeb() {
   var badge = $('#webBadge'); badge.hidden = !waiting.length; badge.textContent = '🌐 ' + waiting.length;
   var fresh = seenWeb && waiting.some(function (o) { return !seenWeb[o.key] });
   seenWeb = {}; waiting.forEach(function (o) { seenWeb[o.key] = 1 });
-  if (fresh) { chime(); toast('🌐 طلب جديد من الموقع', 'New website order') }
+  if (fresh && !MANAGE) { chime(); toast('🌐 طلب جديد من الموقع', 'New website order') }
 }
 function poll() {
   if (EB.pending().length || !EB.key()) return;
@@ -1131,6 +1156,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.f
 setLang(store(LKEY) || 'ar'); showNet(); updateSave();
 if (EB.key()) start();
 else { var c = EB.cached('menu'); if (c) useMenu(c); askKey() }
+if (MANAGE) showView('report');
 </script>
 <script>
 // The offline copy only works from the app's own link (GitHub Pages), not inside the Apps Script page
@@ -1159,6 +1185,7 @@ function purchases() {
 }
 
 function showExpenses() {
+  if (!SET.loaded) { $('#exp').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   if (SET.pin && pin() !== SET.pin && !(/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin))) {
     EX.locked = true; var had = pin(); setPin('');
     return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '', '#exp', showExpenses, bi('المصاريف', 'Expenses'));
@@ -1167,7 +1194,10 @@ function showExpenses() {
   if (!EX.y) { var t = bizDate(); EX.y = t.getFullYear(); EX.m = t.getMonth() }
   drawExpenses();
   EB.read('purchases', {'Purchases': 0}).then(function (r) { EX.data = r; EX.err = ''; drawExpenses() }, function (e) {
-    EX.err = e.offline ? 'OFFLINE' : (e.message || String(e)); drawExpenses();
+    // the sheet's script isn't updated yet: the purchases typed here wait on this iPad
+    if (/Unknown tab/.test(e.message)) { EX.data = {Purchases: null, at: 0}; EX.err = 'SCRIPT' }
+    else EX.err = e.offline ? 'OFFLINE' : (e.message || String(e));
+    drawExpenses();
   });
   // sales for the profit, the same data as the Sales tab
   if (!SALES) EB.read('sales', {'Orders': 0, 'Order Items': 0}).then(function (r) { SALES = r; drawExpenses() }, function () {});
@@ -1180,6 +1210,8 @@ function drawExpenses() {
     '<h2 class="display">' + bi('المصاريف · ' + MONTHS_AR[m] + ' ' + y, 'Expenses · ' + MONTHS_EN[m] + ' ' + y) + '</h2>' +
     '<button class="nav" data-xmv="1" aria-label="' + T('الشهر الجاي', 'Next month') + '"><span class="chev">›</span></button></div>';
   if (EX.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: المصاريف الجديدة بتنحفظ وبتنبعت لحالها.', 'No internet: new expenses are kept and sent by themselves.') + '</p>';
+  else if (EX.err === 'SCRIPT') h += '<p class="offline">' + bi('المصاريف محفوظة على هالآيباد لهلّق، وبتنبعت عالشيت لحالها بعد تحديث السكريبت.',
+    'Expenses are kept on this iPad for now, and go to the sheet by themselves once the script is updated.') + '</p>';
   else if (EX.err) h += '<p class="err">' + esc(EX.err) + '</p>';
 
   // the form to add a purchase
