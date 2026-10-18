@@ -149,6 +149,8 @@ section[hidden]{display:none}
 .send-modal p{margin:10px 0;color:var(--muted)}
 .send-modal p.big{color:var(--ink);font-weight:800;font-size:17px;line-height:1.35}
 .send-modal .choice-actions{justify-content:center}
+.send-modal .num-big{font-size:44px;color:var(--green);margin:4px 0}
+.send:disabled{opacity:.6}
 .wa-demo{display:flex;align-items:center;gap:8px;margin:14px auto;padding:8px;max-width:300px;border-radius:999px;background:#efeae2;direction:ltr}
 .wa-msg{flex:1;min-width:0;background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;color:#555;text-align:start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wa-send{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--whatsapp);color:#fff;font-size:18px;animation:pulse 1.4s infinite}
@@ -272,7 +274,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
 <footer><span class="fez"><img src="assets/elbash/fez-paper.svg" alt=""></span><strong data-t>Basha — Chicken and Snack</strong><span class="sig"><span lang="en" dir="ltr">Tekram ya basha!</span> · <span lang="ar" dir="rtl">تكرم يا باشا!</span></span><span class="hours" data-t>Daily 1:00 – 5:00 PM &amp; 7:00 – 11:30 PM · Closed on Mondays</span><span data-t>Managed by Hussein Al Basha</span> · <a href="tel:+96176075724" data-phone="tel">76 075 724</a><small data-t>Prices may change based on market rates. Closed on Mondays.</small></footer>
 </div>
 
-<button id="cartFab" class="fab" type="button" aria-haspopup="dialog">Order on WhatsApp</button>
+<button id="cartFab" class="fab" type="button" aria-haspopup="dialog">Order now</button>
 <div id="backdrop" class="backdrop"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
@@ -284,12 +286,13 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div id="deliveryNote" class="note" hidden></div>
   <div class="form">
     <input type="text" id="custName" placeholder="Your name" data-tp autocomplete="name">
+    <input type="tel" id="custPhone" placeholder="Your WhatsApp number" data-tp autocomplete="tel" inputmode="tel" dir="ltr">
     <div class="otype"><label><input type="radio" name="otype" value="Delivery"> <span data-t>Delivery</span></label><label><input type="radio" name="otype" value="Pickup"> <span data-t>Pickup</span></label></div>
     <textarea id="custAddr" rows="2" placeholder="Delivery address (area, street, building, floor)" data-tp hidden autocomplete="street-address"></textarea>
     <textarea id="custNote" rows="2" placeholder="Notes (optional)" data-tp></textarea>
     <div id="formErr" class="err" role="alert"></div>
   </div>
-  <div class="panel-actions"><button class="clear" type="button" data-t>Clear order</button><button class="send" type="button" data-t>Send via WhatsApp</button></div>
+  <div class="panel-actions"><button class="clear" type="button" data-t>Clear order</button><button class="send" type="button" data-t>Send order</button></div>
 </div>
 
 <div id="choiceModal" class="choice-modal" role="dialog" aria-modal="true" aria-labelledby="choiceTitle">
@@ -299,6 +302,13 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div id="choiceOptions" class="choices"></div>
   <div id="choiceErr" class="err" role="alert"></div>
   <div class="choice-actions"><button id="cancelChoice" type="button" data-t>Cancel</button><button id="confirmChoice" class="confirm" type="button" data-t>Add to order</button></div>
+</div>
+
+<div id="doneModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
+  <h3 id="doneTitle" data-t>Order received!</h3>
+  <p class="big num-big" id="doneNum"></p>
+  <p id="doneText"></p>
+  <div class="choice-actions"><button id="doneOk" class="confirm" type="button" data-t>OK</button></div>
 </div>
 
 <div id="sendModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
@@ -321,6 +331,8 @@ const CONFIG = {
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
   menuUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec?format=menu',
+  // Orders go straight to the shop's order screen through the same script (empty = WhatsApp only)
+  orderUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec',
   popular: ['Zinger Sandwich', 'Crispy Meal', 'Basha Burger', 'Loaded Fries'], // items tagged "★ Popular"
   deliveryNote: {en: '', ar: ''},// optional line in the cart, e.g. {en: 'Delivery fee: 100,000 L.L.', ar: 'كلفة التوصيل: 100,000 ل.ل.'}
   photos: {                      // item photos (square, in the photos folder)
@@ -463,6 +475,13 @@ drinkGrid: [
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
+  'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق','Sending…':'عم نبعت…','Order received!':'وصلنا طلبك!','OK':'تمام','Order #{n}':'طلب رقم {n}','Phone':'الرقم',
+  "We'll confirm it, and message you on WhatsApp when it's ready.":'رح نأكدلك، ومنبعتلك عالواتساب أول ما يجهز.',
+  "We'll confirm it, and message you on WhatsApp when it's on the way.":'رح نأكدلك، ومنبعتلك عالواتساب أول ما يطلع عالطريق.',
+  "We couldn't send it to the shop. Send it on WhatsApp instead:":'ما قدرنا نبعتو للمحل. ابعتو عالواتساب بدالها:',
+  'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
+  'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
+  'Some items are not available right now. Please remove them and send again.':'في أصناف مش متوفرة هلّق. رجاءً شيلها وابعت مرة تانية.',
   "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 5:00 PM & 7:00 – 11:30 PM · Closed on Mondays':'كل يوم من 1:00 لـ 5:00 بعد الضهر ومن 7:00 لـ 11:30 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
 names: {'Small Fries Box':'علبة بطاطا صغيرة','Small Fries Box with Sauce & Cheddar':'علبة بطاطا صغيرة مع صوص وتشيدر','Large Fries Box with Sauce & Cheddar':'علبة بطاطا كبيرة مع صوص وتشيدر','Loaded Fries':'لودد فرايز',
 'Mozzarella Sticks':'موزاريلا ستيكس','Onion Rings':'أونيون رينغز','Nuggets':'ناغتس','Mix Appetizer Box':'علبة ميكس مقبلات',
@@ -553,7 +572,7 @@ function priceOf(key) {
 function orderQtys() { const o = {}; Object.entries(order).forEach(([k, x]) => o[k] = x.qty); return o }
 function saveCart() { store.set('basha-cart', {at: Date.now(), items: orderQtys(), note: $('#custNote').value}) }
 function saveCustomer() {
-  store.set('basha-customer', {name: $('#custName').value, otype: ($('input[name=otype]:checked') || {}).value || '', addr: $('#custAddr').value});
+  store.set('basha-customer', {name: $('#custName').value, phone: $('#custPhone').value, otype: ($('input[name=otype]:checked') || {}).value || '', addr: $('#custAddr').value});
 }
 function fillOrder(items) {
   Object.entries(items || {}).forEach(([k, q]) => {
@@ -567,6 +586,7 @@ function restore() {
   const u = store.get('basha-customer');
   if (u) {
     $('#custName').value = u.name || '';
+    $('#custPhone').value = u.phone || '';
     $('#custAddr').value = u.addr || '';
     const r = $(`input[name=otype][value="${u.otype}"]`);
     if (r) r.checked = true;
@@ -730,7 +750,7 @@ function cart() {
       }).join('') + upsell()
     : '<div class="note">' + t('No items selected yet.') + '</div>' + (last && Object.keys(last).length ? `<button class="reorder" type="button" data-act="reorder">↻ ${t('Reorder last order')}</button>` : '');
   $('#total').textContent = fmt(total);
-  $('#cartFab').innerHTML = count ? `<span>${t('View Order')} (${count})</span><b>${fmt(total)}</b>` : `<span>${t('Order on WhatsApp')}</span>`;
+  $('#cartFab').innerHTML = count ? `<span>${t('View Order')} (${count})</span><b>${fmt(total)}</b>` : `<span>${t('Order now')}</span>`;
   const dn = $('#deliveryNote'), dnText = CONFIG.deliveryNote[lang] || CONFIG.deliveryNote.en;
   dn.textContent = dnText; dn.hidden = !dnText;
 }
@@ -759,7 +779,7 @@ function openLayer(el, opener) {
   if (f) f.focus({preventScroll: true});
 }
 function closeLayers() {
-  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
+  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#doneModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
   document.documentElement.classList.remove('lock');
   $$('#choiceModal input').forEach(i => i.checked = false);
   selectedChoice = null;
@@ -867,28 +887,69 @@ $$('input[name=otype]').forEach(r => r.onchange = () => { $('#custAddr').hidden 
 $('.form').addEventListener('input', () => { $('#formErr').textContent = ''; saveCustomer(); saveCart() });
 $('.form').addEventListener('change', saveCustomer);
 
-/* ---------- send to WhatsApp ---------- */
+/* ---------- send the order: straight to the shop's order screen, or on WhatsApp if that doesn't work ---------- */
+// A cart key as the sheet names it: 'Crispy Meal [5 PCS]' -> 'Crispy Meal 5 PCS'; 'Loaded Fries [Ketchup, Cheddar Sauce]' -> its sauces
+function sheetItem(key, qty) {
+  const m = key.match(/^(.*?) \[(.*)\]$/);
+  if (!m) return {name: key, qty, sauces: []};
+  const item = ITEMS[m[1]];
+  if (item && item[3] === 'p') return {name: m[1] + ' ' + parseInt(m[2]) + ' PCS', qty, sauces: []};
+  return {name: m[1], qty, sauces: m[2].split(', ')};
+}
+function whatsappText(entries, name, phone, type, addr, note) {
+  let total = 0, msg = t('Hi Basha, I would like to place an order:') + '\n\n';
+  entries.forEach(([n, it]) => { total += it.qty * it.price; msg += `• ${it.qty}${lang === 'ar' ? '×' : 'x'} ${tKey(n)} - ${fmt(it.qty * it.price)}\n` });
+  msg += '\n*' + t('Total') + ':* ' + fmt(total) + '\n\n*' + t('Name') + ':* ' + name + '\n*' + t('Phone') + ':* ' + phone + '\n*' + t('Order type') + ':* ' + t(type);
+  if (type === 'Delivery') msg += '\n*' + t('Address') + ':* ' + addr;
+  if (note) msg += '\n*' + t('Notes') + ':* ' + note;
+  return msg;
+}
+function viaWhatsApp(msg) {
+  pendingUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(msg)}`;
+  $('#sendModal').classList.add('open');
+  $('#goWhatsApp').focus({preventScroll: true});
+}
+function sentOrder(num, type) {
+  Object.keys(order).forEach(k => delete order[k]); $('#custNote').value = ''; saveCart(); cart();
+  $('#doneNum').textContent = t('Order #{n}').replace('{n}', num);
+  $('#doneText').textContent = t(type === 'Delivery' ? "We'll confirm it, and message you on WhatsApp when it's on the way." : "We'll confirm it, and message you on WhatsApp when it's ready.");
+  $('#doneModal').classList.add('open');
+  $('#doneOk').focus({preventScroll: true});
+}
+let sending = false;
 $('.send').onclick = () => {
   const err = $('#formErr'), fail = m => { err.textContent = t(m); err.scrollIntoView({block: 'nearest'}) };
   err.textContent = '';
+  if (sending) return;
   const entries = Object.entries(order);
   if (!entries.length) return fail('Your order is empty. Add some items first.');
   if (isClosedToday()) return fail("We're closed on Mondays. Please send your order another day.");
-  const name = $('#custName').value.trim(), type = ($('input[name=otype]:checked') || {}).value, addr = $('#custAddr').value.trim(), note = $('#custNote').value.trim();
+  const name = $('#custName').value.trim(), phone = $('#custPhone').value.trim(), type = ($('input[name=otype]:checked') || {}).value,
+    addr = $('#custAddr').value.trim(), note = $('#custNote').value.trim();
   if (!name) return fail('Please enter your name.');
+  if ((phone.match(/\d/g) || []).length < 7) return fail('Please enter your WhatsApp number.');
   if (!type) return fail('Please choose Delivery or Pickup.');
   if (type === 'Delivery' && !addr) return fail('Please enter your delivery address.');
-  let total = 0, msg = t('Hi Basha, I would like to place an order:') + '\n\n';
-  entries.forEach(([n, it]) => { total += it.qty * it.price; msg += `• ${it.qty}${lang === 'ar' ? '×' : 'x'} ${tKey(n)} - ${fmt(it.qty * it.price)}\n` });
-  msg += '\n*' + t('Total') + ':* ' + fmt(total) + '\n\n*' + t('Name') + ':* ' + name + '\n*' + t('Order type') + ':* ' + t(type);
-  if (type === 'Delivery') msg += '\n*' + t('Address') + ':* ' + addr;
-  if (note) msg += '\n*' + t('Notes') + ':* ' + note;
   store.set('basha-last', orderQtys());
-  const url = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(msg)}`;
-  pendingUrl = url;
-  $('#sendModal').classList.add('open');
-  $('#goWhatsApp').focus({preventScroll: true});
+  const msg = whatsappText(entries, name, phone, type, addr, note);
+  if (!CONFIG.orderUrl) return viaWhatsApp(msg);
+  const btn = $('.send'), offer = () => { err.textContent = t("We couldn't send it to the shop. Send it on WhatsApp instead:"); viaWhatsApp(msg) };
+  sending = true; btn.disabled = true; btn.textContent = t('Sending…');
+  const ctl = 'AbortController' in window ? new AbortController() : null, timer = ctl && setTimeout(() => ctl.abort(), 20000);
+  const done = () => { clearTimeout(timer); sending = false; btn.disabled = false; btn.textContent = t('Send order') };
+  const body = JSON.stringify({action: 'webOrder', order: {name, phone, type, address: addr, note, lang, items: entries.map(([k, it]) => sheetItem(k, it.qty))}});
+  fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
+    .then(r => r.json()).then(res => {
+      done();
+      if (res && res.ok) return sentOrder(res.num, type);
+      // the shop said no: say why when it's something the customer can fix, otherwise offer WhatsApp
+      const e = String(res && res.error || '');
+      if (/not available/.test(e)) return fail('Some items are not available right now. Please remove them and send again.');
+      if (/^(Too many|We are very busy|Please)/.test(e)) return fail(e);
+      offer();
+    }).catch(() => { done(); offer() });
 };
+$('#doneOk').onclick = closeLayers;
 // Many people think the order is sent once WhatsApp opens, so remind them to press send there
 let pendingUrl = null;
 $('#goWhatsApp').onclick = () => {

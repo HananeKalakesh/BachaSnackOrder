@@ -10,6 +10,9 @@
  *   {action: 'read', tabs: [{tab, last}]}
  *       the header and rows of those tabs (only the last N rows when last is given);
  *       dates come back as yyyy-mm-dd and times as HH:mm, in the sheet's time zone
+ *   {action: 'webOrder', order: {...}}  NO key: an order from the menu website. Checked here against the Menu tab
+ *       (prices come from the sheet), limited per phone number, and saved as Not paid with Status "Waiting"
+ *       until staff accept it in the app
  *   {action: 'write', ops: [...]}     done in order, together, under a lock
  *       {op: 'append', tab, rows: [{Header: value}], unique: 'Header'}
  *           adds rows; a header the tab doesn't have yet becomes a new column;
@@ -23,7 +26,7 @@
  */
 
 var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – Orders & Sales
-var TABS = ['Orders', 'Order Items', 'Menu', 'Settings'];
+var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases'];
 var APP_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/app/';
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
@@ -60,6 +63,7 @@ function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).se
 
 function handle_(req) {
   var ss = book_();
+  if (req.action === 'webOrder') return webOrder_(ss, req.order || {});
   var key = setting_(ss, 'App key');
   if (!key || String(req.key || '') !== key) throw new Error('Wrong app key');
   if (req.action === 'read') return read_(ss, req.tabs || []);
@@ -84,7 +88,7 @@ function cell_(v, tz) {
 
 function sheet_(ss, tab) {
   if (TABS.indexOf(tab) < 0) throw new Error('Unknown tab: ' + tab);
-  return ss.getSheetByName(tab);
+  return ss.getSheetByName(tab) || ss.insertSheet(tab);   // Purchases is made the first time it is used
 }
 
 function read_(ss, tabs) {
@@ -134,7 +138,11 @@ function matches_(sh, where, tz) {
 function write_(ss, ops) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
-  try {
+  try { return apply_(ss, ops) } finally { lock.releaseLock() }
+}
+
+function apply_(ss, ops) {
+  {
     var tz = ss.getSpreadsheetTimeZone(), results = ops.map(function (op) {
       var sh = sheet_(ss, op.tab);
       if (op.op === 'append') {
@@ -162,7 +170,7 @@ function write_(ss, ops) {
         return { updated: hit.length };
       }
       if (op.op === 'remove') {
-        if (op.tab !== 'Orders' && op.tab !== 'Order Items') throw new Error('Rows can only be removed from Orders and Order Items');
+        if (op.tab === 'Menu' || op.tab === 'Settings') throw new Error('Rows can only be removed from Orders, Order Items and Purchases');
         var gone = matches_(sh, op.where || {}, tz);
         for (var i = gone.length - 1; i >= 0; i--) sh.deleteRow(gone[i]);
         return { removed: gone.length };
@@ -171,9 +179,85 @@ function write_(ss, ops) {
     });
     SpreadsheetApp.flush();
     return { results: results };
+  }
+}
+
+/* ---------- orders from the menu website ---------- */
+
+/** A WhatsApp number as digits with the country code (Lebanese numbers get 961), or '' if it doesn't look like one. */
+function phone_(p) {
+  var d = String(p || '').replace(/\D/g, '');
+  if (d.indexOf('00') === 0) d = d.slice(2);
+  if (d.indexOf('961') !== 0 && d.length >= 7 && d.length <= 8) d = '961' + d.replace(/^0/, '');
+  return d.length >= 10 && d.length <= 15 ? d : '';
+}
+
+function webOrder_(ss, o) {
+  var text = function (v, n) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n) };
+  var name = text(o.name, 40), phone = phone_(o.phone), type = o.type === 'Delivery' ? 'Delivery' : 'Pickup';
+  var address = text(o.address, 200), note = text(o.note, 200), lang = o.lang === 'ar' ? 'ar' : 'en';
+  if (!name) throw new Error('Please enter your name.');
+  if (!phone) throw new Error('Please enter your WhatsApp number.');
+  if (type === 'Delivery' && !address) throw new Error('Please enter your delivery address.');
+
+  // Against spam: 3 orders per number every 10 minutes, 40 website orders an hour in all
+  var cache = CacheService.getScriptCache(), mine = Number(cache.get('web:' + phone) || 0), all = Number(cache.get('web:all') || 0);
+  if (mine >= 3) throw new Error('Too many orders from this number. Please call or WhatsApp us.');
+  if (all >= 40) throw new Error('We are very busy right now. Please call or WhatsApp us.');
+
+  // Items and prices only from the Menu tab, and only what is on the menu right now
+  var menu = {}, head = [], rate = Number(String(setting_(ss, 'USD rate')).replace(/,/g, '')) || 89500;
+  ss.getSheetByName('Menu').getDataRange().getValues().forEach(function (r, i) {
+    if (!i) { head = r.map(String); return }
+    var m = {}; head.forEach(function (h, k) { m[h] = r[k] });
+    // the price in L.L., or the $ price at today's rate
+    m.price = Number(m['Price (L.L.)']) || Math.round((Number(String(m['Price ($)'] || '').replace(/[^0-9.]/g, '')) || 0) * rate);
+    if (m['Item'] && m['On order screen'] === true && m.price > 0) menu[String(m['Item']).trim()] = m;
+  });
+  var items = (o.items || []).slice(0, 30).map(function (x) {
+    return { name: text(x.name, 80), qty: Math.min(50, Math.floor(Number(x.qty) || 0)),
+      sauces: (x.sauces || []).slice(0, 4).map(function (v) { return text(v, 40) }).filter(String) };
+  }).filter(function (x) { return x.qty > 0 });
+  if (!items.length) throw new Error('Your order is empty.');
+  var total = 0;
+  items.forEach(function (x) {
+    var m = menu[x.name];
+    if (!m) throw new Error('"' + x.name + '" is not available right now. Please remove it and send again.');
+    x.price = m.price; x.cat = String(m['Category']); total += x.qty * x.price;
+  });
+  var itemsText = items.map(function (x) { return x.qty + ' × ' + x.name + (x.sauces.length ? ' — ' + x.sauces.join(' + ') : '') }).join(', ');
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var tz = ss.getSpreadsheetTimeZone(), dayEnd = Number(setting_(ss, 'Day ends') || 2), now = new Date();
+    var day = Utilities.formatDate(new Date(now.getTime() - dayEnd * 3600000), tz, 'yyyy-MM-dd'), time = Utilities.formatDate(now, tz, 'HH:mm');
+    // the next number that business day
+    var orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), num = 1;
+    if (last > 1) {
+      var from = Math.max(2, last - 499);
+      orders.getRange(from, 1, last - from + 1, 2).getValues().forEach(function (r) {
+        if (r[0] !== '' && String(cell_(r[1], tz)) === day && Number(r[0]) >= num) num = Number(r[0]) + 1;
+      });
+    }
+    var ref = 'web' + now.getTime().toString(36) + Math.random().toString(36).slice(2, 6);
+    apply_(ss, [
+      { op: 'append', tab: 'Orders', rows: [{ 'Order #': num, 'Date': day, 'Time': "'" + time, 'Items': itemsText,
+        'Item count': items.reduce(function (a, x) { return a + x.qty }, 0), 'Order total (L.L.)': total, 'Payment': 'Unpaid', 'Paid ($)': 0, 'Paid (L.L.)': 0,
+        'USD rate': rate,
+        'Paid total (L.L.)': '=INDEX(H:H,ROW())*INDEX(J:J,ROW())+INDEX(I:I,ROW())', 'Difference (L.L.)': '=INDEX(K:K,ROW())-INDEX(F:F,ROW())',
+        'Note': note, 'Ref': ref, 'Name': name, 'Pickup / Delivery': type, 'Source': 'Website', 'Phone': phone, 'Address': address,
+        'Status': 'Waiting', 'Language': lang }] },
+      { op: 'append', tab: 'Order Items', rows: items.map(function (x) {
+        return { 'Order #': num, 'Date': day, 'Item': x.name, 'Category': x.cat, 'Qty': x.qty, 'Unit price (L.L.)': x.price,
+          'Line total (L.L.)': '=INDEX(E:E,ROW())*INDEX(F:F,ROW())', 'Sauces': x.sauces.join(', '), 'Ref': ref };
+      }) }]);
   } finally {
     lock.releaseLock();
   }
+  cache.put('web:' + phone, String(mine + 1), 600);
+  cache.put('web:all', String(all + 1), 3600);
+  return { ok: true, num: num, total: total };
 }
 
 /** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one. */

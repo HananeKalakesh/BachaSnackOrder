@@ -111,7 +111,11 @@ var EB = (function () {
       var x = {key: day + '#' + n, num: n, day: day, time: time, at: EB.at(day, time, dayEnd),
         total: num(o['Order total (L.L.)']), payment: str(o.Payment) || 'Cash', paidUsd: num(o['Paid ($)']), rate: num(o['USD rate']),
         received: num(o['Paid total (L.L.)']), note: str(o.Note), uid: str(o.Ref), name: str(o.Name), type: str(o['Pickup / Delivery']),
-        done: str(o['Kitchen done']), text: str(o.Items), items: []};
+        done: str(o['Kitchen done']), text: str(o.Items), items: [],
+        // from the menu website: phone (WhatsApp), address, Status Waiting / Accepted / Rejected, the customer's language
+        web: str(o.Source) === 'Website', phone: str(o.Phone).replace(/\D/g, ''), address: str(o.Address), status: str(o.Status),
+        lang: str(o.Language) || 'ar', ready: str(o['Ready sent'])};
+      x.live = live(x);
       byKey[x.key] = x; list.push(x);
     });
     EB.rows(r && r['Order Items']).forEach(function (it) {
@@ -122,6 +126,9 @@ var EB = (function () {
     });
     return list;
   };
+
+  // An order that counts (kitchen, Sales, Not paid): not a website order still waiting, and not one turned down
+  function live(o) { return o.status !== 'Waiting' && o.status !== 'Rejected' }
 
   /* ---------- the outbox: every change waits here until the sheet has it ---------- */
   // Each change has the sheet operations and an "effect", so the screens can show it before it is sent.
@@ -162,16 +169,21 @@ var EB = (function () {
   // The changes a copy loaded at readAt doesn't have yet: those sent since then, and those still in the outbox
   function changes(readAt) { return (get('eb-sent') || []).filter(function (x) { return x.sent > (readAt || 0) }).concat(outbox()) }
   // Apply them to a list of orders (applying a change the list already has does nothing, so the order doesn't matter)
-  EB.withPending = function (list, readAt) {
+  // kind keeps lists apart: orders have none, purchases are 'purchase'
+  EB.withPending = function (list, readAt, kind) {
     changes(readAt).forEach(function (c) {
       var f = c.effect || {}, i = -1;
+      if ((f.kind || '') !== (kind || '')) return;
       list.forEach(function (o, k) { if (o.key === f.key) i = k });
       if (f.t === 'save' && i < 0) list.push(JSON.parse(JSON.stringify(f.order)));
       if (f.t === 'edit' && i >= 0) { var done = list[i].done; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
       if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total }
+      if (f.t === 'status' && i >= 0) list[i].status = f.status;
+      if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
     });
+    list.forEach(function (o) { o.live = live(o) });
     return list;
   };
 
@@ -218,6 +230,25 @@ var EB = (function () {
     EB.send([{op: 'update', tab: 'Menu', where: {'Item': name}, set: {'On order screen': !out, 'Sold out': out ? true : ''}}],
       {t: 'soldout', name: name, out: out});
   };
+  // A website order accepted (goes to the kitchen) or rejected
+  EB.status = function (o, status) {
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Status': status}}], {t: 'status', key: o.key, status: status});
+  };
+  // When the "ready" WhatsApp message was sent
+  EB.ready = function (o, at) {
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Ready sent': "'" + at}}], {t: 'ready', key: o.key, ready: at});
+  };
+  // The WhatsApp message for an order, in the customer's language: ready (pickup or delivery) or turned down
+  EB.whatsapp = function (o, kind) {
+    var ar = o.lang !== 'en', n = o.num, msg;
+    if (kind === 'reject') msg = ar ? 'يا باشا، آسفين، ما منقدر ناخد طلبيتك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏'
+      : 'Ya Basha, sorry, we can\'t take your order #' + n + ' right now. Please call or message us 🙏';
+    else if (o.type === 'Delivery') msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة وعالطريق لعندك! 🛵 تكرم يا باشا!'
+      : 'Ya Basha, your El Bash order #' + n + ' is ready and on its way to you! 🛵 Tekram ya basha!';
+    else msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة! 🍗 تفضّل استلمها. تكرم يا باشا!'
+      : 'Ya Basha, your El Bash order #' + n + ' is ready! 🍗 Come pick it up. Tekram ya basha!';
+    return 'https://wa.me/' + o.phone + '?text=' + encodeURIComponent(msg);
+  };
   // A Not paid order paid later, in full: Cash or Whish, and the day it was paid
   EB.paid = function (o, payment, day) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': day}}],
@@ -229,7 +260,7 @@ var EB = (function () {
     var s = {orders: 0, items: 0, sales: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0};
     var days = {}, items = {}, orders = [];
     list.forEach(function (o) {
-      if (o.day < from || o.day > to) return;
+      if (o.day < from || o.day > to || !o.live) return;
       var got = o.received || (o.payment === 'Unpaid' ? 0 : o.total);
       s.orders++; s.sales += o.total;
       if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got }

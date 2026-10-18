@@ -145,7 +145,7 @@ function loadMenu() {
 function build(r) {
   var now = EB.now(), named = MENU_ALL.some(function (m) { return m.station });
   return EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r && r.at).filter(function (o) {
-    if (o.done || o.at < SINCE - 60000 || now - o.at > 12 * 3600000) return false;
+    if (o.done || !o.live || o.at < SINCE - 60000 || now - o.at > 12 * 3600000) return false;
     o.other = o.items.filter(function (x) { return named && x.station !== STATION });
     o.items = o.items.filter(function (x) { return !named || x.station === STATION });
     return o.items.length;
@@ -184,7 +184,7 @@ function render(fresh) {
     var m = age(o), cls = m >= RED ? 'over' : m >= YELLOW ? 'late' : 'fresh', tk = t[o.key] || {};
     var all = o.items.every(function (x) { return tk[tickId(x)] });
     return '<article class="card ' + cls + (fresh && fresh.indexOf(o.key) >= 0 ? ' new' : '') + '" data-key="' + esc(o.key) + '">' +
-      '<header><span class="who"><span class="n num">#' + o.num + '</span>' + (o.name ? '<span class="nm2">' + esc(o.name) + '</span>' : '') + '</span>' +
+      '<header><span class="who"><span class="n num">' + (o.web ? '🌐 ' : '') + '#' + o.num + '</span>' + (o.name ? '<span class="nm2">' + esc(o.name) + '</span>' : '') + '</span>' +
         (o.type ? '<span class="tag">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '') + '<span class="t"><b class="num">' + esc(o.time) + '</b><small>' +
         bi(m < 1 ? 'هلّق' : 'من ' + m + ' دقيقة', m < 1 ? 'just now' : m + ' min ago') + '</small></span></header>' +
       '<div class="items">' + o.items.map(function (x, i) {
