@@ -12,6 +12,10 @@
  *   …/exec                                        the order screen
  *   …/exec?screen=kitchen                         the kitchen screen (every item of every order)
  *   …/exec?screen=kitchen&station=Sandwiches      a screen for one station, if the Menu tab names stations
+ *   …/exec?format=menu                            the menu as JSON, read by the menu website for its items and prices
+ *
+ * A business day runs until the hour in Settings (2 am by default): an order at 00:30 belongs to the day before,
+ * so numbering, Today's orders and Sales keep a late night together.
  */
 
 // The screens live on GitHub, so they can be updated (or new ones added) without touching this script.
@@ -19,6 +23,9 @@ var PAGE_BASE = 'https://raw.githubusercontent.com/HananeKalakesh/BachaSnackOrde
 var TITLES = { order: 'El Bash Orders', kitchen: 'El Bash Kitchen' };
 
 function doGet(e) {
+  if (e && e.parameter.format === 'menu') {
+    return ContentService.createTextOutput(JSON.stringify(menuForWebsite_())).setMimeType(ContentService.MimeType.JSON);
+  }
   var screen = String((e && e.parameter.screen) || 'order').toLowerCase();
   if (!/^[a-z]+$/.test(screen)) screen = 'order';
   var file = screen === 'order' ? 'page.html' : screen + '.html';
@@ -40,12 +47,17 @@ var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – O
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
 function tz_() { return book_().getSpreadsheetTimeZone() }
 function settings_() {
-  var v = book_().getSheetByName('Settings').getRange('B3:B9').getValues();
-  return { rate: Number(v[0][0]) || 89500, pin: String(v[1][0]).trim(), yellow: Number(v[5][0]) || 10, red: Number(v[6][0]) || 20 };
+  var v = book_().getSheetByName('Settings').getRange('B3:B10').getValues();
+  return { rate: Number(v[0][0]) || 89500, pin: String(v[1][0]).trim(), yellow: Number(v[5][0]) || 10, red: Number(v[6][0]) || 20,
+    dayEnd: v[7][0] === '' ? 2 : Math.max(0, Math.min(12, Number(v[7][0]) || 0)) };
 }
+/** The business day of a moment: before the day-end hour it still counts as the day before. */
+function businessDay_(when, tz, dayEnd) { return Utilities.formatDate(new Date(when.getTime() - dayEnd * 3600000), tz, 'yyyy-MM-dd') }
 function checkPin_(pin) {
   var real = settings_().pin;
-  if (real && String(pin).trim() !== real) throw new Error('Wrong PIN');
+  var typed = String(pin == null ? '' : pin).trim();
+  // a PIN like 0000 may be stored by the sheet as the number 0, so digits are also compared as numbers
+  if (real && typed !== real && !(/^\d+$/.test(typed) && /^\d+$/.test(real) && Number(typed) === Number(real))) throw new Error('Wrong PIN');
 }
 function dayKey_(d) { return d instanceof Date ? Utilities.formatDate(d, tz_(), 'yyyy-MM-dd') : String(d) }
 
@@ -54,7 +66,17 @@ function getMenu() {
   var rows = book_().getSheetByName('Menu').getDataRange().getValues().slice(1);
   var items = rows.filter(function (r) { return r[1] && r[5] === true && Number(r[4]) > 0 })
     .map(function (r) { return { cat: String(r[0]), name: String(r[1]), ar: String(r[2]), price: Number(r[4]) } });
-  return { rate: settings_().rate, items: items };
+  var st = settings_();
+  return { rate: st.rate, dayEnd: st.dayEnd, items: items };
+}
+
+/** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one. */
+function menuForWebsite_() {
+  var rows = book_().getSheetByName('Menu').getDataRange().getValues().slice(1);
+  return { rate: settings_().rate, items: rows.filter(function (r) { return r[1] }).map(function (r) {
+    return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
+      price: Number(r[4]) || 0, on: r[5] === true };
+  }) };
 }
 
 function payment_(p) { return p === 'Whish' || p === 'Unpaid' ? p : 'Cash' }
@@ -108,13 +130,17 @@ function saveOrder(order) {
 
     var p = priced_(order.items), pay = payment_(order.payment);
     var when = order.at ? new Date(order.at) : new Date();
-    var day = Utilities.formatDate(when, tz, 'yyyy-MM-dd');
+    var day = businessDay_(when, tz, settings_().dayEnd);
     var time = Utilities.formatDate(when, tz, 'HH:mm');
 
-    // Order numbers restart from 1 each day.
-    var props = PropertiesService.getScriptProperties();
-    var num = props.getProperty('day') === day ? Number(props.getProperty('num')) + 1 : 1;
-    props.setProperties({ day: day, num: String(num) });
+    // Order numbers restart from 1 each business day: the next number after the highest one that day.
+    var num = 1;
+    if (last > 1) {
+      var from2 = Math.max(2, last - 299);
+      orders.getRange(from2, 1, last - from2 + 1, 2).getValues().forEach(function (r) {
+        if (r[0] !== '' && dayKey_(r[1]) === day && Number(r[0]) >= num) num = Number(r[0]) + 1;
+      });
+    }
 
     var r = orders.getLastRow() + 1;
     orders.getRange(r, 1, 1, 14).setValues([[
@@ -189,7 +215,7 @@ function menuInfo_(ss) {
  * if that column is empty everywhere, every item goes to every station.
  */
 function recentOrders_(ss, station, keep) {
-  var tz = tz_(), menu = menuInfo_(ss), orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), list = [], byKey = {};
+  var tz = tz_(), dayEnd = settings_().dayEnd, menu = menuInfo_(ss), orders = ss.getSheetByName('Orders'), last = orders.getLastRow(), list = [], byKey = {};
   if (last < 2) return list;
   var col = doneCol_(orders, station, false), from = Math.max(2, last - 299);
   var hhmm = function (v) { return v instanceof Date ? Utilities.formatDate(v, tz, 'HH:mm') : String(v) };
@@ -197,6 +223,7 @@ function recentOrders_(ss, station, keep) {
     if (r[0] === '') return;
     var day = dayKey_(r[1]), time = hhmm(r[2]), at;
     try { at = Utilities.parseDate(day + ' ' + time, tz, 'yyyy-MM-dd HH:mm').getTime() } catch (e) { return }  // a row typed in by hand without a proper date or time
+    if (Number(time.slice(0, 2)) < dayEnd) at += 86400000;  // after midnight: the clock time is on the next calendar day
     var o = {
       key: day + '#' + r[0], num: r[0], day: day, time: time, at: at,
       total: Number(r[5]) || 0, payment: String(r[6]), note: String(r[12] || ''), name: String(r[15] || ''), type: String(r[16] || ''),
@@ -232,7 +259,7 @@ function getKitchen(station) {
 
 /** Every order placed today, oldest first, with its kitchen done time (for the Today's orders tab). */
 function getToday() {
-  var ss = book_(), st = settings_(), now = Date.now(), day = Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd');
+  var ss = book_(), st = settings_(), now = Date.now(), day = businessDay_(new Date(), tz_(), st.dayEnd);
   var list = recentOrders_(ss, 'Kitchen', function (o) { return o.day === day });
   list.forEach(function (o) { o.items = o.items.concat(o.other); delete o.other });
   return { now: now, yellow: st.yellow, red: st.red, rate: st.rate, orders: list };

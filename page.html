@@ -79,24 +79,27 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .stepper > span{min-width:30px;text-align:center;font-size:20px;font-weight:800}
 .stepper small{margin-inline-start:auto;color:var(--muted);font-size:13px;font-weight:600}
 
-.pay{padding:14px 18px 18px;background:var(--paper);border-top:1px solid var(--hairline)}
-.total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-.total .display{font-size:30px;color:var(--ink)}
-.total b{display:block;font-size:25px;font-weight:800;white-space:nowrap}
-.total small{display:block;color:var(--muted);font-weight:700;text-align:end}
+.pay{padding:10px 14px 12px;background:var(--paper);border-top:1px solid var(--hairline)}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.total .display{font-size:24px;color:var(--ink)}
+.total b{display:inline-block;font-size:22px;font-weight:800;white-space:nowrap}
+.total small{display:inline-block;color:var(--muted);font-weight:700}
+.total > div{display:flex;align-items:baseline;gap:10px}
 .methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.methods button{height:60px;border-radius:14px;background:var(--sand);color:var(--ink);font-size:21px;font-weight:800}
+.methods button{height:46px;border-radius:12px;background:var(--sand);color:var(--ink);font-size:18px;font-weight:800}
 .methods button.on[data-m=Cash]{background:var(--green);color:var(--paper)}
 .methods button.on[data-m=Whish]{background:var(--whish);color:#fff}
 .methods button.on[data-m=Unpaid]{background:var(--red);color:#fff}
-.methods button[data-m=Unpaid]{font-size:18px}
-.note{width:100%;margin-top:10px;height:52px;border-radius:16px;border:0;background:var(--input);padding:0 18px;font-size:16px;outline:none}
+.methods button[data-m=Unpaid]{font-size:16px}
+.note{width:100%;margin-top:6px;height:42px;border-radius:12px;border:0;background:var(--input);padding:0 12px;font-size:16px;outline:none}
 .note::placeholder{color:var(--placeholder)}
 .note:focus{box-shadow:0 0 0 2px var(--green)}
-.kind{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;padding:4px;border-radius:16px;background:var(--input)}
-.kind button{height:44px;padding:0 12px;border-radius:12px;font-weight:700;color:var(--muted)}
+.kind{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;padding:3px;border-radius:14px;background:var(--input)}
+.kind button{height:36px;padding:0 12px;border-radius:11px;font-weight:700;color:var(--muted)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.fields .note{margin-top:0}
 .kind button.on{background:var(--green);color:var(--paper)}
-.save{margin-top:12px;width:100%;height:70px;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:22px;box-shadow:var(--shadow-cta)}
+.save{margin-top:8px;width:100%;height:54px;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:20px;box-shadow:var(--shadow-cta)}
 .save:disabled{background:var(--sand);color:var(--muted);box-shadow:none}
 
 /* sales: amounts in $ (big) with L.L. (small) under them; one green ramp for "how much" */
@@ -283,8 +286,7 @@ td.r,th.r{text-align:end}
       <div class="total"><span class="display"><span class="ar">المجموع</span><span class="en">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
       <div class="methods"><button data-m="Cash"><span class="ar">كاش</span><span class="en">Cash</span></button><button data-m="Whish"><span class="ar">ويش</span><span class="en">Whish</span></button><button data-m="Unpaid"><span class="ar">ما دفع</span><span class="en">Not paid</span></button></div>
       <div class="kind"><button data-k="Pickup" type="button"><span class="ar">استلام</span><span class="en">Pickup</span></button><button data-k="Delivery" type="button"><span class="ar">توصيل</span><span class="en">Delivery</span></button></div>
-      <input class="note" id="cname" placeholder="الاسم (اختياري)" autocomplete="off" maxlength="40">
-      <input class="note" id="note" placeholder="ملاحظة (اختياري)" autocomplete="off">
+      <div class="fields"><input class="note" id="cname" placeholder="الاسم (اختياري)" autocomplete="off" maxlength="40"><input class="note" id="note" placeholder="ملاحظة (اختياري)" autocomplete="off"></div>
       <button class="save" id="save" disabled></button>
     </div>
   </div>
@@ -300,6 +302,8 @@ td.r,th.r{text-align:end}
 
 <script>
 var MENU = [], RATE = 89500, CATS = [], cart = {}, method = '';
+var DAY_END = 2;  // the business day runs until 2 am (Settings tab), so a late night counts as one day
+function bizDate() { return new Date(Date.now() - DAY_END * 3600000) }
 var QKEY = 'elbash-pos-queue', PKEY = 'elbash-pos-pin', LKEY = 'elbash-pos-lang';
 var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
@@ -358,7 +362,7 @@ function sauceList(list) { return bi(list.map(function (s) { return SAUCE_AR[s] 
 
 function loadMenu() {
   call('getMenu').then(function (m) {
-    MENU = m.items; RATE = m.rate;
+    MENU = m.items; RATE = m.rate; if (m.dayEnd != null) DAY_END = m.dayEnd;
     CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) });
     renderGrid(); renderCart();
   }, function (e) { $('#grid').innerHTML = '<div class="err" style="padding:20px">' + bi('ما قدرنا نحمّل المنيو. تأكد من الإنترنت وجرّب مرة تانية.', 'Could not load the menu. Check the internet and reload.') + '<br><small>' + esc(e.message || e) + '</small></div>' });
@@ -605,24 +609,25 @@ function fetchR(kind, key, from, to) {
 }
 function showReport() {
   S.years = {}; S.months = {}; S.days = {}; S.all = {}; S.err = ''; S.locked = false;
-  if (!S.y) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
+  if (!S.y) { var t = bizDate(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
   drawSales();
 }
 
 // One day's numbers, sales by hour and every order (a day picked in the calendar, or the Today view)
 function dayBody(D) {
   var h = '', k;
-  var hours = {}, lo = 24, hi = -1;
-  D.orders.forEach(function (o) { var hr = +String(o.time).slice(0, 2); if (isNaN(hr)) return; hours[hr] = hours[hr] || {sales: 0, orders: 0}; hours[hr].sales += o.total; hours[hr].orders++; lo = Math.min(lo, hr); hi = Math.max(hi, hr) });
+  // hours are counted from the start of the business day, so 00:00 and 01:00 come after 23:00
+  var hours = {}, lo = 24, hi = -1, clock = function (k) { return (k + DAY_END) % 24 };
+  D.orders.forEach(function (o) { var hr = +String(o.time).slice(0, 2); if (isNaN(hr)) return; hr = (hr + 24 - DAY_END) % 24; hours[hr] = hours[hr] || {sales: 0, orders: 0}; hours[hr].sales += o.total; hours[hr].orders++; lo = Math.min(lo, hr); hi = Math.max(hi, hr) });
   var maxH = 0; for (k = lo; k <= hi; k++) if (hours[k] && hours[k].sales > maxH) maxH = hours[k].sales;
   var pick = S.hour >= lo && S.hour <= hi ? S.hour : -1;
   if (hi >= lo) {
     h += '<h4>' + bi('المبيعات حسب الساعة', 'Sales by hour') + '</h4><div class="readout">' + (pick >= 0 && hours[pick] ?
-      '<b class="num">' + pad(pick) + ':00–' + pad(pick + 1) + ':00</b> · <b class="num">' + $usd(hours[pick].sales) + '</b> <small class="num">' + ll(hours[pick].sales) + '</small> · ' + fmt(hours[pick].orders) + ' ' + bi('طلب', 'orders')
+      '<b class="num">' + pad(clock(pick)) + ':00–' + pad(clock(pick + 1)) + ':00</b> · <b class="num">' + $usd(hours[pick].sales) + '</b> <small class="num">' + ll(hours[pick].sales) + '</small> · ' + fmt(hours[pick].orders) + ' ' + bi('طلب', 'orders')
       : '<span class="muted">' + bi('دق على ساعة لتشوف رقمها', 'Tap an hour to see its numbers') + '</span>') + '</div><div class="hours">';
     for (k = lo; k <= hi; k++) {
       var v = hours[k] ? hours[k].sales : 0;
-      h += '<button class="hr' + (k === pick ? ' on' : '') + '" data-h="' + k + '"><span class="track">' + (v === maxH && v ? '<em class="num">' + $usd(v) + '</em>' : '') + '<i style="height:' + (v ? Math.max(3, v / maxH * 100) : 0) + '%"></i></span><span class="num">' + pad(k) + '</span></button>';
+      h += '<button class="hr' + (k === pick ? ' on' : '') + '" data-h="' + k + '"><span class="track">' + (v === maxH && v ? '<em class="num">' + $usd(v) + '</em>' : '') + '<i style="height:' + (v ? Math.max(3, v / maxH * 100) : 0) + '%"></i></span><span class="num">' + pad(clock(k)) + '</span></button>';
     }
     h += '</div>';
   }
@@ -684,7 +689,7 @@ function dayView(D, empty) {
 
 /* Today: today's numbers, sales by hour, cash and Whish, best sellers and every order */
 function drawToday() {
-  var today = ymd(new Date());
+  var today = ymd(bizDate());
   fetchR('days', today, today, today);
   if (S.locked) return;
   var D = S.days[today];
@@ -696,7 +701,7 @@ function drawToday() {
 
 /* All time: the same numbers for every order so far, by month and by day of the week */
 function drawAll() {
-  var today = ymd(new Date());
+  var today = ymd(bizDate());
   fetchR('all', 'all', '2020-01-01', today);
   if (S.locked) return;
   var A = S.all.all, wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
@@ -745,7 +750,7 @@ function drawSales() {
   if (S.locked) return;
   if (S.mode === 'all') return drawAll();
   if (S.mode === 'today') return drawToday();
-  var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(new Date());
+  var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(bizDate());
   fetchR('years', y, y + '-01-01', y + '-12-31');
   fetchR('months', mk, mk + '-01', mk + '-' + pad(daysIn(y, m)));
   if (S.sel) fetchR('days', S.sel, S.sel, S.sel);
@@ -815,10 +820,10 @@ function drawSales() {
 $('#rep').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || S.locked) return;
   if (b.dataset.mv) { moveMonth(+b.dataset.mv); return }
-  if (b.dataset.mode) { S.mode = b.dataset.mode; S.err = ''; if (S.mode === 'today') delete S.days[ymd(new Date())]; drawSales(); return }
+  if (b.dataset.mode) { S.mode = b.dataset.mode; S.err = ''; if (S.mode === 'today') delete S.days[ymd(bizDate())]; drawSales(); return }
   if (b.dataset.goto) { S.mode = 'month'; S.y = +b.dataset.goto.slice(0, 4); S.m = +b.dataset.goto.slice(5) - 1; S.sel = ''; drawSales(); return }
   if (b.dataset.close) { S.sel = ''; drawSales(); return }
-  if (b.dataset.today) { var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t); drawSales(); return }
+  if (b.dataset.today) { var t = bizDate(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t); drawSales(); return }
   if (b.dataset.m) { S.m = +b.dataset.m; S.sel = ''; drawSales(); return }
   if (b.dataset.h) { S.hour = +b.dataset.h === S.hour ? -1 : +b.dataset.h; drawSales(); return }
   if (b.dataset.d && b.classList.contains('day')) {
