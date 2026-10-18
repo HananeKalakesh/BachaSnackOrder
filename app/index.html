@@ -231,6 +231,8 @@ td.r,th.r{text-align:end}
 .xcat{height:42px;padding:0 14px;border-radius:999px;font-weight:700;background:var(--paper);box-shadow:inset 0 0 0 2px var(--c);color:var(--ink)}
 .xcat.on{background:var(--c);color:#fff}
 .xhint{margin:8px 0 0}
+.xsubs{margin-top:10px;padding-top:10px;border-top:1px dashed var(--hairline)}.xsubs .xcat{height:38px;font-size:15px}
+.xsplit{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted);margin-top:2px}.xsplit b{color:var(--ink)}
 .xform{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .xform input{height:48px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);padding:0 14px;font:inherit;font-size:17px;color:var(--ink);min-width:0;width:100%}
 .xform #xItem{grid-column:1/-1}
@@ -1167,10 +1169,15 @@ var EXP_CATS = [
   ['Chicken', 'دجاج', ['', ''], 'food'], ['Beef', 'لحمة', ['', ''], 'food'], ['Bread', 'خبز', ['', ''], 'food'],
   ['Vegetables', 'خضار', ['', ''], 'food'], ['Ingredients', 'مواد أولية', ['صوصات، مشروبات، زيت، جبنة…', 'sauces, drinks, oil, cheese…'], 'food'],
   ['Packaging', 'تغليف', ['بلاستيك، علب، أكياس', 'plastics, boxes, bags'], 'packaging'],
-  ['Salaries', 'رواتب', ['موظفين، تنظيف', 'staff, cleaning'], 'running'], ['Utilities', 'فواتير', ['غاز، مي، إنترنت', 'gas, water, internet'], 'running'],
-  ['Other', 'غير ذلك', ['', ''], 'running'], ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment']];
+  ['Salaries', 'رواتب', ['', ''], 'running', [['Staff', 'موظفين'], ['Cleaning', 'تنظيف']]],
+  ['Utilities', 'فواتير', ['', ''], 'running', [['Gas', 'غاز'], ['Water', 'مي'], ['Internet', 'إنترنت']]],
+  ['Other', 'غير ذلك', ['', ''], 'running'],
+  ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]]];
+// A purchase's label: the category, and its type when it has one (e.g. Utilities · Gas)
+function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
+function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
 var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C'};
-var EX = {y: 0, m: 0, cat: '', cur: '$', data: null, err: '', locked: false};
+var EX = {y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false};
 function catOf(name) { return EXP_CATS.filter(function (c) { return c[0] === name })[0] || EXP_CATS[8] }
 
 // Purchases from the sheet (and the ones added or deleted on this iPad that the copy doesn't have yet)
@@ -1178,7 +1185,7 @@ function purchases() {
   var r = EX.data || EB.cached('purchases');
   if (!r) return null;
   var list = EB.rows(r.Purchases).filter(function (p) { return p.Ref && p.Date }).map(function (p) {
-    return {key: String(p.Ref), day: String(p.Date).slice(0, 10), cat: String(p.Category), item: String(p.Item || ''), amount: Number(p.Amount) || 0,
+    return {key: String(p.Ref), day: String(p.Date).slice(0, 10), cat: String(p.Category), sub: String(p.Type || ''), item: String(p.Item || ''), amount: Number(p.Amount) || 0,
       cur: String(p.Currency || 'L.L.'), lbp: Number(p['Amount (L.L.)']) || 0, supplier: String(p.Supplier || '')};
   });
   return EB.withPending(list, r.at, 'purchase');
@@ -1218,6 +1225,8 @@ function drawExpenses() {
   var c = EX.cat ? catOf(EX.cat) : null;
   h += '<div class="card addx"><h3 class="display">' + bi('زيد مصروف', 'Add a purchase') + '</h3><div class="xcats">' +
     EXP_CATS.map(function (k) { return '<button class="xcat' + (EX.cat === k[0] ? ' on' : '') + '" data-xcat="' + k[0] + '" style="--c:' + EXP_COLOR[k[3]] + '">' + bi(k[1], k[0]) + '</button>' }).join('') + '</div>' +
+    (c && c[4] ? '<div class="xcats xsubs">' + c[4].map(function (t) {
+      return '<button class="xcat' + (EX.sub === t[0] ? ' on' : '') + '" data-xsub="' + esc(t[0]) + '" style="--c:' + EXP_COLOR[c[3]] + '">' + bi(t[1], t[0]) + '</button>' }).join('') + '</div>' : '') +
     (c && c[2][0] ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
     '<div class="xform"><input id="xItem" placeholder="' + esc(T('شو اشتريت؟ (مثلاً: 10 كيلو صدر دجاج)', 'What did you buy? (e.g. 10 kg chicken breast)')) + '" maxlength="80">' +
     '<div class="xamt"><input id="xAmount" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('المبلغ', 'Amount')) + '">' +
@@ -1228,10 +1237,11 @@ function drawExpenses() {
 
   if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   var month = list.filter(function (p) { return p.day.slice(0, 7) === mk }).sort(function (a, b) { return a.day < b.day ? 1 : -1 });
-  var spent = 0, invest = 0, byCat = {};
+  var spent = 0, invest = 0, byCat = {}, bySub = {};
   month.forEach(function (p) {
     if (catOf(p.cat)[3] === 'investment') invest += p.lbp; else spent += p.lbp;
     byCat[p.cat] = (byCat[p.cat] || 0) + p.lbp;
+    if (subOf(catOf(p.cat), p.sub)) { var bs = bySub[p.cat] = bySub[p.cat] || {}; bs[p.sub] = (bs[p.sub] || 0) + p.lbp }
   });
   var sales = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), mk + '-01', mk + '-' + pad(daysIn(y, m))).summary.sales : null;
   var profit = sales == null ? null : sales - spent;
@@ -1247,13 +1257,15 @@ function drawExpenses() {
   h += '<div class="cols"><div class="card"><h3 class="display">' + bi('المصاريف حسب النوع', 'By category') + '</h3>' + (cats.length ? cats.map(function (k) {
     var cc = catOf(k);
     return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + '<span class="tq num">' + $usd(byCat[k]) + '</span></div>' +
-      '<div class="tb"><i style="width:' + Math.max(3, byCat[k] / max * 100) + '%;background:' + EXP_COLOR[cc[3]] + '"></i></div><small class="ll num">' + ll(byCat[k]) + '</small></div>';
+      '<div class="tb"><i style="width:' + Math.max(3, byCat[k] / max * 100) + '%;background:' + EXP_COLOR[cc[3]] + '"></i></div><small class="ll num">' + ll(byCat[k]) + '</small>' +
+      (bySub[k] ? '<div class="xsplit">' + Object.keys(bySub[k]).sort(function (a, b) { return bySub[k][b] - bySub[k][a] }).map(function (t) {
+        var st = subOf(cc, t); return '<span>' + bi(st[1], st[0]) + ' <b class="num">' + $usd(bySub[k][t]) + '</b></span>' }).join('') + '</div>' : '') + '</div>';
   }).join('') : '<p class="muted">' + bi('ما في مصاريف بهالشهر', 'No purchases this month') + '</p>') + '</div>';
 
   // every purchase this month
   h += '<div class="card"><h3 class="display">' + bi('كل المصاريف', 'Every purchase') + '</h3>' + (month.length ? '<table>' + month.map(function (p) {
     var cc = catOf(p.cat);
-    return '<tr><td class="num">' + p.day.slice(8) + '/' + p.day.slice(5, 7) + '</td><td><span class="xtag" style="--c:' + EXP_COLOR[cc[3]] + '">' + bi(cc[1], cc[0]) + '</span> ' + esc(p.item) +
+    return '<tr><td class="num">' + p.day.slice(8) + '/' + p.day.slice(5, 7) + '</td><td><span class="xtag" style="--c:' + EXP_COLOR[cc[3]] + '">' + expLabel(cc, p.sub) + '</span> ' + esc(p.item) +
       (p.supplier ? '<div class="muted">' + esc(p.supplier) + '</div>' : '') + '</td><td class="r"><b class="num">' + (p.cur === '$' ? '$' + fmt(p.amount) : fmt(p.amount) + ' L.L.') + '</b>' +
       (p.cur === '$' ? '<div class="muted num">' + ll(p.lbp) + '</div>' : '<div class="muted num">' + $usd(p.lbp) + '</div>') + '</td>' +
       '<td><button class="del" data-xdel="' + esc(p.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
@@ -1264,10 +1276,11 @@ function drawExpenses() {
 $('#exp').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || EX.locked) return;
   if (b.dataset.xmv) { EX.m += +b.dataset.xmv; if (EX.m < 0) { EX.m = 11; EX.y-- } if (EX.m > 11) { EX.m = 0; EX.y++ } return drawExpenses() }
-  if (b.dataset.xcat || b.dataset.xcur) {
+  if (b.dataset.xcat || b.dataset.xcur || b.dataset.xsub) {
     // keep what was typed while the form redraws
     var keep = {item: $('#xItem').value, amount: $('#xAmount').value, supplier: $('#xSupplier').value, date: $('#xDate').value};
-    if (b.dataset.xcat) EX.cat = b.dataset.xcat; else EX.cur = b.dataset.xcur;
+    if (b.dataset.xcat) { if (EX.cat !== b.dataset.xcat) EX.sub = ''; EX.cat = b.dataset.xcat }
+    else if (b.dataset.xsub) EX.sub = b.dataset.xsub; else EX.cur = b.dataset.xcur;
     drawExpenses();
     $('#xItem').value = keep.item; $('#xAmount').value = keep.amount; $('#xSupplier').value = keep.supplier; $('#xDate').value = keep.date;
     return;
@@ -1275,14 +1288,16 @@ $('#exp').addEventListener('click', function (e) {
   if (b.id === 'xSave') {
     var amount = Number($('#xAmount').value), day = $('#xDate').value, err = function (ar, en) { $('#xErr').innerHTML = bi(ar, en) };
     if (!EX.cat) return err('اختار النوع', 'Choose a category');
+    if (catOf(EX.cat)[4] && !subOf(catOf(EX.cat), EX.sub)) return err('اختار شو بالزبط (' + catOf(EX.cat)[4].map(function (t) { return t[1] }).join('، ') + ')',
+      'Choose which one (' + catOf(EX.cat)[4].map(function (t) { return t[0] }).join(', ') + ')');
     if (!(amount > 0)) return err('اكتب المبلغ', 'Enter the amount');
     if (!/^\d{4}-\d\d-\d\d$/.test(day)) return err('اختار التاريخ', 'Choose the date');
-    var p = {key: 'px' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), day: day, cat: EX.cat, item: $('#xItem').value.trim(),
+    var p = {key: 'px' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), day: day, cat: EX.cat, sub: catOf(EX.cat)[4] ? EX.sub : '', item: $('#xItem').value.trim(),
       amount: amount, cur: EX.cur, lbp: Math.round(EX.cur === '$' ? amount * RATE : amount), supplier: $('#xSupplier').value.trim()};
-    EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [{'Date': p.day, 'Category': p.cat, 'Item': p.item, 'Amount': p.amount, 'Currency': p.cur,
+    EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [{'Date': p.day, 'Category': p.cat, 'Type': p.sub, 'Item': p.item, 'Amount': p.amount, 'Currency': p.cur,
       'Amount (L.L.)': p.lbp, 'Supplier': p.supplier, 'Ref': p.key, 'Added': "'" + EB.ymd(new Date()) + ' ' + EB.hhmm()}]}], {t: 'save', kind: 'purchase', key: p.key, order: p});
     toast('انحفظ المصروف', 'Purchase saved');
-    var d = p.day.split('-'); EX.y = +d[0]; EX.m = +d[1] - 1; EX.cat = '';
+    var d = p.day.split('-'); EX.y = +d[0]; EX.m = +d[1] - 1; EX.cat = ''; EX.sub = '';
     return drawExpenses();
   }
   if (b.dataset.xdel) {

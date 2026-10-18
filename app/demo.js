@@ -112,18 +112,19 @@ var EBDemo = (function () {
     order(td, at(1), {num: 9, done: '', payment: 'Unpaid', source: 'Website', status: 'Waiting', name: 'Sam', type: 'Pickup', phone: '96170999888',
       lang: 'en', items: [{m: byName(/Crispy Meal/), q: 1}, {m: byName(/Pepsi/), q: 2}]});
     // this month's purchases
-    var P = [['Date', 'Category', 'Item', 'Amount', 'Currency', 'Amount (L.L.)', 'Supplier', 'Note', 'Ref', 'Added']], pr = 0;
-    var buy = function (daysAgo, cat, item, amount, cur, supplier) {
+    var P = [['Date', 'Category', 'Type', 'Item', 'Amount', 'Currency', 'Amount (L.L.)', 'Supplier', 'Note', 'Ref', 'Added']], pr = 0;
+    var buy = function (daysAgo, cat, item, amount, cur, supplier, type) {
       var d = new Date(today); d.setDate(d.getDate() - daysAgo);
       if (d.getMonth() !== today.getMonth()) return;
-      P.push([ymd(d), cat, item, amount, cur, cur === '$' ? amount * rate : amount, supplier || '', '', 'pxdemo' + (++pr), '']);
+      P.push([ymd(d), cat, type || '', item, amount, cur, cur === '$' ? amount * rate : amount, supplier || '', '', 'pxdemo' + (++pr), '']);
     };
     for (var w = 0; w < 31; w += 3) { buy(w, 'Chicken', '20 kg breast', 90, '$', 'Hawa Chicken'); buy(w + 1, 'Bread', 'Saj bread', 1500000, 'L.L.') }
     for (var v = 0; v < 31; v += 4) { buy(v, 'Vegetables', 'Lettuce, tomatoes, pickles', 1800000, 'L.L.'); buy(v + 2, 'Ingredients', 'Sauces, oil, cheddar', 45, '$') }
     buy(2, 'Beef', '10 kg burger meat', 85, '$'); buy(9, 'Beef', '10 kg burger meat', 85, '$');
     buy(5, 'Packaging', 'Boxes, bags, cups', 60, '$'); buy(12, 'Packaging', 'Plastic containers', 2700000, 'L.L.');
-    buy(1, 'Salaries', 'Staff, first half', 400, '$'); buy(3, 'Utilities', 'Gas', 35, '$'); buy(6, 'Utilities', 'Internet', 25, '$');
-    buy(4, 'Other', 'Cleaning products', 900000, 'L.L.'); buy(7, 'Equipment', 'New fryer', 450, '$');
+    buy(1, 'Salaries', 'First half of the month', 400, '$', '', 'Staff'); buy(8, 'Salaries', 'Weekly cleaning', 40, '$', '', 'Cleaning');
+    buy(3, 'Utilities', 'Gas cylinder', 35, '$', '', 'Gas'); buy(5, 'Utilities', 'Water tank', 1800000, 'L.L.', '', 'Water'); buy(6, 'Utilities', 'Monthly', 25, '$', '', 'Internet');
+    buy(4, 'Other', 'Cleaning products', 900000, 'L.L.'); buy(7, 'Equipment', 'New fryer', 450, '$', '', 'Machines'); buy(2, 'Equipment', 'Knives and tongs', 30, '$', '', 'Kitchen supplies');
 
     var menuTab = [['Category', 'Item', 'Arabic name', 'Price ($)', 'Price (L.L.)', 'On order screen', 'Kitchen screen', 'Sold out']].concat(menu.items.map(function (m) {
       return [m.cat, m.name, m.ar, m.usd ? '$' + m.usd : '', m.price || '', m.on, '', ''];
