@@ -76,12 +76,18 @@ var EB = (function () {
     s.dayEnd = d === '' ? 2 : Math.max(0, Math.min(12, num(d)));
     return s;
   };
-  // Every Menu row; on = "On order screen" ticked
+  // Every Menu row; on = "On order screen" ticked; soldOut = taken off for now with the Sold out button
+  // (a sold-out item is also unticked, which hides it from the menu website)
   EB.menu = function (r) {
-    return EB.rows(r && r.Menu).filter(function (m) { return str(m.Item) }).map(function (m) {
+    var list = EB.rows(r && r.Menu).filter(function (m) { return str(m.Item) }).map(function (m) {
       return {cat: str(m.Category), name: str(m.Item), ar: str(m['Arabic name']), usd: num(m['Price ($)']), price: num(m['Price (L.L.)']),
-        on: m['On order screen'] === true, station: str(m['Kitchen screen'])};
+        on: m['On order screen'] === true, soldOut: m['Sold out'] === true, station: str(m['Kitchen screen'])};
     });
+    changes(r && r.at).forEach(function (c) {
+      var f = c.effect || {};
+      if (f.t === 'soldout') list.forEach(function (m) { if (m.name === f.name) { m.soldOut = f.out; m.on = !f.out } });
+    });
+    return list;
   };
 
   /* ---------- the business day: until the hour in Settings (2 am), it is still the day before ---------- */
@@ -153,16 +159,18 @@ var EB = (function () {
     var keep = (get('eb-sent') || []).filter(function (x) { return Date.now() - x.sent < 2 * 864e5 }).slice(-300);
     keep.push({sent: Date.now(), effect: c.effect}); put('eb-sent', keep);
   }
-  // Apply to a list of orders loaded at readAt: the changes sent since then, and those still waiting in the outbox
-  // (applying a change the list already has does nothing, so the order doesn't matter)
+  // The changes a copy loaded at readAt doesn't have yet: those sent since then, and those still in the outbox
+  function changes(readAt) { return (get('eb-sent') || []).filter(function (x) { return x.sent > (readAt || 0) }).concat(outbox()) }
+  // Apply them to a list of orders (applying a change the list already has does nothing, so the order doesn't matter)
   EB.withPending = function (list, readAt) {
-    (get('eb-sent') || []).filter(function (x) { return x.sent > (readAt || 0) }).concat(outbox()).forEach(function (c) {
+    changes(readAt).forEach(function (c) {
       var f = c.effect || {}, i = -1;
       list.forEach(function (o, k) { if (o.key === f.key) i = k });
       if (f.t === 'save' && i < 0) list.push(JSON.parse(JSON.stringify(f.order)));
       if (f.t === 'edit' && i >= 0) { var done = list[i].done; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total }
     });
     return list;
   };
@@ -203,6 +211,17 @@ var EB = (function () {
   };
   EB.remove = function (o) {
     EB.send([{op: 'remove', tab: 'Orders', where: where(o)}, {op: 'remove', tab: 'Order Items', where: where(o)}], {t: 'delete', key: o.key});
+  };
+
+  // Sold out for now (or back on): also unticks "On order screen", so the menu website hides it
+  EB.soldOut = function (name, out) {
+    EB.send([{op: 'update', tab: 'Menu', where: {'Item': name}, set: {'On order screen': !out, 'Sold out': out ? true : ''}}],
+      {t: 'soldout', name: name, out: out});
+  };
+  // A Not paid order paid later, in full: Cash or Whish, and the day it was paid
+  EB.paid = function (o, payment, day) {
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': day}}],
+      {t: 'paid', key: o.key, payment: payment});
   };
 
   /* ---------- reports: totals for the days from..to (yyyy-mm-dd) ---------- */
