@@ -331,8 +331,10 @@ const CONFIG = {
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
   menuUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec?format=menu',
-  // Orders go straight to the shop's order screen through the same script (empty = WhatsApp only)
-  orderUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec',
+  // Orders go straight to the shop's order screen through the same script (empty = WhatsApp only).
+  // Off until the shop uses the cashier app; to turn on, put back:
+  // 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec'
+  orderUrl: '',
   popular: ['Zinger Sandwich', 'Crispy Meal', 'Basha Burger', 'Loaded Fries'], // items tagged "★ Popular"
   deliveryNote: {en: '', ar: ''},// optional line in the cart, e.g. {en: 'Delivery fee: 100,000 L.L.', ar: 'كلفة التوصيل: 100,000 ل.ل.'}
   photos: {                      // item photos (square, in the photos folder)
@@ -944,7 +946,7 @@ $('.send').onclick = () => {
   if (type === 'Delivery' && !addr) return fail('Please enter your delivery address.');
   store.set('basha-last', orderQtys());
   const msg = whatsappText(entries, name, phone, type, addr, note);
-  if (!CONFIG.orderUrl) return viaWhatsApp(msg);
+  if (!CONFIG.orderUrl && !DEMO) return viaWhatsApp(msg);   // the demo always goes to the pretend app
   const btn = $('.send'), offer = () => { err.textContent = t("We couldn't send it to the shop. Send it on WhatsApp instead:"); viaWhatsApp(msg) };
   sending = true; btn.disabled = true; btn.textContent = t('Sending…');
   const ctl = 'AbortController' in window ? new AbortController() : null, timer = ctl && setTimeout(() => ctl.abort(), 20000);
