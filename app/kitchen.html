@@ -146,7 +146,7 @@ function loadMenu() {
 function build(r) {
   var now = EB.now(), named = MENU_ALL.some(function (m) { return m.station });
   return EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r && r.at).filter(function (o) {
-    if (o.done || !o.live || o.at < SINCE - 60000 || now - o.at > 12 * 3600000) return false;
+    if (o.done || o.ready || !o.live || o.at < SINCE - 60000 || now - o.at > 12 * 3600000) return false;
     o.other = o.items.filter(function (x) { return named && x.station !== STATION });
     o.items = o.items.filter(function (x) { return !named || x.station === STATION });
     return o.items.length;
@@ -213,12 +213,12 @@ $('#board').addEventListener('click', function (e) {
 });
 
 function finish(o) {
-  EB.done(o, EB.hhmm());   // shows at once; reaches the sheet as soon as it can
+  EB.ready(o, EB.hhmm());   // ready: the cashier hands it over or sends it out; shows at once, reaches the sheet as soon as it can
   var el = $('#toast');
-  el.innerHTML = bi('الطلب #' + o.num + ' خلص', 'Order #' + o.num + ' done') + '<button type="button">' + bi('رجّعه', 'Undo') + '</button>';
+  el.innerHTML = bi('الطلب #' + o.num + ' جاهز', 'Order #' + o.num + ' ready') + '<button type="button">' + bi('رجّعه', 'Undo') + '</button>';
   el.classList.add('show'); clearTimeout(finish.t);
   finish.t = setTimeout(function () { el.classList.remove('show') }, 6000);
-  el.querySelector('button').onclick = function () { el.classList.remove('show'); EB.done(o, '') };
+  el.querySelector('button').onclick = function () { el.classList.remove('show'); EB.ready(o, '') };
 }
 
 function tick() {

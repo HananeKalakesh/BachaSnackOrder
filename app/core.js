@@ -222,7 +222,7 @@ var EB = (function () {
       if ((f.kind || '') !== (kind || '')) return;
       list.forEach(function (o, k) { if (o.key === f.key) i = k });
       if (f.t === 'save' && i < 0) list.push(JSON.parse(JSON.stringify(f.order)));
-      if (f.t === 'edit' && i >= 0) { var done = list[i].done; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done }
+      if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
       if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total }
@@ -280,9 +280,10 @@ var EB = (function () {
   EB.status = function (o, status) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Status': status}}], {t: 'status', key: o.key, status: status});
   };
-  // When the "ready" WhatsApp message was sent
+  // The order's stages: preparing → ready (for pickup) or out for delivery, kept as the time in "Ready sent" → done
+  // ("Kitchen done": picked up, or delivered and paid). An empty time takes it back a stage.
   EB.ready = function (o, at) {
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Ready sent': "'" + at}}], {t: 'ready', key: o.key, ready: at});
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Ready sent': at ? "'" + at : ''}}], {t: 'ready', key: o.key, ready: at});
   };
   // The WhatsApp message for an order, in the customer's language: accepted, ready (pickup or delivery) or turned down
   EB.whatsapp = function (o, kind) {
@@ -291,11 +292,12 @@ var EB = (function () {
       : 'Ya Basha, we got your El Bash order #' + n + ' ✅ We\'re preparing it and will message you when it\'s ' + (o.type === 'Delivery' ? 'on the way' : 'ready') + '. Tekram ya basha!';
     else if (kind === 'reject') msg = ar ? 'يا باشا، آسفين، ما منقدر ناخد طلبيتك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏'
       : 'Ya Basha, sorry, we can\'t take your order #' + n + ' right now. Please call or message us 🙏';
-    else if (o.type === 'Delivery') msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة وعالطريق لعندك! 🛵 تكرم يا باشا!'
-      : 'Ya Basha, your El Bash order #' + n + ' is ready and on its way to you! 🛵 Tekram ya basha!';
+    else if (o.type === 'Delivery') msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة، ومنبعتلك ياها بأسرع وقت! 🛵 تكرم يا باشا!'
+      : 'Ya Basha, your El Bash order #' + n + ' is ready and we\'ll send it to you as soon as we can! 🛵 Tekram ya basha!';
     else msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة! 🍗 تفضّل استلمها. تكرم يا باشا!'
       : 'Ya Basha, your El Bash order #' + n + ' is ready! 🍗 Come pick it up. Tekram ya basha!';
-    return 'https://wa.me/' + o.phone + '?text=' + encodeURIComponent(msg);
+    // no number (an order taken at the counter or by phone): WhatsApp opens and asks who to send it to
+    return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
   };
   // A Not paid order paid later, in full: Cash or Whish, and the day it was paid
   EB.paid = function (o, payment, day) {

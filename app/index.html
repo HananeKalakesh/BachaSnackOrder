@@ -384,6 +384,16 @@ td.r,th.r{text-align:end}
 .ord.web .onum{--age:var(--ink);--on-age:var(--paper)}
 .ph{color:var(--muted);font-size:13px;margin-inline-start:8px}
 .addr{font-size:14px;color:var(--body);margin-bottom:4px}
+/* stages */
+.stage{display:inline-block;font-size:13px;font-weight:800;padding:2px 10px;border-radius:999px;margin-bottom:4px}
+.stage.s1{background:var(--sand);color:var(--ink)}.stage.s2{background:#DCEBDD;color:var(--green)}.stage.s3{background:var(--sand);color:var(--muted)}
+.ord.ready{--age:#25A55F;--on-age:#fff;box-shadow:inset 0 0 0 2px #25A55F,var(--shadow-sm)}
+.stepb{height:46px;padding:0 14px;border-radius:12px;background:var(--green);color:var(--paper);font-weight:800;white-space:nowrap}
+.stepb.go{background:var(--ink)}
+.backb{height:34px;padding:0 10px;border-radius:10px;background:var(--sand);color:var(--muted);font-size:13px;font-weight:800}
+.paysheet{position:fixed;inset:0;z-index:40;background:rgba(26,26,23,.5);display:flex;align-items:center;justify-content:center;padding:16px}
+.paybox{background:var(--paper);border-radius:24px;padding:20px;max-width:420px;width:100%;text-align:center}
+.paybox h3{margin:0 0 6px;font-size:24px}.paybtns{display:flex;gap:10px;margin:14px 0}.paybtns .payb{flex:1;height:56px;font-size:20px}
 .readyb{height:40px;padding:0 12px;border-radius:12px;background:#25A55F;color:#fff;font-weight:800;white-space:nowrap}
 .readyb.sent{background:var(--sand);color:var(--green)}
 .odel{height:34px;border-radius:12px;color:var(--red);font-weight:700;font-size:14px}
@@ -1125,9 +1135,10 @@ function drawOrders() {
   TD.yellow = SET.yellow; TD.red = SET.red;
   var byTime = function (a, b) { return a.at - b.at || a.num - b.num };
   var open = TD.list.filter(function (o) { return !o.done }).sort(byTime), done = TD.list.filter(function (o) { return o.done }).sort(byTime);
-  var unpaid = TD.list.filter(function (o) { return o.payment === 'Unpaid' }).length;
+  var unpaid = TD.list.filter(function (o) { return o.payment === 'Unpaid' }).length, nReady = open.filter(function (o) { return o.ready }).length;
   var h = '<div class="shead">' + orderModes(0) +
-    (TD.loaded ? '<span class="since"><b class="num">' + open.length + '</b> ' + bi('عم ينعمل', 'open') + ' · <b class="num">' + done.length + '</b> ' + bi('خلص', 'done') +
+    (TD.loaded ? '<span class="since"><b class="num">' + (open.length - nReady) + '</b> ' + bi('عم يتحضّر', 'preparing') + ' · <b class="num">' + nReady + '</b> ' + bi('جاهز', 'ready') +
+      ' · <b class="num">' + done.length + '</b> ' + bi('خلص', 'done') +
       (unpaid ? ' · <b class="num owe">' + unpaid + '</b> <span class="owe">' + bi('ما دفع', 'not paid') + '</span>' : '') + '</span><span class="hint2">' + bi('دق على طلب لتغيّر فيه', 'Tap an order to change it') + '</span>' : '') + '</div>';
   if (TD.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الطلبات اللي بيعرفها هالآيباد. التغييرات بتنبعت لحالها.', 'No internet: these are the orders this iPad knows. Changes send by themselves.') + '</p>';
   else if (TD.err) h += '<p class="err">' + bi('ما قدرنا نحمّل الطلبات', 'Could not load the orders') + ' · <small>' + esc(TD.err) + '</small></p>';
@@ -1142,21 +1153,32 @@ function drawOrders() {
   }).join('') + '</div>';
   if (!TD.list.length) { $('#ord').innerHTML = h + (waiting.length ? '' : '<p class="muted">' + bi('لسا ما في طلبات اليوم', 'No orders yet today') + '</p>'); return }
   h += '<div class="olist">' + open.concat(done).map(function (o) {
-    var m = Math.max(0, Math.floor((now - o.at) / 60000));
-    var cls = o.done ? 'done' : m >= TD.red ? 'over' : m >= TD.yellow ? 'late' : 'fresh';
+    var m = Math.max(0, Math.floor((now - o.at) / 60000)), del = o.type === 'Delivery';
+    var cls = o.done ? 'done' : o.ready ? 'ready' : m >= TD.red ? 'over' : m >= TD.yellow ? 'late' : 'fresh';
+    // where the order is: preparing → ready for pickup / out for delivery → done
+    var stage = o.done ? '<span class="stage s3">✓ ' + bi('خلص ' + o.done, 'Done ' + o.done) + '</span>'
+      : o.ready ? '<span class="stage s2">' + (del ? '🛵 ' + bi('طلع للتوصيل ' + o.ready, 'Out for delivery ' + o.ready) : '✅ ' + bi('جاهز للاستلام ' + o.ready, 'Ready for pickup ' + o.ready)) + '</span>'
+      : '<span class="stage s1">🔥 ' + bi('عم يتحضّر', 'Preparing') + '</span>';
+    var acts = o.done ? '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
+      : o.ready ? '<button class="stepb go" data-step="done" data-k="' + esc(o.key) + '">✓ ' + (del ? bi('وصل وانقبض', 'Delivered & paid') : bi('استلمو', 'Picked up')) + '</button>' +
+          '<button class="readyb" data-msg="' + esc(o.key) + '">📲 ' + bi('ابعت تحديث', 'Send update') + '</button>' +
+          '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
+      : '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
     return '<div class="ord ' + cls + (o.payment === 'Unpaid' ? ' owes' : '') + '" data-key="' + esc(o.key) + '">' +
       '<div class="onum"><b class="num">' + (o.web ? '🌐 ' : '') + '#' + o.num + '</b><span class="num">' + esc(o.time) + '</span>' +
-        (o.done ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
-      '<div class="obody">' + who(o) + '<div class="oitems">' + itemsOf(o) + '</div>' +
+        (o.done || o.ready ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
+      '<div class="obody">' + stage + who(o) + '<div class="oitems">' + itemsOf(o) + '</div>' +
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + esc(o.payment) + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
         typeTag(o) + '</span></div>' +
-      '<div class="oacts"><button class="switch' + (o.done ? ' on' : '') + '" data-done="' + esc(o.key) + '" role="switch" aria-checked="' + !!o.done + '"><i></i>' +
-          (o.done ? bi('خلص ' + o.done, 'Done ' + o.done) : bi('خلص؟', 'Done?')) + '</button>' +
-        (o.phone ? '<button class="readyb' + (o.ready ? ' sent' : '') + '" data-ready="' + esc(o.key) + '">' +
-          (o.ready ? bi('✓ انبعت ' + o.ready, '✓ Sent ' + o.ready) : bi('📲 جاهز', '📲 Ready')) + '</button>' : '') +
-        '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
+      '<div class="oacts">' + acts + '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
   }).join('') + '</div>';
+  // Done on an order not paid yet: how it was paid
+  var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
+  if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + bi('الطلب #' + pf.num + ' ما كان مدفوع', 'Order #' + pf.num + ' wasn\'t paid yet') + '</h3>' +
+    '<p>' + bi('كيف انْدفع؟', 'How was it paid?') + ' <b class="num">' + $usd(pf.total) + '</b> <small class="muted num">' + ll(pf.total) + '</small></p>' +
+    '<div class="paybtns"><button class="payb cash" data-payhow="Cash">' + bi('كاش', 'Cash') + '</button><button class="payb whish" data-payhow="Whish">' + bi('ويش', 'Whish') + '</button></div>' +
+    '<button class="ghost" data-payhow="Unpaid">' + bi('لسا ما دفع', 'Still not paid') + '</button> <button class="ghost" data-payhow="cancel">' + bi('رجوع', 'Back') + '</button></div></div>';
   $('#ord').innerHTML = h;
 }
 function hhmmNow() { return EB.hhmm() }
@@ -1195,22 +1217,34 @@ $('#ord').addEventListener('click', function (e) {
     }
     return drawOrders();
   }
-  if (b && b.dataset.ready) {
-    var r = TD.list.filter(function (x) { return x.key === b.dataset.ready })[0]; if (!r) return;
-    whatsapp(r, 'ready'); EB.ready(r, hhmmNow());
+  // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
+  if (b && b.dataset.step) {
+    var s = TD.list.filter(function (x) { return x.key === b.dataset.k })[0]; if (!s) return;
+    if (b.dataset.step === 'ready') {
+      EB.ready(s, hhmmNow()); if (s.phone) whatsapp(s, 'ready');
+      toast(s.type === 'Delivery' ? 'الطلب #' + s.num + ' طلع للتوصيل' : 'الطلب #' + s.num + ' جاهز', 'Order #' + s.num + (s.type === 'Delivery' ? ' out for delivery' : ' ready'));
+    }
+    if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; return drawOrders() } EB.done(s, hhmmNow()) }
+    if (b.dataset.step === 'back') { if (s.done) EB.done(s, ''); else EB.ready(s, '') }
     return drawOrders();
   }
+  if (b && b.dataset.msg) { var u = TD.list.filter(function (x) { return x.key === b.dataset.msg })[0]; if (u) whatsapp(u, 'ready'); return }
+  if (b && b.dataset.payhow) {
+    var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0]; TD.payFor = null;
+    if (q && b.dataset.payhow !== 'cancel') {
+      if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END));
+      EB.done(q, hhmmNow());
+    }
+    return drawOrders();
+  }
+  if (!b && e.target.closest('#paySheet')) return;
   if (!b) {
     var row = e.target.closest('.ord'); if (!row) return;
     var picked = TD.list.filter(function (x) { return x.key === row.dataset.key })[0];
     if (picked) editOrder(picked);
     return;
   }
-  var key = b.dataset.done || b.dataset.del, o = TD.list.filter(function (x) { return x.key === key })[0]; if (!o) return;
-  if (b.dataset.done) {
-    EB.done(o, o.done ? '' : hhmmNow());
-    return;
-  }
+  var key = b.dataset.del, o = TD.list.filter(function (x) { return x.key === key })[0]; if (!o) return;
   if (!confirm(T('تمسح الطلب رقم ' + o.num + '؟ بينمسح من كل مكان.', 'Delete order #' + o.num + '? It is removed everywhere.'))) return;
   if (SET.pin && pin() !== SET.pin) {
     var p = prompt(T('اكتب الرمز', 'Enter the PIN'));
