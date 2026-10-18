@@ -1,0 +1,14 @@
+{
+  "name": "El Bash Orders",
+  "short_name": "El Bash",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#FAF5EC",
+  "theme_color": "#1F4A37",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
