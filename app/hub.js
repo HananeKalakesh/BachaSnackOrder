@@ -41,7 +41,9 @@ function driveHtml() {
     ' <a class="hlink" href="' + DRIVE + DRIVE_FOLDERS[0][0] + '" target="_blank" rel="noopener">' + bi('افتح المجلد ↗', 'Open folder ↗') + '</a></h3>';
   if (!r || !r.folders) {
     return h + '<div class="hgrid">' + DRIVE_FOLDERS.slice(1).map(function (f) { return hubTile('📁', folderLabel(f[1]), '', DRIVE + f[0]) }).join('') + '</div>' +
-      '<p class="muted xhint">' + bi('بعد تحديث السكريبت، الملفات اللي بتحطها بهالمجلدات بتبيّن هون لحالها.', 'Once the script is updated, files you put in these folders show here by themselves.') + '</p></div>';
+      '<p class="muted xhint">' + bi('بعد تحديث السكريبت، الملفات اللي بتحطها بهالمجلدات بتبيّن هون لحالها.', 'Once the script is updated, files you put in these folders show here by themselves.') + '</p>' +
+      // Google's own reason, to know what to fix (e.g. the script isn't allowed to read Drive yet)
+      (HUB.driveErr ? '<p class="err xhint" dir="ltr">Drive: ' + esc(HUB.driveErr) + '</p>' : '') + '</div>';
   }
   var empty = r.folders.filter(function (f) { return f.name && !f.files.length });
   return h + r.folders.filter(function (f) { return f.files.length }).map(function (f) {
@@ -63,7 +65,7 @@ function hubLinks() {
 
 function showHub() {
   drawHub();
-  EB.files().then(function (r) { HUB.files = r; drawHub() }, function () {});
+  EB.files().then(function (r) { HUB.files = r; HUB.driveErr = ''; drawHub() }, function (e) { HUB.driveErr = e.offline && !/answer properly/.test(e.message) ? '' : e.message; drawHub() });
   EB.read('links', {'Links': 0}).then(function (r) { HUB.data = r; HUB.err = ''; drawHub() }, function (e) {
     HUB.err = /Unknown tab/.test(e.message) ? 'SCRIPT' : e.offline ? 'OFFLINE' : (e.message || String(e)); drawHub();
   });
