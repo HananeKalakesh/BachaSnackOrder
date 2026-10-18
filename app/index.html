@@ -309,6 +309,12 @@ td.r,th.r{text-align:end}
 #eSteps{height:auto;padding:10px 14px;margin-top:6px;resize:vertical}
 .eunit{font-size:14px;color:var(--muted)}
 .ghost{height:44px;padding:0 16px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:800;margin-top:4px}
+.day.x1{background:#F6E3E3}.day.x2{background:#EFC4C8}.day.x3{background:#E59AA2}.day.x4{background:#D9677A;color:#fff}.day.x5{background:#CF3B53;color:#fff}.day.x6{background:#C8102E;color:#fff}
+.day.x4 .dn,.day.x5 .dn,.day.x6 .dn{color:rgba(255,255,255,.85)}
+.legend i.x1{background:#F6E3E3}.legend i.x2{background:#EFC4C8}.legend i.x3{background:#E59AA2}.legend i.x4{background:#D9677A}.legend i.x5{background:#CF3B53}.legend i.x6{background:#C8102E}
+.track.two{display:flex;align-items:flex-end;gap:2px}.track.two i{flex:1;width:auto}.track.two i.ks{background:var(--g4)}.track.two i.kx{background:#E59AA2}
+.key{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px}.key.ks{background:var(--g4)}.key.kx{background:#E59AA2}
+.xmo b.neg{color:var(--red)}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
 #exp .kpis{margin-top:14px}
 @media (max-width:600px){.xform{grid-template-columns:1fr}
@@ -1322,7 +1328,7 @@ var EXP_CATS = [
 function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
 function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
 var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C'};
-var EX = {y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false};
+var EX = {mode: 'add', sel: '', y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false};
 function catOf(name) { return EXP_CATS.filter(function (c) { return c[0] === name })[0] || EXP_CATS[8] }
 
 // Purchases from the sheet (and the ones added or deleted on this iPad that the copy doesn't have yet)
@@ -1355,20 +1361,71 @@ function showExpenses() {
   if (!SALES) EB.read('sales', {'Orders': 0, 'Order Items': 0}).then(function (r) { SALES = r; drawExpenses() }, function () {});
 }
 
+// Totals for a list of purchases: running costs (taken off the profit), equipment (an investment, apart), by category and type
+function tally(list) {
+  var t = {spent: 0, invest: 0, byCat: {}, bySub: {}, count: list.length};
+  list.forEach(function (p) {
+    if (catOf(p.cat)[3] === 'investment') t.invest += p.lbp; else t.spent += p.lbp;
+    t.byCat[p.cat] = (t.byCat[p.cat] || 0) + p.lbp;
+    if (subOf(catOf(p.cat), p.sub)) { var bs = t.bySub[p.cat] = t.bySub[p.cat] || {}; bs[p.sub] = (bs[p.sub] || 0) + p.lbp }
+  });
+  return t;
+}
+// Bars by category, biggest first, with each category's types under it
+function catBars(t, none) {
+  var cats = Object.keys(t.byCat).sort(function (a, b) { return t.byCat[b] - t.byCat[a] }), max = cats.length ? t.byCat[cats[0]] : 1, all = t.spent + t.invest || 1;
+  return '<div class="card"><h3 class="display">' + bi('حسب النوع', 'By category') + '</h3>' + (cats.length ? cats.map(function (k) {
+    var cc = catOf(k), v = t.byCat[k];
+    return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + (cc[3] === 'investment' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : '') +
+      '<span class="tq num">' + $usd(v) + ' <small class="muted">' + Math.round(v / all * 100) + '%</small></span></div>' +
+      '<div class="tb"><i style="width:' + Math.max(3, v / max * 100) + '%;background:' + EXP_COLOR[cc[3]] + '"></i></div><small class="ll num">' + ll(v) + '</small>' +
+      (t.bySub[k] ? '<div class="xsplit">' + Object.keys(t.bySub[k]).sort(function (a, b) { return t.bySub[k][b] - t.bySub[k][a] }).map(function (s) {
+        var st = subOf(cc, s); return '<span>' + bi(st[1], st[0]) + ' <b class="num">' + $usd(t.bySub[k][s]) + '</b></span>' }).join('') + '</div>' : '') + '</div>';
+  }).join('') : '<p class="muted">' + none + '</p>') + '</div>';
+}
+// A list of purchases with delete
+function purchaseTable(list, withDate) {
+  return list.length ? '<table>' + list.map(function (p) {
+    var cc = catOf(p.cat);
+    return '<tr>' + (withDate ? '<td class="num">' + p.day.slice(8) + '/' + p.day.slice(5, 7) + '</td>' : '') +
+      '<td><span class="xtag" style="--c:' + EXP_COLOR[cc[3]] + '">' + expLabel(cc, p.sub) + '</span> ' + esc(p.item) +
+      (p.supplier ? '<div class="muted">' + esc(p.supplier) + '</div>' : '') + '</td><td class="r"><b class="num">' + (p.cur === '$' ? '$' + fmt2(p.amount) : fmt(p.amount) + ' L.L.') + '</b>' +
+      '<div class="muted num">' + (p.cur === '$' ? ll(p.lbp) : $usd(p.lbp)) + '</div></td>' +
+      '<td><button class="del" data-xdel="' + esc(p.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
+  }).join('') + '</table>' : '<p class="muted">–</p>';
+}
+// Sales between two days (the Sales tab's numbers), or null before they load
+function salesIn(from, to) { return (SALES || EB.cached('sales')) ? EB.report(salesOrders(), from, to).summary.sales : null }
+function profitKpis(sales, t, label) {
+  var profit = sales == null ? null : sales - t.spent;
+  return '<div class="kpis">' +
+    '<div class="kpi' + (profit != null && profit < 0 ? ' owed' : ' hero') + '"><small>' + bi('الربح', 'Profit') + label + '</small>' + (profit == null ? '<b class="usd">…</b>' : amount(profit)) +
+      '<small class="ll">' + bi('المبيعات ناقص المصاريف', 'Sales minus expenses') + '</small></div>' +
+    '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) + '</div>' +
+    '<div class="kpi"><small>' + bi('المصاريف', 'Expenses') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
+    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div></div>';
+}
+function expModes() {
+  return '<div class="modes">' + [['add', 'زيد مصروف', 'Add'], ['cal', 'التقويم', 'Calendar'], ['dash', 'الملخّص', 'Dashboard']].map(function (x) {
+    return '<button data-xmode="' + x[0] + '"' + (EX.mode === x[0] ? ' class="on"' : '') + '>' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>';
+}
+function expNote() {
+  if (EX.err === 'OFFLINE') return '<p class="offline">' + bi('ما في إنترنت: المصاريف الجديدة بتنحفظ وبتنبعت لحالها.', 'No internet: new expenses are kept and sent by themselves.') + '</p>';
+  if (EX.err === 'SCRIPT') return '<p class="offline">' + bi('المصاريف محفوظة على هالآيباد لهلّق، وبتنبعت عالشيت لحالها بعد تحديث السكريبت.',
+    'Expenses are kept on this iPad for now, and go to the sheet by themselves once the script is updated.') + '</p>';
+  return EX.err ? '<p class="err">' + esc(EX.err) + '</p>' : '';
+}
+
 function drawExpenses() {
   if (EX.locked) return;
-  var y = EX.y, m = EX.m, mk = monthKey(y, m), list = purchases();
-  var h = '<div class="shead"><button class="nav" data-xmv="-1" aria-label="' + T('الشهر الماضي', 'Previous month') + '"><span class="chev">‹</span></button>' +
-    '<h2 class="display">' + bi('المصاريف · ' + MONTHS_AR[m] + ' ' + y, 'Expenses · ' + MONTHS_EN[m] + ' ' + y) + '</h2>' +
-    '<button class="nav" data-xmv="1" aria-label="' + T('الشهر الجاي', 'Next month') + '"><span class="chev">›</span></button></div>';
-  if (EX.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: المصاريف الجديدة بتنحفظ وبتنبعت لحالها.', 'No internet: new expenses are kept and sent by themselves.') + '</p>';
-  else if (EX.err === 'SCRIPT') h += '<p class="offline">' + bi('المصاريف محفوظة على هالآيباد لهلّق، وبتنبعت عالشيت لحالها بعد تحديث السكريبت.',
-    'Expenses are kept on this iPad for now, and go to the sheet by themselves once the script is updated.') + '</p>';
-  else if (EX.err) h += '<p class="err">' + esc(EX.err) + '</p>';
-
-  // the form to add a purchase
+  EX.mode = EX.mode || 'add';
+  var list = purchases();
+  if (EX.mode === 'cal') return expCalendar(list);
+  if (EX.mode === 'dash') return expDashboard(list);
+  // Add: the form, then the latest purchases
   var c = EX.cat ? catOf(EX.cat) : null;
-  h += '<div class="card addx"><h3 class="display">' + bi('زيد مصروف', 'Add a purchase') + '</h3><div class="xcats">' +
+  var h = '<div class="shead">' + expModes() + '<h2 class="display">' + bi('زيد مصروف', 'Add a purchase') + '</h2></div>' + expNote() +
+    '<div class="card addx"><div class="xcats">' +
     EXP_CATS.map(function (k) { return '<button class="xcat' + (EX.cat === k[0] ? ' on' : '') + '" data-xcat="' + k[0] + '" style="--c:' + EXP_COLOR[k[3]] + '">' + bi(k[1], k[0]) + '</button>' }).join('') + '</div>' +
     (c && c[4] ? '<div class="xcats xsubs">' + c[4].map(function (t) {
       return '<button class="xcat' + (EX.sub === t[0] ? ' on' : '') + '" data-xsub="' + esc(t[0]) + '" style="--c:' + EXP_COLOR[c[3]] + '">' + bi(t[1], t[0]) + '</button>' }).join('') + '</div>' : '') +
@@ -1379,48 +1436,90 @@ function drawExpenses() {
     '<input id="xSupplier" placeholder="' + esc(T('من وين؟ (اختياري)', 'Supplier (optional)')) + '" maxlength="60">' +
     '<input id="xDate" type="date" value="' + ymd(bizDate()) + '">' +
     '<button class="save" id="xSave">' + bi('احفظ المصروف', 'Save purchase') + '</button><div class="err" id="xErr"></div></div></div>';
-
   if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
-  var month = list.filter(function (p) { return p.day.slice(0, 7) === mk }).sort(function (a, b) { return a.day < b.day ? 1 : -1 });
-  var spent = 0, invest = 0, byCat = {}, bySub = {};
-  month.forEach(function (p) {
-    if (catOf(p.cat)[3] === 'investment') invest += p.lbp; else spent += p.lbp;
-    byCat[p.cat] = (byCat[p.cat] || 0) + p.lbp;
-    if (subOf(catOf(p.cat), p.sub)) { var bs = bySub[p.cat] = bySub[p.cat] || {}; bs[p.sub] = (bs[p.sub] || 0) + p.lbp }
-  });
-  var sales = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), mk + '-01', mk + '-' + pad(daysIn(y, m))).summary.sales : null;
-  var profit = sales == null ? null : sales - spent;
-  h += '<div class="kpis">' +
-    '<div class="kpi' + (profit != null && profit < 0 ? ' owed' : ' hero') + '"><small>' + bi('الربح', 'Profit') + '</small>' + (profit == null ? '<b class="usd">…</b>' : amount(profit)) +
-      '<small class="ll">' + bi('المبيعات ناقص المصاريف', 'Sales minus expenses') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) + '</div>' +
-    '<div class="kpi"><small>' + bi('المصاريف', 'Expenses') + '</small>' + amount(spent) + '<small class="ll">' + fmt(month.length) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(invest) + '</div></div>';
+  var today = ymd(bizDate()), tt = tally(list.filter(function (p) { return p.day === today }));
+  var latest = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : (a.key < b.key ? 1 : -1) }).slice(0, 10);
+  h += '<div class="card"><div class="chead"><h3 class="display">' + bi('آخر المصاريف', 'Latest purchases') + '</h3>' +
+    '<span class="tot">' + bi('اليوم: ', 'Today: ') + '<b class="num">' + $usd(tt.spent + tt.invest) + '</b></span></div>' + purchaseTable(latest, true) + '</div>';
+  $('#exp').innerHTML = h;
+}
 
-  // by category, biggest first
-  var cats = Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a] }), max = cats.length ? byCat[cats[0]] : 1;
-  h += '<div class="cols"><div class="card"><h3 class="display">' + bi('المصاريف حسب النوع', 'By category') + '</h3>' + (cats.length ? cats.map(function (k) {
-    var cc = catOf(k);
-    return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + '<span class="tq num">' + $usd(byCat[k]) + '</span></div>' +
-      '<div class="tb"><i style="width:' + Math.max(3, byCat[k] / max * 100) + '%;background:' + EXP_COLOR[cc[3]] + '"></i></div><small class="ll num">' + ll(byCat[k]) + '</small>' +
-      (bySub[k] ? '<div class="xsplit">' + Object.keys(bySub[k]).sort(function (a, b) { return bySub[k][b] - bySub[k][a] }).map(function (t) {
-        var st = subOf(cc, t); return '<span>' + bi(st[1], st[0]) + ' <b class="num">' + $usd(bySub[k][t]) + '</b></span>' }).join('') + '</div>' : '') + '</div>';
-  }).join('') : '<p class="muted">' + bi('ما في مصاريف بهالشهر', 'No purchases this month') + '</p>') + '</div>';
+// Calendar: each day's spending, darker = more; tap a day for its details
+function expCalendar(list) {
+  var y = EX.y, m = EX.m, mk = monthKey(y, m), today = ymd(bizDate());
+  var h = '<div class="shead">' + expModes() + '<button class="nav" data-xmv="-1" aria-label="' + T('الشهر الماضي', 'Previous month') + '"><span class="chev">‹</span></button>' +
+    '<h2 class="display">' + bi(MONTHS_AR[m] + ' ' + y, MONTHS_EN[m] + ' ' + y) + '</h2>' +
+    '<button class="nav" data-xmv="1" aria-label="' + T('الشهر الجاي', 'Next month') + '"><span class="chev">›</span></button></div>' + expNote();
+  if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  var month = list.filter(function (p) { return p.day.slice(0, 7) === mk }), t = tally(month), byDay = {}, maxD = 0, k;
+  month.forEach(function (p) { byDay[p.day] = (byDay[p.day] || 0) + p.lbp });
+  Object.keys(byDay).forEach(function (d) { if (byDay[d] > maxD) maxD = byDay[d] });
+  h += profitKpis(salesIn(mk + '-01', mk + '-' + pad(daysIn(y, m))), t, '');
+  var first = (new Date(y, m, 1).getDay() + 6) % 7;
+  var cal = '<div class="card calcard"><div class="cal">' + WEEK_AR.map(function (w, i) { return '<span class="wd">' + bi(w, WEEK_EN[i]) + '</span>' }).join('');
+  for (k = 0; k < first; k++) cal += '<span></span>';
+  for (k = 1; k <= daysIn(y, m); k++) {
+    var key = mk + '-' + pad(k), v = byDay[key] || 0, step = v ? Math.min(6, 1 + Math.floor(v / maxD * 5.999)) : 0;
+    cal += '<button class="day xday x' + step + (key === today ? ' today' : '') + (key === EX.sel ? ' sel' : '') + (key > today ? ' future' : '') + '" data-xday="' + key + '">' +
+      '<span class="dn num">' + k + '</span>' + (v ? '<b class="num">' + $usd(v) + '</b><small class="num">' + llShort(v) + ' L.L.</small>' : '') + '</button>';
+  }
+  cal += '</div><div class="legend">' + bi('أقل', 'Less') + '<i class="x1"></i><i class="x2"></i><i class="x3"></i><i class="x4"></i><i class="x5"></i><i class="x6"></i>' + bi('أكتر', 'More') +
+    '<span class="hint">' + bi('دق على يوم لتشوف مصاريفو', 'Tap a day to see its purchases') + '</span></div></div>';
+  h += '<div class="cols">' + cal + '<div>' + catBars(t, bi('ما في مصاريف بهالشهر', 'No purchases this month')) + '</div></div>';
+  if (EX.sel && EX.sel.slice(0, 7) === mk) {
+    var day = month.filter(function (p) { return p.day === EX.sel }), dt = tally(day);
+    h += '<section class="dayx" id="xDayCard"><div class="shead"><h2 class="display">' + dayName(EX.sel) + '</h2>' +
+      '<button class="today" data-xclose="1">' + bi('سكّر', 'Close') + '</button></div>' +
+      '<div class="kpis"><div class="kpi hero"><small>' + bi('مصاريف اليوم', 'Spent this day') + '</small>' + amount(dt.spent + dt.invest) + '<small class="ll">' + fmt(day.length) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
+      '<div class="kpi"><small>' + bi('مبيعات اليوم', 'Sales this day') + '</small>' + (salesIn(EX.sel, EX.sel) == null ? '<b class="usd">…</b>' : amount(salesIn(EX.sel, EX.sel))) + '</div></div>' +
+      '<div class="cols"><div class="card"><h3 class="display">' + bi('المصاريف', 'Purchases') + '</h3>' + purchaseTable(day, false) + '</div><div>' + catBars(dt, bi('ما في مصاريف بهاليوم', 'No purchases on this day')) + '</div></div></section>';
+  }
+  $('#exp').innerHTML = h;
+}
 
-  // every purchase this month
-  h += '<div class="card"><h3 class="display">' + bi('كل المصاريف', 'Every purchase') + '</h3>' + (month.length ? '<table>' + month.map(function (p) {
-    var cc = catOf(p.cat);
-    return '<tr><td class="num">' + p.day.slice(8) + '/' + p.day.slice(5, 7) + '</td><td><span class="xtag" style="--c:' + EXP_COLOR[cc[3]] + '">' + expLabel(cc, p.sub) + '</span> ' + esc(p.item) +
-      (p.supplier ? '<div class="muted">' + esc(p.supplier) + '</div>' : '') + '</td><td class="r"><b class="num">' + (p.cur === '$' ? '$' + fmt(p.amount) : fmt(p.amount) + ' L.L.') + '</b>' +
-      (p.cur === '$' ? '<div class="muted num">' + ll(p.lbp) + '</div>' : '<div class="muted num">' + $usd(p.lbp) + '</div>') + '</td>' +
-      '<td><button class="del" data-xdel="' + esc(p.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
-  }).join('') + '</table>' : '<p class="muted">–</p>') + '</div></div>';
+// Dashboard: everything so far, month by month, by category and by supplier
+function expDashboard(list) {
+  var h = '<div class="shead">' + expModes() + '<h2 class="display">' + bi('الملخّص · كل الوقت', 'Dashboard · all time') + '</h2></div>' + expNote();
+  if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  var today = ymd(bizDate()), t = tally(list), A = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2020-01-01', today) : null;
+  // from the first purchase or the first sale, whichever came first
+  var first = list.reduce(function (a, p) { return p.day < a ? p.day : a }, A && A.days.length ? A.days[0].date : today);
+  h += profitKpis(A ? A.summary.sales : null, t, '') ;
+  // month by month: spent (bar) and profit (sales minus spent)
+  var spentM = {}, salesM = {}, keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
+  list.forEach(function (p) { if (catOf(p.cat)[3] !== 'investment') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
+  if (A) A.days.forEach(function (d) { salesM[d.date.slice(0, 7)] = (salesM[d.date.slice(0, 7)] || 0) + d.sales });
+  while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
+  var maxM = Math.max.apply(null, keys.map(function (k) { return Math.max(spentM[k] || 0, salesM[k] || 0) })) || 1;
+  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('كل شهر', 'Month by month') + '</h3>' +
+    '<span class="tot"><i class="key ks"></i>' + bi('المبيعات', 'Sales') + ' <i class="key kx"></i>' + bi('المصاريف', 'Expenses') + '</span></div><div class="months all">' +
+    keys.map(function (k) {
+      var s = salesM[k] || 0, x = spentM[k] || 0, mi = +k.slice(5) - 1, p = s - x;
+      return '<button class="mo xmo" data-xgoto="' + k + '"><span class="track two"><i class="ks" style="height:' + (s ? Math.max(3, s / maxM * 100) : 0) + '%"></i><i class="kx" style="height:' + (x ? Math.max(3, x / maxM * 100) : 0) + '%"></i></span>' +
+        '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span>' +
+        '<b class="num' + (p < 0 ? ' neg' : '') + '">' + (s || x ? $usd(p) : '–') + '</b></button>';
+    }).join('') + '</div><p class="muted note2">' + bi('الرقم تحت كل شهر هو الربح. دق على شهر لتفتح تقويمو.', 'The number under each month is its profit. Tap a month to open its calendar.') + '</p></div>';
+  // by supplier
+  var bySup = {};
+  list.forEach(function (p) { var s = p.supplier || ''; if (s) bySup[s] = (bySup[s] || 0) + p.lbp });
+  var sups = Object.keys(bySup).sort(function (a, b) { return bySup[b] - bySup[a] }).slice(0, 8), maxS = sups.length ? bySup[sups[0]] : 1;
+  var supCard = '<div class="card"><h3 class="display">' + bi('حسب المورّد', 'By supplier') + '</h3>' + (sups.length ? sups.map(function (s) {
+    return '<div class="seller"><div class="tn">' + esc(s) + '<span class="tq num">' + $usd(bySup[s]) + '</span></div><div class="tb"><i style="width:' + Math.max(3, bySup[s] / maxS * 100) + '%"></i></div></div>';
+  }).join('') : '<p class="muted">' + bi('اكتب «من وين» لما تزيد مصروف لتبيّن هون.', 'Fill in "Supplier" when adding a purchase to see it here.') + '</p>') + '</div>';
+  h += '<div class="cols">' + catBars(t, bi('لسا ما في مصاريف', 'No purchases yet')) + '<div>' + supCard +
+    '<div class="card"><h3 class="display">' + bi('معدّل الشهر', 'Monthly average') + '</h3><p>' + bi('مصاريف', 'Expenses') + ': <b class="num">' +
+    $usd(t.spent / Math.max(1, keys.length)) + '</b> · ' + bi('مبيعات', 'Sales') + ': <b class="num">' + (A ? $usd(A.summary.sales / Math.max(1, keys.length)) : '…') + '</b></p>' +
+    '<p class="muted note2">' + bi('من ', 'Since ') + dayName(first) + ' <span class="num">' + first.slice(0, 4) + '</span></p></div></div></div>';
   $('#exp').innerHTML = h;
 }
 
 $('#exp').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || EX.locked) return;
-  if (b.dataset.xmv) { EX.m += +b.dataset.xmv; if (EX.m < 0) { EX.m = 11; EX.y-- } if (EX.m > 11) { EX.m = 0; EX.y++ } return drawExpenses() }
+  if (b.dataset.xmode) { EX.mode = b.dataset.xmode; return drawExpenses() }
+  if (b.dataset.xmv) { EX.m += +b.dataset.xmv; if (EX.m < 0) { EX.m = 11; EX.y-- } if (EX.m > 11) { EX.m = 0; EX.y++ } EX.sel = ''; return drawExpenses() }
+  if (b.dataset.xday) { EX.sel = b.dataset.xday; drawExpenses(); var c = $('#xDayCard'); if (c) c.scrollIntoView({behavior: 'smooth', block: 'start'}); return }
+  if (b.dataset.xclose) { EX.sel = ''; return drawExpenses() }
+  if (b.dataset.xgoto) { EX.mode = 'cal'; EX.y = +b.dataset.xgoto.slice(0, 4); EX.m = +b.dataset.xgoto.slice(5) - 1; EX.sel = ''; return drawExpenses() }
   if (b.dataset.xcat || b.dataset.xcur || b.dataset.xsub) {
     // keep what was typed while the form redraws
     var keep = {item: $('#xItem').value, amount: $('#xAmount').value, supplier: $('#xSupplier').value, date: $('#xDate').value};
@@ -1442,7 +1541,7 @@ $('#exp').addEventListener('click', function (e) {
     EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [{'Date': p.day, 'Category': p.cat, 'Type': p.sub, 'Item': p.item, 'Amount': p.amount, 'Currency': p.cur,
       'Amount (L.L.)': p.lbp, 'Supplier': p.supplier, 'Ref': p.key, 'Added': "'" + EB.ymd(new Date()) + ' ' + EB.hhmm()}]}], {t: 'save', kind: 'purchase', key: p.key, order: p});
     toast('انحفظ المصروف', 'Purchase saved');
-    var d = p.day.split('-'); EX.y = +d[0]; EX.m = +d[1] - 1; EX.cat = ''; EX.sub = '';
+    var d = p.day.split('-'); EX.y = +d[0]; EX.m = +d[1] - 1; EX.cat = ''; EX.sub = ''; EX.cur = '$';
     return drawExpenses();
   }
   if (b.dataset.xdel) {
