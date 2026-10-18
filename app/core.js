@@ -79,6 +79,9 @@ var EB = (function () {
     });
   };
   EB.cached = function (name) { return get('eb-read-' + name) };
+  // What is in the El Bash folder in Google Drive
+  EB.files = function () { return remote({action: 'files'}).then(function (r) { r.at = Date.now(); put('eb-files', r); return r }) };
+  EB.cachedFiles = function () { return get('eb-files') };
   EB.rows = function (t) {
     return t ? t.rows.map(function (r) { var o = {}; t.head.forEach(function (h, i) { o[h] = r[i] }); return o }) : [];
   };

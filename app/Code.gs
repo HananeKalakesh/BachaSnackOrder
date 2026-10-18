@@ -13,6 +13,7 @@
  *   {action: 'webOrder', order: {...}}  NO key: an order from the menu website. Checked here against the Menu tab
  *       (prices come from the sheet), limited per phone number, and saved as Not paid with Status "Waiting"
  *       until staff accept it in the app
+ *   {action: 'files'}                 what is in the El Bash folder in Google Drive, by sub-folder
  *   {action: 'write', ops: [...]}     done in order, together, under a lock
  *       {op: 'append', tab, rows: [{Header: value}], unique: 'Header'}
  *           adds rows; a header the tab doesn't have yet becomes a new column;
@@ -29,6 +30,7 @@ var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – O
 // The tabs the app uses today; a new feature can add its own tab (a plain English name) without pasting this again
 var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases', 'Ingredients', 'Recipes', 'Recipe Lines', 'Stock', 'Links'];
 var APP_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/app/';
+var FOLDER_ID = '1emJrOfqaE3bP1RGid38uyHoYBuPlB76R';  // the El Bash folder in Google Drive (menus, stories, logos, photos…)
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
 
@@ -69,7 +71,29 @@ function handle_(req) {
   if (!key || String(req.key || '') !== key) throw new Error('Wrong app key');
   if (req.action === 'read') return read_(ss, req.tabs || []);
   if (req.action === 'write') return write_(ss, req.ops || []);
+  if (req.action === 'files') return files_();
   throw new Error('Unknown action');
+}
+
+/** What is in the El Bash Drive folder, by sub-folder, for the management app's Home screen (kept 5 minutes). */
+function files_() {
+  var cache = CacheService.getScriptCache(), hit = cache.get('files');
+  if (hit) return JSON.parse(hit);
+  var root = DriveApp.getFolderById(FOLDER_ID), out = { url: root.getUrl(), folders: [] };
+  var list = function (folder) {
+    var files = [], it = folder.getFiles();
+    while (it.hasNext() && files.length < 60) {
+      var f = it.next();
+      files.push({ name: f.getName(), url: f.getUrl(), type: f.getMimeType(), updated: f.getLastUpdated().getTime() });
+    }
+    return files.sort(function (a, b) { return b.updated - a.updated });
+  };
+  out.folders.push({ name: '', url: root.getUrl(), files: list(root) });
+  var subs = root.getFolders();
+  while (subs.hasNext()) { var s = subs.next(); out.folders.push({ name: s.getName(), url: s.getUrl(), files: list(s) }) }
+  out.folders.sort(function (a, b) { return a.name < b.name ? -1 : 1 });
+  try { cache.put('files', JSON.stringify(out), 300) } catch (err) {}
+  return out;
 }
 
 /** A value from the Settings tab, found by the start of its label in column A. */

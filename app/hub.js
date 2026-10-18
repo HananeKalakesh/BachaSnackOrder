@@ -18,7 +18,40 @@ var HUB_FIXED = [
   ['data', '⚙️', 'Apps Script', 'Apps Script', 'https://script.google.com/home', 'السكريبت اللي بيربط التطبيق بالشيت', 'The script linking the app to the sheet'],
   ['data', '🛠', 'صفحة التركيب', 'Setup page', 'https://claude.ai/artifact/4hoVWEBZ71cGS8Hf4rDC2L', 'لصق السكريبت وتركيب الآيباد', 'Pasting the script, setting up iPads']
 ];
-var HUB = {data: null, err: '', adding: false, group: 'menus'};
+var HUB = {data: null, err: '', adding: false, group: 'menus', files: null};
+// The El Bash folder in Google Drive; until the script lists it, these folder links are shown
+var DRIVE = 'https://drive.google.com/drive/folders/';
+var DRIVE_FOLDERS = [['1emJrOfqaE3bP1RGid38uyHoYBuPlB76R', 'El Bash'], ['1s_Eap5z10Y85fMtv1NrMoYnqbuJpyohQ', '1 Menus & print'],
+  ['1r_mRypOu2Spw6jLlydOMfnjcWTuLJTzp', '2 Social media & stories'], ['1Gxub86ScNlnYfbhwqAl2bJRP4xRIGIMS', '3 Brand & logos'],
+  ['1-6ueNQhNUrjlI9ZTnvaO5Iv90151_2tx', '4 Photos'], ['1_xdtMvb3CjPqzxq_rFLHayz9v4PYNwZO', '5 Recipes & documents']];
+var FOLDER_AR = {'El Bash': 'كل الملفات', 'Menus & print': 'المنيو والطباعة', 'Social media & stories': 'سوشال ميديا وستوريات', 'Brand & logos': 'الهوية واللوغو',
+  'Photos': 'الصور', 'Recipes & documents': 'الوصفات والمستندات'};
+function folderLabel(name) { var n = String(name).replace(/^\d+\s*/, ''); return FOLDER_AR[n] ? bi(FOLDER_AR[n], n) : esc(n) }
+function fileIcon(type) {
+  return /pdf/.test(type) ? '📄' : /image/.test(type) ? '🖼' : /video/.test(type) ? '🎬' : /spreadsheet|excel/.test(type) ? '📗' :
+    /presentation|powerpoint/.test(type) ? '📊' : /document|word|text/.test(type) ? '📝' : /folder/.test(type) ? '📁' : '📎';
+}
+function ago(t) {
+  var d = Math.floor((Date.now() - t) / 864e5);
+  return d < 1 ? T('اليوم', 'today') : d < 2 ? T('مبارح', 'yesterday') : d < 31 ? T('من ' + d + ' يوم', d + ' days ago') : new Date(t).toLocaleDateString(lang === 'ar' ? 'ar-LB' : 'en-GB');
+}
+// Google Drive: each folder with its newest files (from the script), or just the folder links
+function driveHtml() {
+  var r = HUB.files || EB.cachedFiles(), h = '<div class="hgroup"><h3 class="display">' + bi('غوغل درايف', 'Google Drive') +
+    ' <a class="hlink" href="' + DRIVE + DRIVE_FOLDERS[0][0] + '" target="_blank" rel="noopener">' + bi('افتح المجلد ↗', 'Open folder ↗') + '</a></h3>';
+  if (!r || !r.folders) {
+    return h + '<div class="hgrid">' + DRIVE_FOLDERS.slice(1).map(function (f) { return hubTile('📁', folderLabel(f[1]), '', DRIVE + f[0]) }).join('') + '</div>' +
+      '<p class="muted xhint">' + bi('بعد تحديث السكريبت، الملفات اللي بتحطها بهالمجلدات بتبيّن هون لحالها.', 'Once the script is updated, files you put in these folders show here by themselves.') + '</p></div>';
+  }
+  var empty = r.folders.filter(function (f) { return f.name && !f.files.length });
+  return h + r.folders.filter(function (f) { return f.files.length }).map(function (f) {
+    var shown = f.files.slice(0, 6);
+    return '<div class="hfolder"><a class="hfname" href="' + esc(f.url) + '" target="_blank" rel="noopener">📁 ' + (f.name ? folderLabel(f.name) : bi('بالمجلد الرئيسي', 'In the main folder')) +
+      ' <small class="muted">' + f.files.length + (f.files.length > shown.length ? ' · ' + bi('شوف الكل ↗', 'see all ↗') : '') + '</small></a>' +
+      (shown.length ? '<div class="hgrid">' + shown.map(function (x) { return hubTile(fileIcon(x.type), esc(x.name), ago(x.updated), x.url) }).join('') + '</div>'
+        : '') + '</div>';
+  }).join('') + (empty.length ? '<div class="hgrid">' + empty.map(function (f) { return hubTile('📁', folderLabel(f.name), bi('فاضي', 'Empty'), f.url) }).join('') + '</div>' : '') + '</div>';
+}
 
 function hubLinks() {
   var r = HUB.data || EB.cached('links');
@@ -30,6 +63,7 @@ function hubLinks() {
 
 function showHub() {
   drawHub();
+  EB.files().then(function (r) { HUB.files = r; drawHub() }, function () {});
   EB.read('links', {'Links': 0}).then(function (r) { HUB.data = r; HUB.err = ''; drawHub() }, function (e) {
     HUB.err = /Unknown tab/.test(e.message) ? 'SCRIPT' : e.offline ? 'OFFLINE' : (e.message || String(e)); drawHub();
   });
@@ -47,13 +81,14 @@ function hostOf(url) { try { return new URL(url).hostname.replace(/^www\./, '') 
 function drawHub() {
   var mine = hubLinks(), h = '<div class="shead"><h2 class="display">' + bi('أهلا بالباش', 'El Bash') + '</h2></div>';
   if (HUB.err === 'SCRIPT') h += '<p class="offline">' + bi('الروابط اللي بتزيدها محفوظة على هالجهاز لهلّق، وبتنبعت عالشيت لحالها بعد تحديث السكريبت.', 'Links you add are kept on this device for now, and go to the sheet once the script is updated.') + '</p>';
-  h += HUB_GROUPS.map(function (g) {
+  h += HUB_GROUPS.slice(0, 1).map(groupHtml).join('') + driveHtml() + HUB_GROUPS.slice(1).map(groupHtml).join('');
+  function groupHtml(g) {
     var fixed = HUB_FIXED.filter(function (x) { return x[0] === g[0] }), own = mine.filter(function (x) { return (HUB_GROUPS.some(function (y) { return y[0] === x.group }) ? x.group : 'other') === g[0] });
     if (!fixed.length && !own.length) return '';
     return '<div class="hgroup"><h3 class="display">' + bi(g[1], g[2]) + '</h3><div class="hgrid">' +
       fixed.map(function (x) { return hubTile(x[1], bi(x[2], x[3]), bi(x[5], x[6]), x[4]) }).join('') +
       own.map(function (x) { return hubTile('🔗', esc(x.name), esc(x.note || hostOf(x.url)), x.url, x.key) }).join('') + '</div></div>';
-  }).join('');
+  }
   h += HUB.adding ? '<div class="card addx"><h3 class="display">' + bi('زيد رابط', 'Add a link') + '</h3><div class="xcats">' +
       HUB_GROUPS.filter(function (g) { return g[0] !== 'apps' }).map(function (g) { return '<button class="xcat' + (HUB.group === g[0] ? ' on' : '') + '" data-hgroup="' + g[0] + '" style="--c:var(--green)">' + bi(g[1], g[2]) + '</button>' }).join('') +
       '</div><div class="xform"><input id="hName" placeholder="' + esc(T('الاسم (مثلاً: منيو A3، ستوري واتساب)', 'Name (e.g. A3 menu, WhatsApp stories)')) + '" maxlength="60">' +
