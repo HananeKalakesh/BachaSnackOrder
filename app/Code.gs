@@ -14,6 +14,8 @@
  *       (prices come from the sheet), limited per phone number, and saved as Not paid with Status "Waiting"
  *       until staff accept it in the app
  *   {action: 'files'}                 what is in the El Bash folder in Google Drive, by sub-folder
+ *   {action: 'file', id}              one file from that folder as data (to share it, e.g. to a WhatsApp story)
+ *   {action: 'copyAssets'}            copies the website's menu photos and logos into the folder (new ones only)
  *   {action: 'write', ops: [...]}     done in order, together, under a lock
  *       {op: 'append', tab, rows: [{Header: value}], unique: 'Header'}
  *           adds rows; a header the tab doesn't have yet becomes a new column;
@@ -31,6 +33,9 @@ var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – O
 var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases', 'Ingredients', 'Recipes', 'Recipe Lines', 'Stock', 'Links'];
 var APP_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/app/';
 var FOLDER_ID = '1emJrOfqaE3bP1RGid38uyHoYBuPlB76R';  // the El Bash folder in Google Drive (menus, stories, logos, photos…)
+var SITE_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/';
+// Where the website's files are copied in Drive: its menu photos, and the logos
+var COPY_TO = { menu: '1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk', brand: '1Gxub86ScNlnYfbhwqAl2bJRP4xRIGIMS' };
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
 
@@ -72,6 +77,8 @@ function handle_(req) {
   if (req.action === 'read') return read_(ss, req.tabs || []);
   if (req.action === 'write') return write_(ss, req.ops || []);
   if (req.action === 'files') return files_();
+  if (req.action === 'file') return file_(String(req.id || ''));
+  if (req.action === 'copyAssets') return copyAssets_();
   throw new Error('Unknown action');
 }
 
@@ -84,7 +91,7 @@ function files_() {
     var files = [], it = folder.getFiles();
     while (it.hasNext() && files.length < 60) {
       var f = it.next();
-      files.push({ name: f.getName(), url: f.getUrl(), type: f.getMimeType(), updated: f.getLastUpdated().getTime() });
+      files.push({ id: f.getId(), name: f.getName(), url: f.getUrl(), type: f.getMimeType(), size: f.getSize(), updated: f.getLastUpdated().getTime() });
     }
     return files.sort(function (a, b) { return b.updated - a.updated });
   };
@@ -94,6 +101,35 @@ function files_() {
   out.folders.sort(function (a, b) { return a.name < b.name ? -1 : 1 });
   try { cache.put('files', JSON.stringify(out), 300) } catch (err) {}
   return out;
+}
+
+/** One file from the El Bash folder (or one level below), as data, so the app can share it (e.g. to a WhatsApp story). */
+function file_(id) {
+  var f = DriveApp.getFileById(id), ok = false, parents = f.getParents();
+  while (parents.hasNext()) {
+    var p = parents.next();
+    if (p.getId() === FOLDER_ID) ok = true;
+    var up = p.getParents();
+    while (up.hasNext()) if (up.next().getId() === FOLDER_ID) ok = true;
+  }
+  if (!ok) throw new Error('Only files in the El Bash folder can be shared');
+  if (f.getSize() > 30 * 1024 * 1024) throw new Error('This file is too big to share from the app (over 30 MB). Open it in Drive instead.');
+  return { name: f.getName(), type: f.getMimeType(), data: Utilities.base64Encode(f.getBlob().getBytes()) };
+}
+
+/** Copies the website's menu photos and logos (listed in app/assets.json) into the Drive folders, skipping any already there. */
+function copyAssets_() {
+  var list = JSON.parse(UrlFetchApp.fetch(SITE_URL + 'app/assets.json').getContentText()), added = 0, kept = 0;
+  Object.keys(COPY_TO).forEach(function (group) {
+    var folder = DriveApp.getFolderById(COPY_TO[group]), have = {}, it = folder.getFiles();
+    while (it.hasNext()) have[it.next().getName()] = true;
+    (list[group] || []).forEach(function (x) {
+      if (have[x.name] || !/^[\w\/.-]+$/.test(x.path)) { kept++; return }
+      folder.createFile(UrlFetchApp.fetch(SITE_URL + x.path).getBlob().setName(x.name)); added++;
+    });
+  });
+  CacheService.getScriptCache().remove('files');
+  return { added: added, kept: kept };
 }
 
 /** A value from the Settings tab, found by the start of its label in column A. */

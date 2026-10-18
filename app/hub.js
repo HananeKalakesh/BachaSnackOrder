@@ -5,15 +5,14 @@ var SITE = 'https://hananekalakesh.github.io/BachaSnackOrder/';
 var HUB_GROUPS = [['apps', 'التطبيقات', 'Apps'], ['menus', 'المنيو والطباعة', 'Menus & print'], ['social', 'سوشال ميديا', 'Social media'],
   ['brand', 'الهوية واللوغو والصور', 'Brand, logos & photos'], ['data', 'الشيت والإعدادات', 'Sheet & setup'], ['other', 'غير ذلك', 'Other']];
 var HUB_FIXED = [
-  ['apps', '🧾', 'تطبيق الكاشير', 'Cashier app', SITE + 'app/', 'الطلبات والدفع', 'Orders and payments'],
-  ['apps', '📊', 'تطبيق الإدارة', 'Management app', SITE + 'app/manage.html', 'المبيعات، المصاريف، الوصفات', 'Sales, expenses, recipes'],
+  ['apps', '🧾', 'التطبيق (رابط واحد لكل جهاز)', 'The app (one link for every device)', SITE + 'app/', 'بيسأل مين عم يستعمله', 'Asks who is using it'],
   ['apps', '👨‍🍳', 'شاشة المطبخ', 'Kitchen screen', '', 'قريباً', 'Coming later'],
   ['apps', '🧪', 'تجربة', 'Demo', SITE + 'app/manage.html?demo', 'جرّب كل شي بدون ما يوصل عالشيت', 'Try everything, nothing reaches the sheet'],
   ['menus', '📱', 'المنيو الرقمي', 'Digital menu', SITE, 'للزباين، مع الطلب عالواتساب', 'For customers, with WhatsApp ordering'],
-  ['brand', '🎨', 'دليل الهوية El Bash v4', 'El Bash design system v4', 'https://claude.ai/artifact/8pLbbZdLV1TekzQr6oJkJD', 'الألوان والخطوط', 'Colors and fonts'],
-  ['brand', '🟩', 'اللوغو (أخضر)', 'Logo (green)', SITE + 'assets/elbash/noar-green.svg', 'SVG', 'SVG'],
-  ['brand', '🔴', 'الطربوش (أحمر وأخضر)', 'Fez (red & green)', SITE + 'assets/elbash/fez-redgreen.svg', 'SVG', 'SVG'],
-  ['brand', '⬜', 'الطربوش (فاتح)', 'Fez (paper)', SITE + 'assets/elbash/fez-paper.svg', 'SVG', 'SVG'],
+  ['apps', '📣', 'الماركتنغ', 'Marketing', SITE + 'app/?role=marketing', 'صور وفيديوهات للستوريات', 'Photos and videos for stories'],
+  ['brand', '🎨', 'دليل الهوية (Google Doc)', 'Brand guidelines (Google Doc)', 'https://docs.google.com/document/d/1lMnkcyG8Bqlgfk4NDgfgmmrKdpoi_uYrUHM_UFs9GsI/edit', 'الألوان، الخطوط، اللوغو، طريقة الكلام', 'Colours, fonts, logo, voice'],
+  ['brand', '✨', 'نظام التصميم El Bash v4', 'El Bash design system v4', 'https://claude.ai/artifact/8pLbbZdLV1TekzQr6oJkJD', 'النسخة التفاعلية', 'The interactive version'],
+  ['brand', '🟩', 'اللوغو (PNG)', 'Logo (PNG)', SITE + 'assets/elbash/v4/png/noar-green.png', 'عالأخضر', 'On green'],
   ['data', '📗', 'شيت الطلبات والمبيعات', 'Orders & Sales sheet', 'https://docs.google.com/spreadsheets/d/1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI/edit', 'كل البيانات', 'All the data'],
   ['data', '⚙️', 'Apps Script', 'Apps Script', 'https://script.google.com/home', 'السكريبت اللي بيربط التطبيق بالشيت', 'The script linking the app to the sheet'],
   ['data', '🛠', 'صفحة التركيب', 'Setup page', 'https://claude.ai/artifact/4hoVWEBZ71cGS8Hf4rDC2L', 'لصق السكريبت وتركيب الآيباد', 'Pasting the script, setting up iPads']
@@ -23,9 +22,10 @@ var HUB = {data: null, err: '', adding: false, group: 'menus', files: null};
 var DRIVE = 'https://drive.google.com/drive/folders/';
 var DRIVE_FOLDERS = [['1emJrOfqaE3bP1RGid38uyHoYBuPlB76R', 'El Bash'], ['1s_Eap5z10Y85fMtv1NrMoYnqbuJpyohQ', '1 Menus & print'],
   ['1r_mRypOu2Spw6jLlydOMfnjcWTuLJTzp', '2 Social media & stories'], ['1Gxub86ScNlnYfbhwqAl2bJRP4xRIGIMS', '3 Brand & logos'],
-  ['1-6ueNQhNUrjlI9ZTnvaO5Iv90151_2tx', '4 Photos'], ['1_xdtMvb3CjPqzxq_rFLHayz9v4PYNwZO', '5 Recipes & documents']];
+  ['1-6ueNQhNUrjlI9ZTnvaO5Iv90151_2tx', '4 Photos'], ['1_xdtMvb3CjPqzxq_rFLHayz9v4PYNwZO', '5 Recipes & documents'],
+  ['1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk', '6 Menu photos'], ['1iQqlCTVLk6DHYGuT-rYIE6Ye3T1Ai4A6', '7 Videos']];
 var FOLDER_AR = {'El Bash': 'كل الملفات', 'Menus & print': 'المنيو والطباعة', 'Social media & stories': 'سوشال ميديا وستوريات', 'Brand & logos': 'الهوية واللوغو',
-  'Photos': 'الصور', 'Recipes & documents': 'الوصفات والمستندات'};
+  'Photos': 'الصور', 'Recipes & documents': 'الوصفات والمستندات', 'Menu photos': 'صور الأصناف', 'Videos': 'فيديوهات'};
 function folderLabel(name) { var n = String(name).replace(/^\d+\s*/, ''); return FOLDER_AR[n] ? bi(FOLDER_AR[n], n) : esc(n) }
 function fileIcon(type) {
   return /pdf/.test(type) ? '📄' : /image/.test(type) ? '🖼' : /video/.test(type) ? '🎬' : /spreadsheet|excel/.test(type) ? '📗' :

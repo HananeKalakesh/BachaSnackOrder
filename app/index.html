@@ -12,9 +12,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>El Bash Orders</title>
 <script>
-// Two apps from this one page: the cashier's (new order, today's orders) and, with ?app=manage, the management one
-// (sales, expenses, orders), each with its own home-screen icon
-var MANAGE = /[?&]app=manage\b/.test(location.search);
+// One app, one link, four users: each iPad remembers who uses it (switched from the top bar).
+// cashier: new order, today's orders · chef: stock, recipes · marketing: photos, videos, stories, links ·
+// manage (PIN): home, sales, expenses, recipes with costs, orders. ?app=manage (manage.html) or ?role=… picks one.
+var ROLE = (function () {
+  var q = location.search, r = /[?&]app=manage\b/.test(q) ? 'manage' : (q.match(/[?&]role=(cashier|chef|marketing|manage)\b/) || [])[1];
+  try { if (r) localStorage.setItem('elbash-role', r); else r = localStorage.getItem('elbash-role') } catch (e) {}
+  return /^(cashier|chef|marketing|manage)$/.test(r || '') ? r : '';
+})();
+var MANAGE = ROLE === 'manage';
+document.documentElement.setAttribute('data-role', ROLE || 'none');
 if (MANAGE) {
   document.documentElement.classList.add('manage');
   document.querySelector('link[rel=manifest]').href = 'manage.webmanifest';
@@ -48,8 +55,23 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .tabs{display:flex;gap:4px;background:rgba(250,245,236,.08);border:1.5px solid rgba(250,245,236,.3);padding:4px;border-radius:999px;margin-inline-start:auto}
 .tabs button{height:42px;padding:0 20px;border-radius:999px;color:var(--paper);font-size:17px}
 .tabs button.on{background:var(--paper);color:var(--green)}
-html:not(.manage) .tabs [data-view=report],html:not(.manage) .tabs [data-view=exp],html:not(.manage) .tabs [data-view=home],html.manage .tabs [data-view=order]{display:none}
-html.manage .tabs [data-view=home]{order:-3}html.manage .tabs [data-view=report]{order:-2}html.manage .tabs [data-view=exp]{order:-1}
+/* who uses this device */
+.rolebtn{white-space:nowrap}
+.who{position:fixed;inset:0;z-index:50;background:var(--green);overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.who[hidden]{display:none}
+.whobox{width:100%;max-width:760px;text-align:center;color:var(--paper)}
+.wlogo{height:110px;margin-bottom:10px}
+.whobox h1{font-size:40px;margin:0 0 22px;color:var(--paper)}
+.wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.wgrid button{background:var(--paper);color:var(--ink);border-radius:24px;padding:22px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 10px 30px -12px rgba(0,0,0,.4)}
+.wgrid button:active{transform:scale(.98)}
+.wgrid b{font-size:22px}.wgrid small{color:var(--muted);font-size:14px}.wic{font-size:40px}
+.wlang{margin-top:22px}
+.gatein{width:220px;height:60px;border-radius:16px;border:0;background:var(--paper);color:var(--ink);font-size:30px;text-align:center;letter-spacing:.3em;margin:16px auto 8px;display:block}
+.gatego{height:52px;padding:0 34px;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:18px}
+.gateerr{color:var(--mustard);min-height:22px;font-weight:800}
+.gateback{display:block;margin:18px auto 0;color:var(--paper);opacity:.8;text-decoration:underline}
+@media (max-width:600px){.wgrid{grid-template-columns:1fr}.whobox h1{font-size:30px}.wlogo{height:80px}}
 /* home: links to everything */
 .hgroup{margin-bottom:18px}.hgroup h3{margin:0 0 10px;font-size:22px;color:var(--green)}
 .hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
@@ -61,6 +83,25 @@ html.manage .tabs [data-view=home]{order:-3}html.manage .tabs [data-view=report]
 .hicon{width:44px;height:44px;flex:none;border-radius:14px;background:var(--sand);display:grid;place-items:center;font-size:22px}
 .hlink{font:800 14px "Plus Jakarta Sans",Cairo,sans-serif;color:var(--green);margin-inline-start:10px}
 .hfolder{margin-bottom:14px}.hfname{display:inline-block;margin:0 0 8px;font-weight:800;color:var(--ink);text-decoration:none}
+/* marketing */
+.mkhow{margin:0 0 14px;padding:10px 14px;border-radius:14px;background:var(--white);box-shadow:var(--shadow-sm)}
+.mklinks{margin-bottom:18px}
+.mkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.mkcard{display:flex;flex-direction:column;gap:6px;background:var(--white);border-radius:18px;padding:6px;box-shadow:var(--shadow-sm);text-align:start;min-width:0}
+.mkcard small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px 2px}
+.mkimg{position:relative;display:block;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sand)}
+.mkimg img{width:100%;height:100%;object-fit:cover;display:block}.mkimg.noimg img{display:none}
+.mkicon{position:absolute;inset:0;display:grid;place-items:center;font-size:44px}
+.mkplay{position:absolute;inset:auto auto 8px 8px;background:rgba(26,26,23,.7);color:#fff;border-radius:999px;padding:2px 10px;font-size:13px}
+.mksheet{position:fixed;inset:0;z-index:40;background:rgba(26,26,23,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.mkbox{position:relative;width:100%;max-width:520px;max-height:100%;overflow-y:auto;background:var(--paper);border-radius:24px;padding:16px;text-align:center}
+.mkbig{width:100%;max-height:52vh;object-fit:contain;border-radius:16px;background:var(--sand);display:block}div.mkbig{height:200px;display:grid;place-items:center;font-size:70px}
+.mkvid{margin-top:6px;font-size:14px;color:var(--muted)}
+.mkname{font-weight:800;word-break:break-word}
+.save.mkgo{display:flex;align-items:center;justify-content:center;text-decoration:none;background:#25A55F;box-shadow:none}
+.mkmore{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}.mkmore .ghost{display:inline-flex;align-items:center;text-decoration:none}
+.mkclose{position:absolute;top:10px;inset-inline-end:10px;width:40px;height:40px;border-radius:999px;background:var(--white);font-size:18px;z-index:1;box-shadow:var(--shadow-sm)}
+.mkcopy{margin-top:18px}
 .hcopy{height:34px;padding:0 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:13px;font-weight:800;flex:none}
 .langbtn{height:44px;padding:0 18px;border-radius:999px;border:1.5px solid rgba(250,245,236,.3);background:rgba(250,245,236,.08);color:var(--paper);font-weight:800}
 .langbtn .ar{font-family:Cairo,sans-serif}.langbtn .en{font-family:"Plus Jakarta Sans",sans-serif}
@@ -366,7 +407,8 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
   <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
 </div>
 
@@ -398,6 +440,24 @@ td.r,th.r{text-align:end}
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
+<div class="report" id="stockView"><div class="wrap" id="stock"></div></div>
+<div class="report" id="marketView"><div class="wrap" id="market"></div></div>
+<!-- who uses this iPad (first time, or after "switch user") -->
+<div id="who" class="who" hidden>
+  <div class="whobox">
+    <img class="wlogo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
+    <h1 class="display"><span class="ar">مين عم يستعمل هالجهاز؟</span><span class="en">Who's using this device?</span></h1>
+    <div class="wgrid">
+      <button data-role="cashier"><span class="wic">🧾</span><b><span class="ar">الكاشير</span><span class="en">Cashier</span></b><small><span class="ar">طلب جديد وطلبات اليوم</span><span class="en">New order and today's orders</span></small></button>
+      <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">مخزون اليوم والوصفات</span><span class="en">Today's stock and recipes</span></small></button>
+      <button data-role="marketing"><span class="wic">📣</span><b><span class="ar">الماركتنغ</span><span class="en">Marketing</span></b><small><span class="ar">صور، فيديوهات، ستوريات، لوغو ومنيو</span><span class="en">Photos, videos, stories, logos, menus</span></small></button>
+      <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، الربح، المصاريف، الأسعار · بالرمز</span><span class="en">Sales, profit, expenses, prices · PIN</span></small></button>
+    </div>
+    <button class="langbtn wlang" id="whoLang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
+  </div>
+</div>
+<!-- management: the PIN once each time the app opens -->
+<div id="gate" class="who" hidden><div class="whobox" id="gateBox"></div></div>
 <div class="sheet" id="sheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="shT">
   <h3 id="shT"></h3><p id="shH"></p><div class="chips" id="shC"></div>
   <div class="acts"><button id="shX" type="button"><span class="ar">إلغاء</span><span class="en">Cancel</span></button><button id="shOk" type="button"><span class="ar">زيد عالطلب</span><span class="en">Add to order</span></button></div>
@@ -484,6 +544,7 @@ function useMenu(r) {
   if (first && $('#reportView').style.display === 'block') showReport();
   if (first && $('#expView').style.display === 'block') showExpenses();
   if (first && $('#recView').style.display === 'block') showRecipes();
+  if (first) gate();
   // sold-out items stay on the screen (greyed) so they can be brought back
   var next = MENU_ALL.filter(function (m) { return (m.on || m.soldOut) && m.price > 0 }), old = MENU;
   // keep what's already in the order, by item name, in case the menu changed
@@ -689,11 +750,15 @@ function showView(v) {
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
+  $('#stockView').style.display = v === 'stock' ? 'block' : 'none';
+  $('#marketView').style.display = v === 'market' ? 'block' : 'none';
   if (v === 'orders') { drawOrders(); loadOrders() }
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
+  if (v === 'stock') showStock();
+  if (v === 'market') showMarket();
 }
 document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { showView(b.dataset.view) }) });
 
@@ -1171,10 +1236,10 @@ function checkWeb() {
   var badge = $('#webBadge'); badge.hidden = !waiting.length; badge.textContent = '🌐 ' + waiting.length;
   var fresh = seenWeb && waiting.some(function (o) { return !seenWeb[o.key] });
   seenWeb = {}; waiting.forEach(function (o) { seenWeb[o.key] = 1 });
-  if (fresh && !MANAGE) { chime(); toast('🌐 طلب جديد من الموقع', 'New website order') }
+  if (fresh && ROLE === 'cashier') { chime(); toast('🌐 طلب جديد من الموقع', 'New website order') }
 }
 function poll() {
-  if (EB.pending().length || !EB.key()) return;
+  if (EB.pending().length || !EB.key() || (ROLE !== 'cashier' && !MANAGE)) return;
   loadRecent().then(function () { checkWeb(); if ($('#ordersView').style.display === 'block' && OMODE === 'today') drawOrders() }, function () {});
 }
 setInterval(poll, 15000);
@@ -1193,10 +1258,52 @@ function setLang(l) {
 $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
 
 function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
+/* ---------- who uses this device ---------- */
+// each user's tabs, in order; the first one opens
+var ROLES = {cashier: [['order', 'orders'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['home', 'report', 'exp', 'rec', 'orders'], 'الإدارة', 'Management', '🔒']};
+function roleTabs() {
+  var r = ROLES[ROLE], tabs = $('.tabs');
+  tabs.querySelectorAll('button').forEach(function (b) { b.style.display = 'none' });
+  r[0].forEach(function (v) { var b = tabs.querySelector('[data-view="' + v + '"]'); b.style.display = ''; tabs.appendChild(b) });
+  tabs.style.visibility = r[0].length > 1 ? '' : 'hidden';
+  $('#roleBtn').innerHTML = r[3] + ' ' + bi(r[1], r[2]);
+}
+function demoQ(sep) { return EB.demo ? sep + 'demo' : '' }
+$('#roleBtn').addEventListener('click', function () {
+  if (!confirm(T('تبدّل المستخدم على هالجهاز؟', 'Switch the user on this device?'))) return;
+  try { localStorage.removeItem('elbash-role') } catch (e) {}
+  setPin(''); location.href = 'index.html' + demoQ('?');
+});
+$('#who').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-role]'); if (!b) return;
+  try { localStorage.setItem('elbash-role', b.dataset.role) } catch (e) {}
+  location.href = 'index.html?' + (b.dataset.role === 'manage' ? 'app=manage' : 'role=' + b.dataset.role) + demoQ('&');
+});
+$('#whoLang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
+// Management: the PIN once each time the app opens (Settings tab), before anything shows
+function pinOk() { return !SET.pin || pin() === SET.pin || (/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin)) }
+function gate(msg) {
+  if (!MANAGE || (SET.loaded && pinOk())) { $('#gate').hidden = true; return }
+  $('#gate').hidden = false;
+  if (!SET.loaded) { $('#gateBox').innerHTML = '<p>' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  $('#gateBox').innerHTML = '<img class="wlogo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">' +
+    '<h1 class="display">' + bi('الإدارة', 'Management') + '</h1><p>' + bi('اكتب الرمز', 'Enter the PIN') + '</p>' +
+    '<input class="gatein" id="gateIn" type="password" inputmode="numeric" autocomplete="off"><div class="gateerr">' + (msg || '') + '</div>' +
+    '<button class="gatego" id="gateGo">' + bi('افتح', 'Open') + '</button><button class="gateback" id="gateBack">' + bi('مستخدم تاني', 'Another user') + '</button>';
+  var go = function () { setPin($('#gateIn').value); if (pinOk()) { $('#gate').hidden = true; showView(ROLES.manage[0][0]) } else gate(bi('الرمز غلط', 'Wrong PIN')) };
+  $('#gateGo').onclick = go; $('#gateIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#gateIn').focus();
+  $('#gateBack').onclick = function () { try { localStorage.removeItem('elbash-role') } catch (e) {} location.href = 'index.html' + demoQ('?') };
+}
+
 setLang(store(LKEY) || 'ar'); showNet(); updateSave();
-if (EB.key()) start();
-else { var c = EB.cached('menu'); if (c) useMenu(c); askKey() }
-if (MANAGE) addEventListener('DOMContentLoaded', function () { showView('home') });   // after recipes.js and hub.js
+if (!ROLE) $('#who').hidden = false;
+else {
+  roleTabs(); gate();
+  if (EB.key()) start();
+  else { var c = EB.cached('menu'); if (c) useMenu(c); askKey() }
+  addEventListener('DOMContentLoaded', function () { showView(ROLES[ROLE][0][0]) });   // after recipes.js, hub.js and marketing.js
+}
 </script>
 <script>
 // The offline copy only works from the app's own link (GitHub Pages), not inside the Apps Script page
@@ -1349,5 +1456,6 @@ $('#exp').addEventListener('click', function (e) {
 </script>
 <script src="recipes.js"></script>
 <script src="hub.js"></script>
+<script src="marketing.js"></script>
 </body>
 </html>

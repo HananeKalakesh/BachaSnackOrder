@@ -1,0 +1,215 @@
+{
+ "note": "What the script copies from this website into the El Bash Google Drive folder (only files not there yet). Names are what they get in Drive.",
+ "menu": [
+  {
+   "name": "Fajita Sandwich.jpg",
+   "path": "photos/fajita-sandwich.jpg"
+  },
+  {
+   "name": "Francisco Sandwich.jpg",
+   "path": "photos/francisco-sandwich.jpg"
+  },
+  {
+   "name": "Chicken Quesadilla.jpg",
+   "path": "photos/chicken-quesadilla.jpg"
+  },
+  {
+   "name": "Tawouk Sandwich.jpg",
+   "path": "photos/tawouk-sandwich.jpg"
+  },
+  {
+   "name": "Zinger Sandwich.jpg",
+   "path": "photos/zinger-sandwich.jpg"
+  },
+  {
+   "name": "Crunchy Burger.jpg",
+   "path": "photos/crunchy-burger.jpg"
+  },
+  {
+   "name": "Escalope Meal 3 PCS.jpg",
+   "path": "photos/escalope-meal.jpg"
+  },
+  {
+   "name": "Basha Burger.jpg",
+   "path": "photos/basha-burger.jpg"
+  },
+  {
+   "name": "Broasted Family Meal 10 PCS.jpg",
+   "path": "photos/broasted-family-meal.jpg"
+  },
+  {
+   "name": "Crispy Meal.jpg",
+   "path": "photos/crispy-meal.jpg"
+  },
+  {
+   "name": "Mozzarella Patty Burger.jpg",
+   "path": "photos/mozzarella-patty-burger.jpg"
+  },
+  {
+   "name": "Small Fries Box.jpg",
+   "path": "photos/small-fries-box.jpg"
+  },
+  {
+   "name": "Large Fries Box with Sauce & Cheddar.jpg",
+   "path": "photos/large-cheddar-fries.jpg"
+  },
+  {
+   "name": "Loaded Fries.jpg",
+   "path": "photos/loaded-fries.jpg"
+  },
+  {
+   "name": "Mozzarella Sticks 6 PCS.jpg",
+   "path": "photos/mozzarella-sticks.jpg"
+  },
+  {
+   "name": "Zinger Meal.jpg",
+   "path": "photos/zinger-meal.jpg"
+  },
+  {
+   "name": "Shawarma Plate.jpg",
+   "path": "photos/shawarma-plate.jpg"
+  },
+  {
+   "name": "Small Fries Box with Sauce & Cheddar.jpg",
+   "path": "photos/small-cheddar-fries.jpg"
+  },
+  {
+   "name": "Mushroom Burger.jpg",
+   "path": "photos/mushroom-burger.jpg"
+  },
+  {
+   "name": "Wings Meal 14 PCS.jpg",
+   "path": "photos/wings-meal.jpg"
+  },
+  {
+   "name": "Half Broasted Meal 5 PCS.jpg",
+   "path": "photos/half-broasted-meal.jpg"
+  },
+  {
+   "name": "Nuggets 5 PCS.jpg",
+   "path": "photos/nuggets.jpg"
+  },
+  {
+   "name": "Mix Appetizer Box.jpg",
+   "path": "photos/mix-appetizer-box.jpg"
+  },
+  {
+   "name": "Cordon Bleu Sandwich.jpg",
+   "path": "photos/cordon-bleu-sandwich.jpg"
+  },
+  {
+   "name": "Chicken Sub Sandwich.jpg",
+   "path": "photos/chicken-sub-sandwich.jpg"
+  },
+  {
+   "name": "Buffalo Sauce.jpg",
+   "path": "photos/buffalo-sauce.jpg"
+  },
+  {
+   "name": "Honey Mustard Sauce.jpg",
+   "path": "photos/honey-mustard-sauce.jpg"
+  },
+  {
+   "name": "Barbecue Sauce.jpg",
+   "path": "photos/barbecue-sauce.jpg"
+  },
+  {
+   "name": "Cocktail Sauce.jpg",
+   "path": "photos/cocktail-sauce.jpg"
+  },
+  {
+   "name": "Garlic Sauce.jpg",
+   "path": "photos/garlic-sauce.jpg"
+  },
+  {
+   "name": "Cheddar Cup (Small).jpg",
+   "path": "photos/cheddar-cup-small.jpg"
+  },
+  {
+   "name": "Coleslaw.jpg",
+   "path": "photos/coleslaw.jpg"
+  }
+ ],
+ "brand": [
+  {
+   "name": "Logo on green.png",
+   "path": "assets/elbash/v4/png/noar-green.png"
+  },
+  {
+   "name": "Logo on green.svg",
+   "path": "assets/elbash/v4/noar-green.svg"
+  },
+  {
+   "name": "Logo on paper (print).png",
+   "path": "assets/elbash/v4/png/noar-paper.png"
+  },
+  {
+   "name": "Logo on paper (print).svg",
+   "path": "assets/elbash/v4/noar-paper.svg"
+  },
+  {
+   "name": "Logo on red (offers).png",
+   "path": "assets/elbash/v4/png/noar-red.png"
+  },
+  {
+   "name": "Logo on red (offers).svg",
+   "path": "assets/elbash/v4/noar-red.svg"
+  },
+  {
+   "name": "Logo on mustard (stickers).png",
+   "path": "assets/elbash/v4/png/noar-mustard.png"
+  },
+  {
+   "name": "Logo on mustard (stickers).svg",
+   "path": "assets/elbash/v4/noar-mustard.svg"
+  },
+  {
+   "name": "Logo on green, one colour.png",
+   "path": "assets/elbash/v4/png/noar-greenmono.png"
+  },
+  {
+   "name": "Logo on green, one colour.svg",
+   "path": "assets/elbash/v4/noar-greenmono.svg"
+  },
+  {
+   "name": "Logo on white, one colour.png",
+   "path": "assets/elbash/v4/png/noar-black.png"
+  },
+  {
+   "name": "Logo on white, one colour.svg",
+   "path": "assets/elbash/v4/noar-black.svg"
+  },
+  {
+   "name": "Fez icon (on green).png",
+   "path": "assets/elbash/v4/png/fez-paper.png"
+  },
+  {
+   "name": "Fez icon (on green).svg",
+   "path": "assets/elbash/v4/fez-paper.svg"
+  },
+  {
+   "name": "Fez icon (red and green).png",
+   "path": "assets/elbash/v4/png/fez-redgreen.png"
+  },
+  {
+   "name": "Fez icon (red and green).svg",
+   "path": "assets/elbash/v4/fez-redgreen.svg"
+  },
+  {
+   "name": "Fez icon (on red).png",
+   "path": "assets/elbash/v4/png/fez-cream.png"
+  },
+  {
+   "name": "Fez icon (on red).svg",
+   "path": "assets/elbash/v4/fez-cream.svg"
+  },
+  {
+   "name": "Fez icon (red).png",
+   "path": "assets/elbash/v4/png/fez-red.png"
+  },
+  {
+   "name": "Fez icon (red).svg",
+   "path": "assets/elbash/v4/fez-red.svg"
+  }
+ ]
+}

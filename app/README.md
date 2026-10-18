@@ -2,8 +2,12 @@
 
 Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ and installable on the home screen:
 
-- `index.html`: the cashier app (new order, today's orders). With `?app=manage` (or `manage.html`) it is the
-  management app instead (sales, expenses, orders), with its own home-screen icon (`manage.webmanifest`).
+- `index.html`: the app, one link for every device. The first time, it asks who uses the device and remembers it
+  (switched from the top bar): Cashier (new order, today's orders), Chef (today's stock, recipes), Marketing
+  (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories) or Management (PIN:
+  `hub.js` home, sales, expenses, `recipes.js` with costs, orders). `manage.html` and `?app=manage` open
+  Management, `?role=cashier|chef|marketing` the others. `assets.json` lists the website files the script copies
+  into Drive (menu photos named by item, logos).
 - `kitchen.html`: the kitchen screen.
 - `core.js`: shared by all of them. `sw.js` keeps a copy on the iPad so the app opens without internet; unsent
   changes wait in an outbox (core.js).

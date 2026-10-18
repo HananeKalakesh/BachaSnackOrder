@@ -83,6 +83,16 @@ var EB = (function () {
   // What is in the El Bash folder in Google Drive
   EB.files = function () { return remote({action: 'files'}).then(function (r) { r.at = Date.now(); put('eb-files', r); return r }) };
   EB.cachedFiles = function () { return get('eb-files') };
+  // One of those files as a File, ready to share (e.g. to a WhatsApp story)
+  EB.file = function (id) {
+    return remote({action: 'file', id: id}).then(function (r) {
+      var bin = atob(r.data), bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new File([bytes], r.name, {type: r.type});
+    });
+  };
+  // Copies the website's menu photos and logos into the Drive folder (new ones only)
+  EB.copyAssets = function () { return remote({action: 'copyAssets'}) };
   EB.rows = function (t) {
     return t ? t.rows.map(function (r) { var o = {}; t.head.forEach(function (h, i) { o[h] = r[i] }); return o }) : [];
   };
