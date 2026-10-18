@@ -269,10 +269,12 @@ var EB = (function () {
   EB.ready = function (o, at) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Ready sent': "'" + at}}], {t: 'ready', key: o.key, ready: at});
   };
-  // The WhatsApp message for an order, in the customer's language: ready (pickup or delivery) or turned down
+  // The WhatsApp message for an order, in the customer's language: accepted, ready (pickup or delivery) or turned down
   EB.whatsapp = function (o, kind) {
     var ar = o.lang !== 'en', n = o.num, msg;
-    if (kind === 'reject') msg = ar ? 'يا باشا، آسفين، ما منقدر ناخد طلبيتك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏'
+    if (kind === 'confirm') msg = ar ? 'يا باشا، وصلنا طلبك رقم ' + n + ' من الباش ✅ عم نحضّرو، ومنبعتلك أول ما ' + (o.type === 'Delivery' ? 'يطلع عالطريق' : 'يجهز') + '. تكرم يا باشا!'
+      : 'Ya Basha, we got your El Bash order #' + n + ' ✅ We\'re preparing it and will message you when it\'s ' + (o.type === 'Delivery' ? 'on the way' : 'ready') + '. Tekram ya basha!';
+    else if (kind === 'reject') msg = ar ? 'يا باشا، آسفين، ما منقدر ناخد طلبيتك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏'
       : 'Ya Basha, sorry, we can\'t take your order #' + n + ' right now. Please call or message us 🙏';
     else if (o.type === 'Delivery') msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة وعالطريق لعندك! 🛵 تكرم يا باشا!'
       : 'Ya Basha, your El Bash order #' + n + ' is ready and on its way to you! 🛵 Tekram ya basha!';

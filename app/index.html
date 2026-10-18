@@ -1079,7 +1079,11 @@ $('#ord').addEventListener('click', function (e) {
   if (OMODE === 'owed') return;
   if (b && (b.dataset.accept || b.dataset.reject)) {
     var w = (TD.waiting || []).filter(function (x) { return x.key === (b.dataset.accept || b.dataset.reject) })[0]; if (!w) return;
-    if (b.dataset.accept) { EB.status(w, 'Accepted'); toast('انقبل الطلب #' + w.num + '، راح عالمطبخ', 'Order #' + w.num + ' accepted, sent to the kitchen') }
+    // accepted: it joins the orders, and WhatsApp opens with the confirmation for the customer (the cashier taps send)
+    if (b.dataset.accept) {
+      EB.status(w, 'Accepted'); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
+      if (w.phone) whatsapp(w, 'confirm');
+    }
     else if (confirm(T('ترفض الطلب #' + w.num + '؟', 'Reject order #' + w.num + '?'))) {
       EB.status(w, 'Rejected');
       if (w.phone && confirm(T('تبعتلو رسالة إنو ما منقدر ناخد الطلب؟', 'Send them a message that we can\'t take the order?'))) whatsapp(w, 'reject');

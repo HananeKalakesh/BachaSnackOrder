@@ -304,15 +304,9 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div class="choice-actions"><button id="cancelChoice" type="button" data-t>Cancel</button><button id="confirmChoice" class="confirm" type="button" data-t>Add to order</button></div>
 </div>
 
-<div id="doneModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
-  <h3 id="doneTitle" data-t>Order received!</h3>
-  <p class="big num-big" id="doneNum"></p>
-  <p id="doneText"></p>
-  <div class="choice-actions"><button id="doneOk" class="confirm" type="button" data-t>OK</button></div>
-</div>
-
 <div id="sendModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
   <h3 id="sendTitle" data-t>Almost done!</h3>
+  <p class="big num-big" id="sendNum" hidden></p>
   <p data-t>WhatsApp will open with your order ready.</p>
   <div class="wa-demo" aria-hidden="true"><span class="wa-msg" dir="auto" data-t>Hi Basha, I would like to place an order:</span><span class="wa-send">➤</span></div>
   <p class="big" data-t>Press the green send button ➤ in WhatsApp to send it to us.</p>
@@ -331,10 +325,8 @@ const CONFIG = {
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
   menuUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec?format=menu',
-  // Orders go straight to the shop's order screen through the same script (empty = WhatsApp only).
-  // Off until the shop uses the cashier app; to turn on, put back:
-  // 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec'
-  orderUrl: '',
+  // Orders go into the shop's app through the same script, then on WhatsApp as always (empty = WhatsApp only)
+  orderUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec',
   popular: ['Zinger Sandwich', 'Crispy Meal', 'Basha Burger', 'Loaded Fries'], // items tagged "★ Popular"
   deliveryNote: {en: '', ar: ''},// optional line in the cart, e.g. {en: 'Delivery fee: 100,000 L.L.', ar: 'كلفة التوصيل: 100,000 ل.ل.'}
   photos: {                      // item photos (square, in the photos folder)
@@ -477,9 +469,7 @@ drinkGrid: [
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
-  'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق','Sending…':'عم نبعت…','Order received!':'وصلنا طلبك!','OK':'تمام','Order #{n}':'طلب رقم {n}','Phone':'الرقم',
-  "We'll confirm it, and message you on WhatsApp when it's ready.":'رح نأكدلك، ومنبعتلك عالواتساب أول ما يجهز.',
-  "We'll confirm it, and message you on WhatsApp when it's on the way.":'رح نأكدلك، ومنبعتلك عالواتساب أول ما يطلع عالطريق.',
+  'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
   "We couldn't send it to the shop. Send it on WhatsApp instead:":'ما قدرنا نبعتو للمحل. ابعتو عالواتساب بدالها:',
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
@@ -781,7 +771,7 @@ function openLayer(el, opener) {
   if (f) f.focus({preventScroll: true});
 }
 function closeLayers() {
-  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#doneModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
+  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
   document.documentElement.classList.remove('lock');
   $$('#choiceModal input').forEach(i => i.checked = false);
   selectedChoice = null;
@@ -918,17 +908,17 @@ function whatsappText(entries, name, phone, type, addr, note) {
   if (note) msg += '\n*' + t('Notes') + ':* ' + note;
   return msg;
 }
-function viaWhatsApp(msg) {
+function viaWhatsApp(msg, num) {
+  $('#sendNum').hidden = !num; $('#sendNum').textContent = num ? t('Order #{n}').replace('{n}', num) : '';
   pendingUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(msg)}`;
   $('#sendModal').classList.add('open');
   $('#goWhatsApp').focus({preventScroll: true});
 }
-function sentOrder(num, type) {
+// In the shop's app now: the cart is emptied (sending again would make a second order), and the WhatsApp message
+// carries the number so the shop knows it's already in the app
+function sentOrder(num, msg) {
   Object.keys(order).forEach(k => delete order[k]); $('#custNote').value = ''; saveCart(); cart();
-  $('#doneNum').textContent = t('Order #{n}').replace('{n}', num);
-  $('#doneText').textContent = t(type === 'Delivery' ? "We'll confirm it, and message you on WhatsApp when it's on the way." : "We'll confirm it, and message you on WhatsApp when it's ready.");
-  $('#doneModal').classList.add('open');
-  $('#doneOk').focus({preventScroll: true});
+  viaWhatsApp(t('🌐 Order #{n} (already in the app)').replace('{n}', num) + '\n' + msg, num);
 }
 let sending = false;
 $('.send').onclick = () => {
@@ -955,7 +945,7 @@ $('.send').onclick = () => {
   (DEMO ? demoServer().then(d => d.post(JSON.parse(body))) : fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
     .then(r => r.json())).then(res => {
       done();
-      if (res && res.ok) return sentOrder(res.num, type);
+      if (res && res.ok) return sentOrder(res.num, msg);
       // the shop said no: say why when it's something the customer can fix, otherwise offer WhatsApp
       const e = String(res && res.error || '');
       if (/not available/.test(e)) return fail('Some items are not available right now. Please remove them and send again.');
@@ -964,7 +954,6 @@ $('.send').onclick = () => {
       offer();
     }).catch(() => { done(); offer() });
 };
-$('#doneOk').onclick = closeLayers;
 // Many people think the order is sent once WhatsApp opens, so remind them to press send there
 let pendingUrl = null;
 $('#goWhatsApp').onclick = () => {
