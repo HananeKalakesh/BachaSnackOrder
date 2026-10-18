@@ -35,7 +35,8 @@ var EB = (function () {
         if (!r.ok) throw offline('HTTP ' + r.status);
         return r.text();
       }, function (e) { throw offline(e.message) }).then(function (t) {
-        try { return JSON.parse(t) } catch (e) { throw new Error('The sheet link did not answer properly. Check that the Apps Script is deployed.') }
+        // not data (e.g. Google's sign-in or permission page): kept and tried again, like no internet, so nothing is lost
+        try { return JSON.parse(t) } catch (e) { throw offline('The sheet link did not answer properly. Check that the Apps Script is deployed and allowed.') }
       });
     }
     return p.then(function (r) {
