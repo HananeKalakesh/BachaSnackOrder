@@ -18,7 +18,7 @@
  *           adds rows; a header the tab doesn't have yet becomes a new column;
  *           with unique, nothing is added if a row already has the first row's value in that column (a resent order)
  *       {op: 'update', tab, where: {Header: value}, set: {Header: value}}   every row matching all of where
- *       {op: 'remove', tab, where: {Header: value}}                         Orders and Order Items only
+ *       {op: 'remove', tab, where: {Header: value}}                         any tab but Menu and Settings
  * Links:
  *   …/exec                  the order screen (the app's own link on GitHub Pages also works offline)
  *   …/exec?screen=kitchen   the kitchen screen
@@ -26,7 +26,8 @@
  */
 
 var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – Orders & Sales
-var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases'];
+// The tabs the app uses today; a new feature can add its own tab (a plain English name) without pasting this again
+var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases', 'Ingredients', 'Recipes', 'Recipe Lines', 'Stock', 'Links'];
 var APP_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/app/';
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
@@ -87,8 +88,8 @@ function cell_(v, tz) {
 }
 
 function sheet_(ss, tab) {
-  if (TABS.indexOf(tab) < 0) throw new Error('Unknown tab: ' + tab);
-  return ss.getSheetByName(tab) || ss.insertSheet(tab);   // Purchases is made the first time it is used
+  if (TABS.indexOf(tab) < 0 && !/^[A-Z][A-Za-z ]{1,39}$/.test(String(tab))) throw new Error('Unknown tab: ' + tab);
+  return ss.getSheetByName(tab) || ss.insertSheet(tab);   // a new tab is made the first time it is used
 }
 
 function read_(ss, tabs) {
@@ -170,7 +171,7 @@ function apply_(ss, ops) {
         return { updated: hit.length };
       }
       if (op.op === 'remove') {
-        if (op.tab === 'Menu' || op.tab === 'Settings') throw new Error('Rows can only be removed from Orders, Order Items and Purchases');
+        if (op.tab === 'Menu' || op.tab === 'Settings') throw new Error('Rows can not be removed from Menu or Settings');
         var gone = matches_(sh, op.where || {}, tz);
         for (var i = gone.length - 1; i >= 0; i--) sh.deleteRow(gone[i]);
         return { removed: gone.length };

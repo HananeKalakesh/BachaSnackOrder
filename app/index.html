@@ -48,8 +48,18 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .tabs{display:flex;gap:4px;background:rgba(250,245,236,.08);border:1.5px solid rgba(250,245,236,.3);padding:4px;border-radius:999px;margin-inline-start:auto}
 .tabs button{height:42px;padding:0 20px;border-radius:999px;color:var(--paper);font-size:17px}
 .tabs button.on{background:var(--paper);color:var(--green)}
-html:not(.manage) .tabs [data-view=report],html:not(.manage) .tabs [data-view=exp],html.manage .tabs [data-view=order]{display:none}
-html.manage .tabs [data-view=report]{order:-2}html.manage .tabs [data-view=exp]{order:-1}
+html:not(.manage) .tabs [data-view=report],html:not(.manage) .tabs [data-view=exp],html:not(.manage) .tabs [data-view=home],html.manage .tabs [data-view=order]{display:none}
+html.manage .tabs [data-view=home]{order:-3}html.manage .tabs [data-view=report]{order:-2}html.manage .tabs [data-view=exp]{order:-1}
+/* home: links to everything */
+.hgroup{margin-bottom:18px}.hgroup h3{margin:0 0 10px;font-size:22px;color:var(--green)}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.htile{display:flex;align-items:center;gap:6px;background:var(--white);border-radius:20px;box-shadow:var(--shadow-sm);padding:6px 8px 6px 6px;min-width:0}
+.htile.off{opacity:.55}
+.hmain{flex:1;display:flex;align-items:center;gap:12px;padding:8px;color:var(--ink);text-decoration:none;min-width:0}
+.hmain b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hmain small{display:block;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hmain > span:last-child{min-width:0}
+.hicon{width:44px;height:44px;flex:none;border-radius:14px;background:var(--sand);display:grid;place-items:center;font-size:22px}
+.hcopy{height:34px;padding:0 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:13px;font-weight:800;flex:none}
 .langbtn{height:44px;padding:0 18px;border-radius:999px;border:1.5px solid rgba(250,245,236,.3);background:rgba(250,245,236,.08);color:var(--paper);font-weight:800}
 .langbtn .ar{font-family:Cairo,sans-serif}.langbtn .en{font-family:"Plus Jakarta Sans",sans-serif}
 .net{font-size:14px;background:var(--mustard);color:var(--ink);padding:4px 12px;border-radius:999px;white-space:nowrap}
@@ -241,12 +251,27 @@ td.r,th.r{text-align:end}
 .xcur button{height:40px;padding:0 12px;border-radius:11px;font-weight:700;color:var(--muted)}
 .xcur button.on{background:var(--green);color:var(--paper)}
 .xform .save,.xform .err{grid-column:1/-1}
+/* recipes */
+.rmodes{margin-bottom:14px}
+.rtable td{padding:9px 6px;border-bottom:1px solid var(--hairline);vertical-align:top}.rtable th{font-size:13px;color:var(--muted);padding:4px 6px}
+.rtable td.r,.rtable th.r{text-align:center}
+.rrow{cursor:pointer}.rrow:active{background:var(--sand)}
+.pct{padding:2px 8px;border-radius:999px;font-size:14px}.pct.ok{background:#DCEBDD;color:var(--green)}.pct.near{background:var(--mustard);color:var(--ink)}.pct.over{background:var(--red);color:#fff}
+.rtarget{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}.rtarget input{width:70px;height:40px;border-radius:12px;border:1px solid var(--hairline);background:var(--paper);text-align:center;font-size:18px}
+.radd{margin:0 0 14px}.redit{width:auto;margin:0 auto 0 0;padding:0 22px;height:46px;font-size:17px}
+.rsum{margin-top:12px;padding-top:10px;border-top:1px dashed var(--hairline)}
+.steps{margin:0;padding-inline-start:22px;line-height:1.7}.steps li{margin-bottom:6px}
+.eline{display:grid;grid-template-columns:minmax(0,1fr) 110px 54px 36px;gap:8px;align-items:center;margin-bottom:8px}
+.eline select,.eline input,#eSteps{height:46px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);padding:0 10px;font:inherit;font-size:16px;color:var(--ink);min-width:0;width:100%}
+#eSteps{height:auto;padding:10px 14px;margin-top:6px;resize:vertical}
+.eunit{font-size:14px;color:var(--muted)}
+.ghost{height:44px;padding:0 16px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:800;margin-top:4px}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
 #exp .kpis{margin-top:14px}
 @media (max-width:600px){.xform{grid-template-columns:1fr}
   /* phones (the management app): a tighter top bar and headings */
   .top{padding:0 10px;gap:6px}.top .logo{display:none}.tabs{margin-inline-start:0;min-width:0}
-  .tabs{padding:3px;gap:2px}.tabs button{height:38px;padding:0 10px;font-size:14px;white-space:nowrap}
+  .tabs{padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{height:38px;padding:0 10px;font-size:14px;white-space:nowrap;flex:none}
   .langbtn{height:38px;padding:0 10px;font-size:13px}
   .report{padding:12px 12px 70px}.shead{flex-wrap:wrap;gap:8px}.shead h2,.lang-en .shead h2{font-size:26px}
   #exp .shead{flex-wrap:nowrap}#exp .shead h2{flex:1;font-size:21px;text-align:center}
@@ -339,7 +364,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button></div>
   <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
 </div>
 
@@ -369,6 +394,8 @@ td.r,th.r{text-align:end}
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
+<div class="report" id="recView"><div class="wrap" id="rec"></div></div>
+<div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
 <div class="sheet" id="sheet" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="shT">
   <h3 id="shT"></h3><p id="shH"></p><div class="chips" id="shC"></div>
   <div class="acts"><button id="shX" type="button"><span class="ar">إلغاء</span><span class="en">Cancel</span></button><button id="shOk" type="button"><span class="ar">زيد عالطلب</span><span class="en">Add to order</span></button></div>
@@ -454,6 +481,7 @@ function useMenu(r) {
   // Sales and Expenses waited for the Settings (the PIN is there)
   if (first && $('#reportView').style.display === 'block') showReport();
   if (first && $('#expView').style.display === 'block') showExpenses();
+  if (first && $('#recView').style.display === 'block') showRecipes();
   // sold-out items stay on the screen (greyed) so they can be brought back
   var next = MENU_ALL.filter(function (m) { return (m.on || m.soldOut) && m.price > 0 }), old = MENU;
   // keep what's already in the order, by item name, in case the menu changed
@@ -657,9 +685,13 @@ function showView(v) {
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
   $('#reportView').style.display = v === 'report' ? 'block' : 'none';
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
+  $('#recView').style.display = v === 'rec' ? 'block' : 'none';
+  $('#homeView').style.display = v === 'home' ? 'block' : 'none';
   if (v === 'orders') { drawOrders(); loadOrders() }
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
+  if (v === 'rec') showRecipes();
+  if (v === 'home') showHub();
 }
 document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { showView(b.dataset.view) }) });
 
@@ -1162,7 +1194,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.f
 setLang(store(LKEY) || 'ar'); showNet(); updateSave();
 if (EB.key()) start();
 else { var c = EB.cached('menu'); if (c) useMenu(c); askKey() }
-if (MANAGE) showView('report');
+if (MANAGE) addEventListener('DOMContentLoaded', function () { showView('home') });   // after recipes.js and hub.js
 </script>
 <script>
 // The offline copy only works from the app's own link (GitHub Pages), not inside the Apps Script page
@@ -1313,5 +1345,7 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
+<script src="recipes.js"></script>
+<script src="hub.js"></script>
 </body>
 </html>

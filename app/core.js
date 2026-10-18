@@ -97,6 +97,7 @@ var EB = (function () {
     s.red = num(val('Kitchen screen: minutes until an order turns red')) || 20;
     var d = val('Day ends');
     s.dayEnd = d === '' ? 2 : Math.max(0, Math.min(12, num(d)));
+    s.target = num(val('Target food cost'));
     return s;
   };
   // Every Menu row; on = "On order screen" ticked; soldOut = taken off for now with the Sold out button
