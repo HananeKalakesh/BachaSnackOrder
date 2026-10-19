@@ -87,12 +87,21 @@ function prnSheet() {
       '<li>' + bi('دقو 🖨 واختارو الطابعة', 'Tap 🖨 and pick the printer') + '</li></ol></div>' +
       '<div class="busyopts"><button data-prn="bluefy">⬇ ' + bi('نزّل Bluefy', 'Get Bluefy') + '</button><button data-prn="link">📋 ' + bi('انسخ رابط التطبيق', 'Copy the app link') + '</button></div>';
   } else {
-    h += '<p class="muted">' + (PRN.ready() ? bi('موصولة: ', 'Connected: ') + '<b>' + esc(PRN.name()) + '</b>' : bi('مش موصولة', 'Not connected')) + '</p>' +
+    // Android: straight from Chrome (BLE printers) or through the RawBT app (classic Bluetooth printers)
+    if (PRN.android) h += '<div class="busyopts"><button class="' + (o.mode === 'ble' ? 'on' : '') + '" data-prn="mode-ble">📶 ' + bi('مباشرة من كروم', 'Straight from Chrome') + '</button>' +
+      '<button class="' + (o.mode === 'rawbt' ? 'on' : '') + '" data-prn="mode-rawbt">📲 ' + bi('عبر تطبيق RawBT', 'Through the RawBT app') + '</button></div>';
+    if (o.mode === 'rawbt') h += '<div class="prnhelp"><ol><li>' + bi('نزّلو RawBT من Google Play (مجاني)', 'Get RawBT from Google Play (free)') + '</li>' +
+      '<li>' + bi('بـ RawBT: اختارو الطابعة (Bluetooth) وعرض الورق 80mm', 'In RawBT: pick the printer (Bluetooth) and 80 mm paper') + '</li>' +
+      '<li>' + bi('ارجعو لهون ودقو «اطبع تجربة»', 'Come back here and tap Print a test') + '</li></ol></div>' +
+      '<div class="busyopts"><button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button><button data-prn="getrawbt">⬇ ' + bi('نزّل RawBT', 'Get RawBT') + '</button></div>';
+    else h += '<p class="muted">' + (PRN.ready() ? bi('موصولة: ', 'Connected: ') + '<b>' + esc(PRN.name()) + '</b>' : bi('مش موصولة', 'Not connected')) + '</p>' +
       '<div class="busyopts">' + (PRN.ready() ? '<button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button>' : '<button data-prn="connect">🔗 ' + bi('وصّل الطابعة', 'Connect the printer') + '</button>') + '</div>' +
+      (PRN.android ? '<p class="muted">' + bi('إذا الطابعة ما بيّنت بالقايمة، جرّبو «عبر تطبيق RawBT».', 'If the printer isn\'t in the list, try "Through the RawBT app".') + '</p>' : '');
+    h +=
       '<div class="prnrow"><label><input type="checkbox" id="prnAuto"' + (o.auto ? ' checked' : '') + '> ' + bi('اطبع كل طلب جديد لحالو', 'Print every new order by itself') + '</label></div>' +
       '<div class="prnrow"><label>' + bi('عرض الورق', 'Paper width') + ' <select id="prnWidth"><option value="576"' + (o.width === 576 ? ' selected' : '') + '>80 mm</option><option value="512"' + (o.width === 512 ? ' selected' : '') + '>80 mm (72)</option><option value="384"' + (o.width === 384 ? ' selected' : '') + '>58 mm</option></select></label>' +
       '<label>' + bi('سرعة', 'Speed') + ' <select id="prnSpeed"><option value="180,12"' + (o.chunk === 180 ? ' selected' : '') + '>' + bi('عادي', 'Normal') + '</option><option value="100,30"' + (o.chunk === 100 ? ' selected' : '') + '>' + bi('بطيء (إذا طلع خربيط)', 'Slow (if it prints garbage)') + '</option><option value="20,15"' + (o.chunk === 20 ? ' selected' : '') + '>' + bi('بطيء كتير', 'Very slow') + '</option></select></label></div>' +
-      (PRN.ready() ? '<button class="ghost" data-prn="forget">' + bi('افصل', 'Disconnect') + '</button> ' : '');
+      (PRN.ready() && o.mode === 'ble' ? '<button class="ghost" data-prn="forget">' + bi('افصل', 'Disconnect') + '</button> ' : '');
   }
   $('#prnSheet').innerHTML = h + '<button class="ghost" data-prn="close">' + bi('رجوع', 'Back') + '</button></div>';
   $('#prnSheet').hidden = false;
@@ -116,6 +125,8 @@ $('#prnSheet').addEventListener('click', function (e) {
   if (!b) { if (e.target === this) this.hidden = true; return }
   var a = b.dataset.prn;
   if (a === 'bluefy') return window.open(BLUEFY, '_blank');
+  if (a === 'getrawbt') return window.open('https://play.google.com/store/apps/details?id=ru.a402d.rawbtprinter', '_blank');
+  if (a === 'mode-ble' || a === 'mode-rawbt') { PRN.setOpts({mode: a.slice(5)}); return prnSheet() }
   if (a === 'link') { var u = location.href.split('#')[0]; (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { toast('انْسخ الرابط', 'Link copied') }, function () { prompt('Copy:', u) }); return }
   if (a === 'connect') return prnConnect();
   if (a === 'forget') { PRN.forget(); return prnSheet() }

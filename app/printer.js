@@ -1,5 +1,6 @@
 /* ---------- the receipt printer (Bluetooth, 80 mm, ESC/POS) ----------
-   Safari can't reach Bluetooth, so on the iPad the app is opened in the Bluefy browser, which can.
+   Chrome on Android talks to Bluetooth (BLE) printers directly; classic Bluetooth printers go through the RawBT app.
+   Safari can't reach Bluetooth, so on an iPad the app is opened in the Bluefy browser, which can.
    The ticket is drawn as a picture and sent as dots, so Arabic prints exactly as on screen.
    Settings on this device (localStorage elbash-printer): auto (print new orders), width in dots, chunk size and pause between chunks. */
 var PRN = (function () {
@@ -9,11 +10,15 @@ var PRN = (function () {
     '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb', '0000fee7-0000-1000-8000-00805f9b34fb',
     '0000ae30-0000-1000-8000-00805f9b34fb', '0000af30-0000-1000-8000-00805f9b34fb', '0000ae00-0000-1000-8000-00805f9b34fb'];
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
-  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || ''} }
+  var ANDROID = /Android/i.test(navigator.userAgent);
+  // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
+  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble'} }
   function setOpts(p) { var o = opts(); for (var k in p) o[k] = p[k]; try { localStorage.setItem(KEY, JSON.stringify(o)) } catch (e) {} changed() }
   function changed() { listeners.forEach(function (f) { f() }) }
-  function can() { return !!(navigator.bluetooth && navigator.bluetooth.requestDevice) }
-  function ready() { return !!(ch && dev && dev.gatt && dev.gatt.connected) }
+  function rawbt() { return opts().mode === 'rawbt' }
+  function ble() { return !!(navigator.bluetooth && navigator.bluetooth.requestDevice) }
+  function can() { return rawbt() || ble() }
+  function ready() { return rawbt() || !!(ch && dev && dev.gatt && dev.gatt.connected) }
 
   function attach(d) {
     dev = d;
@@ -34,13 +39,13 @@ var PRN = (function () {
   }
   // Tapping the button: pick the printer (needs a tap, browsers ask the user)
   function connect() {
-    if (!can()) return Promise.reject(new Error('NO_BLUETOOTH'));
+    if (!ble()) return Promise.reject(new Error('NO_BLUETOOTH'));
     if (dev && !ready()) return attach(dev);
     return navigator.bluetooth.requestDevice({acceptAllDevices: true, optionalServices: SERVICES}).then(attach);
   }
   // Opening the app again: reconnect to the printer it knew, without asking, where the browser allows it
   function resume() {
-    if (!can() || !navigator.bluetooth.getDevices) return Promise.resolve(false);
+    if (rawbt() || !ble() || !navigator.bluetooth.getDevices) return Promise.resolve(false);
     return navigator.bluetooth.getDevices().then(function (ds) {
       var d = ds.filter(function (x) { return x.name === opts().name })[0] || ds[0];
       return d ? attach(d).then(function () { changed(); return true }) : false;
@@ -73,8 +78,16 @@ var PRN = (function () {
     for (var i = 0; i < data.length; i += o.chunk) (function (part) { p = p.then(function () { return write(part) }).then(function () { return o.pause && wait(o.pause) }) })(data.slice(i, i + o.chunk));
     return p;
   }
+  // RawBT: the ticket's bytes go to the RawBT app, which prints them on the paired printer
+  function sendRawbt(data) {
+    var s = '';
+    for (var i = 0; i < data.length; i += 8192) s += String.fromCharCode.apply(null, data.subarray(i, i + 8192));
+    api.go('intent:base64,' + btoa(s) + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;');
+    return Promise.resolve();
+  }
   // One print at a time, reconnecting first if the printer dropped
   function printCanvas(canvas) {
+    if (rawbt()) return sendRawbt(bytesOf(canvas));
     var job = busy.then(function () { return ready() ? null : dev ? attach(dev) : Promise.reject(new Error('NOT_CONNECTED')) })
       .then(function () { return send(bytesOf(canvas)) });
     busy = job.catch(function () {});
@@ -82,6 +95,7 @@ var PRN = (function () {
   }
 
   /* ---------- the ticket ---------- */
+  var SAUCES_AR = {'Cocktail Sauce': 'كوكتيل', 'Ketchup': 'كاتشاب', 'Barbecue Sauce': 'باربكيو', 'Cheddar Sauce': 'تشيدر', 'Buffalo Sauce': 'بوفالو', 'Honey Mustard Sauce': 'هني ماستارد', 'Garlic Sauce': 'توم'};
   var AR = 'Cairo, "Geeza Pro", sans-serif', EN = '"Plus Jakarta Sans", Helvetica, Arial, sans-serif';
   function ticket(o, money) {
     var W = opts().width, M = 14, c = document.createElement('canvas'), g = c.getContext('2d'), y = 0, ops = [];
@@ -99,36 +113,35 @@ var PRN = (function () {
       });
     }
     function rule(thick) { var yy = y + 6; ops.push(function () { g.fillStyle = '#000'; g.fillRect(M, yy, W - 2 * M, thick || 2) }); y += 14 }
-    var kind = o.type === 'Delivery' ? 'توصيل · DELIVERY' : o.type === 'Pickup' ? 'استلام · PICKUP' : '';
-    text('EL BASH · الباش', EN, 34, 'center', W / 2, {bold: true});
-    text('Chicken & Snack', EN, 20, 'center', W / 2);
+    // Arabic only, to keep the ticket short
+    var kind = o.type === 'Delivery' ? 'توصيل' : o.type === 'Pickup' ? 'استلام' : '';
+    text('الباش', AR, 34, 'center', W / 2, {bold: true, lh: 1.15});
     rule(3);
     // the order number big, white on black
     var ny = y; ops.push(function () { g.fillStyle = '#000'; g.fillRect(M - 4, ny + 4, W - 2 * M + 8, 84); g.font = '800 64px ' + EN; g.textAlign = 'center'; g.direction = 'ltr'; g.fillStyle = '#fff'; g.fillText('#' + o.num, W / 2, ny + 68) });
     y += 92;
     y += 6;
-    text((o.web ? '🌐 Website · ' : '') + o.day + '  ' + o.time, EN, 22, 'center', W / 2);
+    text((o.web ? '🌐 من الموقع · ' : '') + o.day + '  ' + o.time, EN, 22, 'center', W / 2);
     if (kind) text(kind, AR, 28, 'center', W / 2, {bold: true});
     if (o.name || o.phone) text([o.name, o.phone ? '+' + o.phone : ''].filter(Boolean).join(' · '), AR, 26, 'center', W / 2, {bold: true});
     if (o.type === 'Delivery' && o.address) text('📍 ' + o.address, AR, 24, 'right', W - M, {rtl: true});
     rule(2);
     o.items.forEach(function (x) {
-      var price = money ? money(x.price * x.qty) : '', yy = y + 30;
+      var price = money ? money(x.price * x.qty).replace(' L.L.', '') : '', yy = y + 30;
       text(x.qty + ' × ' + (x.ar || x.name), AR, 30, 'right', W - M, {bold: true, rtl: true, max: W - 2 * M - 110});
       if (price) ops.push(function () { g.font = '700 22px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(price, M, yy) });
-      if (x.ar && x.ar !== x.name) text(x.name, EN, 20, 'right', W - M, {max: W - 2 * M - 110});
-      if (x.sauces && x.sauces.length) text('+ ' + x.sauces.join(' + '), AR, 22, 'right', W - M, {rtl: true});
-      y += 6;
+      if (x.sauces && x.sauces.length) text('+ ' + x.sauces.map(function (s) { return SAUCES_AR[s] || s }).join(' + '), AR, 24, 'right', W - M, {rtl: true});
+      y += 4;
     });
     if (o.note) { rule(2); text('ملاحظة: ' + o.note, AR, 26, 'right', W - M, {bold: true, rtl: true}) }
     rule(3);
-    var tot = money ? money(o.total) : String(o.total), ty = y + 34;
-    ops.push(function () { g.font = '800 34px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(tot, M, ty); g.textAlign = 'right'; g.font = '800 30px ' + AR; g.fillText('المجموع', W - M, ty) });
+    var tot = money ? money(o.total).replace(' L.L.', '') : String(o.total), ty = y + 34;
+    ops.push(function () { g.font = '800 34px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(tot, M, ty); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '800 30px ' + AR; g.fillText('المجموع ل.ل.', W - M, ty) });
     y += 46;
-    var pay = {Cash: 'كاش · Cash', Whish: 'ويش · Whish', Unpaid: 'ما دفع · NOT PAID'}[o.payment] || o.payment || '';
+    var pay = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع'}[o.payment] || o.payment || '';
     if (pay) text(pay, AR, 26, 'center', W / 2, {bold: o.payment === 'Unpaid'});
     rule(1);
-    text('شكراً يا باشا · Thank you', AR, 22, 'center', W / 2);
+    text('شكراً يا باشا', AR, 22, 'center', W / 2);
     y += 10;
     c.width = W; c.height = Math.ceil(y);
     g.fillStyle = '#fff'; g.fillRect(0, 0, W, c.height);
@@ -137,6 +150,7 @@ var PRN = (function () {
   }
   function print(o, money) { return printCanvas(ticket(o, money)) }
 
-  return {can: can, ready: ready, connect: connect, resume: resume, forget: forget, print: print, ticket: ticket, bytesOf: bytesOf,
-    opts: opts, setOpts: setOpts, name: function () { return dev ? dev.name || opts().name : opts().name }, on: function (f) { listeners.push(f) }};
+  var api = {go: function (u) { location.href = u }, can: can, ble: ble, android: ANDROID, ready: ready, connect: connect, resume: resume, forget: forget, print: print, ticket: ticket, bytesOf: bytesOf,
+    opts: opts, setOpts: setOpts, name: function () { return rawbt() ? 'RawBT' : dev ? dev.name || opts().name : opts().name }, on: function (f) { listeners.push(f) }};
+  return api;
 })();
