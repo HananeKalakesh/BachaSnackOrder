@@ -103,7 +103,7 @@ function prnSheet() {
       '<div class="prnrow"><label><input type="checkbox" id="prnAuto"' + (o.auto ? ' checked' : '') + '> ' + bi('اطبع كل طلب جديد لحالو', 'Print every new order by itself') + '</label></div>' +
       '<div class="prnrow"><label><input type="checkbox" id="prnArrive"' + (o.arrive ? ' checked' : '') + '> ' + bi('اطبع طلبات الموقع أول ما توصل (قبل القبول)', 'Print website orders as soon as they arrive (before Accept)') + '</label></div>' +
       '<div class="prnrow"><label>' + bi('عرض الورق', 'Paper width') + ' <select id="prnWidth"><option value="576"' + (o.width === 576 ? ' selected' : '') + '>80 mm · 72 mm print (576)</option><option value="512"' + (o.width === 512 ? ' selected' : '') + '>64 mm print (512)</option><option value="384"' + (o.width === 384 ? ' selected' : '') + '>58 mm · 48 mm print (384)</option></select></label>' +
-      '<label>' + bi('سرعة', 'Speed') + ' <select id="prnSpeed"><option value="180,12"' + (o.chunk === 180 ? ' selected' : '') + '>' + bi('عادي', 'Normal') + '</option><option value="100,30"' + (o.chunk === 100 ? ' selected' : '') + '>' + bi('بطيء (إذا طلع خربيط)', 'Slow (if it prints garbage)') + '</option><option value="20,15"' + (o.chunk === 20 ? ' selected' : '') + '>' + bi('بطيء كتير', 'Very slow') + '</option></select></label></div>' +
+      '<label>' + bi('سرعة', 'Speed') + ' <select id="prnSpeed"><option value="safe"' + (o.speed === 'safe' ? ' selected' : '') + '>' + bi('أكيد (الأفضل)', 'Safe (best)') + '</option><option value="180,12"' + (o.speed !== 'safe' && o.chunk === 180 ? ' selected' : '') + '>' + bi('سريع', 'Fast') + '</option><option value="100,30"' + (o.speed !== 'safe' && o.chunk === 100 ? ' selected' : '') + '>' + bi('بطيء (إذا طلع خربيط)', 'Slow (if it prints garbage)') + '</option><option value="20,15"' + (o.speed !== 'safe' && o.chunk === 20 ? ' selected' : '') + '>' + bi('بطيء كتير', 'Very slow') + '</option></select></label></div>' +
       '<div class="prnrow"><label>' + bi('ورق فاضي بالآخر (لتقطعو)', 'Blank paper at the end (to tear it)') + ' <select id="prnTail">' + [[80, '1 cm'], [160, '2 cm'], [240, '3 cm'], [320, '4 cm']].map(function (t) {
         return '<option value="' + t[0] + '"' + (o.tail === t[0] ? ' selected' : '') + '>' + t[1] + '</option>' }).join('') + '</select></label></div>' +
       (PRN.ready() && o.mode === 'ble' ? '<button class="ghost" data-prn="forget">' + bi('افصل', 'Disconnect') + '</button> ' : '');
@@ -126,7 +126,7 @@ $('#prnSheet').addEventListener('change', function (e) {
   if (e.target.id === 'prnWidth') PRN.setOpts({width: +e.target.value});
   if (e.target.id === 'prnFmt') PRN.setOpts({rawfmt: e.target.value});
   if (e.target.id === 'prnTail') PRN.setOpts({tail: +e.target.value});
-  if (e.target.id === 'prnSpeed') { var v = e.target.value.split(','); PRN.setOpts({chunk: +v[0], pause: +v[1]}) }
+  if (e.target.id === 'prnSpeed') { var v = e.target.value.split(','); PRN.setOpts(v[0] === 'safe' ? {speed: 'safe'} : {speed: 'fixed', chunk: +v[0], pause: +v[1]}) }
 });
 $('#prnSheet').addEventListener('click', function (e) {
   var b = e.target.closest('[data-prn]');

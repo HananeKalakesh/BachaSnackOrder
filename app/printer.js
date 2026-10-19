@@ -12,7 +12,7 @@ var PRN = (function () {
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
   var ANDROID = /Android/i.test(navigator.userAgent);
   // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
-  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, arrive: o.arrive === true, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '',
+  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, arrive: o.arrive === true, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, speed: o.speed || 'safe', name: o.name || '',
     // the shop's setup is the default: on Android, through the RawBT app (the Fox Touch is a classic Bluetooth printer), as a picture, 1 cm at the end (RawBT cuts)
     mode: ANDROID && o.mode !== 'ble' ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image', tail: o.tail == null ? 80 : o.tail} }
   function setOpts(p) { var o = opts(); for (var k in p) o[k] = p[k]; try { localStorage.setItem(KEY, JSON.stringify(o)) } catch (e) {} changed() }
@@ -75,7 +75,15 @@ var PRN = (function () {
   }
   function send(data) {
     var o = opts(), wait = function (ms) { return new Promise(function (ok) { setTimeout(ok, ms) }) };
-    var write = function (part) { return ch.writeValueWithoutResponse && ch.properties.writeWithoutResponse ? ch.writeValueWithoutResponse(part) : ch.writeValue(part) };
+    // Safe (the default): wait for the printer to confirm each piece, so its memory never overflows into printed garbage.
+    // Printers that can't confirm get small pieces with a pause instead.
+    var acked = o.speed === 'safe' && ch.properties.write;
+    if (o.speed === 'safe' && !acked) o = {chunk: 100, pause: 40};
+    if (acked) o = {chunk: 180, pause: 0};
+    var write = function (part) {
+      if (acked) return ch.writeValueWithResponse ? ch.writeValueWithResponse(part) : ch.writeValue(part);
+      return ch.writeValueWithoutResponse && ch.properties.writeWithoutResponse ? ch.writeValueWithoutResponse(part) : ch.writeValue(part);
+    };
     var p = Promise.resolve();
     for (var i = 0; i < data.length; i += o.chunk) (function (part) { p = p.then(function () { return write(part) }).then(function () { return o.pause && wait(o.pause) }) })(data.slice(i, i + o.chunk));
     return p;
@@ -103,7 +111,7 @@ var PRN = (function () {
   var SAUCES_AR = {'Cocktail Sauce': 'كوكتيل', 'Ketchup': 'كاتشاب', 'Barbecue Sauce': 'باربكيو', 'Cheddar Sauce': 'تشيدر', 'Buffalo Sauce': 'بوفالو', 'Honey Mustard Sauce': 'هني ماستارد', 'Garlic Sauce': 'توم'};
   var AR = 'Cairo, "Geeza Pro", sans-serif', EN = '"Plus Jakarta Sans", Helvetica, Arial, sans-serif';
   function ticket(o, money) {
-    var W = opts().width, M = 14, c = document.createElement('canvas'), g = c.getContext('2d'), y = 0, ops = [];
+    var W = opts().width, M = 30, c = document.createElement('canvas'), g = c.getContext('2d'), y = 0, ops = [];
     // drawn twice: once to measure the height, once for real
     function wrap(text, font, max) {
       g.font = font; var words = String(text).split(' '), lines = [], cur = '';
