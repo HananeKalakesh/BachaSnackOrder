@@ -12,7 +12,7 @@ var PRN = (function () {
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
   var ANDROID = /Android/i.test(navigator.userAgent);
   // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
-  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image'} }
+  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image', tail: o.tail == null ? 160 : o.tail} }
   function setOpts(p) { var o = opts(); for (var k in p) o[k] = p[k]; try { localStorage.setItem(KEY, JSON.stringify(o)) } catch (e) {} changed() }
   function changed() { listeners.forEach(function (f) { f() }) }
   function rawbt() { return opts().mode === 'rawbt' }
@@ -68,7 +68,7 @@ var PRN = (function () {
         out.push(b);
       }
     }
-    out.push(0x1b, 0x64, 4, 0x1d, 0x56, 0x42, 0);
+    out.push(0x1d, 0x56, 0x42, 0);
     return new Uint8Array(out);
   }
   function send(data) {
@@ -146,7 +146,8 @@ var PRN = (function () {
     if (pay) text(pay, AR, 26, 'center', W / 2, {bold: o.payment === 'Unpaid'});
     rule(1);
     text('شكراً يا باشا', AR, 22, 'center', W / 2);
-    y += 10;
+    // blank paper at the end, so the whole ticket is past the tear bar (about 2 cm above the print head)
+    y += 10 + opts().tail;
     c.width = W; c.height = Math.ceil(y);
     g.fillStyle = '#fff'; g.fillRect(0, 0, W, c.height);
     ops.forEach(function (f) { f() });
