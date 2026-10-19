@@ -147,7 +147,8 @@ var PRN = (function () {
     rule(1);
     text('شكراً يا باشا', AR, 22, 'center', W / 2);
     // blank paper at the end, so the whole ticket is past the tear bar (about 2 cm above the print head)
-    y += 10 + opts().tail;
+    // (printer commands end with "feed to the cutter and cut", so only a picture sent to RawBT needs it)
+    y += 10 + (rawbt() && opts().rawfmt === 'image' ? opts().tail : 0);
     c.width = W; c.height = Math.ceil(y);
     g.fillStyle = '#fff'; g.fillRect(0, 0, W, c.height);
     ops.forEach(function (f) { f() });
