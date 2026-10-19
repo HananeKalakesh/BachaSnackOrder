@@ -110,7 +110,7 @@ var PRN = (function () {
     }
     function text(t, font, size, align, x, opt) {
       opt = opt || {};
-      wrap(t, size + 'px ' + font, opt.max || W - 2 * M).forEach(function (line) {
+      wrap(t, (opt.bold ? '800 ' : '600 ') + size + 'px ' + font, opt.max || W - 2 * M).forEach(function (line) {
         var yy = y + size; ops.push(function () { g.font = (opt.bold ? '800 ' : '600 ') + size + 'px ' + font; g.textAlign = align; g.direction = opt.rtl ? 'rtl' : 'ltr'; g.fillStyle = '#000'; g.fillText(line, x, yy) });
         y += Math.round(size * (opt.lh || 1.3));
       });
@@ -131,7 +131,8 @@ var PRN = (function () {
     rule(2);
     o.items.forEach(function (x) {
       var price = money ? money(x.price * x.qty).replace(' L.L.', '') : '', yy = y + 30;
-      text(x.qty + ' × ' + (x.ar || x.name), AR, 30, 'right', W - M, {bold: true, rtl: true, max: W - 2 * M - 110});
+      g.font = '700 22px ' + EN; var room = price ? g.measureText(price).width + 24 : 0;  // the price keeps its own space on the left
+      text(x.qty + ' × ' + (x.ar || x.name), AR, 30, 'right', W - M, {bold: true, rtl: true, max: W - 2 * M - room});
       if (price) ops.push(function () { g.font = '700 22px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(price, M, yy) });
       if (x.sauces && x.sauces.length) text('+ ' + x.sauces.map(function (s) { return SAUCES_AR[s] || s }).join(' + '), AR, 24, 'right', W - M, {rtl: true});
       y += 4;
