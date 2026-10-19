@@ -313,9 +313,9 @@ var EB = (function () {
     // no number (an order taken at the counter or by phone): WhatsApp opens and asks who to send it to
     return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
   };
-  // A Not paid order paid later, in full: Cash or Whish, and the day it was paid
+  // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   EB.paid = function (o, payment, day) {
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': day}}],
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': day && day !== o.day ? day : ''}}],
       {t: 'paid', key: o.key, payment: payment});
   };
 
