@@ -276,6 +276,20 @@ var EB = (function () {
     EB.send([{op: 'update', tab: 'Menu', where: {'Item': name}, set: {'On order screen': !out, 'Sold out': out ? true : ''}}],
       {t: 'soldout', name: name, out: out});
   };
+  // Busy mode for the website (Status tab, row "Website"): 'busy' with the extra wait in minutes, or 'paused' (no website
+  // orders); ends by itself at until. mode '' turns it off.
+  EB.setBusy = function (mode, wait, until) {
+    EB.send([{op: 'append', tab: 'Status', unique: 'Key', rows: [{'Key': 'Website'}]},
+      {op: 'update', tab: 'Status', where: {'Key': 'Website'}, set: {'Value': mode, 'Wait': wait || '', 'Until': until || '', 'Set at': "'" + ymd(new Date()) + ' ' + EB.hhmm()}}],
+      {t: 'busy', mode: mode, wait: wait, until: until});
+  };
+  // The busy mode now: from the Status tab in a copy loaded at r.at, and the changes made since; null when off or over
+  EB.busy = function (r) {
+    var b = null;
+    EB.rows(r && r.Status).forEach(function (x) { if (str(x.Key) === 'Website') b = {mode: str(x.Value), wait: num(x.Wait), until: num(x.Until)} });
+    changes(r && r.at).forEach(function (c) { var f = c.effect || {}; if (f.t === 'busy') b = {mode: f.mode, wait: f.wait, until: f.until} });
+    return b && b.mode && b.until > Date.now() ? b : null;
+  };
   // A website order accepted (goes to the kitchen) or rejected
   EB.status = function (o, status) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Status': status}}], {t: 'status', key: o.key, status: status});

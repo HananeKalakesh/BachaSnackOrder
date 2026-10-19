@@ -86,6 +86,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
   <h1 class="display" id="stName"></h1>
   <span class="count num" id="count">0</span>
   <span class="clock num" id="clock"></span>
+  <button class="langbtn" id="who" type="button">🔥 <span class="ar">المطبخ</span><span class="en">Kitchen</span></button>
   <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
 </div>
 <div class="net" id="net"></div>
@@ -233,6 +234,12 @@ function setLang(l) {
   $('#stName').textContent = STATION === 'Kitchen' ? T('المطبخ', 'Kitchen') : T('المطبخ · ' + (STATION_AR[STATION] || STATION), 'Kitchen · ' + STATION);
 }
 $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
+// switching the user goes back to the app's picker
+$('#who').addEventListener('click', function () {
+  if (!confirm(T('تبدّل المستخدم على هالجهاز؟', 'Switch the user on this device?'))) return;
+  try { localStorage.removeItem('elbash-role') } catch (e) {}
+  location.href = 'index.html' + (EB.demo ? '?demo' : '');
+});
 
 // iPads only play sound after a tap, so the screen starts with one big button
 $('#go').addEventListener('click', function () {

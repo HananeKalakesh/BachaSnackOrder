@@ -2,7 +2,7 @@
    Online, the newest files are used (and saved); offline, the saved copy. Orders themselves are not handled here:
    the app keeps unsent changes in its own outbox (core.js). */
 var CACHE = 'elbash-app-v1';
-var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
+var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'cashier.js', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../assets/elbash/noar-green.svg'];
 
 self.addEventListener('install', function (e) {

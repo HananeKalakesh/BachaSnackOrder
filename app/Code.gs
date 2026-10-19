@@ -273,6 +273,8 @@ function webOrder_(ss, o) {
   var cache = CacheService.getScriptCache(), mine = Number(cache.get('web:' + phone) || 0), all = Number(cache.get('web:all') || 0);
   if (mine >= 3) throw new Error('Too many orders from this number. Please call or WhatsApp us.');
   if (all >= 40) throw new Error('We are very busy right now. Please call or WhatsApp us.');
+  var st = status_(ss);
+  if (st && st.mode === 'paused') throw new Error('We are very busy right now. Please call or WhatsApp us.');
 
   // Items and prices only from the Menu tab, and only what is on the menu right now
   var menu = {}, head = [], rate = Number(String(setting_(ss, 'USD rate')).replace(/,/g, '')) || 89500;
@@ -329,10 +331,21 @@ function webOrder_(ss, o) {
   return { ok: true, num: num, total: total };
 }
 
+/** Busy mode, set by the cashier (Status tab, row "Website"): {mode: 'busy' (orders take longer, wait = extra minutes)
+ *  or 'paused' (no website orders), until: when it ends by itself}, or null. */
+function status_(ss) {
+  var sh = ss.getSheetByName('Status');
+  if (!sh || sh.getLastRow() < 2) return null;
+  var v = sh.getDataRange().getValues(), head = v[0].map(String), out = null;
+  v.slice(1).forEach(function (r) { var m = {}; head.forEach(function (h, k) { m[h] = r[k] }); if (String(m['Key']) === 'Website') out = m });
+  if (!out || !out['Value'] || Number(out['Until']) < Date.now()) return null;
+  return { mode: String(out['Value']), wait: Number(out['Wait']) || 0, until: Number(out['Until']) };
+}
+
 /** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one. */
 function menu_() {
   var ss = book_(), rows = ss.getSheetByName('Menu').getDataRange().getValues().slice(1);
-  return { rate: Number(setting_(ss, 'USD rate').replace(/,/g, '')) || 89500, items: rows.filter(function (r) { return r[1] }).map(function (r) {
+  return { rate: Number(setting_(ss, 'USD rate').replace(/,/g, '')) || 89500, status: status_(ss), items: rows.filter(function (r) { return r[1] }).map(function (r) {
     return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
       price: Number(r[4]) || 0, on: r[5] === true };
   }) };

@@ -6,7 +6,7 @@ var HUB_GROUPS = [['apps', 'التطبيقات', 'Apps'], ['menus', 'المني�
   ['brand', 'الهوية واللوغو والصور', 'Brand, logos & photos'], ['data', 'الشيت والإعدادات', 'Sheet & setup'], ['other', 'غير ذلك', 'Other']];
 var HUB_FIXED = [
   ['apps', '🧾', 'التطبيق (رابط واحد لكل جهاز)', 'The app (one link for every device)', SITE + 'app/', 'بيسأل مين عم يستعمله', 'Asks who is using it'],
-  ['apps', '👨‍🍳', 'شاشة المطبخ', 'Kitchen screen', '', 'قريباً', 'Coming later'],
+  ['apps', '🔥', 'شاشة المطبخ', 'Kitchen screen', SITE + 'app/kitchen.html', 'الطلبات اللي لازم تنعمل', 'The orders to make'],
   ['apps', '🧪', 'تجربة', 'Demo', SITE + 'app/manage.html?demo', 'جرّب كل شي بدون ما يوصل عالشيت', 'Try everything, nothing reaches the sheet'],
   ['menus', '📱', 'المنيو الرقمي', 'Digital menu', SITE, 'للزباين، مع الطلب عالواتساب', 'For customers, with WhatsApp ordering'],
   ['apps', '📣', 'الماركتنغ', 'Marketing', SITE + 'app/?role=marketing', 'صور وفيديوهات للستوريات', 'Photos and videos for stories'],

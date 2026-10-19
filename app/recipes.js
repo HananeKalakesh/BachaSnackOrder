@@ -68,7 +68,7 @@ function pctClass(p) { return p <= target() ? 'ok' : p <= target() + 5 ? 'near' 
 
 /* ---------- the screen ---------- */
 function showRecipes() {
-  if (MANAGE && SET.pin) {
+  if (RFULL && SET.pin) {
     if (!SET.loaded) { $('#rec').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
     if (pin() !== SET.pin && !(/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin))) {
       RC.locked = true; var had = pin(); setPin('');
@@ -95,7 +95,7 @@ function drawRecipes() {
   var d = recData();
   if (RC.draft) return drawEditor(d);
   if (RC.open) return drawRecipe(d);
-  var modes = [['menu', 'الأصناف', 'Menu items'], ['prep', 'التحضيرات', 'Preparations']].concat(MANAGE ? [['ing', 'المواد', 'Ingredients']] : []);
+  var modes = [['menu', 'الأصناف', 'Menu items'], ['prep', 'التحضيرات', 'Preparations']].concat(RFULL ? [['ing', 'المواد', 'Ingredients']] : []);
   var h = '<div class="shead"><h2 class="display">' + bi('الوصفات', 'Recipes') + '</h2></div>' + recNote() +
     '<div class="modes rmodes">' + modes.map(function (m) { return '<button data-rmode="' + m[0] + '"' + (RC.mode === m[0] ? ' class="on"' : '') + '>' + bi(m[1], m[2]) + '</button>' }).join('') + '</div>';
   if (!d) { $('#rec').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
@@ -108,18 +108,18 @@ function drawRecipes() {
 // Every menu item: its cost, price, food cost % and suggested price (management), or just whether it has a recipe (staff)
 function menuList(d) {
   var items = MENU_ALL.filter(function (m) { return priceOfItem(m) > 0 }), h = '';
-  if (MANAGE) h += '<div class="card rtarget"><label>' + bi('الهدف: كلفة المواد من سعر البيع', 'Target: ingredients as a share of the price') +
+  if (RFULL) h += '<div class="card rtarget"><label>' + bi('الهدف: كلفة المواد من سعر البيع', 'Target: ingredients as a share of the price') +
     ' <input id="rTarget" type="number" inputmode="numeric" min="5" max="80" value="' + target() + '"> %</label>' +
     '<small class="muted">' + bi('أخضر = ضمن الهدف · أصفر = قريب · أحمر = الكلفة عالية، فكّر تغيّر السعر', 'Green = on target · yellow = close · red = costs too much for its price') + '</small></div>';
   var cats = [];
   items.forEach(function (m) { if (cats.indexOf(m.cat) < 0) cats.push(m.cat) });
   h += cats.map(function (c) {
-    return '<div class="card"><h3 class="display">' + esc(c) + '</h3><table class="rtable">' + (MANAGE ? '<tr><th></th><th class="r">' + bi('الكلفة', 'Cost') + '</th><th class="r">' + bi('السعر', 'Price') +
+    return '<div class="card"><h3 class="display">' + esc(c) + '</h3><table class="rtable">' + (RFULL ? '<tr><th></th><th class="r">' + bi('الكلفة', 'Cost') + '</th><th class="r">' + bi('السعر', 'Price') +
       '</th><th class="r">%</th><th class="r">' + bi('السعر المقترح', 'Suggested') + '</th></tr>' : '') +
       items.filter(function (m) { return m.cat === c }).map(function (m) {
         var r = d.rec.filter(function (x) { return x.type === 'Menu item' && x.name === m.name })[0];
         var name = '<td>' + bi(esc(m.ar || m.name), esc(m.name)) + (r ? '' : ' <small class="muted">· ' + bi('ما في وصفة', 'no recipe') + '</small>') + '</td>';
-        if (!MANAGE) return '<tr class="rrow" data-ropen="' + esc(m.name) + '|Menu item">' + name + '</tr>';
+        if (!RFULL) return '<tr class="rrow" data-ropen="' + esc(m.name) + '|Menu item">' + name + '</tr>';
         var cost = r ? recipeCost(d, r) : null, price = priceOfItem(m), p = cost && !cost.missing.length && cost.total ? cost.total / price * 100 : null;
         return '<tr class="rrow" data-ropen="' + esc(m.name) + '|Menu item">' + name +
           '<td class="r num">' + (cost ? (cost.missing.length ? '<span class="muted" title="' + esc(cost.missing.join(', ')) + '">?</span>' : $usd(cost.total)) : '–') + '</td>' +
@@ -133,11 +133,11 @@ function menuList(d) {
 
 function prepList(d) {
   var preps = d.rec.filter(function (x) { return x.type === 'Prep' }).sort(function (a, b) { return a.name < b.name ? -1 : 1 });
-  var h = MANAGE ? '<button class="save radd" data-rnew="Prep">+ ' + bi('تحضير جديد (صوص، تتبيلة، خلطة…)', 'New preparation (sauce, marinade, breading…)') + '</button>' : '';
+  var h = RFULL ? '<button class="save radd" data-rnew="Prep">+ ' + bi('تحضير جديد (صوص، تتبيلة، خلطة…)', 'New preparation (sauce, marinade, breading…)') + '</button>' : '';
   return h + '<div class="card"><table class="rtable">' + (preps.length ? preps.map(function (p) {
-    var u = MANAGE ? unitCost(d, p.name) : null;
+    var u = RFULL ? unitCost(d, p.name) : null;
     return '<tr class="rrow" data-ropen="' + esc(p.name) + '|Prep"><td>' + bi(esc(p.ar || p.name), esc(p.name)) + '<div class="muted">' + bi('بيطلع ', 'Makes ') + '<span class="num">' + fmt(p.makes) + '</span> ' + unitName(p.unit) + '</div></td>' +
-      (MANAGE ? '<td class="r num">' + (u == null ? '<span class="muted">?</span>' : costPer(u, p.unit)) + '</td>' : '') + '</tr>';
+      (RFULL ? '<td class="r num">' + (u == null ? '<span class="muted">?</span>' : costPer(u, p.unit)) + '</td>' : '') + '</tr>';
   }).join('') : '<tr><td class="muted">' + bi('لسا ما في تحضيرات', 'No preparations yet') + '</td></tr>') + '</table></div>';
 }
 // "$0.45 / 100 g" reads better than a cost per gram
@@ -180,17 +180,17 @@ function drawRecipe(d) {
   var f = findRec(d, RC.open), r = f.r, m = MENU_ALL.filter(function (x) { return x.name === f.name })[0];
   var title = r ? (r.ar ? bi(esc(r.ar), esc(r.name)) : esc(r.name)) : m ? bi(esc(m.ar || m.name), esc(m.name)) : esc(f.name);
   var h = '<div class="shead"><button class="nav" data-rback="1" aria-label="' + T('رجوع', 'Back') + '"><span class="chev">›</span></button><h2 class="display">' + title + '</h2>' +
-    (MANAGE ? '<button class="save redit" data-redit="1">' + (r ? bi('عدّل', 'Edit') : bi('اكتب الوصفة', 'Write the recipe')) + '</button>' : '') + '</div>';
+    (RFULL ? '<button class="save redit" data-redit="1">' + (r ? bi('عدّل', 'Edit') : bi('اكتب الوصفة', 'Write the recipe')) + '</button>' : '') + '</div>';
   if (!r) { $('#rec').innerHTML = h + '<div class="card"><p class="muted">' + bi('لسا ما في وصفة لهالصنف.', 'No recipe for this yet.') + '</p></div>'; return }
-  var cost = MANAGE ? recipeCost(d, r) : null;
+  var cost = RFULL ? recipeCost(d, r) : null;
   h += '<div class="cols"><div class="card"><h3 class="display">' + bi('المكوّنات', 'What goes in') + (r.type === 'Prep' ? ' <small class="muted">· ' + bi('بيطلع ', 'makes ') + '<span class="num">' + fmt(r.makes) + '</span> ' + unitName(r.unit) + '</small>' : '') + '</h3>' +
     '<table class="rtable">' + r.lines.map(function (l) {
-      var u = MANAGE ? unitCost(d, l.use) : null, isPrep = d.rec.some(function (x) { return x.type === 'Prep' && x.name === l.use });
+      var u = RFULL ? unitCost(d, l.use) : null, isPrep = d.rec.some(function (x) { return x.type === 'Prep' && x.name === l.use });
       return '<tr' + (isPrep ? ' class="rrow" data-ropen="' + esc(l.use) + '|Prep"' : '') + '><td>' + bi(esc(usedAr(d, l.use)), esc(l.use)) + (isPrep ? ' <small class="muted">↗</small>' : '') + '</td>' +
         '<td class="r"><b class="num">' + fmt2(l.qty) + '</b> ' + unitName(usedUnit(d, l.use)) + '</td>' +
-        (MANAGE ? '<td class="r num">' + (u == null ? '<span class="muted">?</span>' : $usd(u * l.qty)) + '</td>' : '') + '</tr>';
+        (RFULL ? '<td class="r num">' + (u == null ? '<span class="muted">?</span>' : $usd(u * l.qty)) + '</td>' : '') + '</tr>';
     }).join('') + '</table>' +
-    (MANAGE ? '<div class="rsum">' + bi('الكلفة', 'Cost') + ': <b class="num">' + $usd(cost.total) + '</b> <small class="muted num">' + ll(cost.total) + '</small>' +
+    (RFULL ? '<div class="rsum">' + bi('الكلفة', 'Cost') + ': <b class="num">' + $usd(cost.total) + '</b> <small class="muted num">' + ll(cost.total) + '</small>' +
       (r.type === 'Prep' && r.makes ? ' · <span class="num">' + costPer(cost.total / r.makes, r.unit) + '</span>' : '') +
       (r.type === 'Menu item' && m ? ' · ' + bi('السعر', 'Price') + ' <b class="num">' + $usd(priceOfItem(m)) + '</b> · <b class="pct ' + pctClass(cost.total / priceOfItem(m) * 100) + '">' + Math.round(cost.total / priceOfItem(m) * 100) + '%</b>' : '') +
       (cost.missing.length ? '<div class="err">' + bi('ناقص سعر: ', 'No price yet for: ') + esc(cost.missing.join(', ')) + '</div>' : '') + '</div>' : '') + '</div>' +

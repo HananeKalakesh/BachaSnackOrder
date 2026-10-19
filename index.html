@@ -65,6 +65,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .cbtn.wa{background:var(--whatsapp);border-color:var(--whatsapp);color:#fff}
 .closed-banner{margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--red);color:#fff;font-weight:700;font-size:14px;text-align:center}
 .closed-banner[hidden]{display:none}
+.busy-banner{background:var(--mustard);color:var(--ink)}
 
 /* promo: the red offer banner */
 .promo{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:12px;width:calc(100% - 32px);margin:18px 16px 0;padding:18px 20px;border:0;border-radius:24px;background:var(--red);color:#fff;text-align:start;cursor:pointer}
@@ -190,6 +191,7 @@ footer small{display:block;margin-top:6px;font-size:12px}
 .line em{font-style:normal;font-weight:800}
 .remove{border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}
 .note{margin-top:12px;padding:10px 14px;border-radius:14px;background:var(--sand);color:var(--body);font-size:14px}
+.busy-note{background:var(--mustard);color:var(--ink);font-weight:700}
 .note[hidden]{display:none}
 #cartItems .note{margin-top:0}
 .reorder{display:block;width:100%;margin-top:10px;border:1.5px dashed var(--green);background:transparent;color:var(--green);border-radius:14px;padding:11px;font-weight:700;cursor:pointer}
@@ -257,6 +259,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
     <a class="cbtn wa" href="https://wa.me/96176075724" data-phone="wa" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg><span data-t>WhatsApp</span></a>
   </div>
   <div id="closedBanner" class="closed-banner" role="status" hidden data-t>We're closed today (Monday). You can still browse the menu.</div>
+  <div id="busyBanner" class="closed-banner busy-banner" role="status" hidden></div>
 </header>
 <button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>1 KG Shawarma or Tawouk with fries</b></span><span class="go">$15 <i>→</i></span></button>
 <nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
@@ -283,6 +286,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div id="cartItems"></div>
   <div class="total"><span data-t>Total</span><span id="total">0 L.L.</span></div>
   <div id="hoursNote" class="note" hidden></div>
+  <div id="busyNote" class="note busy-note" hidden></div>
   <div id="deliveryNote" class="note" hidden></div>
   <div class="form">
     <input type="text" id="custName" placeholder="Your name" data-tp autocomplete="name">
@@ -469,7 +473,9 @@ drinkGrid: [
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
-  'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
+  'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
+  "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
+  'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
   "We couldn't send it to the shop. Send it on WhatsApp instead:":'ما قدرنا نبعتو للمحل. ابعتو عالواتساب بدالها:',
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
@@ -625,6 +631,19 @@ function updateStatus() {
 }
 setInterval(updateStatus, 60000);
 
+/* ---------- busy mode, set by the cashier in the shop's app: a longer wait, or no website orders for a while ---------- */
+let BUSY = null;
+function busyNow() { return BUSY && BUSY.until > Date.now() ? BUSY : null }
+function updateBusy() {
+  const b = busyNow(), until = b && new Date(b.until).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', timeZone: CONFIG.timeZone});
+  const msg = !b ? '' : b.mode === 'paused'
+    ? t("We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.").replace('{t}', until)
+    : t('We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!').replace('{m}', b.wait || 20);
+  $('#busyBanner').textContent = msg; $('#busyBanner').hidden = !b;
+  $('#busyNote').textContent = msg; $('#busyNote').hidden = !b;
+}
+setInterval(updateBusy, 60000);
+
 /* ---------- translation ---------- */
 const missing = new Set(), miss = x => { if (x) missing.add(x) };
 function t(x) { if (lang !== 'ar' || !x) return x; const a = AR.ui[x]; if (a === undefined) { miss(x); return x } return a }
@@ -660,6 +679,7 @@ function applyLang() {
   const ar = lang === 'ar', h = document.documentElement;
   missing.clear();
   h.lang = ar ? 'ar' : 'en'; h.dir = ar ? 'rtl' : 'ltr';
+  if (typeof updateBusy === 'function') updateBusy();
   $$('[data-t]').forEach(e => e.textContent = t(e.dataset.en));
   $$('[data-tp]').forEach(e => e.placeholder = t(e.dataset.enp));
   $$('[data-ta]').forEach(e => e.setAttribute('aria-label', t(e.dataset.ta)));
@@ -928,6 +948,7 @@ $('.send').onclick = () => {
   const entries = Object.entries(order);
   if (!entries.length) return fail('Your order is empty. Add some items first.');
   if (isClosedToday()) return fail("We're closed on Mondays. Please send your order another day.");
+  if (busyNow() && busyNow().mode === 'paused') { updateBusy(); err.textContent = $('#busyBanner').textContent; return }
   const name = $('#custName').value.trim(), phone = $('#custPhone').value.trim(), type = ($('input[name=otype]:checked') || {}).value,
     addr = $('#custAddr').value.trim(), note = $('#custNote').value.trim();
   if (!name) return fail('Please enter your name.');
@@ -1020,6 +1041,7 @@ addStructuredData();
 spy();
 if (CONFIG.menuUrl) {
   (DEMO ? demoServer().then(d => d.menu()) : fetch(CONFIG.menuUrl).then(r => r.json())).then(sheet => {
+    BUSY = sheet && sheet.status || null; updateBusy();
     if (!applySheet(sheet)) return;
     store.set('basha-sheet-menu', sheet);
     Object.keys(order).forEach(k => { const p = priceOf(k); if (p) order[k].price = p; else delete order[k] });   // today's prices in the cart
