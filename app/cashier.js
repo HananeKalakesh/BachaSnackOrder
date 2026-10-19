@@ -97,6 +97,7 @@ function prnSheet() {
       '<div class="prnrow"><label>' + bi('طريقة الإرسال', 'Send as') + ' <select id="prnFmt"><option value="image"' + (o.rawfmt === 'image' ? ' selected' : '') + '>' + bi('صورة (الأفضل)', 'Picture (best)') + '</option>' +
         '<option value="escpos"' + (o.rawfmt === 'escpos' ? ' selected' : '') + '>' + bi('أوامر الطابعة', 'Printer commands') + '</option></select></label></div>';
     else h += '<p class="muted">' + (PRN.ready() ? bi('موصولة: ', 'Connected: ') + '<b>' + esc(PRN.name()) + '</b>' : bi('مش موصولة', 'Not connected')) + '</p>' +
+      (!PRN.ready() && PRN.err ? '<p class="err">' + bi('آخر محاولة: ', 'Last try: ') + esc(PRN.err) + '</p>' : '') +
       '<div class="busyopts">' + (PRN.ready() ? '<button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button>' : '<button data-prn="connect">🔗 ' + bi('وصّل الطابعة', 'Connect the printer') + '</button>') + '</div>' +
       (PRN.android ? '<p class="muted">' + bi('إذا الطابعة ما بيّنت بالقايمة، جرّبو «عبر تطبيق RawBT».', 'If the printer isn\'t in the list, try "Through the RawBT app".') + '</p>' : '');
     h +=
@@ -118,7 +119,7 @@ $('#prnBtn').addEventListener('click', function () {
 });
 function prnConnect() {
   return PRN.connect().then(function (n) { toast('الطابعة موصولة', 'Printer connected: ' + n); if (!$('#prnSheet').hidden) prnSheet() })
-    .catch(function (e) { if (!/cancel/i.test(e.message)) toast('ما وصلت الطابعة: ' + esc(e.message), 'Printer not connected: ' + e.message); prnSheet() });
+    .catch(function (e) { PRN.err = e.message || String(e); if (!/cancel/i.test(e.message)) toast('ما وصلت الطابعة: ' + esc(e.message), 'Printer not connected: ' + e.message); prnSheet() });
 }
 $('#prnSheet').addEventListener('change', function (e) {
   if (e.target.id === 'prnAuto') PRN.setOpts({auto: e.target.checked});

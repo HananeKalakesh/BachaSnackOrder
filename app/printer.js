@@ -8,7 +8,11 @@ var PRN = (function () {
   // services the common Bluetooth receipt printers use for their "write" line
   var SERVICES = ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455',
     '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb', '0000fee7-0000-1000-8000-00805f9b34fb',
-    '0000ae30-0000-1000-8000-00805f9b34fb', '0000af30-0000-1000-8000-00805f9b34fb', '0000ae00-0000-1000-8000-00805f9b34fb'];
+    '0000ae30-0000-1000-8000-00805f9b34fb', '0000af30-0000-1000-8000-00805f9b34fb', '0000ae00-0000-1000-8000-00805f9b34fb',
+    '0000fff0-0000-1000-8000-00805f9b34fb', '0000ffe5-0000-1000-8000-00805f9b34fb', '0000ffd0-0000-1000-8000-00805f9b34fb',
+    '0000ff10-0000-1000-8000-00805f9b34fb', '0000ff12-0000-1000-8000-00805f9b34fb', '0000fee0-0000-1000-8000-00805f9b34fb',
+    '0000ff80-0000-1000-8000-00805f9b34fb', '0000fe00-0000-1000-8000-00805f9b34fb', '0000ff01-0000-1000-8000-00805f9b34fb',
+    '6e400001-b5a3-f393-e0a9-e50e24dcca9e', 'd0611e78-bbb4-4591-a5f8-487910ae4366', '0000fef5-0000-1000-8000-00805f9b34fb'];
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
   var ANDROID = /Android/i.test(navigator.userAgent);
   // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
@@ -25,7 +29,9 @@ var PRN = (function () {
   function attach(d) {
     dev = d;
     d.addEventListener('gattserverdisconnected', function () { ch = null; changed() });
+    var seen = [];
     return d.gatt.connect().then(function (g) { return g.getPrimaryServices() }).then(function (list) {
+      seen = list.map(function (s) { return String(s.uuid || '?').slice(4, 8) });
       // the first characteristic we're allowed to write to
       return list.reduce(function (p, s) {
         return p.then(function (found) {
@@ -35,9 +41,9 @@ var PRN = (function () {
         });
       }, Promise.resolve(null));
     }).then(function (c) {
-      if (!c) throw new Error('This printer has no line we can write to');
-      ch = c; setOpts({name: d.name || 'Printer'}); return d.name;
-    });
+      if (!c) throw new Error('No printing line on "' + (d.name || '?') + '" (services: ' + (seen.join(', ') || 'none') + ')');
+      ch = c; api.err = ''; setOpts({name: d.name || 'Printer'}); return d.name;
+    }).catch(function (e) { api.err = e.message || String(e); changed(); throw e });
   }
   // Tapping the button: pick the printer (needs a tap, browsers ask the user)
   function connect() {
