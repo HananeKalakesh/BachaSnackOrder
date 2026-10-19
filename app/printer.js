@@ -12,7 +12,9 @@ var PRN = (function () {
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
   var ANDROID = /Android/i.test(navigator.userAgent);
   // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
-  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, arrive: o.arrive === true, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image', tail: o.tail == null ? 160 : o.tail} }
+  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, arrive: o.arrive === true, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '',
+    // the shop's setup is the default: on Android, through the RawBT app (the Fox Touch is a classic Bluetooth printer), as a picture, 1 cm at the end (RawBT cuts)
+    mode: ANDROID && o.mode !== 'ble' ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image', tail: o.tail == null ? 80 : o.tail} }
   function setOpts(p) { var o = opts(); for (var k in p) o[k] = p[k]; try { localStorage.setItem(KEY, JSON.stringify(o)) } catch (e) {} changed() }
   function changed() { listeners.forEach(function (f) { f() }) }
   function rawbt() { return opts().mode === 'rawbt' }
