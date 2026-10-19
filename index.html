@@ -323,6 +323,7 @@ const CONFIG = {
   phone: '96176075724',          // WhatsApp number: country code + number, digits only
   phoneDisplay: '76 075 724',    // how the number is shown on the page
   closedDay: 1,                  // day off (Beirut time): 0=Sun 1=Mon 2=Tue ... 6=Sat, or null for none
+  openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
   hours: [['13:00', '17:00'], ['19:00', '23:30']], // opening hours each open day (Beirut time)
   timeZone: 'Asia/Beirut',
   pieces: {4: 500000, 5: 600000, 6: 700000, 7: 800000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
@@ -597,10 +598,10 @@ function restore() {
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DAY_NAMES = {en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], ar: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']};
 function beirutNow() {
-  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone: CONFIG.timeZone, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23'}).formatToParts(new Date()).map(x => [x.type, x.value]));
-  return {day: DAYS.indexOf(p.weekday), min: +p.hour * 60 + +p.minute};
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone: CONFIG.timeZone, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric', hourCycle: 'h23'}).formatToParts(new Date()).map(x => [x.type, x.value]));
+  return {day: DAYS.indexOf(p.weekday), min: +p.hour * 60 + +p.minute, date: p.year + '-' + p.month + '-' + p.day};
 }
-function isClosedToday() { return CONFIG.closedDay != null && beirutNow().day === CONFIG.closedDay }
+function isClosedToday() { const n = beirutNow(); return CONFIG.closedDay != null && n.day === CONFIG.closedDay && !(CONFIG.openDates || []).includes(n.date) }
 const mins = hm => { const [h, m] = hm.split(':'); return +h * 60 + +m };
 function timeText(hm) {
   const [h, m] = hm.split(':').map(Number), h12 = h % 12 || 12, mm = m ? ':' + String(m).padStart(2, '0') : '';
@@ -610,7 +611,7 @@ function timeText(hm) {
 function openStatus() {
   const {day, min} = beirutNow(), hours = CONFIG.hours || [];
   if (!hours.length) return null;
-  const closedDay = day === CONFIG.closedDay;
+  const closedDay = isClosedToday();
   if (!closedDay) {
     const now = hours.find(([a, b]) => min >= mins(a) && min < mins(b));
     if (now) return {open: true, text: t('Open now · until {t}').replace('{t}', timeText(now[1]))};
