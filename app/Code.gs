@@ -39,6 +39,14 @@ var COPY_TO = { menu: '1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk', brand: '1Gxub86ScNlnY
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
 
+/** Run this once from the editor (choose allowDrive next to Run): Google asks to allow the script to use the El Bash
+ *  folder in Drive and to fetch the website's files. Needed for the Marketing screen and "Copy to Drive". */
+function allowDrive() {
+  var name = DriveApp.getFolderById(FOLDER_ID).getName();
+  UrlFetchApp.fetch(SITE_URL + 'app/assets.json');
+  Logger.log('All set: the script can use the "' + name + '" folder in Drive.');
+}
+
 function doGet(e) {
   var p = (e && e.parameter) || {};
   if (p.format === 'menu') return json_(menu_());
