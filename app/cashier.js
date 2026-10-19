@@ -154,14 +154,17 @@ function printOrder(o) {
   });
 }
 // Orders already printed on this device, so a website order printed when it arrived isn't printed again on Accept
-var PRINTED = (function () { try { return JSON.parse(localStorage.getItem('elbash-printed')) || [] } catch (e) { return [] } })();
-function markPrinted(o) { if (PRINTED.indexOf(o.key) < 0) PRINTED.push(o.key); PRINTED = PRINTED.slice(-300); try { localStorage.setItem('elbash-printed', JSON.stringify(PRINTED)) } catch (e) {} }
+// (by each order's own code, not its number: numbers start again from #1, e.g. after old orders are cleared)
+var PRINTED = (function () { try { return JSON.parse(localStorage.getItem('elbash-printed2')) || [] } catch (e) { return [] } })();
+function printId(o) { return o.uid || o.key }
+function wasPrinted(o) { return PRINTED.indexOf(printId(o)) >= 0 }
+function markPrinted(o) { if (!wasPrinted(o)) PRINTED.push(printId(o)); PRINTED = PRINTED.slice(-300); try { localStorage.setItem('elbash-printed2', JSON.stringify(PRINTED)) } catch (e) {} }
 function printerSet() { return ROLE === 'cashier' && PRN.can() && (PRN.opts().mode === 'rawbt' || PRN.opts().name) }
-function autoPrint(o) { if (printerSet() && PRN.opts().auto && PRINTED.indexOf(o.key) < 0) { markPrinted(o); printOrder(o) } }
+function autoPrint(o) { if (printerSet() && PRN.opts().auto && !wasPrinted(o)) { markPrinted(o); printOrder(o) } }
 // Website orders the moment they arrive (no tap): one after another, a few seconds apart so the printer app keeps up
 function arrivePrint(list) {
   if (!printerSet() || !PRN.opts().arrive) return;
-  list.filter(function (o) { return PRINTED.indexOf(o.key) < 0 }).forEach(function (o, i) {
+  list.filter(function (o) { return !wasPrinted(o) }).forEach(function (o, i) {
     markPrinted(o); setTimeout(function () { printOrder(o) }, i * 5000);
   });
 }
