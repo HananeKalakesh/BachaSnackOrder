@@ -12,7 +12,7 @@ var PRN = (function () {
   var dev = null, ch = null, busy = Promise.resolve(), listeners = [];
   var ANDROID = /Android/i.test(navigator.userAgent);
   // mode: 'ble' talks to the printer from the browser; 'rawbt' hands each ticket to the RawBT app (Android, classic Bluetooth printers)
-  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble'} }
+  function opts() { var o = {}; try { o = JSON.parse(localStorage.getItem(KEY)) || {} } catch (e) {} return {auto: o.auto !== false, width: o.width || 576, chunk: o.chunk || 180, pause: o.pause == null ? 12 : o.pause, name: o.name || '', mode: o.mode === 'rawbt' && ANDROID ? 'rawbt' : 'ble', rawfmt: o.rawfmt === 'escpos' ? 'escpos' : 'image'} }
   function setOpts(p) { var o = opts(); for (var k in p) o[k] = p[k]; try { localStorage.setItem(KEY, JSON.stringify(o)) } catch (e) {} changed() }
   function changed() { listeners.forEach(function (f) { f() }) }
   function rawbt() { return opts().mode === 'rawbt' }
@@ -78,16 +78,19 @@ var PRN = (function () {
     for (var i = 0; i < data.length; i += o.chunk) (function (part) { p = p.then(function () { return write(part) }).then(function () { return o.pause && wait(o.pause) }) })(data.slice(i, i + o.chunk));
     return p;
   }
-  // RawBT: the ticket's bytes go to the RawBT app, which prints them on the paired printer
-  function sendRawbt(data) {
-    var s = '';
+  // RawBT: the ticket goes to the RawBT app, which prints it on the printer chosen there.
+  // As a picture (RawBT turns it into dots with its own printer settings), or as ready ESC/POS bytes.
+  var RAWBT = '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+  function sendRawbt(canvas) {
+    if (opts().rawfmt !== 'escpos') { api.go('intent:' + canvas.toDataURL('image/png') + RAWBT); return Promise.resolve() }
+    var data = bytesOf(canvas), s = '';
     for (var i = 0; i < data.length; i += 8192) s += String.fromCharCode.apply(null, data.subarray(i, i + 8192));
-    api.go('intent:base64,' + btoa(s) + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;');
+    api.go('intent:base64,' + btoa(s) + RAWBT);
     return Promise.resolve();
   }
   // One print at a time, reconnecting first if the printer dropped
   function printCanvas(canvas) {
-    if (rawbt()) return sendRawbt(bytesOf(canvas));
+    if (rawbt()) return sendRawbt(canvas);
     var job = busy.then(function () { return ready() ? null : dev ? attach(dev) : Promise.reject(new Error('NOT_CONNECTED')) })
       .then(function () { return send(bytesOf(canvas)) });
     busy = job.catch(function () {});

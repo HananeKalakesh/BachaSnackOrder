@@ -93,7 +93,9 @@ function prnSheet() {
     if (o.mode === 'rawbt') h += '<div class="prnhelp"><ol><li>' + bi('نزّلو RawBT من Google Play (مجاني)', 'Get RawBT from Google Play (free)') + '</li>' +
       '<li>' + bi('بـ RawBT: اختارو الطابعة (Bluetooth) وعرض الورق 80mm', 'In RawBT: pick the printer (Bluetooth) and 80 mm paper') + '</li>' +
       '<li>' + bi('ارجعو لهون ودقو «اطبع تجربة»', 'Come back here and tap Print a test') + '</li></ol></div>' +
-      '<div class="busyopts"><button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button><button data-prn="getrawbt">⬇ ' + bi('نزّل RawBT', 'Get RawBT') + '</button></div>';
+      '<div class="busyopts"><button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button><button data-prn="getrawbt">⬇ ' + bi('نزّل RawBT', 'Get RawBT') + '</button></div>' +
+      '<div class="prnrow"><label>' + bi('طريقة الإرسال', 'Send as') + ' <select id="prnFmt"><option value="image"' + (o.rawfmt === 'image' ? ' selected' : '') + '>' + bi('صورة (الأفضل)', 'Picture (best)') + '</option>' +
+        '<option value="escpos"' + (o.rawfmt === 'escpos' ? ' selected' : '') + '>' + bi('أوامر الطابعة', 'Printer commands') + '</option></select></label></div>';
     else h += '<p class="muted">' + (PRN.ready() ? bi('موصولة: ', 'Connected: ') + '<b>' + esc(PRN.name()) + '</b>' : bi('مش موصولة', 'Not connected')) + '</p>' +
       '<div class="busyopts">' + (PRN.ready() ? '<button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button>' : '<button data-prn="connect">🔗 ' + bi('وصّل الطابعة', 'Connect the printer') + '</button>') + '</div>' +
       (PRN.android ? '<p class="muted">' + bi('إذا الطابعة ما بيّنت بالقايمة، جرّبو «عبر تطبيق RawBT».', 'If the printer isn\'t in the list, try "Through the RawBT app".') + '</p>' : '');
@@ -118,6 +120,7 @@ function prnConnect() {
 $('#prnSheet').addEventListener('change', function (e) {
   if (e.target.id === 'prnAuto') PRN.setOpts({auto: e.target.checked});
   if (e.target.id === 'prnWidth') PRN.setOpts({width: +e.target.value});
+  if (e.target.id === 'prnFmt') PRN.setOpts({rawfmt: e.target.value});
   if (e.target.id === 'prnSpeed') { var v = e.target.value.split(','); PRN.setOpts({chunk: +v[0], pause: +v[1]}) }
 });
 $('#prnSheet').addEventListener('click', function (e) {
