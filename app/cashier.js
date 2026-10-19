@@ -165,3 +165,14 @@ function arrivePrint(list) {
   });
 }
 PRN.resume(); drawPrn();
+
+/* ---------- keep the screen on while the cashier app is open (so orders and the chime are never missed) ---------- */
+var WAKE = null;
+function keepAwake() {
+  if (ROLE !== 'cashier' || !('wakeLock' in navigator) || document.visibilityState !== 'visible' || (WAKE && !WAKE.released)) return;
+  navigator.wakeLock.request('screen').then(function (l) { WAKE = l }, function () {});
+}
+// the browser lets go when the app goes to the back (or RawBT opens to print): take it again on return
+document.addEventListener('visibilitychange', keepAwake);
+document.addEventListener('click', keepAwake);
+keepAwake();
