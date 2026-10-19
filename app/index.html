@@ -773,7 +773,7 @@ $('#save').addEventListener('click', function () {
     items: items, text: EB.text(items), total: t, payment: method, paidUsd: 0, rate: RATE, received: method === 'Unpaid' ? 0 : t,
     note: $('#note').value.trim(), name: $('#cname').value.trim(), type: kind, done: ''};
   EB.save(o);
-  autoPrint(o);
+  autoPrint(o, true);
   resetOrder();
   toast('انحفظ الطلب رقم <span class="num">' + n + '</span> · <span class="num">' + money(t) + '</span>', 'Order #' + n + ' saved');
 });

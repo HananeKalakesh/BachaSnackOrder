@@ -69,7 +69,7 @@ $('#avail').addEventListener('click', function (e) {
 drawBusy();
 
 /* ---------- the receipt printer: 🖨 in the top bar connects it; new orders print by themselves ---------- */
-var BUILD = '19.10-7';   // shown in the printer sheet, to check a tablet runs the newest version
+var BUILD = '19.10-8';   // shown in the printer sheet, to check a tablet runs the newest version
 var BLUEFY = 'https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055';
 function drawPrn() {
   var b = $('#prnBtn');
@@ -163,7 +163,8 @@ function printId(o) { return o.uid || o.key }
 function wasPrinted(o) { return PRINTED.indexOf(printId(o)) >= 0 }
 function markPrinted(o) { if (!wasPrinted(o)) PRINTED.push(printId(o)); PRINTED = PRINTED.slice(-300); try { localStorage.setItem('elbash-printed2', JSON.stringify(PRINTED)) } catch (e) {} }
 function printerSet() { return ROLE === 'cashier' && PRN.can() && (PRN.opts().mode === 'rawbt' || PRN.opts().name) }
-function autoPrint(o) { if (printerSet() && PRN.opts().auto && !wasPrinted(o)) { markPrinted(o); printOrder(o) } }
+// fresh: an order just saved on this tablet always prints; an accepted website order prints unless it already did
+function autoPrint(o, fresh) { if (printerSet() && PRN.opts().auto && (fresh || !wasPrinted(o))) { markPrinted(o); printOrder(o) } }
 // Website orders the moment they arrive (no tap): one after another, a few seconds apart so the printer app keeps up
 function arrivePrint(list) {
   if (!printerSet() || !PRN.opts().arrive) return;
