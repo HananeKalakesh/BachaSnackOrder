@@ -1293,9 +1293,9 @@ document.addEventListener('click', function () { if (!audio) try { audio = new (
 function checkWeb() {
   var today = EB.bizDay(DAY_END), waiting = knownOrders().filter(function (o) { return o.day === today && o.status === 'Waiting' });
   var badge = $('#webBadge'); badge.hidden = !waiting.length; badge.textContent = '🌐 ' + waiting.length;
-  var fresh = seenWeb && waiting.some(function (o) { return !seenWeb[o.key] });
+  var fresh = seenWeb ? waiting.filter(function (o) { return !seenWeb[o.key] }) : [];
   seenWeb = {}; waiting.forEach(function (o) { seenWeb[o.key] = 1 });
-  if (fresh && ROLE === 'cashier') { chime(); toast('🌐 طلب جديد من الموقع', 'New website order') }
+  if (fresh.length && ROLE === 'cashier') { chime(); toast('🌐 طلب جديد من الموقع', 'New website order'); arrivePrint(fresh) }
 }
 function poll() {
   if (EB.pending().length || !EB.key() || ROLE !== 'cashier') return;

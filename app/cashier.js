@@ -101,6 +101,7 @@ function prnSheet() {
       (PRN.android ? '<p class="muted">' + bi('إذا الطابعة ما بيّنت بالقايمة، جرّبو «عبر تطبيق RawBT».', 'If the printer isn\'t in the list, try "Through the RawBT app".') + '</p>' : '');
     h +=
       '<div class="prnrow"><label><input type="checkbox" id="prnAuto"' + (o.auto ? ' checked' : '') + '> ' + bi('اطبع كل طلب جديد لحالو', 'Print every new order by itself') + '</label></div>' +
+      '<div class="prnrow"><label><input type="checkbox" id="prnArrive"' + (o.arrive ? ' checked' : '') + '> ' + bi('اطبع طلبات الموقع أول ما توصل (قبل القبول)', 'Print website orders as soon as they arrive (before Accept)') + '</label></div>' +
       '<div class="prnrow"><label>' + bi('عرض الورق', 'Paper width') + ' <select id="prnWidth"><option value="576"' + (o.width === 576 ? ' selected' : '') + '>80 mm · 72 mm print (576)</option><option value="512"' + (o.width === 512 ? ' selected' : '') + '>64 mm print (512)</option><option value="384"' + (o.width === 384 ? ' selected' : '') + '>58 mm · 48 mm print (384)</option></select></label>' +
       '<label>' + bi('سرعة', 'Speed') + ' <select id="prnSpeed"><option value="180,12"' + (o.chunk === 180 ? ' selected' : '') + '>' + bi('عادي', 'Normal') + '</option><option value="100,30"' + (o.chunk === 100 ? ' selected' : '') + '>' + bi('بطيء (إذا طلع خربيط)', 'Slow (if it prints garbage)') + '</option><option value="20,15"' + (o.chunk === 20 ? ' selected' : '') + '>' + bi('بطيء كتير', 'Very slow') + '</option></select></label></div>' +
       '<div class="prnrow"><label>' + bi('ورق فاضي بالآخر (لتقطعو)', 'Blank paper at the end (to tear it)') + ' <select id="prnTail">' + [[80, '1 cm'], [160, '2 cm'], [240, '3 cm'], [320, '4 cm']].map(function (t) {
@@ -121,6 +122,7 @@ function prnConnect() {
 }
 $('#prnSheet').addEventListener('change', function (e) {
   if (e.target.id === 'prnAuto') PRN.setOpts({auto: e.target.checked});
+  if (e.target.id === 'prnArrive') PRN.setOpts({arrive: e.target.checked});
   if (e.target.id === 'prnWidth') PRN.setOpts({width: +e.target.value});
   if (e.target.id === 'prnFmt') PRN.setOpts({rawfmt: e.target.value});
   if (e.target.id === 'prnTail') PRN.setOpts({tail: +e.target.value});
@@ -150,5 +152,16 @@ function printOrder(o) {
     drawPrn();
   });
 }
-function autoPrint(o) { if (ROLE === 'cashier' && PRN.can() && PRN.opts().auto && PRN.opts().name) printOrder(o) }
+// Orders already printed on this device, so a website order printed when it arrived isn't printed again on Accept
+var PRINTED = (function () { try { return JSON.parse(localStorage.getItem('elbash-printed')) || [] } catch (e) { return [] } })();
+function markPrinted(o) { if (PRINTED.indexOf(o.key) < 0) PRINTED.push(o.key); PRINTED = PRINTED.slice(-300); try { localStorage.setItem('elbash-printed', JSON.stringify(PRINTED)) } catch (e) {} }
+function printerSet() { return ROLE === 'cashier' && PRN.can() && (PRN.opts().mode === 'rawbt' || PRN.opts().name) }
+function autoPrint(o) { if (printerSet() && PRN.opts().auto && PRINTED.indexOf(o.key) < 0) { markPrinted(o); printOrder(o) } }
+// Website orders the moment they arrive (no tap): one after another, a few seconds apart so the printer app keeps up
+function arrivePrint(list) {
+  if (!printerSet() || !PRN.opts().arrive) return;
+  list.filter(function (o) { return PRINTED.indexOf(o.key) < 0 }).forEach(function (o, i) {
+    markPrinted(o); setTimeout(function () { printOrder(o) }, i * 5000);
+  });
+}
 PRN.resume(); drawPrn();
