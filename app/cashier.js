@@ -69,6 +69,7 @@ $('#avail').addEventListener('click', function (e) {
 drawBusy();
 
 /* ---------- the receipt printer: 🖨 in the top bar connects it; new orders print by themselves ---------- */
+var BUILD = '19.10-7';   // shown in the printer sheet, to check a tablet runs the newest version
 var BLUEFY = 'https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055';
 function drawPrn() {
   var b = $('#prnBtn');
@@ -109,6 +110,8 @@ function prnSheet() {
         return '<option value="' + t[0] + '"' + (o.tail === t[0] ? ' selected' : '') + '>' + t[1] + '</option>' }).join('') + '</select></label></div>' +
       (PRN.ready() && o.mode === 'ble' ? '<button class="ghost" data-prn="forget">' + bi('افصل', 'Disconnect') + '</button> ' : '');
   }
+  var o2 = PRN.opts();
+  h += '<p class="muted" style="font-size:12px;margin-top:10px">' + esc('v' + BUILD + ' · ' + (o2.mode === 'rawbt' ? 'RawBT' : 'Chrome') + ' · auto ' + (o2.auto ? 'on' : 'off') + ' · ' + (navigator.userAgent.match(/(SamsungBrowser|Chrome)\/[\d]+/) || [''])[0]) + '</p>';
   $('#prnSheet').innerHTML = h + '<button class="ghost" data-prn="close">' + bi('رجوع', 'Back') + '</button></div>';
   $('#prnSheet').hidden = false;
 }
