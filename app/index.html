@@ -613,6 +613,9 @@ function section(c) {
 }
 function renderGrid() {
   var grid = $('#grid'), top = grid.scrollTop, w = grid.clientWidth - 20;
+  lastW = grid.clientWidth;
+  // Hidden (loading, user picker, another tab): no width to measure yet, so draw once it shows
+  if (lastW <= 0) { grid.innerHTML = ''; return }
   var cols = LAYOUT.map(function (col) { return col.filter(function (c) { return CATS.indexOf(c) >= 0 }) });
   var count = function (col) { return col.reduce(function (a, c) { return a + MENU.filter(function (it) { return it.cat === c }).length }, 0) };
   CATS.forEach(function (c) {
@@ -636,7 +639,9 @@ function renderGrid() {
   grid.scrollTop = top;
 }
 var lastW = 0;
-window.addEventListener('resize', function () { var w = $('#grid').clientWidth; if (MENU.length && w !== lastW) { lastW = w; renderGrid() } });
+function regrid() { var w = $('#grid').clientWidth; if (MENU.length && w > 0 && w !== lastW) renderGrid() }
+window.addEventListener('resize', regrid);
+if (window.ResizeObserver) new ResizeObserver(regrid).observe($('#grid'));
 $('#grid').addEventListener('click', function (e) {
   var b = e.target.closest('.tile'); if (!b) return;
   var i = +b.dataset.i, it = MENU[i];
