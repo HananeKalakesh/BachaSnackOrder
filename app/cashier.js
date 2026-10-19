@@ -67,3 +67,71 @@ $('#avail').addEventListener('click', function (e) {
   useMenu(EB.cached('menu')); drawAvail();
 });
 drawBusy();
+
+/* ---------- the receipt printer: 🖨 in the top bar connects it; new orders print by themselves ---------- */
+var BLUEFY = 'https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055';
+function drawPrn() {
+  var b = $('#prnBtn');
+  if (ROLE !== 'cashier') { b.hidden = true; return }
+  b.hidden = false;
+  b.className = 'langbtn prnbtn' + (PRN.ready() ? ' on' : PRN.can() ? ' off' : ' off');
+  b.innerHTML = '🖨 ' + (PRN.ready() ? '✓' : PRN.can() && PRN.opts().name ? bi('وصّل', 'Connect') : '');
+}
+PRN.on(drawPrn);
+function prnSheet() {
+  var o = PRN.opts(), h = '<div class="paybox"><h3 class="display">🖨 ' + bi('الطابعة', 'Printer') + '</h3>';
+  if (!PRN.can()) {
+    h += '<div class="prnhelp">' + bi('سفاري ما بيقدر يحكي مع طابعة بلوتوث. افتحو التطبيق بـ Bluefy:', 'Safari can\'t talk to a Bluetooth printer. Open the app in Bluefy:') +
+      '<ol><li>' + bi('نزّلو Bluefy من الـ App Store (مجاني)', 'Get Bluefy from the App Store (free)') + '</li>' +
+      '<li>' + bi('افتحو فيه هالرابط واعملو Add to Home Screen', 'Open this link in it and Add to Home Screen') + '</li>' +
+      '<li>' + bi('دقو 🖨 واختارو الطابعة', 'Tap 🖨 and pick the printer') + '</li></ol></div>' +
+      '<div class="busyopts"><button data-prn="bluefy">⬇ ' + bi('نزّل Bluefy', 'Get Bluefy') + '</button><button data-prn="link">📋 ' + bi('انسخ رابط التطبيق', 'Copy the app link') + '</button></div>';
+  } else {
+    h += '<p class="muted">' + (PRN.ready() ? bi('موصولة: ', 'Connected: ') + '<b>' + esc(PRN.name()) + '</b>' : bi('مش موصولة', 'Not connected')) + '</p>' +
+      '<div class="busyopts">' + (PRN.ready() ? '<button data-prn="test">🧾 ' + bi('اطبع تجربة', 'Print a test') + '</button>' : '<button data-prn="connect">🔗 ' + bi('وصّل الطابعة', 'Connect the printer') + '</button>') + '</div>' +
+      '<div class="prnrow"><label><input type="checkbox" id="prnAuto"' + (o.auto ? ' checked' : '') + '> ' + bi('اطبع كل طلب جديد لحالو', 'Print every new order by itself') + '</label></div>' +
+      '<div class="prnrow"><label>' + bi('عرض الورق', 'Paper width') + ' <select id="prnWidth"><option value="576"' + (o.width === 576 ? ' selected' : '') + '>80 mm</option><option value="512"' + (o.width === 512 ? ' selected' : '') + '>80 mm (72)</option><option value="384"' + (o.width === 384 ? ' selected' : '') + '>58 mm</option></select></label>' +
+      '<label>' + bi('سرعة', 'Speed') + ' <select id="prnSpeed"><option value="180,12"' + (o.chunk === 180 ? ' selected' : '') + '>' + bi('عادي', 'Normal') + '</option><option value="100,30"' + (o.chunk === 100 ? ' selected' : '') + '>' + bi('بطيء (إذا طلع خربيط)', 'Slow (if it prints garbage)') + '</option><option value="20,15"' + (o.chunk === 20 ? ' selected' : '') + '>' + bi('بطيء كتير', 'Very slow') + '</option></select></label></div>' +
+      (PRN.ready() ? '<button class="ghost" data-prn="forget">' + bi('افصل', 'Disconnect') + '</button> ' : '');
+  }
+  $('#prnSheet').innerHTML = h + '<button class="ghost" data-prn="close">' + bi('رجوع', 'Back') + '</button></div>';
+  $('#prnSheet').hidden = false;
+}
+$('#prnBtn').addEventListener('click', function () {
+  // one tap connects when the printer is known; otherwise the sheet
+  if (PRN.can() && !PRN.ready() && PRN.opts().name) return prnConnect();
+  prnSheet();
+});
+function prnConnect() {
+  return PRN.connect().then(function (n) { toast('الطابعة موصولة', 'Printer connected: ' + n); if (!$('#prnSheet').hidden) prnSheet() })
+    .catch(function (e) { if (!/cancel/i.test(e.message)) toast('ما وصلت الطابعة: ' + esc(e.message), 'Printer not connected: ' + e.message); prnSheet() });
+}
+$('#prnSheet').addEventListener('change', function (e) {
+  if (e.target.id === 'prnAuto') PRN.setOpts({auto: e.target.checked});
+  if (e.target.id === 'prnWidth') PRN.setOpts({width: +e.target.value});
+  if (e.target.id === 'prnSpeed') { var v = e.target.value.split(','); PRN.setOpts({chunk: +v[0], pause: +v[1]}) }
+});
+$('#prnSheet').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-prn]');
+  if (!b) { if (e.target === this) this.hidden = true; return }
+  var a = b.dataset.prn;
+  if (a === 'bluefy') return window.open(BLUEFY, '_blank');
+  if (a === 'link') { var u = location.href.split('#')[0]; (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { toast('انْسخ الرابط', 'Link copied') }, function () { prompt('Copy:', u) }); return }
+  if (a === 'connect') return prnConnect();
+  if (a === 'forget') { PRN.forget(); return prnSheet() }
+  if (a === 'test') this.hidden = true;
+  if (a === 'test') return printOrder({num: 0, day: EB.bizDay(DAY_END), time: EB.hhmm(), type: 'Pickup', name: 'تجربة · Test', payment: 'Cash',
+    items: [{qty: 1, name: 'Zinger Sandwich', ar: 'ساندويش زنجر', price: 500000, sauces: []}, {qty: 2, name: 'Pepsi', ar: 'بيبسي', price: 70000, sauces: []}],
+    total: 640000, note: 'بلا بصل'});
+  this.hidden = true;
+});
+function printOrder(o) {
+  if (!PRN.can()) return prnSheet();
+  toast('عم يطبع #' + o.num, 'Printing #' + o.num);
+  return PRN.print(o, money).catch(function (e) {
+    toast(e.message === 'NOT_CONNECTED' ? 'الطابعة مش موصولة: دق 🖨' : 'ما طبع: ' + esc(e.message), e.message === 'NOT_CONNECTED' ? 'Printer not connected: tap 🖨' : 'Didn\'t print: ' + e.message);
+    drawPrn();
+  });
+}
+function autoPrint(o) { if (ROLE === 'cashier' && PRN.can() && PRN.opts().auto && PRN.opts().name) printOrder(o) }
+PRN.resume(); drawPrn();

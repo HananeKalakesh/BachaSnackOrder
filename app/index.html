@@ -59,7 +59,9 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .tabs button.on{background:var(--paper);color:var(--green)}
 /* who uses this device */
 .rolebtn{white-space:nowrap}
-.busybtn{white-space:nowrap}.busybtn.busy{background:var(--mustard);color:var(--ink);border-color:var(--mustard)}.busybtn.paused{background:var(--red);border-color:var(--red)}
+.busybtn{white-space:nowrap}.prnbtn{white-space:nowrap}.prnbtn.on{background:var(--paper);border-color:var(--paper);color:var(--green)}.prnbtn.off{opacity:.75}
+.prnrow{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:10px 0}.prnrow label{display:flex;gap:8px;align-items:center;font-weight:700}
+.prnhelp{text-align:start;line-height:1.6}.prnhelp ol{padding-inline-start:22px;margin:6px 0}.busybtn.busy{background:var(--mustard);color:var(--ink);border-color:var(--mustard)}.busybtn.paused{background:var(--red);border-color:var(--red)}
 /* cashier: what's on the menu now */
 .avsec{margin-bottom:14px}.avsec h3{margin:0 0 8px}
 .avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
@@ -434,6 +436,7 @@ td.r,th.r{text-align:end}
   <span class="net" id="net"></span>
   <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
+  <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
   <button class="langbtn" id="lang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
 </div>
@@ -469,6 +472,7 @@ td.r,th.r{text-align:end}
 <div class="report" id="marketView"><div class="wrap" id="market"></div></div>
 <div class="report" id="availView"><div class="wrap" id="avail"></div></div>
 <div id="busySheet" class="paysheet" hidden></div>
+<div id="prnSheet" class="paysheet" hidden></div>
 <!-- who uses this iPad (first time, or after "switch user") -->
 <div id="who" class="who" hidden>
   <div class="whobox">
@@ -572,7 +576,7 @@ function loadMenu() {
 function useMenu(r) {
   var first = !SET.loaded;
   SET = EB.settings(r); SET.loaded = true; RATE = SET.rate; DAY_END = SET.dayEnd; S.rate = RATE;
-  MENU_ALL = EB.menu(r); BUSY = EB.busy(r); if (typeof drawBusy === 'function') drawBusy();
+  MENU_ALL = EB.menu(r); BUSY = EB.busy(r); if (typeof drawBusy === 'function') drawBusy(); if (typeof drawPrn === 'function') drawPrn();
   // Sales and Expenses waited for the Settings (the PIN is there)
   if (first && $('#reportView').style.display === 'block') showReport();
   if (first && $('#expView').style.display === 'block') showExpenses();
@@ -639,7 +643,7 @@ function renderGrid() {
   grid.scrollTop = top;
 }
 var lastW = 0;
-function regrid() { var w = $('#grid').clientWidth; if (MENU.length && w > 0 && w !== lastW) renderGrid() }
+function regrid() { var g = $('#grid'), w = g ? g.clientWidth : 0; if (MENU.length && w > 0 && w !== lastW) renderGrid() }
 window.addEventListener('resize', regrid);
 if (window.ResizeObserver) new ResizeObserver(regrid).observe($('#grid'));
 $('#grid').addEventListener('click', function (e) {
@@ -766,6 +770,7 @@ $('#save').addEventListener('click', function () {
     items: items, text: EB.text(items), total: t, payment: method, paidUsd: 0, rate: RATE, received: method === 'Unpaid' ? 0 : t,
     note: $('#note').value.trim(), name: $('#cname').value.trim(), type: kind, done: ''};
   EB.save(o);
+  autoPrint(o);
   resetOrder();
   toast('انحفظ الطلب رقم <span class="num">' + n + '</span> · <span class="num">' + money(t) + '</span>', 'Order #' + n + ' saved');
 });
@@ -1186,7 +1191,7 @@ function drawOrders() {
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + esc(o.payment) + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
         typeTag(o) + '</span></div>' +
-      '<div class="oacts">' + acts + '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
+      '<div class="oacts">' + acts + (PRN.can() ? '<button class="backb" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') + '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
   }).join('') + '</div>';
   // Done on an order not paid yet: how it was paid
   var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
@@ -1223,7 +1228,7 @@ $('#ord').addEventListener('click', function (e) {
     var w = (TD.waiting || []).filter(function (x) { return x.key === (b.dataset.accept || b.dataset.reject) })[0]; if (!w) return;
     // accepted: it joins the orders, and WhatsApp opens with the confirmation for the customer (the cashier taps send)
     if (b.dataset.accept) {
-      EB.status(w, 'Accepted'); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
+      EB.status(w, 'Accepted'); autoPrint(w); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
       if (w.phone) whatsapp(w, 'confirm');
     }
     else if (confirm(T('ترفض الطلب #' + w.num + '؟', 'Reject order #' + w.num + '?'))) {
@@ -1233,6 +1238,7 @@ $('#ord').addEventListener('click', function (e) {
     return drawOrders();
   }
   // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
+  if (b && b.dataset.print) { var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (pr) printOrder(pr); return }
   if (b && b.dataset.step) {
     var s = TD.list.filter(function (x) { return x.key === b.dataset.k })[0]; if (!s) return;
     if (b.dataset.step === 'ready') {
@@ -1600,6 +1606,7 @@ $('#exp').addEventListener('click', function (e) {
 <script src="recipes.js"></script>
 <script src="hub.js"></script>
 <script src="marketing.js"></script>
+<script src="printer.js"></script>
 <script src="cashier.js"></script>
 </body>
 </html>
