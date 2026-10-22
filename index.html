@@ -605,6 +605,17 @@ function applySheet(sheet) {
   return true;
 }
 
+// Photos added to the "6 Menu photos" folder in Drive, named after the item ("Crispy Meal.jpg", "Wings Meal 14 PCS.png"):
+// they replace the page's own photo, and give one to new items
+function applyPhotos(sheet) {
+  if (!sheet || !sheet.photos) return;
+  const norm = n => String(n).replace(/\s+\d+(?:[-/]\d+)?\s*(pcs|pc|kg)$/i, '').trim().toLowerCase();
+  Object.values(data).flat().forEach(it => {
+    const id = sheet.photos[norm(it[0])];
+    if (id) CONFIG.photos[it[0]] = 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w640';
+  });
+}
+
 /* ---------- saved data (cart, customer details, last order) ---------- */
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)) } catch (e) { return null } },
@@ -1143,6 +1154,7 @@ $('#langBtn').onclick = () => {
 }
 applySheet(store.get('basha-sheet-menu'));   // the last menu loaded from the sheet, so offline visits match it
 applyHours(store.get('basha-sheet-menu'));
+applyPhotos(store.get('basha-sheet-menu'));
 restore();
 applyLang();
 addStructuredData();
@@ -1152,6 +1164,7 @@ if (CONFIG.menuUrl) {
     BUSY = sheet && sheet.status || null; updateBusy();
     applyHours(sheet); updateStatus();
     if (!applySheet(sheet)) return;
+    applyPhotos(sheet);
     store.set('basha-sheet-menu', sheet);
     Object.keys(order).forEach(k => { const p = priceOf(k); if (p) order[k].price = p; else delete order[k] });   // today's prices in the cart
     render();

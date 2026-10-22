@@ -25,3 +25,5 @@ The website's opening hours, day off and open-anyway dates are rows of the Setti
 "Open anyway on"). Change them there or in the app (Management › Website); `menu_()` in `Code.gs`
 sends them to the website with the menu. `assets/docs/packaging/` holds the box photos shown in the Packaging tab of
 the costing worksheet.
+Photos put in the "6 Menu photos" folder in Drive, named after the item ("Crispy Meal.jpg"), show on the website menu
+(`menuPhotos_()` in `Code.gs` shares them by link and sends their ids with the menu; kept 10 minutes).

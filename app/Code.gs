@@ -107,7 +107,7 @@ function files_() {
   var subs = root.getFolders();
   while (subs.hasNext()) { var s = subs.next(); out.folders.push({ name: s.getName(), url: s.getUrl(), files: list(s) }) }
   out.folders.sort(function (a, b) { return a.name < b.name ? -1 : 1 });
-  try { cache.put('files', JSON.stringify(out), 300) } catch (err) {}
+  try { cache.put('files', JSON.stringify(out), 60) } catch (err) {}
   return out;
 }
 
@@ -350,6 +350,30 @@ function status_(ss) {
   return { mode: String(out['Value']), wait: Number(out['Wait']) || 0, until: Number(out['Until']) };
 }
 
+/** The photos in the "6 Menu photos" folder in Drive, by the item they are named after ("Crispy Meal.jpg",
+ *  "Wings Meal 14 PCS.png"): {"crispy meal": fileId}, the newest file winning. Each is shared "anyone with the link" so
+ *  customers' phones can show it. Kept 10 minutes, so a photo added in Drive shows on the website within 10 minutes. */
+function menuPhotos_() {
+  var cache = CacheService.getScriptCache(), hit = cache.get('menuPhotos');
+  if (hit) return JSON.parse(hit);
+  var out = {}, when = {};
+  try {
+    var it = DriveApp.getFolderById(COPY_TO.menu).getFiles();
+    while (it.hasNext()) {
+      var f = it.next();
+      if (!/^image\//.test(f.getMimeType())) continue;
+      var key = f.getName().replace(/\.[a-z0-9]+$/i, '').replace(/\s+\d+(?:[-\/]\d+)?\s*(pcs|pc|kg)$/i, '').trim().toLowerCase(), t = f.getLastUpdated().getTime();
+      if (when[key] && when[key] > t) continue;
+      if (f.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) {
+        try { f.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW) } catch (err) { continue }
+      }
+      out[key] = f.getId(); when[key] = t;
+    }
+  } catch (err) { return {} }
+  try { cache.put('menuPhotos', JSON.stringify(out), 600) } catch (err) {}
+  return out;
+}
+
 /** Every Menu row for the website: on = shown ("On order screen" ticked), soldOut = shown greyed as not available,
  *  usd = the $ price when there is one; and the
  *  opening hours, day off and open-anyway dates from the Settings tab (rows starting "Opening hours", "Closed day",
@@ -362,7 +386,7 @@ function menu_() {
     return undefined;
   };
   return { rate: Number(setting_(ss, 'USD rate').replace(/,/g, '')) || 89500, status: status_(ss),
-    hours: raw('Opening hours'), closedDay: raw('Closed day'), openDates: raw('Open anyway on'),
+    hours: raw('Opening hours'), closedDay: raw('Closed day'), openDates: raw('Open anyway on'), photos: menuPhotos_(),
     items: rows.filter(function (r) { return r[1] }).map(function (r) {
     return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
       price: Number(r[4]) || 0, on: r[5] === true, soldOut: r[7] === true };
