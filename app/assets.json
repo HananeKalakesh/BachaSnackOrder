@@ -221,6 +221,52 @@
    {
     "name": "Story – new hours, order online.png",
     "path": "assets/stories/new-hours.png"
+   },
+   {
+    "name": "Story – menu online, link sticker.png",
+    "path": "assets/stories/menu-online.png"
+   },
+   {
+    "name": "Story – new Half Broasted Meal.png",
+    "path": "assets/stories/new-half-broasted-meal.png"
+   },
+   {
+    "name": "Story – Mozzarella Sticks.png",
+    "path": "assets/stories/spotlight-mozzarella-sticks.png"
+   },
+   {
+    "name": "Story – Mix Appetizer Box.png",
+    "path": "assets/stories/spotlight-mix-appetizer-box.png"
+   },
+   {
+    "name": "Story – Chicken Sub Sandwich.png",
+    "path": "assets/stories/spotlight-chicken-sub.png"
+   },
+   {
+    "name": "Story – family meals, half kilo.png",
+    "path": "assets/stories/family-half-kg.png"
+   },
+   {
+    "name": "Story – sauces & extras.png",
+    "path": "assets/stories/sauces-extras.png"
+   },
+   {
+    "name": "Story – chicken sandwich prices.png",
+    "path": "assets/stories/prices-chicken-sandwiches.png"
+   },
+   {
+    "name": "Story – meal prices.png",
+    "path": "assets/stories/prices-meals.png"
+   }
+  ],
+  "1 Menus & print": [
+   {
+    "name": "Menu A3 – Arabic & English (Oct 2026).pdf",
+    "path": "assets/print/menu-a3.pdf"
+   },
+   {
+    "name": "Menu A3 – Arabic & English (Oct 2026).png",
+    "path": "assets/print/menu-a3.png"
    }
   ]
  }
