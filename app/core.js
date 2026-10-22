@@ -164,7 +164,9 @@ var EB = (function () {
         web: str(o.Source) === 'Website', phone: str(o.Phone).replace(/\D/g, ''), address: str(o.Address), status: str(o.Status),
         lang: str(o.Language) || 'ar', ready: str(o['Ready sent']),
         // a Not paid order paid on a later day: the money counts on that day
-        paidLater: str(o['Paid later']).slice(0, 10)};
+        paidLater: str(o['Paid later']).slice(0, 10),
+        // paid partly by Whish and the rest cash (Payment "Split"): the Whish part
+        whish: num(o['Whish part (L.L.)'])};
       x.live = live(x);
       byKey[x.key] = x; list.push(x);
     });
@@ -237,7 +239,7 @@ var EB = (function () {
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
-      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total; list[i].paidLater = f.later || '' }
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total; list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0 }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
     });
@@ -356,10 +358,11 @@ var EB = (function () {
     return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
   };
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
-  EB.paid = function (o, payment, day) {
-    var later = day && day !== o.day ? day : '';
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': later}}],
-      {t: 'paid', key: o.key, payment: payment, later: later});
+  // Split: whish is the part paid by Whish (L.L.), the rest was cash
+  EB.paid = function (o, payment, day, whish) {
+    var later = day && day !== o.day ? day : '', part = payment === 'Split' ? whish || 0 : '';
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': later, 'Whish part (L.L.)': part}}],
+      {t: 'paid', key: o.key, payment: payment, later: later, whish: part || 0});
   };
 
   /* ---------- reports: totals for the days from..to (yyyy-mm-dd) ---------- */
@@ -386,7 +389,9 @@ var EB = (function () {
       if (paid) {
         var got = o.received || o.total;
         s.sales += got; day(paidOn).sales += got;
-        if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got } else { s.cashOrders++; s.cashLbp += got }
+        if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got }
+        else if (o.payment === 'Split') { var w = Math.min(o.whish || 0, got); s.whishOrders++; s.whishLbp += w; s.cashOrders++; s.cashLbp += got - w }
+        else { s.cashOrders++; s.cashLbp += got }
         if (paidOn !== o.day) { s.laterOrders++; s.laterLbp += got; later.push(row(o)) }
       }
     });

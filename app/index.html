@@ -14,16 +14,16 @@
 <title>El Bash Orders</title>
 <script>
 // One app, one link, four users: each iPad remembers who uses it (switched from the top bar).
-// cashier: new order, today's orders · kitchen: the kitchen screen (kitchen.html) · chef: stock, recipes ·
-// marketing: photos, videos, stories, links · manage (PIN): sales, expenses · developer (PIN): home with every link and
-// file, recipes with costs. ?app=manage (manage.html) or ?role=… picks one.
+// cashier: new order, today's orders · kitchen: the kitchen screen (kitchen.html) · chef: recipes, stock ·
+// marketing: photos, videos, stories, links · manage (PIN): sales, expenses, income, costs · developer (PIN): the links, the
+// website's hours. ?app=manage (manage.html) or ?role=… picks one.
 var ROLE = (function () {
   var q = location.search, r = /[?&]app=manage\b/.test(q) ? 'manage' : (q.match(/[?&]role=(cashier|kitchen|chef|marketing|manage|developer)\b/) || [])[1];
   try { if (r) localStorage.setItem('elbash-role', r); else r = localStorage.getItem('elbash-role') } catch (e) {}
   return /^(cashier|kitchen|chef|marketing|manage|developer)$/.test(r || '') ? r : '';
 })();
 if (ROLE === 'kitchen') location.replace('kitchen.html' + location.search.replace(/[?&]role=kitchen/, '').replace(/^&/, '?'));
-var MANAGE = ROLE === 'manage', LOCKED = MANAGE || ROLE === 'developer', RFULL = ROLE === 'developer';   // LOCKED: asks for the PIN
+var MANAGE = ROLE === 'manage', LOCKED = MANAGE || ROLE === 'developer';   // LOCKED: asks for the PIN
 document.documentElement.setAttribute('data-role', ROLE || 'none');
 if (MANAGE) {
   document.documentElement.classList.add('manage');
@@ -320,16 +320,19 @@ td.r,th.r{text-align:end}
 .rmodes{margin-bottom:14px}
 .rtable td{padding:9px 6px;border-bottom:1px solid var(--hairline);vertical-align:top}.rtable th{font-size:13px;color:var(--muted);padding:4px 6px}
 .rtable td.r,.rtable th.r{text-align:center}
-.rrow{cursor:pointer}.rrow:active{background:var(--sand)}
 .pct{padding:2px 8px;border-radius:999px;font-size:14px}.pct.ok{background:#DCEBDD;color:var(--green)}.pct.near{background:var(--mustard);color:var(--ink)}.pct.over{background:var(--red);color:#fff}
-.rtarget{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}.rtarget input{width:70px;height:40px;border-radius:12px;border:1px solid var(--hairline);background:var(--paper);text-align:center;font-size:18px}
-.radd{margin:0 0 14px}.redit{width:auto;margin:0 auto 0 0;padding:0 22px;height:46px;font-size:17px}
-.rsum{margin-top:12px;padding-top:10px;border-top:1px dashed var(--hairline)}
-.steps{margin:0;padding-inline-start:22px;line-height:1.7}.steps li{margin-bottom:6px}
-.eline{display:grid;grid-template-columns:minmax(0,1fr) 110px 54px 36px;gap:8px;align-items:center;margin-bottom:8px}
-.eline select,.eline input,#eSteps{height:46px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);padding:0 10px;font:inherit;font-size:16px;color:var(--ink);min-width:0;width:100%}
-#eSteps{height:auto;padding:10px 14px;margin-top:6px;resize:vertical}
-.eunit{font-size:14px;color:var(--muted)}
+.rgh{margin:18px 0 10px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.rcard{display:flex;flex-direction:column;gap:6px;text-align:start;padding:16px;border-radius:18px;background:var(--white);box-shadow:var(--shadow-sm);min-height:92px}
+.rcard b{font-size:19px;color:var(--ink)}.rcard small{color:var(--muted);font-size:14px}.rcard:active{background:var(--sand)}
+.rhead{position:sticky;top:-16px;z-index:2}
+.rmult{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rmult button{min-width:58px;height:50px;padding:0 12px;border-radius:14px;background:var(--sand);color:var(--ink);font:800 20px/1 inherit}
+.rmult button.on{background:var(--green);color:var(--paper)}
+.rcustom{display:flex;align-items:center;gap:4px;font-weight:800;font-size:20px}.rcustom input{width:72px;height:50px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);text-align:center;font-size:20px}
+.rfor{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;margin-top:12px;font-size:18px}
+.rlines td{font-size:19px;padding:11px 6px}.rlines td.r{text-align:end;white-space:nowrap}
+.rnote{margin:0;line-height:1.6;color:var(--body)}
 .ghost{height:44px;padding:0 16px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:800;margin-top:4px}
 .day.x1{background:#F6E3E3}.day.x2{background:#EFC4C8}.day.x3{background:#E59AA2}.day.x4{background:#D9677A;color:#fff}.day.x5{background:#CF3B53;color:#fff}.day.x6{background:#C8102E;color:#fff}
 .day.x4 .dn,.day.x5 .dn,.day.x6 .dn{color:rgba(255,255,255,.85)}
@@ -356,7 +359,8 @@ td.r,th.r{text-align:end}
 .err{color:var(--red);min-height:22px}
 .muted{color:var(--muted)}
 .pill{display:inline-block;padding:0 10px;border-radius:999px;font-size:13px;color:var(--paper);background:var(--green)}
-.pill.Whish{background:var(--whish);color:#fff}
+.pill.Whish{background:var(--whish);color:#fff}.pill.Split{background:linear-gradient(90deg,var(--green) 50%,var(--whish) 50%);color:#fff}
+.splitl{display:block;margin:-4px auto 12px;background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:15px;cursor:pointer}
 .pill.Unpaid{background:var(--red);color:#fff}
 .pill.Later{background:var(--sand);color:var(--ink)}
 
@@ -499,11 +503,11 @@ td.r,th.r{text-align:end}
     <h1 class="display"><span class="ar">مين عم يستعمل هالجهاز؟</span><span class="en">Who's using this device?</span></h1>
     <div class="wgrid">
       <button data-role="cashier"><span class="wic">🧾</span><b><span class="ar">الكاشير</span><span class="en">Cashier</span></b><small><span class="ar">طلب جديد وطلبات اليوم</span><span class="en">New order and today's orders</span></small></button>
-      <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">مخزون اليوم والوصفات</span><span class="en">Today's stock and recipes</span></small></button>
+      <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">الوصفات ومخزون اليوم</span><span class="en">Recipes and today's stock</span></small></button>
       <button data-role="marketing"><span class="wic">📣</span><b><span class="ar">الماركتنغ</span><span class="en">Marketing</span></b><small><span class="ar">صور، فيديوهات، ستوريات، لوغو ومنيو</span><span class="en">Photos, videos, stories, logos, menus</span></small></button>
       <button data-role="kitchen"><span class="wic">🔥</span><b><span class="ar">المطبخ</span><span class="en">Kitchen</span></b><small><span class="ar">الطلبات اللي لازم تنعمل</span><span class="en">The orders to make</span></small></button>
       <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، الربح، المصاريف، الدخل · بالرمز</span><span class="en">Sales, profit, expenses, income · PIN</span></small></button>
-      <button data-role="developer"><span class="wic">🛠</span><b><span class="ar">المطوّر</span><span class="en">Developer</span></b><small><span class="ar">كل الروابط والملفات، الوصفات والأسعار · بالرمز</span><span class="en">Every link and file, recipes and costs · PIN</span></small></button>
+      <button data-role="developer"><span class="wic">🛠</span><b><span class="ar">المطوّر</span><span class="en">Developer</span></b><small><span class="ar">الروابط وأوقات الموقع · بالرمز</span><span class="en">Links and website hours · PIN</span></small></button>
     </div>
     <button class="langbtn wlang" id="whoLang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
   </div>
@@ -526,7 +530,15 @@ var PKEY = 'elbash-pos-pin', LKEY = 'elbash-pos-lang';
 var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
   'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات وإضافات', 'Drinks': 'مشروبات'};
-var PAY_AR = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع'};
+var PAY_AR = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع', Split: 'كاش + ويش'};
+// Paid partly by Whish, the rest cash: asks the Whish part ($, or L.L. for a big number); null when cancelled or not a part
+function askSplit(o) {
+  var a = prompt(T('قديش انْدفع ويش؟ الباقي كاش. (بالدولار، أو بالليرة)', 'How much was paid by Whish? The rest is cash. ($, or L.L.)') + '\n' + $usd(o.total) + ' · ' + ll(o.total));
+  if (a == null) return null;
+  var n = Number(String(a).replace(/[^0-9.]/g, '')), lbp = Math.round(n > 10000 ? n : n * RATE);
+  if (!(lbp > 0 && lbp < o.total)) { alert(T('المبلغ لازم يكون أقل من الحساب', 'The Whish part must be less than the total')); return null }
+  return lbp;
+}
 // Section colors, one El Bash color per food group
 // [background, text on it, tint behind items already in the order]
 var MUSTARD = ['#F2B705', '#1A1A17', '#FDF1CC'], RED = ['#C8102E', '#FFFFFF', '#FBE4E8'], GREEN = ['#1F4A37', '#FAF5EC', '#E2ECE6'],
@@ -1181,7 +1193,8 @@ function drawOwed() {
       '<div class="oside">' + amount(o.total) + '</div>' +
       '<div class="oacts"><button class="readyb" data-remind="' + esc(o.key) + '">📲 ' + bi('ذكّرو بالدفع', 'Payment reminder') + '</button>' +
         '<button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
-        '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button></div></div>';
+        '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button>' +
+        '<button class="splitl" data-paid="' + esc(o.key) + '" data-how="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button></div></div>';
   };
   var part = function (l, ar, en, none) {
     return '<h3 class="display owedh">' + bi(ar, en) + (l.length ? ' <small class="num">' + l.length + ' ' + bi('طلب', l.length > 1 ? 'orders' : 'order') + ' · ' + $usd(total(l)) + ' · ' + ll(total(l)) + '</small>' : '') + '</h3>' +
@@ -1198,7 +1211,9 @@ $('#owe').addEventListener('click', function (e) {
     var url = EB.payReminder(sameCustomer(o, owedOrders()), EB.bizDay(DAY_END), RATE), w = window.open(url, '_blank'); if (!w) location.href = url;
     return;
   }
-  EB.paid(o, b.dataset.how, EB.bizDay(DAY_END));
+  var part = b.dataset.how === 'Split' ? askSplit(o) : null;
+  if (b.dataset.how === 'Split' && part == null) return;
+  EB.paid(o, b.dataset.how, EB.bizDay(DAY_END), part);
   toast('الطلب #' + o.num + ' انْدفع', 'Order #' + o.num + ' marked paid');
   drawOwed();
 });
@@ -1258,6 +1273,7 @@ function drawOrders() {
   if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + bi('الطلب #' + pf.num + ': الحساب', 'Order #' + pf.num + ': payment') + '</h3>' +
     '<p>' + bi('كيف انْدفع؟', 'How was it paid?') + ' <b class="num">' + $usd(pf.total) + '</b> <small class="muted num">' + ll(pf.total) + '</small></p>' +
     '<div class="paybtns"><button class="payb cash" data-payhow="Cash">' + bi('كاش', 'Cash') + '</button><button class="payb whish" data-payhow="Whish">' + bi('ويش', 'Whish') + '</button></div>' +
+    '<button class="splitl" data-payhow="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button>' +
     '<button class="ghost" data-payhow="Unpaid">' + bi('لسا ما دفع', 'Still not paid') + '</button> <button class="ghost" data-payhow="cancel">' + bi('رجوع', 'Back') + '</button></div></div>';
   $('#ord').innerHTML = h;
 }
@@ -1303,9 +1319,11 @@ $('#ord').addEventListener('click', function (e) {
   }
   if (b && b.dataset.msg) { var u = TD.list.filter(function (x) { return x.key === b.dataset.msg })[0]; if (u) whatsapp(u, 'ready'); return }
   if (b && b.dataset.payhow) {
-    var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0]; TD.payFor = null;
+    var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0], part = null;
+    if (q && b.dataset.payhow === 'Split' && (part = askSplit(q)) == null) return;
+    TD.payFor = null;
     if (q && b.dataset.payhow !== 'cancel') {
-      if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END));
+      if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END), part);
       EB.done(q, hhmmNow());
     }
     return drawOrders();
@@ -1367,9 +1385,9 @@ $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' 
 function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
-var ROLES = {cashier: [['order', 'orders', 'owed', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'cost', 'site'], 'الإدارة', 'Management', '🔒'],
-  developer: [['home', 'rec'], 'المطوّر', 'Developer', '🛠']};
+var ROLES = {cashier: [['order', 'orders', 'owed', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'cost'], 'الإدارة', 'Management', '🔒'],
+  developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
   tabs.style.display = '';

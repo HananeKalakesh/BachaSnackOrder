@@ -133,7 +133,17 @@ var EBDemo = (function () {
       ['Kitchen screen: minutes until an order turns yellow', 10], ['Kitchen screen: minutes until an order turns red', 20], ['Day ends at (hour, 0-12)', 2], ['App key', 'demo'], [''],
       ['Opening hours (website), e.g. 1 PM - 4 PM, 6 PM - 11 PM', '1 PM - 4 PM, 6 PM - 11 PM'], ['Closed day (website): a day name, e.g. Monday, or empty for none', 'Monday'],
       ['Open anyway on (website): dates like 2026-12-25, comma between, e.g. a holiday on the closed day', '']];
-    var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P}, sheets = {};
+    // two kitchen recipes (the real ones come from the costing worksheet), each for 1 kg of chicken
+    var KR = [['Preparation', 'Arabic', 'Unit (g or piece)', 'One batch makes', 'Batch cost ($)', 'Cost per unit ($)', 'How it is made / notes'],
+      ['Crispy piece', 'قطعة كريسبي', 'piece', 19, '', '', 'Demo recipe.'], ['Garlic sauce', 'صوص ثوم', 'g', 1720, '', '', 'Demo recipe.']];
+    var KL = [['Preparation', 'Uses (an ingredient)', 'Amount', 'Unit', 'Cost per unit ($)', 'Cost ($)', 'Step (for the kitchen)'],
+      ['Crispy piece', 'Chicken breast', 1000, 'g', '', '', ''], ['Crispy piece', 'Salt', 10, 'g', '', '', 'Marinade'], ['Crispy piece', 'Garlic powder', 5, 'g', '', '', 'Marinade'],
+      ['Crispy piece', 'Flour', 280, 'g', '', '', 'Breading'], ['Crispy piece', 'Salt', 8.4, 'g', '', '', 'Breading'],
+      ['Garlic sauce', 'Garlic', 110, 'g', '', '', ''], ['Garlic sauce', 'Vegetable oil', 1360, 'ml', '', '', ''], ['Garlic sauce', 'Eggs', 6, 'piece', '', '', '']];
+    var KI = [['Ingredient', 'Arabic', 'What we buy (pack)', 'How much is in one pack', 'Unit (g, ml or piece)'], ['Chicken breast', 'صدر دجاج', '', '', 'g'],
+      ['Salt', 'ملح', '', '', 'g'], ['Garlic powder', 'بودرة توم', '', '', 'g'], ['Flour', 'طحين', '', '', 'g'], ['Garlic', 'توم', '', '', 'g'],
+      ['Vegetable oil', 'زيت نباتي', '', '', 'ml'], ['Eggs', 'بيض', '', '', 'piece']];
+    var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P, 'Kitchen recipes': KR, 'Kitchen lines': KL, 'Kitchen ingredients': KI}, sheets = {};
     Object.keys(tabs).forEach(function (n) { sheets[n] = new Sheet(n, tabs[n].map(function (r) { return r.map(parseIn) })) });
     return sheets;
   }
