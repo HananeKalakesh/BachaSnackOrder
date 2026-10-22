@@ -16,7 +16,7 @@ var HUB_FIXED = [
 var DRIVE = 'https://drive.google.com/drive/folders/';
 var DRIVE_FOLDERS = [['1emJrOfqaE3bP1RGid38uyHoYBuPlB76R', 'El Bash'], ['1s_Eap5z10Y85fMtv1NrMoYnqbuJpyohQ', '1 Menus & print'],
   ['1r_mRypOu2Spw6jLlydOMfnjcWTuLJTzp', '2 Social media & stories'], ['1Gxub86ScNlnYfbhwqAl2bJRP4xRIGIMS', '3 Brand & logos'],
-  ['1-6ueNQhNUrjlI9ZTnvaO5Iv90151_2tx', '4 Photos'], ['1_xdtMvb3CjPqzxq_rFLHayz9v4PYNwZO', '5 Recipes & documents'],
+  ['1_xdtMvb3CjPqzxq_rFLHayz9v4PYNwZO', '5 Recipes & documents'],
   ['1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk', '6 Menu photos'], ['1iQqlCTVLk6DHYGuT-rYIE6Ye3T1Ai4A6', '7 Videos']];
 var FOLDER_AR = {'El Bash': 'كل الملفات', 'Menus & print': 'المنيو والطباعة', 'Social media & stories': 'سوشال ميديا وستوريات', 'Brand & logos': 'الهوية واللوغو',
   'Photos': 'الصور', 'Recipes & documents': 'الوصفات والمستندات', 'Menu photos': 'صور الأصناف', 'Videos': 'فيديوهات'};

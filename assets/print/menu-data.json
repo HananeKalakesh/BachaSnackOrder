@@ -1,0 +1,686 @@
+[
+{
+"cat": "Fries",
+"name": "Small Fries Box",
+"ar": "علبة بطاطا صغيرة",
+"usd": "",
+"lbp": "150,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Fries",
+"name": "Small Fries Box with Sauce & Cheddar",
+"ar": "علبة بطاطا صغيرة مع صوص وتشيدر",
+"usd": "",
+"lbp": "200,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Fries",
+"name": "Large Fries Box with Sauce & Cheddar",
+"ar": "علبة بطاطا كبيرة مع صوص وتشيدر",
+"usd": "",
+"lbp": "450,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Fries",
+"name": "Loaded Fries",
+"ar": "لودد فرايز",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Appetizers",
+"name": "Mozzarella Sticks 6 PCS",
+"ar": "موزاريلا ستيكس 6 قطع",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Appetizers",
+"name": "Onion Rings 6 PCS",
+"ar": "أونيون رينغز 6 قطع",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Appetizers",
+"name": "Nuggets 5 PCS",
+"ar": "ناغتس 5 قطع",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Appetizers",
+"name": "Mix Appetizer Box",
+"ar": "علبة ميكس مقبلات",
+"usd": "",
+"lbp": "600,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Crispy Meal 4 PCS",
+"ar": "وجبة كريسبي 4 قطع",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Crispy Meal 5 PCS",
+"ar": "وجبة كريسبي 5 قطع",
+"usd": "",
+"lbp": "600,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Crispy Meal 6 PCS",
+"ar": "وجبة كريسبي 6 قطع",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Crispy Meal 7 PCS",
+"ar": "وجبة كريسبي 7 قطع",
+"usd": "",
+"lbp": "800,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Zinger Meal 4 PCS",
+"ar": "وجبة زنجر 4 قطع",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Zinger Meal 5 PCS",
+"ar": "وجبة زنجر 5 قطع",
+"usd": "",
+"lbp": "600,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Zinger Meal 6 PCS",
+"ar": "وجبة زنجر 6 قطع",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Zinger Meal 7 PCS",
+"ar": "وجبة زنجر 7 قطع",
+"usd": "",
+"lbp": "800,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Escalope Meal 3 PCS",
+"ar": "وجبة إسكالوب 3 قطع",
+"usd": "",
+"lbp": "800,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Cordon Bleu Meal 2 PCS",
+"ar": "وجبة كوردون بلو قطعتين",
+"usd": "",
+"lbp": "700,000",
+"on": false,
+"sold": true
+},
+{
+"cat": "Meals",
+"name": "Half Broasted Meal 5 PCS",
+"ar": "وجبة نصف بروستد 5 قطع",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Wings Meal 14 PCS",
+"ar": "وجبة وينغز 14 قطعة",
+"usd": "",
+"lbp": "800,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Half Wings Meal 7 PCS",
+"ar": "وجبة نصف وينغز 7 قطع",
+"usd": "",
+"lbp": "400,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Chicken Quesadilla",
+"ar": "كيساديا دجاج",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Tawouk Meal",
+"ar": "وجبة طاووق",
+"usd": "",
+"lbp": "750,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Meals",
+"name": "Shawarma Meal",
+"ar": "وجبة شاورما",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Escalope Family Meal 8 PCS",
+"ar": "وجبة عائلية إسكالوب 8 قطع",
+"usd": "",
+"lbp": "1,750,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Zinger Family Meal 20-22 PCS",
+"ar": "وجبة عائلية زنجر 20-22 قطعة",
+"usd": "",
+"lbp": "2,160,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Crispy Family Meal 20-22 PCS",
+"ar": "وجبة عائلية كريسبي 20-22 قطعة",
+"usd": "",
+"lbp": "2,160,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Broasted Family Meal 10 PCS",
+"ar": "وجبة عائلية بروستد 10 قطع",
+"usd": "",
+"lbp": "1,400,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Shawarma Family Meal 1 KG",
+"ar": "وجبة عائلية شاورما 1 كيلو",
+"usd": "$15",
+"lbp": "1,342,500",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Tawouk Family Meal 1 KG",
+"ar": "وجبة عائلية طاووق 1 كيلو",
+"usd": "$15",
+"lbp": "1,342,500",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Fajita Family Meal 1 KG",
+"ar": "وجبة عائلية فاهيتا 1 كيلو",
+"usd": "$20",
+"lbp": "1,790,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Shawarma Family Meal 1/2 KG",
+"ar": "وجبة عائلية شاورما نص كيلو",
+"usd": "$7.5",
+"lbp": "671,250",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Tawouk Family Meal 1/2 KG",
+"ar": "وجبة عائلية طاووق نص كيلو",
+"usd": "$7.5",
+"lbp": "671,250",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Fajita Family Meal 1/2 KG",
+"ar": "وجبة عائلية فاهيتا نص كيلو",
+"usd": "$10",
+"lbp": "895,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Wings Family Meal 1 KG",
+"ar": "وجبة عائلية وينغز 1 كيلو",
+"usd": "$15",
+"lbp": "1,342,500",
+"on": true,
+"sold": false
+},
+{
+"cat": "Family Meals",
+"name": "Boneless Chicken Thighs Family Meal",
+"ar": "وجبة عائلية فخاد دجاج بلا عضم",
+"usd": "$10",
+"lbp": "895,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Plates",
+"name": "Shawarma Plate",
+"ar": "صحن شاورما",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Plates",
+"name": "Tawouk Plate",
+"ar": "صحن طاووق",
+"usd": "",
+"lbp": "750,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Plates",
+"name": "Grilled Chicken Plate",
+"ar": "صحن دجاج مشوي",
+"usd": "",
+"lbp": "750,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Shawarma Sandwich",
+"ar": "ساندويش شاورما",
+"usd": "",
+"lbp": "450,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Tawouk Sandwich",
+"ar": "ساندويش طاووق",
+"usd": "",
+"lbp": "450,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Crispy Sandwich",
+"ar": "ساندويش كريسبي",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Zinger Sandwich",
+"ar": "ساندويش زنجر",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Escalope Sandwich",
+"ar": "ساندويش إسكالوب",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Fajita Sandwich",
+"ar": "ساندويش فاهيتا",
+"usd": "",
+"lbp": "650,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Chicken Sub Sandwich",
+"ar": "ساندويش تشيكن ساب",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Francisco Sandwich",
+"ar": "ساندويش فرانسيسكو",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Grilled Chicken Sandwich",
+"ar": "ساندويش دجاج مشوي",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Chicken Kebab Sandwich",
+"ar": "ساندويش كباب دجاج",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Broasted Sandwich",
+"ar": "ساندويش بروستد",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Sandwiches",
+"name": "Cordon Bleu Sandwich",
+"ar": "ساندويش كوردون بلو",
+"usd": "",
+"lbp": "550,000",
+"on": false,
+"sold": true
+},
+{
+"cat": "Beef Sandwiches",
+"name": "Philadelphia Sandwich",
+"ar": "ساندويش فيلادلفيا",
+"usd": "",
+"lbp": "650,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Sandwiches",
+"name": "Mushroom Steak Sandwich",
+"ar": "ساندويش ستيك فطر",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Sandwiches",
+"name": "Vegetable Steak Sandwich",
+"ar": "ساندويش ستيك مع خضار",
+"usd": "",
+"lbp": "650,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Sandwiches",
+"name": "Hausa Sandwich",
+"ar": "ساندويش هوسا",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Other Sandwiches",
+"name": "Fries Sandwich",
+"ar": "ساندويش بطاطا",
+"usd": "",
+"lbp": "350,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Burgers",
+"name": "Classic Chicken Burger",
+"ar": "برغر دجاج كلاسيك",
+"usd": "",
+"lbp": "500,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Burgers",
+"name": "Mozzarella Patty Burger",
+"ar": "برغر باتي موزاريلا",
+"usd": "",
+"lbp": "550,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Burgers",
+"name": "Crunchy Burger",
+"ar": "كرانشي برغر",
+"usd": "",
+"lbp": "650,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Chicken Burgers",
+"name": "Crunchy Burger with Mozzarella Patty",
+"ar": "كرانشي برغر مع باتي موزاريلا",
+"usd": "",
+"lbp": "750,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Burgers",
+"name": "Classic Beef Burger",
+"ar": "برغر لحمة كلاسيك",
+"usd": "",
+"lbp": "550,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Burgers",
+"name": "Basha Burger",
+"ar": "باشا برغر",
+"usd": "",
+"lbp": "600,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Burgers",
+"name": "Mushroom Burger",
+"ar": "برغر فطر",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Beef Burgers",
+"name": "Philly Steak Burger",
+"ar": "فيلي ستيك برغر",
+"usd": "",
+"lbp": "700,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Buffalo Sauce",
+"ar": "صوص بوفالو",
+"usd": "",
+"lbp": "50,000",
+"on": false,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Honey Mustard Sauce",
+"ar": "صوص هني ماستارد",
+"usd": "",
+"lbp": "50,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Barbecue Sauce",
+"ar": "صوص باربكيو",
+"usd": "",
+"lbp": "50,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Cocktail Sauce",
+"ar": "صوص كوكتيل",
+"usd": "",
+"lbp": "50,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Garlic Sauce",
+"ar": "صوص ثوم",
+"usd": "",
+"lbp": "50,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Cheddar Cup (Small)",
+"ar": "كوب تشيدر (صغير)",
+"usd": "",
+"lbp": "75,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Cheddar Cup (Big)",
+"ar": "كوب تشيدر (كبير)",
+"usd": "",
+"lbp": "150,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Sauces & Extras",
+"name": "Coleslaw",
+"ar": "سلطة ملفوف",
+"usd": "",
+"lbp": "100,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Drinks",
+"name": "Pepsi",
+"ar": "بيبسي",
+"usd": "",
+"lbp": "70,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Drinks",
+"name": "Pepsi Diet",
+"ar": "بيبسي دايت",
+"usd": "",
+"lbp": "70,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Drinks",
+"name": "7UP",
+"ar": "سفن أب",
+"usd": "",
+"lbp": "70,000",
+"on": true,
+"sold": false
+},
+{
+"cat": "Drinks",
+"name": "7UP Diet",
+"ar": "سفن أب دايت",
+"usd": "",
+"lbp": "70,000",
+"on": true,
+"sold": false
+}
+]
