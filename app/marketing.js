@@ -1,12 +1,10 @@
 /* ---------- marketing: links to share or copy ----------
    On top the digital menu and the A3 print menus, then the Drive folders (print, stories, videos, product photos,
-   brand), each a link to copy, and Copy to Drive for new designs. */
-var MK = {copy: ''};
+   brand), each a link to copy. Approved designs reach Drive by themselves (autoCopy in AutoCopy.gs, every hour). */
 var BRAND_DOC = 'https://docs.google.com/document/d/1lMnkcyG8Bqlgfk4NDgfgmmrKdpoi_uYrUHM_UFs9GsI/edit';
 // [icon, Arabic, English, link, Arabic note, English note]
 var MK_LINKS = [
-  ['🖨', 'المنيو A3 (إنكليزي)', 'A3 menu (English)', SITE + 'assets/print/menu-a3-en.pdf', 'للطباعة، PDF', 'For printing, PDF'],
-  ['🖨', 'المنيو A3 (عربي)', 'A3 menu (Arabic)', SITE + 'assets/print/menu-a3-ar.pdf', 'للطباعة، PDF', 'For printing, PDF']];
+  ['🖨', 'المنيو A3', 'A3 menu', SITE + 'assets/print/menu-a3.pdf', 'للطباعة، PDF', 'For printing, PDF']];
 var MK_FOLDERS = [
   ['📄', 'المنيو المطبوع', 'Print menus', DRIVE + '1s_Eap5z10Y85fMtv1NrMoYnqbuJpyohQ', 'منيو، فلايرز', 'Menus, flyers'],
   ['📲', 'الستوريات', 'Stories', DRIVE + '1r_mRypOu2Spw6jLlydOMfnjcWTuLJTzp', 'ستوريات وبوستات', 'Stories and posts'],
@@ -22,11 +20,7 @@ function drawMarket() {
     '<div class="hgrid mklinks">' +
     hubTile('📱', bi('المنيو الرقمي', 'Digital menu'), bi('ابعتو للزباين', 'Send it to customers'), SITE).replace('<button class="hcopy"', '<button class="hcopy" data-mkshare="' + SITE + '"') +
     MK_LINKS.map(mkTile).join('') + '</div>' +
-    '<div class="hgroup"><h3 class="display">' + bi('بالدرايف', 'In Drive') + '</h3><div class="hgrid">' + MK_FOLDERS.map(mkTile).join('') + '</div></div>' +
-    '<div class="card mkcopy"><b>' + bi('انسخ عالدرايف', 'Copy to Drive') + '</b><p class="muted xhint">' +
-      bi('بينسخ صور الأصناف والستوريات والمنيو والتصاميم الجديدة عالدرايف. بس الجديد.', 'Copies the menu item photos, stories, menus and new designs into Drive. Only new ones.') + '</p>' +
-      '<button class="ghost" id="mkCopy"' + (MK.copy === 'busy' ? ' disabled' : '') + '>' + (MK.copy === 'busy' ? bi('عم ينسخ… (دقيقة)', 'Copying… (a minute)') : bi('انسخ عالدرايف', 'Copy to Drive')) + '</button>' +
-      (MK.copy && MK.copy !== 'busy' ? '<p class="xhint">' + MK.copy + '</p>' : '') + '</div>';
+    '<div class="hgroup"><h3 class="display">' + bi('بالدرايف', 'In Drive') + '</h3><div class="hgrid">' + MK_FOLDERS.map(mkTile).join('') + '</div></div>';
   $('#market').innerHTML = h;
 }
 
@@ -42,13 +36,6 @@ $('#market').addEventListener('click', function (ev) {
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function () { toast('انسخ الرابط', 'Link copied') }, function () { prompt(T('انسخ الرابط', 'Copy the link'), url) });
     else prompt(T('انسخ الرابط', 'Copy the link'), url);
     return;
-  }
-  if (b.id === 'mkCopy') {
-    MK.copy = 'busy'; drawMarket();
-    EB.copyAssets().then(function (r) {
-      MK.copy = bi('انسخ ' + r.added + ' ملف جديد' + (r.kept ? '، و' + r.kept + ' كانو موجودين' : ''), r.added + ' new files copied' + (r.kept ? ', ' + r.kept + ' were already there' : ''));
-      drawMarket();
-    }, function (e) { MK.copy = '<span class="err" dir="ltr">' + esc(e.message) + '</span>'; drawMarket() });
   }
 });
 

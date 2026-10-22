@@ -25,11 +25,11 @@ How:
 - **Docs, sheets, text:** create them directly in the sub-folder with the Google Drive / Docs / Sheets connector.
 - **Images and other files** (too big for the connector): commit the file to this repo (stories in `assets/stories/`, print menus in `assets/print/`,
   with the HTML it was rendered from), and add it to `app/assets.json` under `"drive"`, keyed by the sub-folder's exact
-  name. Once the branch is merged and live, **Marketing › Copy to Drive** in the app copies it into that sub-folder
-  (`copyAssets_` in `app/Code.gs`). Tell the owner to tap it, and also send them the file directly.
-  Copy to Drive copies everything listed there that Drive doesn't have yet, so list a file under `"drive"` only once
-  the owner has approved saving it. It skips a name Drive already has: to replace a file, trash the old one in Drive
-  first (Drive connector `trash_file`).
+  name. Once the branch is merged and live, the script copies it into that sub-folder by itself within the hour
+  (`autoCopy` in `app/AutoCopy.gs`, an hourly trigger, runs `copyAssets_` in `app/Code.gs`); there is no button to tap.
+  It copies everything listed there that Drive doesn't have yet, so list a file under `"drive"` only once the owner
+  has approved saving it. It skips a name Drive already has: to replace a file, trash the old one in Drive first
+  (Drive connector `trash_file`). Check Drive within the hour and tell the owner when it's there.
 - Name files so they read well in Drive, e.g. `Story – new hours (1-4 PM, 6-11 PM).png`.
 
 ## Rule: marketing materials send people to the website, not WhatsApp
