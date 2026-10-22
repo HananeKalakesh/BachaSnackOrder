@@ -219,11 +219,7 @@
  "drive": {
   "2 Social media & stories": [
    {
-    "name": "Story – new hours, order online.png",
-    "path": "assets/stories/new-hours.png"
-   },
-   {
-    "name": "Story – menu online, link sticker.png",
+    "name": "Story – menu online.png",
     "path": "assets/stories/menu-online.png"
    },
    {
