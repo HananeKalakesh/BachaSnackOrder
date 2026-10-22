@@ -1438,7 +1438,6 @@ function roleTabs() {
 }
 function demoQ(sep) { return EB.demo ? sep + 'demo' : '' }
 $('#roleBtn').addEventListener('click', function () {
-  if (!confirm(T('تبدّل المستخدم على هالجهاز؟', 'Switch the user on this device?'))) return;
   try { localStorage.removeItem('elbash-role') } catch (e) {}
   setPin(''); location.href = 'index.html' + demoQ('?');
 });
