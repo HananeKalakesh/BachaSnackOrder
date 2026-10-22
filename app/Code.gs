@@ -350,10 +350,19 @@ function status_(ss) {
   return { mode: String(out['Value']), wait: Number(out['Wait']) || 0, until: Number(out['Until']) };
 }
 
-/** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one. */
+/** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one; and the
+ *  opening hours, day off and open-anyway dates from the Settings tab (rows starting "Opening hours", "Closed day",
+ *  "Open anyway on"), which the website reads as it is. */
 function menu_() {
-  var ss = book_(), rows = ss.getSheetByName('Menu').getDataRange().getValues().slice(1);
-  return { rate: Number(setting_(ss, 'USD rate').replace(/,/g, '')) || 89500, status: status_(ss), items: rows.filter(function (r) { return r[1] }).map(function (r) {
+  var ss = book_(), rows = ss.getSheetByName('Menu').getDataRange().getValues().slice(1), tz = ss.getSpreadsheetTimeZone();
+  var raw = function (label) {   // the cell as typed: a date typed alone comes back as yyyy-mm-dd
+    var v = ss.getSheetByName('Settings').getDataRange().getValues();
+    for (var i = 0; i < v.length; i++) if (String(v[i][0]).indexOf(label) === 0) return v[i][1] instanceof Date ? Utilities.formatDate(v[i][1], tz, 'yyyy-MM-dd') : String(v[i][1]).trim();
+    return undefined;
+  };
+  return { rate: Number(setting_(ss, 'USD rate').replace(/,/g, '')) || 89500, status: status_(ss),
+    hours: raw('Opening hours'), closedDay: raw('Closed day'), openDates: raw('Open anyway on'),
+    items: rows.filter(function (r) { return r[1] }).map(function (r) {
     return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
       price: Number(r[4]) || 0, on: r[5] === true };
   }) };

@@ -259,7 +259,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
     <a class="cbtn" href="tel:+96176075724" data-phone="tel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-t>Call</span></a>
     <a class="cbtn wa" href="https://wa.me/96176075724" data-phone="wa" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg><span data-t>WhatsApp</span></a>
   </div>
-  <div id="closedBanner" class="closed-banner" role="status" hidden data-t>We're closed today (Monday). You can still browse the menu.</div>
+  <div id="closedBanner" class="closed-banner" role="status" hidden></div>
   <div id="busyBanner" class="closed-banner busy-banner" role="status" hidden></div>
 </header>
 <button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go">$7.5 <i>→</i></span></button>
@@ -275,7 +275,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
 <section id="burgers"><div class="head"><h2 data-t>Burgers</h2></div><div class="subhead" data-t>Chicken</div><div class="grid" id="burgerChickenGrid"></div><div class="subhead" data-t>Beef</div><div class="grid" id="burgerBeefGrid"></div></section>
 <section id="extras"><div class="head"><h2 data-t>Sauces &amp; Extras</h2></div><div class="subhead" data-t>Sauce Cups</div><div class="grid" id="sauceGrid"></div></section>
 <section id="drinks"><div class="head"><h2 data-t>Drinks</h2></div><div class="grid" id="drinkGrid"></div></section>
-<footer><span class="fez"><img src="assets/elbash/fez-paper.svg" alt=""></span><strong data-t>Basha — Chicken and Snack</strong><span class="sig"><span lang="en" dir="ltr">Tekram ya basha!</span> · <span lang="ar" dir="rtl">تكرم يا باشا!</span></span><span class="hours" data-t>Daily 1:00 – 4:00 PM &amp; 6:00 – 11:00 PM · Closed on Mondays</span><span data-t>Managed by Hussein Al Basha</span> · <a href="tel:+96176075724" data-phone="tel">76 075 724</a><small data-t>Prices may change based on market rates. Closed on Mondays.</small></footer>
+<footer><span class="fez"><img src="assets/elbash/fez-paper.svg" alt=""></span><strong data-t>Basha — Chicken and Snack</strong><span class="sig"><span lang="en" dir="ltr">Tekram ya basha!</span> · <span lang="ar" dir="rtl">تكرم يا باشا!</span></span><span class="hours" id="hoursLine"></span><span data-t>Managed by Hussein Al Basha</span> · <a href="tel:+96176075724" data-phone="tel">76 075 724</a><small data-t>Prices may change based on market rates.</small></footer>
 </div>
 
 <button id="cartFab" class="fab" type="button" aria-haspopup="dialog">Order now</button>
@@ -323,6 +323,8 @@ a[data-phone=tel]{unicode-bidi:isolate}
 const CONFIG = {
   phone: '96176075724',          // WhatsApp number: country code + number, digits only
   phoneDisplay: '76 075 724',    // how the number is shown on the page
+  // Opening hours, day off and open-anyway dates: these until the sheet loads; then the Settings tab of the sheet
+  // ("Opening hours", "Closed day", "Open anyway on"), which the shop changes there or in the app (Menu tab)
   closedDay: 1,                  // day off (Beirut time): 0=Sun 1=Mon 2=Tue ... 6=Sat, or null for none
   openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
   hours: [['13:00', '16:00'], ['18:00', '23:00']], // opening hours each open day (Beirut time)
@@ -481,7 +483,7 @@ drinkGrid: [
    ingredients (AR.ing) translate by themselves; only unusual sentences need a line in AR.desc.
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
-ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
+ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
   'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
   "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
   'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
@@ -489,7 +491,7 @@ ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'�
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'Some items are not available right now. Please remove them and send again.':'في أصناف مش متوفرة هلّق. رجاءً شيلها وابعت مرة تانية.',
-  "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 4:00 PM & 6:00 – 11:00 PM · Closed on Mondays':'كل يوم من 1:00 لـ 4:00 بعد الضهر ومن 6:00 لـ 11:00 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
+  "We're closed today ({d}). You can still browse the menu.":'مسكّرين اليوم ({d}). فيك تتصفّح المنيو.',"We're closed today. Please send your order another day.":'مسكّرين اليوم. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
 names: {'Small Fries Box':'علبة بطاطا صغيرة','Small Fries Box with Sauce & Cheddar':'علبة بطاطا صغيرة مع صوص وتشيدر','Large Fries Box with Sauce & Cheddar':'علبة بطاطا كبيرة مع صوص وتشيدر','Loaded Fries':'لودد فرايز',
 'Mozzarella Sticks':'موزاريلا ستيكس','Onion Rings':'أونيون رينغز','Nuggets':'ناغتس','Mix Appetizer Box':'علبة ميكس مقبلات',
 'Crispy Meal':'وجبة كريسبي','Zinger Meal':'وجبة زنجر','Escalope Meal':'وجبة إسكالوب','Cordon Bleu Meal':'وجبة كوردون بلو','Wings Meal':'وجبة وينغز','Half Wings Meal':'وجبة نصف وينغز','Half Broasted Meal':'وجبة نصف بروستد','Chicken Quesadilla':'كيساديا دجاج','Tawouk Meal':'وجبة طاووق','Shawarma Meal':'وجبة شاورما',
@@ -663,7 +665,40 @@ function openStatus() {
   const dayName = d === 1 ? t('tomorrow') : DAY_NAMES[lang][(day + d) % 7];
   return {open: false, text: t(closedDay ? 'Closed today · opens {d} at {t}' : 'Closed now · opens {d} at {t}').replace('{d}', dayName).replace('{t}', timeText(hours[0][0]))};
 }
+// The hours from the sheet: "13:00-16:00, 18:00-23:00" (or "1-4 pm, 6-11 pm"), a day name ("Monday", "الاثنين", or
+// empty for none) and dates "2026-10-19, 2026-12-25". Anything that doesn't read well keeps the page's own.
+function applyHours(sheet) {
+  if (!sheet) return;
+  // "13", "13:30", "1 pm", "1:30 م" -> "13:00" / "13:30"; a part without am/pm takes the one after it ("1-4 pm")
+  const hm = (x, ap) => {
+    const m = String(x).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm|ص|م)?$/i); if (!m) return null;
+    let h = +m[1]; const s = (m[3] || ap || '').toLowerCase();
+    if ((s === 'pm' || s === 'م') && h < 12) h += 12; if ((s === 'am' || s === 'ص') && h === 12) h = 0;
+    return h > 24 || +(m[2] || 0) > 59 ? null : String(h).padStart(2, '0') + ':' + (m[2] || '00');
+  };
+  if (sheet.hours) {
+    const list = String(sheet.hours).split(/[,،;]+/).map(r => {
+      const p = r.split(/\s*[-–—]\s*|\s+to\s+/i), ap = (String(p[1] || '').match(/am|pm|ص|م/i) || [''])[0];
+      const a = hm(p[0], ap), b = hm(p[1] || '');
+      return a && b && mins(a) < mins(b) ? [a, b] : null;
+    });
+    if (list.length && list.every(Boolean)) CONFIG.hours = list;
+  }
+  if (sheet.closedDay !== undefined) {
+    const d = String(sheet.closedDay).trim(), i = [...DAY_NAMES.en, ...DAY_NAMES.ar].findIndex(n => n.toLowerCase() === d.toLowerCase() || n.slice(0, 3).toLowerCase() === d.slice(0, 3).toLowerCase() && /^[a-z]/i.test(d));
+    if (!d || /^(none|no|لا)$/i.test(d)) CONFIG.closedDay = null; else if (i >= 0) CONFIG.closedDay = i % 7;
+  }
+  if (sheet.openDates !== undefined) CONFIG.openDates = String(sheet.openDates).match(/\d{4}-\d{2}-\d{2}/g) || [];
+}
+// "Daily 1 PM – 4 PM & 6 PM – 11 PM · Closed on Mondays"
+function hoursLine() {
+  const r = (CONFIG.hours || []).map(([a, b]) => lang === 'ar' ? 'من ' + timeText(a) + ' لـ ' + timeText(b) : timeText(a) + ' – ' + timeText(b));
+  const off = CONFIG.closedDay == null ? '' : lang === 'ar' ? ' · مسكّرين يوم ' + DAY_NAMES.ar[CONFIG.closedDay] : ' · Closed on ' + DAY_NAMES.en[CONFIG.closedDay] + 's';
+  return r.length ? (lang === 'ar' ? 'كل يوم ' + r.join(' و') : 'Daily ' + r.join(' & ')) + off : '';
+}
 function updateStatus() {
+  $('#hoursLine').textContent = hoursLine();
+  if (CONFIG.closedDay != null) $('#closedBanner').textContent = t("We're closed today ({d}). You can still browse the menu.").replace('{d}', DAY_NAMES[lang][CONFIG.closedDay]);
   const st = openStatus(), el = $('#status');
   el.textContent = st ? (st.open ? '● ' : '') + st.text : '';
   el.classList.toggle('shut', !!st && !st.open);
@@ -1011,7 +1046,7 @@ $('.send').onclick = () => {
   if (sending) return;
   const entries = Object.entries(order);
   if (!entries.length) return fail('Your order is empty. Add some items first.');
-  if (isClosedToday()) return fail("We're closed on Mondays. Please send your order another day.");
+  if (isClosedToday()) return fail("We're closed today. Please send your order another day.");
   if (busyNow() && busyNow().mode === 'paused') { updateBusy(); err.textContent = $('#busyBanner').textContent; return }
   const name = $('#custName').value.trim(), phone = $('#custPhone').value.trim(), type = ($('input[name=otype]:checked') || {}).value,
     addr = $('#custAddr').value.trim(), note = $('#custNote').value.trim();
@@ -1019,7 +1054,7 @@ $('.send').onclick = () => {
   if ((phone.match(/\d/g) || []).length < 7) return fail('Please enter your WhatsApp number.');
   if (!type) return fail('Please choose Delivery or Pickup.');
   if (type === 'Delivery' && !addr) return fail('Please enter your delivery address.');
-  store.set('basha-last', orderQtys());
+  store.set('basha-last', orderQtys()); saveCustomer();   // next time, this device fills in the same name and number
   const msg = whatsappText(entries, name, phone, type, addr, note);
   if (!CONFIG.orderUrl && !DEMO) return viaWhatsApp(msg);   // the demo always goes to the pretend app
   const btn = $('.send'), offer = () => { err.textContent = t("We couldn't send it to the shop. Send it on WhatsApp instead:"); viaWhatsApp(msg) };
@@ -1099,6 +1134,7 @@ $('#langBtn').onclick = () => {
   lang = q === 'ar' || q === 'en' ? q : sv === 'ar' || sv === 'en' ? sv : phoneLang.startsWith('ar') ? 'ar' : 'en';   // link > own choice > phone language
 }
 applySheet(store.get('basha-sheet-menu'));   // the last menu loaded from the sheet, so offline visits match it
+applyHours(store.get('basha-sheet-menu'));
 restore();
 applyLang();
 addStructuredData();
@@ -1106,6 +1142,7 @@ spy();
 if (CONFIG.menuUrl) {
   (DEMO ? demoServer().then(d => d.menu()) : fetch(CONFIG.menuUrl).then(r => r.json())).then(sheet => {
     BUSY = sheet && sheet.status || null; updateBusy();
+    applyHours(sheet); updateStatus();
     if (!applySheet(sheet)) return;
     store.set('basha-sheet-menu', sheet);
     Object.keys(order).forEach(k => { const p = priceOf(k); if (p) order[k].price = p; else delete order[k] });   // today's prices in the cart

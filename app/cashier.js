@@ -42,6 +42,31 @@ $('#busySheet').addEventListener('click', function (e) {
   this.hidden = true;
 });
 
+// The website's opening hours, kept in the Settings tab of the sheet: changed here or there, the website follows
+var HOURS_RE = /^\s*\d{1,2}(:\d\d)?\s*[-–]\s*\d{1,2}(:\d\d)?(\s*,\s*\d{1,2}(:\d\d)?\s*[-–]\s*\d{1,2}(:\d\d)?)*\s*$/;
+var DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], DAYS_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+function hoursCard() {
+  var day = DAYS_EN.filter(function (d) { return d.toLowerCase() === String(SET.closedDay || '').toLowerCase() })[0] || '';
+  return '<div class="card hrsx"><h3 class="display">🕐 ' + bi('أوقات الطلب عالموقع', 'Website ordering hours') + '</h3>' +
+    '<p class="muted">' + bi('الموقع بيوخدن أول ما حدا يفتحو. فيك كمان تغيّرن بتاب Settings بالشيت.', 'The website uses them the next time someone opens it. You can also change them in the Settings tab of the sheet.') + '</p>' +
+    '<div class="xform"><label class="wide">' + bi('الساعات (24 ساعة)', 'Hours (24-hour clock)') + '<input id="hHours" dir="ltr" value="' + esc(SET.hours || '') + '" placeholder="13:00-16:00, 18:00-23:00"></label>' +
+    '<label>' + bi('يوم العطلة', 'Day off') + '<select id="hDay"><option value="">' + T('ولا يوم', 'None') + '</option>' + DAYS_EN.map(function (d, i) {
+      return '<option value="' + d + '"' + (d === day ? ' selected' : '') + '>' + T(DAYS_AR[i], d) + '</option>' }).join('') + '</select></label>' +
+    '<label>' + bi('فاتحين استثنائياً بـ', 'Open anyway on') + '<input id="hDates" dir="ltr" value="' + esc(SET.openDates || '') + '" placeholder="2026-12-25"></label>' +
+    '<button class="save" id="hSave">' + bi('احفظ الأوقات', 'Save hours') + '</button><div class="err" id="hErr"></div></div></div>';
+}
+function saveHours() {
+  var hours = $('#hHours').value.trim(), day = $('#hDay').value, dates = $('#hDates').value.trim(), err = function (ar, en) { $('#hErr').innerHTML = bi(ar, en) };
+  if (!HOURS_RE.test(hours)) return err('اكتب الساعات متل: 13:00-16:00, 18:00-23:00', 'Write the hours like: 13:00-16:00, 18:00-23:00');
+  if (dates && !/^\s*\d{4}-\d\d-\d\d(\s*,\s*\d{4}-\d\d-\d\d)*\s*$/.test(dates)) return err('اكتب التواريخ متل: 2026-12-25', 'Write the dates like: 2026-12-25');
+  if (hours !== SET.hours) EB.setSetting('hours', hours);
+  if (day.toLowerCase() !== String(SET.closedDay || '').toLowerCase()) EB.setSetting('closedDay', day);
+  if (dates !== SET.openDates) EB.setSetting('openDates', dates);
+  SET.hours = hours; SET.closedDay = day; SET.openDates = dates;
+  toast('انحفظت الأوقات', 'Hours saved');
+  drawAvail();
+}
+
 // What's on the menu now: tap an item to take it off (sold out) or bring it back
 function drawAvail() {
   var items = MENU_ALL.filter(function (m) { return (m.on || m.soldOut) && m.price > 0 }), off = items.filter(function (m) { return m.soldOut });
@@ -50,6 +75,7 @@ function drawAvail() {
     (off.length ? '<button class="ghost" data-avall="1">↩ ' + bi('رجّع الكل (' + off.length + ')', 'Bring all back (' + off.length + ')') + '</button>' : '') + '</div>' +
     '<p class="mkhow">' + bi('دق على صنف خلص لتطفيه: بيصير رمادي بشاشة الطلب وبيختفي من الموقع. دق مرة تانية لترجّعو.',
       'Tap an item that ran out to switch it off: it greys out on the order screen and disappears from the website. Tap again to bring it back.') + '</p>';
+  if (SET.loaded) h += hoursCard();
   if (!items.length) { $('#avail').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   h += cats.map(function (c) {
     return '<div class="avsec"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3><div class="avgrid">' + items.filter(function (m) { return m.cat === c }).map(function (m) {
@@ -61,6 +87,8 @@ function drawAvail() {
 }
 $('#avail').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'hSave') return saveHours();
+  if (!b.dataset.av && !b.dataset.avall) return;
   var list = b.dataset.avall ? MENU_ALL.filter(function (m) { return m.soldOut }) : MENU_ALL.filter(function (m) { return m.name === b.dataset.av });
   list.forEach(function (m) { EB.soldOut(m.name, b.dataset.avall ? false : !m.soldOut) });
   if (list.length === 1) toast(list[0].soldOut ? 'رجع ' + esc(list[0].ar || list[0].name) : 'خلص ' + esc(list[0].ar || list[0].name), list[0].name + (list[0].soldOut ? ' is back' : ' is sold out'));
@@ -69,7 +97,7 @@ $('#avail').addEventListener('click', function (e) {
 drawBusy();
 
 /* ---------- the receipt printer: 🖨 in the top bar connects it; new orders print by themselves ---------- */
-var BUILD = '19.10-8';   // shown in the printer sheet, to check a tablet runs the newest version
+var BUILD = '22.10-1';   // shown in the printer sheet, to check a tablet runs the newest version
 var BLUEFY = 'https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055';
 function drawPrn() {
   var b = $('#prnBtn');
