@@ -1,5 +1,5 @@
 {
- "note": "What the script copies from this website into the El Bash Google Drive folder (only files not there yet). Names are what they get in Drive.",
+ "note": "What the script copies from this website into the El Bash Google Drive folder (only files not there yet). Names are what they get in Drive. Under \"drive\", materials by the name of their sub-folder in the El Bash folder.",
  "menu": [
   {
    "name": "Fajita Sandwich.jpg",
@@ -215,5 +215,13 @@
    "name": "Fez icon (red).svg",
    "path": "assets/elbash/v4/fez-red.svg"
   }
- ]
+ ],
+ "drive": {
+  "2 Social media & stories": [
+   {
+    "name": "Story – new hours, order from the menu.png",
+    "path": "assets/stories/new-hours.png"
+   }
+  ]
+ }
 }

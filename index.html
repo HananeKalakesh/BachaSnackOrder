@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="El Bash – Chicken &amp; Snack digital menu: crispy, zinger, wings, sandwiches, burgers and more. Order on WhatsApp: 76 075 724.">
+<meta name="description" content="El Bash – Chicken &amp; Snack digital menu: crispy, zinger, wings, sandwiches, burgers and more. Order online from the menu: 76 075 724.">
 <meta name="theme-color" content="#1f4a37">
 <!-- Link previews (WhatsApp, Facebook, etc.). If the phone number changes, update it here too. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="El Bash – Chicken &amp; Snack">
 <meta property="og:title" content="El Bash – Chicken &amp; Snack | Menu">
-<meta property="og:description" content="Browse the menu and order on WhatsApp: 76 075 724.">
+<meta property="og:description" content="Browse the menu and order online, right from the menu.">
 <meta property="og:url" content="https://hananekalakesh.github.io/BachaSnackOrder/">
 <meta property="og:image" content="https://hananekalakesh.github.io/BachaSnackOrder/og-image.png?v=2">
 <meta property="og:image:alt" content="El Bash – Chicken &amp; Snack logo">
@@ -61,6 +61,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .search button{border:0;background:var(--sand);border-radius:10px;width:32px;height:32px;font-size:18px;cursor:pointer}
 .search button[hidden]{display:none}
 .contact-row{display:flex;gap:8px;margin-top:8px}
+.contact-note{margin:8px 2px 0;font-size:13.5px;font-weight:600;color:rgba(250,245,236,.85);text-align:center}
 .cbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;background:rgba(250,245,236,.08);border:1.5px solid rgba(250,245,236,.3);color:var(--paper);text-decoration:none;font-weight:700;font-size:16px}
 .cbtn.wa{background:var(--whatsapp);border-color:var(--whatsapp);color:#fff}
 .closed-banner{margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--red);color:#fff;font-weight:700;font-size:14px;text-align:center}
@@ -221,6 +222,7 @@ footer small{display:block;margin-top:6px;font-size:12px}
 .choices{display:grid;gap:8px;margin:12px 0 18px}
 .choices label{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--white);border-radius:16px;box-shadow:var(--shadow-card);cursor:pointer;font-weight:600}
 .choices label:has(input:checked){box-shadow:0 0 0 2px var(--green)}
+#optSauces{display:grid;gap:8px}#optSauces:empty{display:none}.choice-sub{margin:6px 2px 0;font-weight:700;color:var(--muted)}
 .choices label.off{opacity:.4;cursor:not-allowed}
 .choices input{width:20px;height:20px;margin:0;accent-color:var(--green)}
 .choice-actions{display:flex;justify-content:flex-end;gap:8px}
@@ -258,10 +260,11 @@ a[data-phone=tel]{unicode-bidi:isolate}
     <a class="cbtn" href="tel:+96176075724" data-phone="tel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-t>Call</span></a>
     <a class="cbtn wa" href="https://wa.me/96176075724" data-phone="wa" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg><span data-t>WhatsApp</span></a>
   </div>
+  <p class="contact-note" data-t>Order right here from the menu ✓ Call or WhatsApp us for any question.</p>
   <div id="closedBanner" class="closed-banner" role="status" hidden data-t>We're closed today (Monday). You can still browse the menu.</div>
   <div id="busyBanner" class="closed-banner busy-banner" role="status" hidden></div>
 </header>
-<button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>1 KG Shawarma or Tawouk with fries</b></span><span class="go">$15 <i>→</i></span></button>
+<button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go">$7.5 <i>→</i></span></button>
 <nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
 <p id="noResults" class="noresults" hidden data-t>No items match your search.</p>
 <noscript><p class="note">Please turn on JavaScript to see the menu, or call us on 76 075 724.</p></noscript>
@@ -274,7 +277,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
 <section id="burgers"><div class="head"><h2 data-t>Burgers</h2></div><div class="subhead" data-t>Chicken</div><div class="grid" id="burgerChickenGrid"></div><div class="subhead" data-t>Beef</div><div class="grid" id="burgerBeefGrid"></div></section>
 <section id="extras"><div class="head"><h2 data-t>Sauces &amp; Extras</h2></div><div class="subhead" data-t>Sauce Cups</div><div class="grid" id="sauceGrid"></div></section>
 <section id="drinks"><div class="head"><h2 data-t>Drinks</h2></div><div class="grid" id="drinkGrid"></div></section>
-<footer><span class="fez"><img src="assets/elbash/fez-paper.svg" alt=""></span><strong data-t>Basha — Chicken and Snack</strong><span class="sig"><span lang="en" dir="ltr">Tekram ya basha!</span> · <span lang="ar" dir="rtl">تكرم يا باشا!</span></span><span class="hours" data-t>Daily 1:00 – 5:00 PM &amp; 7:00 – 11:30 PM · Closed on Mondays</span><span data-t>Managed by Hussein Al Basha</span> · <a href="tel:+96176075724" data-phone="tel">76 075 724</a><small data-t>Prices may change based on market rates. Closed on Mondays.</small></footer>
+<footer><span class="fez"><img src="assets/elbash/fez-paper.svg" alt=""></span><strong data-t>Basha — Chicken and Snack</strong><span class="sig"><span lang="en" dir="ltr">Tekram ya basha!</span> · <span lang="ar" dir="rtl">تكرم يا باشا!</span></span><span class="hours" data-t>Daily 1:00 – 4:00 PM &amp; 6:00 – 11:00 PM · Closed on Mondays</span><span data-t>Managed by Hussein Al Basha</span> · <a href="tel:+96176075724" data-phone="tel">76 075 724</a><small data-t>Prices may change based on market rates. Closed on Mondays.</small></footer>
 </div>
 
 <button id="cartFab" class="fab" type="button" aria-haspopup="dialog">Order now</button>
@@ -308,6 +311,14 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div class="choice-actions"><button id="cancelChoice" type="button" data-t>Cancel</button><button id="confirmChoice" class="confirm" type="button" data-t>Add to order</button></div>
 </div>
 
+<div id="doneModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
+  <h3 id="doneTitle" data-t>Order sent! ✅</h3>
+  <p class="big num-big" id="doneNum"></p>
+  <p class="big" data-t>We got your order. We'll message you on WhatsApp to confirm it.</p>
+  <p data-t>Keep this number in case you call us.</p>
+  <div class="choice-actions"><button id="doneOk" class="confirm" type="button" data-t>OK</button></div>
+</div>
+
 <div id="sendModal" class="choice-modal send-modal" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
   <h3 id="sendTitle" data-t>Almost done!</h3>
   <p class="big num-big" id="sendNum" hidden></p>
@@ -324,9 +335,16 @@ const CONFIG = {
   phoneDisplay: '76 075 724',    // how the number is shown on the page
   closedDay: 1,                  // day off (Beirut time): 0=Sun 1=Mon 2=Tue ... 6=Sat, or null for none
   openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
-  hours: [['13:00', '17:00'], ['19:00', '23:30']], // opening hours each open day (Beirut time)
+  hours: [['13:00', '16:00'], ['18:00', '23:00']], // opening hours each open day (Beirut time)
   timeZone: 'Asia/Beirut',
   pieces: {4: 500000, 5: 600000, 6: 700000, 7: 800000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
+  // cards with sizes (type 'o'): [label, item in the sheet, price until the sheet loads, sauces 's1' / 's2']
+  options: {
+    'Wings Meal': [['7 PCS', 'Half Wings Meal 7 PCS', 400000, 's1'], ['14 PCS', 'Wings Meal 14 PCS', 800000, 's2']],
+    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', '$7.5'], ['1 KG', 'Shawarma Family Meal 1 KG', '$15']],
+    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', '$7.5'], ['1 KG', 'Tawouk Family Meal 1 KG', '$15']],
+    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', '$10'], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
+  },
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
   menuUrl: 'https://script.google.com/macros/s/AKfycby7dthEIW4d2EF90fH6-_lGJEK_kAtu0XVSdARQUmM8w4iFEvBIfab-6SR9JdZmWDSdcA/exec?format=menu',
@@ -355,7 +373,7 @@ const CONFIG = {
     'Shawarma Meal': 'photos/shawarma-meal.jpg',
     'Small Fries Box with Sauce & Cheddar': 'photos/small-cheddar-fries.jpg',
     'Mushroom Burger': 'photos/mushroom-burger.jpg',
-    'Wings Meal 14 PCS': 'photos/wings-meal.jpg',
+    'Wings Meal': 'photos/wings-meal.jpg',
     'Half Broasted Meal 5 PCS': 'photos/half-broasted-meal.jpg',
     'Nuggets 5 PCS': 'photos/nuggets.jpg',
     'Mix Appetizer Box': 'photos/mix-appetizer-box.jpg',
@@ -374,7 +392,8 @@ const CONFIG = {
 };
 
 /* Sauces offered in the choice popup.
-   type 's' = any number of SAUCES.fries · 's1' = 1 of SAUCES.wings · 's2' = 1 or 2 of SAUCES.wings · 'p' = pick number of pieces */
+   type 's' = any number of SAUCES.fries · 's1' = 1 of SAUCES.wings · 's2' = 1 or 2 of SAUCES.wings · 'p' = pick number of pieces
+   · 'o' = pick a size from CONFIG.options (then its sauces, if it has any) */
 const SAUCES = {
   fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'],
   wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce']
@@ -400,8 +419,7 @@ mealGrid: [
   ['Escalope Meal 3 PCS', 800000, 'Escalope chicken, fries, garlic sauce, pickles, coleslaw'],
   ['Cordon Bleu Meal 2 PCS', 700000, 'Cheese stuffed chicken, fries, garlic sauce, pickles, coleslaw'],
   ['Half Broasted Meal 5 PCS', 700000, 'Broasted chicken, fries, garlic sauce, pickles, coleslaw'],
-  ['Wings Meal 14 PCS', 800000, 'Chicken wings, fries, garlic sauce, pickles, coleslaw', 's2'],
-  ['Half Wings Meal 7 PCS', 400000, 'Chicken wings, fries, garlic sauce, pickles, coleslaw', 's1'],
+  ['Wings Meal', 400000, 'Chicken wings, fries, garlic sauce, pickles, coleslaw', 'o'],
   ['Chicken Quesadilla', 700000, 'Sandwich on tortilla bread cut into pieces, with fries and sauce'],
   ['Tawouk Meal', 750000, 'Tawouk chicken sandwich on tortilla bread cut into pieces, with fries, coleslaw, pickles and garlic sauce'],
   ['Shawarma Meal', 700000, 'Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce']
@@ -411,9 +429,9 @@ familyGrid: [
   ['Zinger Family Meal 20-22 PCS', 2160000, 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Crispy Family Meal 20-22 PCS', 2160000, 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Broasted Family Meal 10 PCS', 1400000, 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Shawarma Family Meal 1 KG', '$15', 'Chicken shawarma and fries'],
-  ['Tawouk Family Meal 1 KG', '$15', 'Tawouk chicken and fries'],
-  ['Fajita Family Meal 1 KG', '$20', 'Chicken fajita and fries'],
+  ['Shawarma Family Meal', '$7.5', 'Chicken shawarma and fries', 'o'],
+  ['Tawouk Family Meal', '$7.5', 'Tawouk chicken and fries', 'o'],
+  ['Fajita Family Meal', '$10', 'Chicken fajita and fries', 'o'],
   ['Wings Family Meal 1 KG', '$15', 'Chicken wings and fries'],
   ['Boneless Chicken Thighs Family Meal', '$10', 'Boneless chicken thighs and fries']
 ],
@@ -476,12 +494,14 @@ const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates. Closed on Mondays.':'الأسعار ممكن تتغيّر حسب أسعار السوق. مسكّرين يوم الاثنين.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
   'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
   "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
-  'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
+  'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Order right here from the menu ✓ Call or WhatsApp us for any question.':'اطلب من هون، من المنيو ✓ واتصل فينا أو راسلنا عالواتساب لأي سؤال.',
+  'Order sent! ✅':'وصل طلبك! ✅',"We got your order. We'll message you on WhatsApp to confirm it.":'وصلنا طلبك، ومنبعتلك رسالة عالواتساب لنأكّدو.','Keep this number in case you call us.':'خلّي هالرقم معك إذا بدك تتصل فينا.','OK':'تمام',
+  'Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
   "We couldn't send it to the shop. Send it on WhatsApp instead:":'ما قدرنا نبعتو للمحل. ابعتو عالواتساب بدالها:',
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'Some items are not available right now. Please remove them and send again.':'في أصناف مش متوفرة هلّق. رجاءً شيلها وابعت مرة تانية.',
-  "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 5:00 PM & 7:00 – 11:30 PM · Closed on Mondays':'كل يوم من 1:00 لـ 5:00 بعد الضهر ومن 7:00 لـ 11:30 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
+  "We're closed today (Monday). You can still browse the menu.":'مسكّرين اليوم (الاثنين). فيك تتصفّح المنيو.',"We're closed on Mondays. Please send your order another day.":'منكون مسكّرين يوم الاثنين. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا','Daily 1:00 – 4:00 PM & 6:00 – 11:00 PM · Closed on Mondays':'كل يوم من 1:00 لـ 4:00 بعد الضهر ومن 6:00 لـ 11:00 بالليل · مسكّرين يوم الاثنين',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
 names: {'Small Fries Box':'علبة بطاطا صغيرة','Small Fries Box with Sauce & Cheddar':'علبة بطاطا صغيرة مع صوص وتشيدر','Large Fries Box with Sauce & Cheddar':'علبة بطاطا كبيرة مع صوص وتشيدر','Loaded Fries':'لودد فرايز',
 'Mozzarella Sticks':'موزاريلا ستيكس','Onion Rings':'أونيون رينغز','Nuggets':'ناغتس','Mix Appetizer Box':'علبة ميكس مقبلات',
 'Crispy Meal':'وجبة كريسبي','Zinger Meal':'وجبة زنجر','Escalope Meal':'وجبة إسكالوب','Cordon Bleu Meal':'وجبة كوردون بلو','Wings Meal':'وجبة وينغز','Half Wings Meal':'وجبة نصف وينغز','Half Broasted Meal':'وجبة نصف بروستد','Chicken Quesadilla':'كيساديا دجاج','Tawouk Meal':'وجبة طاووق','Shawarma Meal':'وجبة شاورما',
@@ -510,6 +530,26 @@ Object.values(data).flat().forEach(it => {
   if (typeof it[1] === 'string' && it[1][0] === '$') { USD[it[0]] = +it[1].slice(1); it[1] = USD[it[0]] * CONFIG.usdRate }
   ITEMS[it[0]] = it;
 });
+// The sizes of each 'o' card: {label, item, price, usd, sauce}; the card shows the smallest price
+const OPTS = {};
+Object.entries(CONFIG.options).forEach(([card, list]) => {
+  OPTS[card] = list.map(([label, item, p, sauce]) => {
+    const usd = typeof p === 'string' && p[0] === '$' ? +p.slice(1) : 0;
+    return {label, item, price: usd ? usd * CONFIG.usdRate : p, usd, sauce: sauce || ''};
+  });
+});
+function optCard(it) {   // the card's price ("From …") from its sizes
+  const o = OPTS[it[0]], low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
+  it[1] = low.price; if (low.usd) USD[it[0]] = low.usd; else delete USD[it[0]];
+}
+const optOf = (card, label) => (OPTS[card] || []).find(o => o.label === label);
+// "1/2 KG" -> "½ KG" / "نص كيلو", "7 PCS" -> "7 قطع"
+function optLabel(l) {
+  const m = String(l).match(/^(\d+(?:\/\d+)?)\s*(PCS|KG)$/i);
+  if (!m) return l;
+  if (/KG/i.test(m[2])) return m[1] === '1/2' ? (lang === 'ar' ? 'نص كيلو' : '½ KG') : m[1] + ' ' + unitWord('KG', m[1]);
+  return m[1] + ' ' + pcsWord(m[1]);
+}
 
 /* ---------- items and prices from the shop's sheet ----------
    The Menu tab is the one place to change items and prices. Descriptions, photos and sauce choices stay here.
@@ -533,6 +573,19 @@ function applySheet(sheet) {
         if (!seen) return true;      // the sheet doesn't list it: keep the page's
         if (!Object.keys(pcs).length) return false;
         PIECES[name] = pcs; it[1] = Math.min(...Object.values(pcs));
+        return true;
+      }
+      if (it[3] === 'o') {           // one card for its sizes, each its own row in the sheet
+        let seen = false;
+        OPTS[name] = OPTS[name].filter(o => {
+          const r = rows[o.item]; if (!r) return true;
+          seen = true; used.add(o.item);
+          if (!r.on || !(r.price || r.usd)) return false;
+          o.usd = r.usd || 0; o.price = r.price || r.usd * rate;
+          return true;
+        });
+        if (seen && !OPTS[name].length) return false;
+        optCard(it);
         return true;
       }
       const r = rows[name];
@@ -566,6 +619,7 @@ function priceOf(key) {
   const m = key.match(/^(.*?) \[(.*)\]$/), item = ITEMS[m ? m[1] : key];
   if (!item) return null;
   if (item[3] === 'p') return m ? piecesOf(item[0])[parseInt(m[2])] || null : null;
+  if (item[3] === 'o') { const o = m && optOf(item[0], m[2].split(', ')[0]); return o ? o.price : null }
   return item[1];
 }
 function orderQtys() { const o = {}; Object.entries(order).forEach(([k, x]) => o[k] = x.qty); return o }
@@ -662,7 +716,7 @@ function tKey(k) {
   if (lang !== 'ar') return k;
   const m = k.match(/^(.*?)\s*\[(.*)\]$/);
   if (!m) return tName(k);
-  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : tSauce(x) }).join('، ');
+  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG$/i.test(x) ? optLabel(x) : tSauce(x) }).join('، ');
   return tName(m[1]) + ' [' + inner + ']';
 }
 function tDesc(d) {
@@ -695,8 +749,9 @@ function applyLang() {
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c])) }
 function qty(s) { return String(s).replace(/(\d+(?:-\d+)?\s*(?:PCS|PC|KG|KGS|قطعة|قطع|كيلو))/gi, '<span class="tag">$1</span>') }
 function card([name, price, desc, type]) {
-  const pick = type === 'p', choice = !!type, label = esc(tName(name));
-  const choiceText = {p: 'Choose 4-7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '';
+  const pick = type === 'p' || type === 'o', choice = !!type, label = esc(tName(name));
+  const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label)).join(' ' + t('or') + ' ')
+    : t({p: 'Choose 4-7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
   const search = [name, inLang('ar', () => tName(name)), desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
   const pop = CONFIG.popular.includes(name), src = CONFIG.photos[name];
@@ -707,7 +762,7 @@ function card([name, price, desc, type]) {
   return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
     + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
-    + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${t(choiceText)}</div>` : ''}</div>`
+    + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${esc(choiceText)}</div>` : ''}</div>`
     + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${fmt(price)}${USD[name] ? ` <bdi dir="ltr">($${USD[name]})</bdi>` : ''}</div>${controls}</div></div>`;
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
@@ -792,7 +847,7 @@ function openLayer(el, opener) {
   if (f) f.focus({preventScroll: true});
 }
 function closeLayers() {
-  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
+  $('#choiceModal').classList.remove('open'); $('#sendModal').classList.remove('open'); $('#doneModal').classList.remove('open'); $('#cartPanel').classList.remove('open'); $('#backdrop').classList.remove('open');
   document.documentElement.classList.remove('lock');
   $$('#choiceModal input').forEach(i => i.checked = false);
   selectedChoice = null;
@@ -814,8 +869,13 @@ function renderChoiceOptions() {
   const ty = selectedChoice.type, box = (v, label) => `<label><input type="checkbox" value="${esc(v)}"> <span>${label}</span></label>`;
   $('#choiceFor').textContent = tName(selectedChoice.name);
   $('#choiceErr').textContent = '';
-  $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : 'Choose your sauces');
-  if (ty === 'p') {
+  $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : ty === 'o' ? 'Choose the size' : 'Choose your sauces');
+  selectedChoice.sauce = '';
+  if (ty === 'o') {
+    $('#choiceHint').textContent = t('Choose one.');
+    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label><input type="radio" name="opt" value="${esc(o.label)}"> <span>${esc(optLabel(o.label))} — ${fmt(o.price)}${o.usd ? ` <bdi dir="ltr">($${o.usd})</bdi>` : ''}</span></label>`).join('') +
+      '<div id="optSauces"></div>';
+  } else if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
     $('#choiceOptions').innerHTML = Object.entries(piecesOf(selectedChoice.name)).map(([n, pr]) => `<label><input type="radio" name="pcs" value="${n}"> <span>${n} ${pcsWord(n)} — ${fmt(pr)}</span></label>`).join('');
   } else if (ty === 's') {
@@ -826,8 +886,14 @@ function renderChoiceOptions() {
     $('#choiceOptions').innerHTML = SAUCES.wings.map(v => box(v, tSauce(v) + (v === 'Buffalo Sauce' ? ' 🌶️' : ''))).join('');
   }
 }
-$('#choiceOptions').onchange = () => {   // limit how many sauces can be ticked
-  const ty = selectedChoice && selectedChoice.type, max = ty === 's2' ? 2 : ty === 's1' ? 1 : 99;
+$('#choiceOptions').onchange = e => {   // limit how many sauces can be ticked
+  if (e.target.name === 'opt') {          // a size with sauces (wings): its sauces under it
+    const o = optOf(selectedChoice.name, e.target.value), box = (v, label) => `<label><input type="checkbox" value="${esc(v)}"> <span>${label}</span></label>`;
+    selectedChoice.sauce = o.sauce;
+    $('#optSauces').innerHTML = o.sauce ? `<p class="choice-sub">${esc(t(o.sauce === 's1' ? 'Choose 1 sauce.' : 'Choose 1 or 2 sauces.'))}</p>` +
+      SAUCES.wings.map(v => box(v, tSauce(v) + (v === 'Buffalo Sauce' ? ' 🌶️' : ''))).join('') : '';
+  }
+  const ty = selectedChoice && (selectedChoice.sauce || selectedChoice.type), max = ty === 's2' ? 2 : ty === 's1' ? 1 : 99;
   const boxes = $$('#choiceOptions input[type=checkbox]'), n = boxes.filter(b => b.checked).length;
   boxes.forEach(b => { const off = n >= max && !b.checked; b.disabled = off; b.parentElement.classList.toggle('off', off) });
   $('#choiceErr').textContent = '';
@@ -835,7 +901,15 @@ $('#choiceOptions').onchange = () => {   // limit how many sauces can be ticked
 $('#confirmChoice').onclick = () => {
   if (!selectedChoice) return;
   const checked = $$('#choiceModal input:checked'), err = m => $('#choiceErr').textContent = t(m);
-  if (selectedChoice.type === 'p') {
+  if (selectedChoice.type === 'o') {
+    const size = $$('#choiceModal input[name=opt]:checked')[0], sauces = $$('#choiceModal input[type=checkbox]:checked').map(x => x.value);
+    if (!size) return err('Please choose the size.');
+    const o = optOf(selectedChoice.name, size.value);
+    if (o.sauce && !sauces.length) return err(o.sauce === 's1' ? 'Please choose 1 sauce.' : 'Please choose at least one sauce.');
+    const key = selectedChoice.name + ' [' + [o.label].concat(sauces).join(', ') + ']';
+    add(key, o.price);
+    added(key);
+  } else if (selectedChoice.type === 'p') {
     if (!checked.length) return err('Please choose the number of pieces.');
     const n = checked[0].value;
     add(selectedChoice.name + ' [' + n + ' PCS]', piecesOf(selectedChoice.name)[n]);
@@ -919,6 +993,7 @@ function sheetItem(key, qty) {
   if (!m) return {name: key, qty, sauces: []};
   const item = ITEMS[m[1]];
   if (item && item[3] === 'p') return {name: m[1] + ' ' + parseInt(m[2]) + ' PCS', qty, sauces: []};
+  if (item && item[3] === 'o') { const p = m[2].split(', '), o = optOf(m[1], p[0]); return {name: o ? o.item : key, qty, sauces: p.slice(1)} }
   return {name: m[1], qty, sauces: m[2].split(', ')};
 }
 function whatsappText(entries, name, phone, type, addr, note) {
@@ -935,12 +1010,16 @@ function viaWhatsApp(msg, num) {
   $('#sendModal').classList.add('open');
   $('#goWhatsApp').focus({preventScroll: true});
 }
-// In the shop's app now: the cart is emptied (sending again would make a second order), and the WhatsApp message
-// carries the number so the shop knows it's already in the app
-function sentOrder(num, msg) {
+// In the shop's app now: the cart is emptied (sending again would make a second order) and the order number shown.
+// Nothing to send on WhatsApp: the shop confirms the order there.
+function sentOrder(num) {
   Object.keys(order).forEach(k => delete order[k]); $('#custNote').value = ''; saveCart(); cart();
-  viaWhatsApp(t('🌐 Order #{n} (already in the app)').replace('{n}', num) + '\n' + msg, num);
+  $('#cartPanel').classList.remove('open');
+  $('#doneNum').textContent = t('Order #{n}').replace('{n}', num);
+  $('#doneModal').classList.add('open'); $('#backdrop').classList.add('open');
+  $('#doneOk').focus({preventScroll: true});
 }
+$('#doneOk').onclick = closeLayers;
 let sending = false;
 $('.send').onclick = () => {
   const err = $('#formErr'), fail = m => { err.textContent = t(m); err.scrollIntoView({block: 'nearest'}) };
@@ -967,7 +1046,7 @@ $('.send').onclick = () => {
   (DEMO ? demoServer().then(d => d.post(JSON.parse(body))) : fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
     .then(r => r.json())).then(res => {
       done();
-      if (res && res.ok) return sentOrder(res.num, msg);
+      if (res && res.ok) return sentOrder(res.num);
       // the shop said no: say why when it's something the customer can fix, otherwise offer WhatsApp
       const e = String(res && res.error || '');
       if (/not available/.test(e)) return fail('Some items are not available right now. Please remove them and send again.');
