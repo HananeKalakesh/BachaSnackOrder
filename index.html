@@ -101,6 +101,8 @@ section[hidden]{display:none}
 .item{position:relative;display:flex;flex-direction:column;background:var(--white);border-radius:22px;box-shadow:var(--shadow-card);padding:14px 10px 10px}
 .item[hidden]{display:none}
 .item.choosable{cursor:pointer}
+.item.soldout{opacity:.55}.item.soldout .photo{filter:grayscale(1)}
+.item .na{margin-inline-start:auto;padding:7px 12px;border-radius:999px;background:var(--sand);color:var(--muted);font-weight:800;font-size:13px;white-space:nowrap}
 .item.has-photo{padding:8px 8px 10px}
 .ph{position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:var(--sand)}
 .photo{display:block;width:100%;height:100%;object-fit:cover}
@@ -486,7 +488,7 @@ const AR = {
 ui: {'Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','Basha — Chicken and Snack':'باشا — تشيكن آند سناك','Managed by Hussein Al Basha':'بإدارة حسين الباشا','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi Basha, I would like to place an order:':'مرحبا باشا، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','Basha — Chicken and Snack | Menu':'باشا — تشيكن آند سناك | المنيو',
   'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
   "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
-  'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
+  'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Not available':'مش متوفر هلّق','Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
   "We couldn't send it to the shop. Send it on WhatsApp instead:":'ما قدرنا نبعتو للمحل. ابعتو عالواتساب بدالها:',
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
@@ -529,7 +531,7 @@ Object.entries(CONFIG.options).forEach(([card, list]) => {
   });
 });
 function optCard(it) {   // the card's price ("From …") from its sizes
-  const o = OPTS[it[0]], low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
+  const o = OPTS[it[0]].filter(x => !x.sold).length ? OPTS[it[0]].filter(x => !x.sold) : OPTS[it[0]], low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
   it[1] = low.price; if (low.usd) USD[it[0]] = low.usd; else delete USD[it[0]];
 }
 const optOf = (card, label) => (OPTS[card] || []).find(o => o.label === label);
@@ -548,20 +550,22 @@ const GRID_OF = {'Fries': 'friesGrid', 'Appetizers': 'appetizerGrid', 'Meals': '
   'Chicken Sandwiches': 'sandwichChickenGrid', 'Beef Sandwiches': 'sandwichBeefGrid', 'Other Sandwiches': 'sandwichOtherGrid',
   'Chicken Burgers': 'burgerChickenGrid', 'Beef Burgers': 'burgerBeefGrid', 'Sauces & Extras': 'sauceGrid', 'Drinks': 'drinkGrid'};
 const PIECES = {};              // 'Crispy Meal' -> {4: price, 5: price, ...}, from the sheet's "Crispy Meal 4 PCS" rows
+const SOLD = new Set();         // cards sold out for now (Sold out ticked in the sheet): shown greyed, "Not available"
 const piecesOf = name => PIECES[name] || CONFIG.pieces;
 function applySheet(sheet) {
   if (!sheet || !Array.isArray(sheet.items) || !sheet.items.length) return false;
   const rate = sheet.rate || CONFIG.usdRate, rows = {}, used = new Set();
   sheet.items.forEach(r => { if (r && r.name) rows[r.name] = r });
+  SOLD.clear();
   Object.keys(data).forEach(id => {
     data[id] = data[id].filter(it => {
       const name = it[0];
       if (it[3] === 'p') {           // one card for "Crispy Meal 4 PCS" … "7 PCS"
         const re = new RegExp('^' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ' (\\d+) PCS$'), pcs = {};
-        let seen = false;
-        Object.values(rows).forEach(r => { const m = r.name.match(re); if (m) { seen = true; used.add(r.name); if (r.on && r.price) pcs[m[1]] = r.price } });
+        let seen = false, sold = false;
+        Object.values(rows).forEach(r => { const m = r.name.match(re); if (m) { seen = true; used.add(r.name); if (r.on && r.price) pcs[m[1]] = r.price; else if (r.soldOut) sold = true } });
         if (!seen) return true;      // the sheet doesn't list it: keep the page's
-        if (!Object.keys(pcs).length) return false;
+        if (!Object.keys(pcs).length) { if (sold) SOLD.add(name); return sold }
         PIECES[name] = pcs; it[1] = Math.min(...Object.values(pcs));
         return true;
       }
@@ -570,18 +574,20 @@ function applySheet(sheet) {
         OPTS[name] = OPTS[name].filter(o => {
           const r = rows[o.item]; if (!r) return true;
           seen = true; used.add(o.item);
-          if (!r.on || !(r.price || r.usd)) return false;
-          o.usd = r.usd || 0; o.price = r.price || r.usd * rate;
+          if (!(r.price || r.usd) || !r.on && !r.soldOut) return false;
+          o.usd = r.usd || 0; o.price = r.price || r.usd * rate; o.sold = !r.on;   // sold out: shown, not available
           return true;
         });
         if (seen && !OPTS[name].length) return false;
+        if (OPTS[name].every(o => o.sold)) SOLD.add(name);
         optCard(it);
         return true;
       }
       const r = rows[name];
       if (!r) return true;
       used.add(name);
-      if (!r.on || !(r.price || r.usd)) return false;
+      if (!(r.price || r.usd) || !r.on && !r.soldOut) return false;
+      if (!r.on) SOLD.add(name);
       if (r.usd) { USD[name] = r.usd; it[1] = r.price || r.usd * rate } else { delete USD[name]; it[1] = r.price }
       return true;
     });
@@ -607,9 +613,9 @@ const store = {
 // Current price for a cart key, so saved carts always use today's menu prices
 function priceOf(key) {
   const m = key.match(/^(.*?) \[(.*)\]$/), item = ITEMS[m ? m[1] : key];
-  if (!item) return null;
+  if (!item || SOLD.has(item[0])) return null;
   if (item[3] === 'p') return m ? piecesOf(item[0])[parseInt(m[2])] || null : null;
-  if (item[3] === 'o') { const o = m && optOf(item[0], m[2].split(', ')[0]); return o ? o.price : null }
+  if (item[3] === 'o') { const o = m && optOf(item[0], m[2].split(', ')[0]); return o && !o.sold ? o.price : null }
   return item[1];
 }
 function orderQtys() { const o = {}; Object.entries(order).forEach(([k, x]) => o[k] = x.qty); return o }
@@ -772,17 +778,17 @@ function applyLang() {
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c])) }
 function qty(s) { return String(s).replace(/(\d+(?:-\d+)?\s*(?:PCS|PC|KG|KGS|قطعة|قطع|كيلو))/gi, '<span class="tag">$1</span>') }
 function card([name, price, desc, type]) {
-  const pick = type === 'p' || type === 'o', choice = !!type, label = esc(tName(name));
+  const sold = SOLD.has(name), pick = type === 'p' || type === 'o', choice = !!type && !sold, label = esc(tName(name));
   const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label)).join(' ' + t('or') + ' ')
     : t({p: 'Choose 4-7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
   const search = [name, inLang('ar', () => tName(name)), desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
   const pop = CONFIG.popular.includes(name), src = CONFIG.photos[name];
   const photo = src ? `<div class="ph"><img class="photo" src="${esc(src)}" alt="${label}" loading="lazy" width="640" height="640">${pop ? `<span class="stamp">★ ${t('Popular')}</span>` : ''}</div>` : '';
-  const controls = choice
+  const controls = sold ? `<span class="na">${t('Not available')}</span>` : choice
     ? `<button class="add" type="button" aria-haspopup="dialog" aria-label="${esc(t('Choose options for'))} ${label}">+<span class="word">${t('Add')}</span></button>`
     : `<div class="stepper"><button class="dec" type="button" aria-label="${esc(t('Remove one'))}: ${label}">−</button><span class="qty">0</span><button class="inc" type="button" aria-label="${esc(t('Add one'))}: ${label}">+<span class="word">${t('Add')}</span></button></div>`;
-  return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
+  return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}${sold ? ' soldout' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
     + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
     + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${esc(choiceText)}</div>` : ''}</div>`
@@ -791,7 +797,8 @@ function card([name, price, desc, type]) {
 // All items show as cards, two per row; items with a photo come first so rows line up
 function render() {
   Object.entries(data).forEach(([id, items]) => {
-    const sorted = [...items.filter(it => CONFIG.photos[it[0]]), ...items.filter(it => !CONFIG.photos[it[0]])];
+    const avail = items.filter(it => !SOLD.has(it[0])), sold = items.filter(it => SOLD.has(it[0]));   // not available last
+    const sorted = [...avail.filter(it => CONFIG.photos[it[0]]), ...avail.filter(it => !CONFIG.photos[it[0]]), ...sold];
     $('#' + id).innerHTML = `<div class="pgrid">${sorted.map(card).join('')}</div>`;
   });
   $('#popularGrid').innerHTML = `<div class="pgrid">${CONFIG.popular.map(n => ITEMS[n]).filter(Boolean).map(card).join('')}</div>`;
@@ -848,8 +855,9 @@ function cart() {
 
 // Suggest drinks in the cart when the order has none
 function upsell() {
-  if (data.drinkGrid.some(([n]) => order[n])) return '';
-  return `<div class="upsell"><p>🥤 ${t('Add a drink?')}</p><div>${data.drinkGrid.map(([n, p]) => `<button type="button" data-act="drink" data-key="${esc(n)}">+ ${esc(tName(n))} · ${fmt(p)}</button>`).join('')}</div></div>`;
+  const drinks = data.drinkGrid.filter(([n]) => !SOLD.has(n));
+  if (!drinks.length || data.drinkGrid.some(([n]) => order[n])) return '';
+  return `<div class="upsell"><p>🥤 ${t('Add a drink?')}</p><div>${drinks.map(([n, p]) => `<button type="button" data-act="drink" data-key="${esc(n)}">+ ${esc(tName(n))} · ${fmt(p)}</button>`).join('')}</div></div>`;
 }
 // Short "Added" message + cart button bump after adding from the menu
 let toastTimer;
@@ -896,7 +904,7 @@ function renderChoiceOptions() {
   selectedChoice.sauce = '';
   if (ty === 'o') {
     $('#choiceHint').textContent = t('Choose one.');
-    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label><input type="radio" name="opt" value="${esc(o.label)}"> <span>${esc(optLabel(o.label))} — ${fmt(o.price)}${o.usd ? ` <bdi dir="ltr">($${o.usd})</bdi>` : ''}</span></label>`).join('') +
+    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label${o.sold ? ' class="off"' : ''}><input type="radio" name="opt" value="${esc(o.label)}"${o.sold ? ' disabled' : ''}> <span>${esc(optLabel(o.label))} — ${o.sold ? t('Not available') : fmt(o.price) + (o.usd ? ` <bdi dir="ltr">($${o.usd})</bdi>` : '')}</span></label>`).join('') +
       '<div id="optSauces"></div>';
   } else if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
@@ -953,7 +961,7 @@ $('#cartFab').onclick = e => { cart(); openLayer($('#cartPanel'), e.currentTarge
 /* ---------- clicks on menu cards ---------- */
 document.addEventListener('click', e => {
   const r = e.target.closest('.item');
-  if (!r) return;
+  if (!r || r.classList.contains('soldout')) return;
   // items with options open the popup from anywhere on the card; others only react to their buttons
   const b = e.target.closest('button') || (r.classList.contains('choosable') ? r.querySelector('.add') : null);
   if (!b) return;

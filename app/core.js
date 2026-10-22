@@ -118,7 +118,7 @@ var EB = (function () {
     return s;
   };
   // The Settings rows the app can change, by their label in column A (the label must stay as it is in the sheet)
-  EB.SETTING_ROWS = {hours: 'Opening hours (website), e.g. 13:00-16:00, 18:00-23:00',
+  EB.SETTING_ROWS = {hours: 'Opening hours (website), e.g. 1 PM - 4 PM, 6 PM - 11 PM',
     closedDay: 'Closed day (website): a day name, e.g. Monday, or empty for none',
     openDates: 'Open anyway on (website): dates like 2026-12-25, comma between, e.g. a holiday on the closed day'};
   EB.setSetting = function (field, value) {
@@ -314,14 +314,15 @@ var EB = (function () {
   // The WhatsApp message for an order, in the customer's language: accepted, ready (pickup or delivery) or turned down
   EB.whatsapp = function (o, kind) {
     var ar = o.lang !== 'en', n = o.num, msg;
-    if (kind === 'confirm') msg = ar ? 'يا باشا، وصلنا طلبك رقم ' + n + ' من الباش ✅ عم نحضّرو، ومنبعتلك أول ما ' + (o.type === 'Delivery' ? 'يطلع عالطريق' : 'يجهز') + '. تكرم يا باشا!'
-      : 'Ya Basha, we got your El Bash order #' + n + ' ✅ We\'re preparing it and will message you when it\'s ' + (o.type === 'Delivery' ? 'on the way' : 'ready') + '. Tekram ya basha!';
-    else if (kind === 'reject') msg = ar ? 'يا باشا، آسفين، ما منقدر ناخد طلبيتك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏'
-      : 'Ya Basha, sorry, we can\'t take your order #' + n + ' right now. Please call or message us 🙏';
-    else if (o.type === 'Delivery') msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة، ومنبعتلك ياها بأسرع وقت! 🛵 تكرم يا باشا!'
-      : 'Ya Basha, your El Bash order #' + n + ' is ready and we\'ll send it to you as soon as we can! 🛵 Tekram ya basha!';
-    else msg = ar ? 'يا باشا، طلبيتك رقم ' + n + ' من الباش جاهزة! 🍗 تفضّل استلمها. تكرم يا باشا!'
-      : 'Ya Basha, your El Bash order #' + n + ' is ready! 🍗 Come pick it up. Tekram ya basha!';
+    // plain words, with "Tekram ya basha!" only at the end
+    if (kind === 'confirm') msg = ar ? 'أهلا! وصلنا طلبك رقم ' + n + ' من الباش ✅ عم نحضّرو، ومنبعتلك رسالة أول ما ' + (o.type === 'Delivery' ? 'يطلع عالطريق' : 'يجهز') + '. تكرم يا باشا!'
+      : 'Hi! We got your El Bash order #' + n + ' ✅ We\'re preparing it and will message you when it\'s ' + (o.type === 'Delivery' ? 'on the way' : 'ready') + '. Tekram ya basha!';
+    else if (kind === 'reject') msg = ar ? 'أهلا، آسفين، ما منقدر ناخد طلبك رقم ' + n + ' هلّق. اتصل فينا أو ابعتلنا رسالة 🙏 تكرم يا باشا!'
+      : 'Hi, sorry, we can\'t take your order #' + n + ' right now. Please call or message us 🙏 Tekram ya basha!';
+    else if (o.type === 'Delivery') msg = ar ? 'طلبك رقم ' + n + ' من الباش جاهز، ومنبعتلك ياه بأسرع وقت! 🛵 تكرم يا باشا!'
+      : 'Your El Bash order #' + n + ' is ready and on its way to you as soon as possible! 🛵 Tekram ya basha!';
+    else msg = ar ? 'طلبك رقم ' + n + ' من الباش جاهز! 🍗 تفضّل استلمو. تكرم يا باشا!'
+      : 'Your El Bash order #' + n + ' is ready! 🍗 You can come pick it up. Tekram ya basha!';
     // no number (an order taken at the counter or by phone): WhatsApp opens and asks who to send it to
     return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
   };

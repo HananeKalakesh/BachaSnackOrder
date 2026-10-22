@@ -22,6 +22,6 @@ live in core.js and the screens, so most changes don't need the Apps Script past
 script can't take yet (e.g. a new tab) wait on the iPad until it is updated.
 
 The website's opening hours, day off and open-anyway dates are rows of the Settings tab ("Opening hours", "Closed day",
-"Open anyway on"). Change them there or in the app (Cashier › Menu › Website ordering hours); `menu_()` in `Code.gs`
+"Open anyway on"). Change them there or in the app (Management › Website); `menu_()` in `Code.gs`
 sends them to the website with the menu. `assets/docs/packaging/` holds the box photos shown in the Packaging tab of
 the costing worksheet.
