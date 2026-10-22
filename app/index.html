@@ -300,6 +300,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}
 th{text-align:start;font-size:13px;color:var(--muted);padding:6px 4px;border-bottom:1px solid var(--hairline)}
 td{padding:8px 4px;border-bottom:1px solid var(--hairline);vertical-align:top}
 td.r,th.r{text-align:end}
+/* numbers are written left to right, so "end" would put them on the right: in Arabic, number columns line up on the left with their heading */
+[dir=rtl] td.r,[dir=rtl] th.r{text-align:left}
 .del{color:var(--red);font-size:14px;padding:4px 6px}
 .ghost.xed{height:32px;padding:0 12px;font-size:13px;margin:0}
 .bases{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:16px}
