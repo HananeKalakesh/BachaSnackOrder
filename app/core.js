@@ -326,6 +326,35 @@ var EB = (function () {
     // no number (an order taken at the counter or by phone): WhatsApp opens and asks who to send it to
     return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
   };
+  // A reminder to pay, for everything one customer owes (oldest first), in their language. Today's orders get a light
+  // "when you get a chance"; earlier days' name the day. Same tone as the other messages: plain, "Tekram ya basha!" at the end.
+  EB.payReminder = function (list, today, rate) {
+    var o = list[list.length - 1], ar = o.lang !== 'en', sum = 0;
+    var DA = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'], DE = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var when = function (x) {
+      if (x.day === today) return ar ? 'اليوم' : 'today';
+      var d = new Date(x.day + 'T12:00'), dm = d.getDate() + '/' + (d.getMonth() + 1);
+      return ar ? 'يوم ' + DA[d.getDay()] + ' ' + dm : 'on ' + DE[d.getDay()] + ' ' + dm;
+    };
+    var usd = function (lbp) { var v = lbp / (rate || 89500); return '$' + (v < 100 ? v.toFixed(2).replace(/\.00$/, '') : Math.round(v)) };
+    var lbp = function (v) { return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' L.L.' };
+    list.forEach(function (x) { sum += x.total });
+    var hi = o.name ? (ar ? 'أهلا ' + o.name + '! ' : 'Hi ' + o.name + '! ') : (ar ? 'أهلا! ' : 'Hi! ');
+    var allToday = list.every(function (x) { return x.day === today }), msg;
+    if (list.length === 1) {
+      var x = list[0];
+      msg = allToday
+        ? (ar ? hi + 'بس تذكير صغير إنو طلبك رقم ' + x.num + ' من الباش اليوم لسا ما اندفع: ' + usd(x.total) + ' (' + lbp(x.total) + '). فيك تدفع كاش أو ويش، ع راحتك. شكراً! تكرم يا باشا!'
+            : hi + 'Just a small reminder that your El Bash order #' + x.num + ' from today isn\'t paid yet: ' + usd(x.total) + ' (' + lbp(x.total) + '). You can pay cash or by Whish, whenever suits you. Thank you! Tekram ya basha!')
+        : (ar ? hi + 'منذكّرك إنو طلبك رقم ' + x.num + ' من الباش ' + when(x) + ' لسا ما اندفع: ' + usd(x.total) + ' (' + lbp(x.total) + '). فيك تدفع كاش بالمحل أو ويش. شكراً كتير! تكرم يا باشا!'
+            : hi + 'A reminder that your El Bash order #' + x.num + ' ' + when(x) + ' is still not paid: ' + usd(x.total) + ' (' + lbp(x.total) + '). You can pay cash at the shop or by Whish. Thanks a lot! Tekram ya basha!');
+    } else {
+      var lines = list.map(function (x) { return '• #' + x.num + ' ' + when(x) + ': ' + usd(x.total) }).join('\n');
+      msg = ar ? hi + 'منذكّرك إنو في ' + list.length + ' طلبات من الباش لسا ما اندفعو:\n' + lines + '\nالمجموع: ' + usd(sum) + ' (' + lbp(sum) + '). فيك تدفع كاش بالمحل أو ويش. شكراً كتير! تكرم يا باشا!'
+        : hi + 'A reminder that ' + list.length + ' of your El Bash orders are still not paid:\n' + lines + '\nTotal: ' + usd(sum) + ' (' + lbp(sum) + '). You can pay cash at the shop or by Whish. Thanks a lot! Tekram ya basha!';
+    }
+    return 'https://wa.me/' + (o.phone || '') + '?text=' + encodeURIComponent(msg);
+  };
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   EB.paid = function (o, payment, day) {
     var later = day && day !== o.day ? day : '';
