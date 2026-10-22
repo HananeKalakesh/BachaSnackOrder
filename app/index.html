@@ -1420,19 +1420,23 @@ else {
 // The offline copy only works from the app's own link (GitHub Pages), not inside the Apps Script page
 if ('serviceWorker' in navigator && !(window.google && google.script)) navigator.serviceWorker.register('sw.js').catch(function () {});
 /* ---------- expenses: what the shop bought, and the profit (sales minus expenses) for each month ---------- */
-// [name in the sheet, Arabic, what goes in it, group]. Equipment is an investment: shown on its own, not taken off the month's profit.
+// [name in the sheet, Arabic, what goes in it, group, types]. Equipment is an investment: shown on its own, not taken off the month's profit.
+// Owners (ربح) is what the owners take: the profit is shown before it, then what is left in the business.
 var EXP_CATS = [
   ['Chicken', 'دجاج', ['', ''], 'food'], ['Beef', 'لحمة', ['', ''], 'food'], ['Bread', 'خبز', ['', ''], 'food'],
-  ['Vegetables', 'خضار', ['', ''], 'food'], ['Ingredients', 'مواد أولية', ['صوصات، مشروبات، زيت، جبنة…', 'sauces, drinks, oil, cheese…'], 'food'],
+  ['Vegetables', 'خضار', ['', ''], 'food'], ['Ingredients', 'مواد أولية', ['صوصات، مشروبات، زيت، جبنة… وأدوات التنظيف والمطبخ', 'sauces, drinks, oil, cheese… and cleaning & kitchen supplies'], 'food',
+    [['Cooking', 'للطبخ'], ['Supplies', 'تنظيف ولوازم (كفوف…)']]],
   ['Packaging', 'تغليف', ['بلاستيك، علب، أكياس', 'plastics, boxes, bags'], 'packaging'],
   ['Salaries', 'رواتب', ['', ''], 'running', [['Staff', 'موظفين'], ['Cleaning', 'تنظيف']]],
   ['Utilities', 'فواتير', ['', ''], 'running', [['Gas', 'غاز'], ['Water', 'مي'], ['Internet', 'إنترنت']]],
   ['Other', 'غير ذلك', ['', ''], 'running'],
-  ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]]];
+  ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]],
+  // what the owners take each week as their pay: shown apart, after the profit
+  ['Owners', 'ربح', ['اللي بياخدو أصحاب المحل كل جمعة كمعاش', 'what the owners take each week as their pay'], 'owners']];
 // A purchase's label: the category, and its type when it has one (e.g. Utilities · Gas)
 function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
 function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
-var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C'};
+var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C', owners: '#8C5A00'};
 var EX = {mode: 'add', sel: '', y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false, edit: null};
 function catOf(name) { return EXP_CATS.filter(function (c) { return c[0] === name })[0] || EXP_CATS[8] }
 
@@ -1470,9 +1474,10 @@ function showExpenses() {
 
 // Totals for a list of purchases: running costs (taken off the profit), equipment (an investment, apart), by category and type
 function tally(list) {
-  var t = {spent: 0, invest: 0, byCat: {}, bySub: {}, count: list.length};
+  var t = {spent: 0, invest: 0, owners: 0, byCat: {}, bySub: {}, count: list.length};
   list.forEach(function (p) {
-    if (catOf(p.cat)[3] === 'investment') t.invest += p.lbp; else t.spent += p.lbp;
+    var g = catOf(p.cat)[3];
+    if (g === 'investment') t.invest += p.lbp; else if (g === 'owners') t.owners += p.lbp; else t.spent += p.lbp;
     t.byCat[p.cat] = (t.byCat[p.cat] || 0) + p.lbp;
     if (subOf(catOf(p.cat), p.sub)) { var bs = t.bySub[p.cat] = t.bySub[p.cat] || {}; bs[p.sub] = (bs[p.sub] || 0) + p.lbp }
   });
@@ -1480,7 +1485,7 @@ function tally(list) {
 }
 // Bars by category, biggest first, with each category's types under it
 function catBars(t, none) {
-  var cats = Object.keys(t.byCat).sort(function (a, b) { return t.byCat[b] - t.byCat[a] }), max = cats.length ? t.byCat[cats[0]] : 1, all = t.spent + t.invest || 1;
+  var cats = Object.keys(t.byCat).sort(function (a, b) { return t.byCat[b] - t.byCat[a] }), max = cats.length ? t.byCat[cats[0]] : 1, all = t.spent + t.invest + t.owners || 1;
   return '<div class="card"><h3 class="display">' + bi('حسب النوع', 'By category') + '</h3>' + (cats.length ? cats.map(function (k) {
     var cc = catOf(k), v = t.byCat[k];
     return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + (cc[3] === 'investment' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : '') +
@@ -1512,7 +1517,9 @@ function profitKpis(sales, t, label, other) {
     '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) +
       (other ? '<small class="ll">+ ' + bi('دخل تاني ', 'other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('المصاريف', 'Expenses') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div></div>';
+    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div>' +
+    (t.owners ? '<div class="kpi"><small>' + bi('ربح (للأصحاب)', 'Owners\' pay (ربح)') + '</small>' + amount(t.owners) +
+      (profit == null ? '' : '<small class="ll">' + bi('بيبقى بالمحل ', 'left in the business ') + '<span class="num">' + $usd(profit - t.owners) + '</span></small>') + '</div>' : '') + '</div>';
 }
 function expModes() {
   return '<div class="modes">' + [['add', 'زيد مصروف', 'Add'], ['cal', 'التقويم', 'Calendar'], ['dash', 'الملخّص', 'Dashboard']].map(function (x) {
@@ -1550,7 +1557,7 @@ function drawExpenses() {
   var today = ymd(bizDate()), tt = tally(list.filter(function (p) { return p.day === today }));
   var latest = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : (a.key < b.key ? 1 : -1) }).slice(0, 10);
   h += '<div class="card"><div class="chead"><h3 class="display">' + bi('آخر المصاريف', 'Latest purchases') + '</h3>' +
-    '<span class="tot">' + bi('اليوم: ', 'Today: ') + '<b class="num">' + $usd(tt.spent + tt.invest) + '</b></span></div>' + purchaseTable(latest, true) + '</div>';
+    '<span class="tot">' + bi('اليوم: ', 'Today: ') + '<b class="num">' + $usd(tt.spent + tt.invest + tt.owners) + '</b></span></div>' + purchaseTable(latest, true) + '</div>';
   $('#exp').innerHTML = h;
 }
 
@@ -1580,7 +1587,7 @@ function expCalendar(list) {
     var day = month.filter(function (p) { return p.day === EX.sel }), dt = tally(day);
     h += '<section class="dayx" id="xDayCard"><div class="shead"><h2 class="display">' + dayName(EX.sel) + '</h2>' +
       '<button class="today" data-xclose="1">' + bi('سكّر', 'Close') + '</button></div>' +
-      '<div class="kpis"><div class="kpi hero"><small>' + bi('مصاريف اليوم', 'Spent this day') + '</small>' + amount(dt.spent + dt.invest) + '<small class="ll">' + fmt(day.length) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
+      '<div class="kpis"><div class="kpi hero"><small>' + bi('مصاريف اليوم', 'Spent this day') + '</small>' + amount(dt.spent + dt.invest + dt.owners) + '<small class="ll">' + fmt(day.length) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
       '<div class="kpi"><small>' + bi('مبيعات اليوم', 'Sales this day') + '</small>' + (salesIn(EX.sel, EX.sel) == null ? '<b class="usd">…</b>' : amount(salesIn(EX.sel, EX.sel))) + '</div></div>' +
       '<div class="cols"><div class="card"><h3 class="display">' + bi('المصاريف', 'Purchases') + '</h3>' + purchaseTable(day, false) + '</div><div>' + catBars(dt, bi('ما في مصاريف بهاليوم', 'No purchases on this day')) + '</div></div></section>';
   }
@@ -1597,7 +1604,7 @@ function expDashboard(list) {
   h += profitKpis(A ? A.summary.sales : null, t, '', incomeIn('2000-01-01', today));
   // month by month: spent (bar) and profit (sales minus spent)
   var spentM = {}, salesM = {}, keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
-  list.forEach(function (p) { if (catOf(p.cat)[3] !== 'investment') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
+  list.forEach(function (p) { if (catOf(p.cat)[3] === 'food' || catOf(p.cat)[3] === 'packaging' || catOf(p.cat)[3] === 'running') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
   if (A) A.days.forEach(function (d) { salesM[d.date.slice(0, 7)] = (salesM[d.date.slice(0, 7)] || 0) + d.sales });
   while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
   var maxM = Math.max.apply(null, keys.map(function (k) { return Math.max(spentM[k] || 0, salesM[k] || 0) })) || 1;

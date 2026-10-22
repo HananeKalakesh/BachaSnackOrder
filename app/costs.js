@@ -1,6 +1,7 @@
 /* ---------- what each menu item costs (Management) ----------
    The Costs tab of the sheet brings in the Menu items tab of the El Bash costing worksheet (IMPORTRANGE): each item's
-   price, what its ingredients and packaging cost, the food cost % and the profit. Prices and recipes are changed in the
+   price, what its ingredients and packaging cost, its share of the running costs (rent, staff, gas…), the food cost % and
+   the profit after all of it. Prices and recipes are changed in the
    costing worksheet; this screen only shows them. */
 var CS = {data: null, err: '', locked: false, group: '', sort: ''};
 var COSTING_URL = 'https://docs.google.com/spreadsheets/d/1xIpuEHK0kfOqg6WFGBV-SBCLakFRj4bH0v4AjPa9Qlg/edit';
@@ -14,7 +15,7 @@ function costRows() {
   return EB.rows(r.Costs).filter(function (x) { return x.Item && x['Costing group'] }).map(function (x) {
     var pct = n(x['Food cost %']);
     return {name: String(x.Item), ar: String(x.Arabic || ''), group: String(x['Costing group']), price: n(x['Price (L.L.)']), usd: n(x['Price ($)']),
-      cost: n(x['Cost ($)']), pct: pct > 1.5 ? pct / 100 : pct, profit: n(x['Profit per item ($)']), missing: n(x['Still missing (count)']), target: n(x['Price for the target (L.L.)'])};
+      cost: n(x['Food & packaging ($)'] != null ? x['Food & packaging ($)'] : x['Cost ($)']), run: n(x['Running costs ($)']), pct: pct > 1.5 ? pct / 100 : pct, profit: n(x['Profit per item ($)']), missing: n(x['Still missing (count)']), target: n(x['Price for the target (L.L.)'])};
   });
 }
 
@@ -35,8 +36,8 @@ function drawCosts() {
   if (CS.locked) return;
   var rows = costRows(), h = '<div class="shead"><h2 class="display">' + bi('كلفة الأصناف', 'What each item costs') + '</h2>' +
     '<a class="ghost" href="' + COSTING_URL + '" target="_blank" rel="noopener">' + bi('شيت الكلفة ↗', 'Costing sheet ↗') + '</a></div>' +
-    '<p class="muted xhint">' + bi('الكلفة = المواد والتغليف بس (بلا إيجار وموظفين). الأخضر لحد 35٪، الأصفر لحد 45٪، الأحمر فوق. الأرقام البرتقالية بشيت الكلفة هي تقديرات.',
-      'Cost = ingredients and packaging only (no rent or staff). Green up to 35%, yellow up to 45%, red above. Orange numbers in the costing sheet are estimates.') + '</p>';
+    '<p class="muted xhint">' + bi('المواد = الأكل والتغليف. التشغيل = حصة الصنف من الإيجار والموظفين والغاز… الربح بعد كل شي. النسبة هي كلفة المواد: الأخضر لحد 35٪، الأصفر لحد 45٪، الأحمر فوق. الأرقام البرتقالية بشيت الكلفة تقديرات.',
+      'Food = ingredients and packaging. Running = the item\'s share of rent, staff, gas… Profit is after all of it. % is the food cost: green up to 35%, yellow up to 45%, red above. Orange numbers in the costing sheet are estimates.') + '</p>';
   if (CS.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الأرقام من آخر مرة.', 'No internet: these are the numbers from last time.') + '</p>';
   else if (CS.err) h += '<p class="err">' + esc(CS.err) + '</p>';
   if (!rows) { $('#cost').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
@@ -53,15 +54,15 @@ function drawCosts() {
     '<div class="kpi"><small>' + bi('الأصناف', 'Items') + '</small><b class="usd num">' + shown.length + '</b></div></div>';
   var list = function (items) {
     if (CS.sort === 'pct') items = items.slice().sort(function (a, b) { return b.pct - a.pct });
-    return '<table class="ctable"><tr><th></th><th class="r">' + bi('السعر', 'Price') + '</th><th class="r">' + bi('الكلفة', 'Cost') + '</th>' +
+    return '<table class="ctable"><tr><th></th><th class="r">' + bi('السعر', 'Price') + '</th><th class="r">' + bi('المواد', 'Food') + '</th><th class="r">' + bi('التشغيل', 'Running') + '</th>' +
       '<th class="r"><button class="hlink" data-csort="1">%' + (CS.sort === 'pct' ? ' ↓' : '') + '</button></th><th class="r">' + bi('الربح', 'Profit') + '</th></tr>' +
       items.map(function (x) {
         var cls = x.pct <= 0.35 ? 'ok' : x.pct <= 0.45 ? 'near' : 'over';
         return '<tr><td>' + bi(x.ar || x.name, x.name) + (x.missing ? '<div class="muted">⚠ ' + bi(x.missing + ' ناقص: الكلفة الحقيقية أعلى', x.missing + ' missing: real cost is higher') + '</div>' : '') + '</td>' +
           '<td class="r num"><b>' + usd(x.usd) + '</b><div class="muted">' + money(x.price) + '</div></td>' +
-          '<td class="r num">' + (x.cost ? usd(x.cost) : '–') + '</td>' +
+          '<td class="r num">' + (x.cost ? usd(x.cost) : '–') + '</td><td class="r num muted">' + (x.cost ? usd(x.run) : '–') + '</td>' +
           '<td class="r num">' + (x.cost ? '<b class="pct ' + cls + '">' + Math.round(x.pct * 100) + '%</b>' : '–') + '</td>' +
-          '<td class="r num">' + (x.cost ? usd(x.profit) : '–') + '</td></tr>';
+          '<td class="r num' + (x.cost && x.profit < 0.5 ? ' owe' : '') + '">' + (x.cost ? usd(x.profit) : '–') + '</td></tr>';
       }).join('') + '</table>';
   };
   h += (CS.group ? [CS.group] : groups).map(function (g) {
