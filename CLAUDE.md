@@ -38,3 +38,9 @@ Stories, posts, flyers and menus never mention WhatsApp: they say to order onlin
 number only for calls. Printed materials show the address (`hananekalakesh.github.io/BachaSnackOrder`) and a QR code.
 Stories and posts don't show the address: the owner pastes the link under them, so they say "الرابط تحت · Link below". The website itself keeps
 WhatsApp: after an order is sent, the customer sends it on WhatsApp too, so the shop can track it and talk to them.
+
+## Rule: Arabic first, English as the second language
+
+Materials (stories, posts, menus, flyers) are built in Arabic, with English as the smaller second line. A catchy title
+or slogan may lead in English when an Arabic line goes with it. Never make a page that is only in English, and never
+make a separate English copy of an Arabic material: one design carries both languages.
