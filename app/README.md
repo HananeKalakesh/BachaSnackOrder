@@ -16,6 +16,9 @@ Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ 
   kept on that device, with the real menu and made-up orders. It runs `Code.gs` itself in the browser; nothing
   reaches the real sheet.
 
+`AutoCopy.gs` sits next to `Code.gs` in the same Apps Script project: an hourly trigger (set up by running
+`startAutoCopy` once) copies the files listed in `assets.json` into the El Bash Drive folder, new ones only.
+
 `Code.gs` is the Apps Script behind the El Bash – Orders & Sales sheet. It reads the tabs, adds, changes or removes
 rows (protected by the app key in the Settings tab), and takes orders from the menu website. All the shop's rules
 live in core.js and the screens, so most changes don't need the Apps Script pasted again. Changes the deployed
