@@ -397,6 +397,7 @@ td.r,th.r{text-align:end}
 .ord.owed{cursor:default}
 .ord.owed .onum{--age:var(--sand);--on-age:var(--ink)}
 .ord.owed .onum span{font-size:12px}
+.owedh{margin:22px 0 10px}.owedh small{font-family:inherit;font-size:15px;color:var(--red);font-weight:800}
 .payb{height:42px;padding:0 14px;border-radius:12px;font-weight:800;white-space:nowrap}
 .payb.cash{background:var(--green);color:var(--paper)}
 .payb.whish{background:var(--whish);color:#fff}
@@ -449,7 +450,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -478,6 +479,7 @@ td.r,th.r{text-align:end}
 </div>
 
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
+<div class="report" id="owedView"><div class="wrap" id="owe"></div></div>
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="incView"><div class="wrap" id="inc"></div></div>
@@ -563,7 +565,7 @@ EB.onError = function (change, e) {
   var f = change.effect || {};
   alert(T('الشيت ما قبل هالتغيير: ', 'The sheet refused this change: ') + (e.message || e) + (f.order ? '\n\n#' + f.order.num + ' · ' + f.order.text : ''));
 };
-EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'block') drawOrders() };
+EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'block') drawOrders(); if ($('#owedView').style.display === 'block') drawOwed() };
 
 /* ---------- menu ---------- */
 // Four fixed columns: sides with sauces and drinks under them, meals, family meals and burgers, sandwiches.
@@ -799,6 +801,7 @@ function showView(v) {
   document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.view === v) });
   $('#orderView').style.display = v === 'order' ? '' : 'none';
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
+  $('#owedView').style.display = v === 'owed' ? 'block' : 'none';
   $('#reportView').style.display = v === 'report' ? 'block' : 'none';
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
@@ -810,6 +813,7 @@ function showView(v) {
   $('#marketView').style.display = v === 'market' ? 'block' : 'none';
   $('#availView').style.display = v === 'avail' ? 'block' : 'none';
   if (v === 'orders') { drawOrders(); loadOrders() }
+  if (v === 'owed') { drawOwed(); loadOwed() }
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
@@ -1145,15 +1149,11 @@ function loadOrders() {
     TD.err = e.offline ? 'OFFLINE' : (e.message || String(e)); drawOrders();
   });
 }
-/* Two views: today's orders, and every order not paid yet (any day) */
-var OMODE = 'today', OWED = null, OWED_ERR = '';
-function orderModes(nOwed) {
-  return '<div class="modes"><button data-omode="today"' + (OMODE === 'today' ? ' class="on"' : '') + '>' + bi('طلبات اليوم', 'Today\'s orders') + '</button>' +
-    '<button data-omode="owed"' + (OMODE === 'owed' ? ' class="on"' : '') + '>' + bi('ما دفعو', 'Not paid') + (nOwed ? ' <b class="num">' + nOwed + '</b>' : '') + '</button></div>';
-}
+/* ---------- Not paid: orders picked up or delivered without paying, today's apart from earlier days' ---------- */
+var OWED = null, OWED_ERR = '';
 function loadOwed() {
-  EB.read('owed', {'Orders': 0}).then(function (r) { OWED = r; OWED_ERR = ''; drawOrders() }, function (e) {
-    OWED_ERR = e.offline ? 'OFFLINE' : (e.message || String(e)); drawOrders();
+  EB.read('owed', {'Orders': 0}).then(function (r) { OWED = r; OWED_ERR = ''; drawOwed() }, function (e) {
+    OWED_ERR = e.offline ? 'OFFLINE' : (e.message || String(e)); drawOwed();
   });
 }
 function owedOrders() {
@@ -1161,28 +1161,49 @@ function owedOrders() {
   if (!r) return null;
   return EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r.at).filter(function (o) { return o.live && o.payment === 'Unpaid' && (o.done || o.day < EB.bizDay(DAY_END)) }).sort(function (a, b) { return a.at - b.at });
 }
+// everything the same customer owes (same phone, or same name when there's no phone), oldest first
+function sameCustomer(o, list) {
+  return list.filter(function (x) { return o.phone ? x.phone === o.phone : o.name && x.name.toLowerCase() === o.name.toLowerCase() || x.key === o.key });
+}
 function drawOwed() {
-  var list = owedOrders(), sum = 0;
-  (list || []).forEach(function (o) { sum += o.total });
-  var h = '<div class="shead">' + orderModes(list && list.length) + (list ? '<span class="since">' + bi('المجموع ', 'Total owed ') + '<b class="num owe">' + $usd(sum) + '</b> · <span class="num">' + ll(sum) + '</span></span>' : '') + '</div>';
+  var list = owedOrders(), today = EB.bizDay(DAY_END);
+  var total = function (l) { return l.reduce(function (a, o) { return a + o.total }, 0) };
+  var h = '<div class="shead"><h2 class="display">' + bi('ما دفعو', 'Not paid') + '</h2>' + (list && list.length ? '<span class="since">' + bi('المجموع ', 'Total owed ') +
+    '<b class="num owe">' + $usd(total(list)) + '</b> · <span class="num">' + ll(total(list)) + '</span></span>' : '') + '</div>' +
+    '<p class="muted xhint">' + bi('📲 بيفتح واتساب مع رسالة تذكير بالدفع، وإنت بتبعتها.', '📲 opens WhatsApp with a payment reminder written for you to send.') + '</p>';
   if (OWED_ERR === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي اللائحة من آخر مرة.', 'No internet: this list is from last time.') + '</p>';
   else if (OWED_ERR) h += '<p class="err">' + esc(OWED_ERR) + '</p>';
-  if (!list) { $('#ord').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
-  if (!list.length) { $('#ord').innerHTML = h + '<p class="muted">' + bi('ما حدا عليه شي. 👌', 'Nobody owes anything. 👌') + '</p>'; return }
-  h += '<div class="olist">' + list.map(function (o) {
+  if (!list) { $('#owe').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  var card = function (o) {
     return '<div class="ord owed">' +
-      '<div class="onum"><b class="num">#' + o.num + '</b><span>' + dayName(o.day) + '</span><span class="num">' + esc(o.time) + '</span></div>' +
-      '<div class="obody">' + (o.name ? '<div class="ohead"><b>' + esc(o.name) + '</b></div>' : '') +
-        '<div class="oitems"><span>' + bi(itemsAr(o.text), o.text) + '</span></div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
+      '<div class="onum"><b class="num">#' + o.num + '</b>' + (o.day === today ? '' : '<span>' + dayName(o.day) + '</span>') + '<span class="num">' + esc(o.time) + '</span></div>' +
+      '<div class="obody">' + who(o) + '<div class="oitems"><span>' + bi(itemsAr(o.text), o.text) + '</span></div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + '</div>' +
-      '<div class="oacts"><button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
+      '<div class="oacts"><button class="readyb" data-remind="' + esc(o.key) + '">📲 ' + bi('ذكّرو بالدفع', 'Payment reminder') + '</button>' +
+        '<button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
         '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button></div></div>';
-  }).join('') + '</div>';
-  $('#ord').innerHTML = h;
+  };
+  var part = function (l, ar, en, none) {
+    return '<h3 class="display owedh">' + bi(ar, en) + (l.length ? ' <small class="num">' + l.length + ' ' + bi('طلب', l.length > 1 ? 'orders' : 'order') + ' · ' + $usd(total(l)) + ' · ' + ll(total(l)) + '</small>' : '') + '</h3>' +
+      (l.length ? '<div class="olist">' + l.map(card).join('') + '</div>' : '<p class="muted">' + none + '</p>');
+  };
+  h += part(list.filter(function (o) { return o.day === today }), 'اليوم', 'Today', bi('ما حدا عليه شي من اليوم. 👌', 'Nobody owes anything from today. 👌')) +
+    part(list.filter(function (o) { return o.day !== today }).reverse(), 'من أيام قبل', 'From earlier days', bi('ما في دين من أيام قبل. 👌', 'Nothing owed from earlier days. 👌'));
+  $('#owe').innerHTML = h;
 }
+$('#owe').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  var o = (owedOrders() || []).filter(function (x) { return x.key === (b.dataset.paid || b.dataset.remind) })[0]; if (!o) return;
+  if (b.dataset.remind) {
+    var url = EB.payReminder(sameCustomer(o, owedOrders()), EB.bizDay(DAY_END), RATE), w = window.open(url, '_blank'); if (!w) location.href = url;
+    return;
+  }
+  EB.paid(o, b.dataset.how, EB.bizDay(DAY_END));
+  toast('الطلب #' + o.num + ' انْدفع', 'Order #' + o.num + ' marked paid');
+  drawOwed();
+});
 
 function drawOrders() {
-  if (OMODE === 'owed') return drawOwed();
   var now = EB.now(), today = EB.bizDay(DAY_END, now);
   TD.loaded = !!(RECENT || EB.cached('recent'));
   var all = knownOrders().filter(function (o) { return o.day === today && o.status !== 'Rejected' });
@@ -1193,7 +1214,7 @@ function drawOrders() {
   var byTime = function (a, b) { return a.at - b.at || a.num - b.num };
   var open = TD.list.filter(function (o) { return !o.done }).sort(byTime), done = TD.list.filter(function (o) { return o.done }).sort(byTime);
   var unpaid = TD.list.filter(function (o) { return o.payment === 'Unpaid' && o.done }).length, nReady = open.filter(function (o) { return o.ready }).length;
-  var h = '<div class="shead">' + orderModes(0) +
+  var h = '<div class="shead">' +
     (TD.loaded ? '<span class="since"><b class="num">' + (open.length - nReady) + '</b> ' + bi('عم يتحضّر', 'preparing') + ' · <b class="num">' + nReady + '</b> ' + bi('جاهز', 'ready') +
       ' · <b class="num">' + done.length + '</b> ' + bi('خلص', 'done') +
       (unpaid ? ' · <b class="num owe">' + unpaid + '</b> <span class="owe">' + bi('ما دفع', 'not paid') + '</span>' : '') + '</span><span class="hint2">' + bi('دق على طلب لتغيّر فيه', 'Tap an order to change it') + '</span>' : '') + '</div>';
@@ -1255,14 +1276,6 @@ function typeTag(o) { return o.type ? '<span class="otype">' + (o.type === 'Deli
 function whatsapp(o, kind) { var w = window.open(EB.whatsapp(o, kind), '_blank'); if (!w) location.href = EB.whatsapp(o, kind) }
 $('#ord').addEventListener('click', function (e) {
   var b = e.target.closest('button');
-  if (b && b.dataset.omode) { OMODE = b.dataset.omode; drawOrders(); if (OMODE === 'owed') loadOwed(); else loadOrders(); return }
-  if (b && b.dataset.paid) {
-    var debt = (owedOrders() || []).filter(function (x) { return x.key === b.dataset.paid })[0]; if (!debt) return;
-    EB.paid(debt, b.dataset.how, EB.bizDay(DAY_END));
-    toast('الطلب #' + debt.num + ' انْدفع', 'Order #' + debt.num + ' marked paid');
-    return drawOrders();
-  }
-  if (OMODE === 'owed') return;
   if (b && (b.dataset.accept || b.dataset.reject)) {
     var w = (TD.waiting || []).filter(function (x) { return x.key === (b.dataset.accept || b.dataset.reject) })[0]; if (!w) return;
     // accepted: it joins the orders, and WhatsApp opens with the confirmation for the customer (the cashier taps send)
@@ -1334,7 +1347,7 @@ function checkWeb() {
 }
 function poll() {
   if (EB.pending().length || !EB.key() || ROLE !== 'cashier') return;
-  loadRecent().then(function () { checkWeb(); if ($('#ordersView').style.display === 'block' && OMODE === 'today') drawOrders() }, function () {});
+  loadRecent().then(function () { checkWeb(); if ($('#ordersView').style.display === 'block') drawOrders() }, function () {});
 }
 setInterval(poll, 15000);
 setInterval(function () { if ($('#ordersView').style.display === 'block' && TD.loaded) drawOrders() }, 30000);
@@ -1354,7 +1367,7 @@ $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' 
 function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
-var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
+var ROLES = {cashier: [['order', 'orders', 'owed', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
   marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'cost', 'site'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'rec'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
