@@ -112,7 +112,17 @@ var EB = (function () {
     var d = val('Day ends');
     s.dayEnd = d === '' ? 2 : Math.max(0, Math.min(12, num(d)));
     s.target = num(val('Target food cost'));
+    // the website's opening hours (rows "Opening hours", "Closed day", "Open anyway on"), with the changes made here
+    s.hours = str(val('Opening hours')); s.closedDay = str(val('Closed day')); s.openDates = str(val('Open anyway on'));
+    changes(r && r.at).forEach(function (c) { var f = c.effect || {}; if (f.t === 'setting') s[f.field] = f.value });
     return s;
+  };
+  // The Settings rows the app can change, by their label in column A (the label must stay as it is in the sheet)
+  EB.SETTING_ROWS = {hours: 'Opening hours (website), e.g. 13:00-16:00, 18:00-23:00',
+    closedDay: 'Closed day (website): a day name, e.g. Monday, or empty for none',
+    openDates: 'Open anyway on (website): dates like 2026-12-25, comma between, e.g. a holiday on the closed day'};
+  EB.setSetting = function (field, value) {
+    EB.send([{op: 'update', tab: 'Settings', where: {'Settings': EB.SETTING_ROWS[field]}, set: {'Value': value}}], {t: 'setting', field: field, value: value});
   };
   // Every Menu row; on = "On order screen" ticked; soldOut = taken off for now with the Sold out button
   // (a sold-out item is also unticked, which hides it from the menu website)

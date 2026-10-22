@@ -20,3 +20,8 @@ Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ 
 rows (protected by the app key in the Settings tab), and takes orders from the menu website. All the shop's rules
 live in core.js and the screens, so most changes don't need the Apps Script pasted again. Changes the deployed
 script can't take yet (e.g. a new tab) wait on the iPad until it is updated.
+
+The website's opening hours, day off and open-anyway dates are rows of the Settings tab ("Opening hours", "Closed day",
+"Open anyway on"). Change them there or in the app (Cashier › Menu › Website ordering hours); `menu_()` in `Code.gs`
+sends them to the website with the menu. `assets/docs/packaging/` holds the box photos shown in the Packaging tab of
+the costing worksheet.

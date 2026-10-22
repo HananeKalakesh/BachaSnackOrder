@@ -222,16 +222,6 @@
     "name": "Story – new hours, order online.png",
     "path": "assets/stories/new-hours.png"
    }
-  ],
-  "5 Recipes & documents": [
-   {
-    "name": "Packaging list with prices (22 Oct 2026).pdf",
-    "path": "assets/docs/packaging.pdf"
-   },
-   {
-    "name": "Packaging list with prices (22 Oct 2026).png",
-    "path": "assets/docs/packaging.png"
-   }
   ]
  }
 }

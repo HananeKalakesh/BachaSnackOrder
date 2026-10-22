@@ -129,8 +129,10 @@ var EBDemo = (function () {
     var menuTab = [['Category', 'Item', 'Arabic name', 'Price ($)', 'Price (L.L.)', 'On order screen', 'Kitchen screen', 'Sold out']].concat(menu.items.map(function (m) {
       return [m.cat, m.name, m.ar, m.usd ? '$' + m.usd : '', m.price || '', m.on, '', ''];
     }));
-    var settings = [['Settings'], ['Demo sheet: nothing here is real.'], ['USD rate (L.L. per $1)', rate], ['PIN to lock the Sales screen', "'0000"], [''], [''], [''],
-      ['Kitchen screen: minutes until an order turns yellow', 10], ['Kitchen screen: minutes until an order turns red', 20], ['Day ends at (hour, 0-12)', 2], ['App key', 'demo']];
+    var settings = [['Settings', 'Value'], ['Demo sheet: nothing here is real.'], ['USD rate (L.L. per $1)', rate], ['PIN to lock the Sales screen', "'0000"], [''], [''], [''],
+      ['Kitchen screen: minutes until an order turns yellow', 10], ['Kitchen screen: minutes until an order turns red', 20], ['Day ends at (hour, 0-12)', 2], ['App key', 'demo'], [''],
+      ['Opening hours (website), e.g. 13:00-16:00, 18:00-23:00', '13:00-16:00, 18:00-23:00'], ['Closed day (website): a day name, e.g. Monday, or empty for none', 'Monday'],
+      ['Open anyway on (website): dates like 2026-12-25, comma between, e.g. a holiday on the closed day', '']];
     var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P}, sheets = {};
     Object.keys(tabs).forEach(function (n) { sheets[n] = new Sheet(n, tabs[n].map(function (r) { return r.map(parseIn) })) });
     return sheets;
