@@ -350,7 +350,8 @@ function status_(ss) {
   return { mode: String(out['Value']), wait: Number(out['Wait']) || 0, until: Number(out['Until']) };
 }
 
-/** Every Menu row for the website: on = shown ("On order screen" ticked), usd = the $ price when there is one; and the
+/** Every Menu row for the website: on = shown ("On order screen" ticked), soldOut = shown greyed as not available,
+ *  usd = the $ price when there is one; and the
  *  opening hours, day off and open-anyway dates from the Settings tab (rows starting "Opening hours", "Closed day",
  *  "Open anyway on"), which the website reads as it is. */
 function menu_() {
@@ -364,6 +365,6 @@ function menu_() {
     hours: raw('Opening hours'), closedDay: raw('Closed day'), openDates: raw('Open anyway on'),
     items: rows.filter(function (r) { return r[1] }).map(function (r) {
     return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
-      price: Number(r[4]) || 0, on: r[5] === true };
+      price: Number(r[4]) || 0, on: r[5] === true, soldOut: r[7] === true };
   }) };
 }

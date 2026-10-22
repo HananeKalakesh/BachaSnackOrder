@@ -64,7 +64,8 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .prnhelp{text-align:start;line-height:1.6}.prnhelp ol{padding-inline-start:22px;margin:6px 0}.busybtn.busy{background:var(--mustard);color:var(--ink);border-color:var(--mustard)}.busybtn.paused{background:var(--red);border-color:var(--red)}
 /* cashier: what's on the menu now */
 .hrsx{margin-bottom:14px}.hrsx label{display:grid;gap:4px;font-weight:700;font-size:14px}.hrsx label.wide{grid-column:1/-1}
-.hrsx select{height:48px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);padding:0 12px;font:inherit;font-size:17px;color:var(--ink)}
+.hrsx .slot{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:700}.hrsx .slot select{flex:1;min-width:0}
+.hrsx select,#site .slot select{height:48px;border-radius:14px;border:1px solid var(--hairline);background:var(--paper);padding:0 12px;font:inherit;font-size:17px;color:var(--ink)}
 .avsec{margin-bottom:14px}.avsec h3{margin:0 0 8px}
 .avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
 .avit{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--white);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow-sm);text-align:start;font-weight:700;min-height:52px}
@@ -295,6 +296,10 @@ th{text-align:start;font-size:13px;color:var(--muted);padding:6px 4px;border-bot
 td{padding:8px 4px;border-bottom:1px solid var(--hairline);vertical-align:top}
 td.r,th.r{text-align:end}
 .del{color:var(--red);font-size:14px;padding:4px 6px}
+.ghost.xed{height:32px;padding:0 12px;font-size:13px;margin:0}
+.bases{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:16px}
+.base{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:14px;background:var(--white);box-shadow:var(--shadow-sm);font-weight:800;text-align:start}
+.base small{font-weight:600;color:var(--muted)}.base.off{background:#F6E3E3;color:var(--red)}.base.part{background:#FFF4CC}
 .addx h3{margin:0 0 10px}
 .xcats{display:flex;flex-wrap:wrap;gap:8px}
 .xcat{height:42px;padding:0 14px;border-radius:999px;font-weight:700;background:var(--paper);box-shadow:inset 0 0 0 2px var(--c);color:var(--ink)}
@@ -442,7 +447,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -474,6 +479,7 @@ td.r,th.r{text-align:end}
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="incView"><div class="wrap" id="inc"></div></div>
+<div class="report" id="siteView"><div class="wrap" id="site"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
 <div class="report" id="stockView"><div class="wrap" id="stock"></div></div>
@@ -589,6 +595,7 @@ function useMenu(r) {
   if (first && $('#reportView').style.display === 'block') showReport();
   if (first && $('#expView').style.display === 'block') showExpenses();
   if (first && $('#incView').style.display === 'block') showIncome();
+  if (first && $('#siteView').style.display === 'block') showWebsite();
   if (first && $('#recView').style.display === 'block') showRecipes();
   if (first) gate();
   // sold-out items stay on the screen (greyed) so they can be brought back
@@ -791,6 +798,7 @@ function showView(v) {
   $('#reportView').style.display = v === 'report' ? 'block' : 'none';
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
+  $('#siteView').style.display = v === 'site' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
   $('#stockView').style.display = v === 'stock' ? 'block' : 'none';
@@ -800,6 +808,7 @@ function showView(v) {
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
+  if (v === 'site') showWebsite();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
   if (v === 'stock') showStock();
@@ -1340,7 +1349,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.f
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'site'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'rec'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1403,7 +1412,7 @@ var EXP_CATS = [
 function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
 function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
 var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C'};
-var EX = {mode: 'add', sel: '', y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false};
+var EX = {mode: 'add', sel: '', y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false, edit: null};
 function catOf(name) { return EXP_CATS.filter(function (c) { return c[0] === name })[0] || EXP_CATS[8] }
 
 // Purchases from the sheet (and the ones added or deleted on this iPad that the copy doesn't have yet)
@@ -1460,7 +1469,7 @@ function catBars(t, none) {
         var st = subOf(cc, s); return '<span>' + bi(st[1], st[0]) + ' <b class="num">' + $usd(t.bySub[k][s]) + '</b></span>' }).join('') + '</div>' : '') + '</div>';
   }).join('') : '<p class="muted">' + none + '</p>') + '</div>';
 }
-// A list of purchases with delete
+// A list of purchases with edit and delete
 function purchaseTable(list, withDate) {
   return list.length ? '<table>' + list.map(function (p) {
     var cc = catOf(p.cat);
@@ -1468,7 +1477,7 @@ function purchaseTable(list, withDate) {
       '<td><span class="xtag" style="--c:' + EXP_COLOR[cc[3]] + '">' + expLabel(cc, p.sub) + '</span> ' + esc(p.item) +
       (p.supplier ? '<div class="muted">' + esc(p.supplier) + '</div>' : '') + '</td><td class="r"><b class="num">' + (p.cur === '$' ? '$' + fmt2(p.amount) : fmt(p.amount) + ' L.L.') + '</b>' +
       '<div class="muted num">' + (p.cur === '$' ? ll(p.lbp) : $usd(p.lbp)) + '</div></td>' +
-      '<td><button class="del" data-xdel="' + esc(p.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
+      '<td><button class="ghost xed" data-xedit="' + esc(p.key) + '">' + bi('عدّل', 'Edit') + '</button> <button class="del" data-xdel="' + esc(p.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
   }).join('') + '</table>' : '<p class="muted">–</p>';
 }
 // Sales between two days (the Sales tab's numbers), or null before they load
@@ -1503,7 +1512,7 @@ function drawExpenses() {
   if (EX.mode === 'dash') return expDashboard(list);
   // Add: the form, then the latest purchases
   var c = EX.cat ? catOf(EX.cat) : null;
-  var h = '<div class="shead">' + expModes() + '<h2 class="display">' + bi('زيد مصروف', 'Add a purchase') + '</h2></div>' + expNote() +
+  var h = '<div class="shead">' + expModes() + '<h2 class="display">' + (EX.edit ? bi('عدّل المصروف', 'Edit purchase') : bi('زيد مصروف', 'Add a purchase')) + '</h2></div>' + expNote() +
     '<div class="card addx"><div class="xcats">' +
     EXP_CATS.map(function (k) { return '<button class="xcat' + (EX.cat === k[0] ? ' on' : '') + '" data-xcat="' + k[0] + '" style="--c:' + EXP_COLOR[k[3]] + '">' + bi(k[1], k[0]) + '</button>' }).join('') + '</div>' +
     (c && c[4] ? '<div class="xcats xsubs">' + c[4].map(function (t) {
@@ -1514,7 +1523,8 @@ function drawExpenses() {
     '<div class="xcur"><button data-xcur="$" class="' + (EX.cur === '$' ? 'on' : '') + '">$</button><button data-xcur="L.L." class="' + (EX.cur === 'L.L.' ? 'on' : '') + '">L.L.</button></div></div>' +
     '<input id="xSupplier" placeholder="' + esc(T('من وين؟ (اختياري)', 'Supplier (optional)')) + '" maxlength="60">' +
     '<input id="xDate" type="date" value="' + ymd(bizDate()) + '">' +
-    '<button class="save" id="xSave">' + bi('احفظ المصروف', 'Save purchase') + '</button><div class="err" id="xErr"></div></div></div>';
+    '<button class="save" id="xSave">' + (EX.edit ? bi('احفظ التعديل', 'Save changes') : bi('احفظ المصروف', 'Save purchase')) + '</button>' +
+    (EX.edit ? '<button class="ghost" id="xCancel">' + bi('إلغاء التعديل', 'Cancel edit') + '</button>' : '') + '<div class="err" id="xErr"></div></div></div>';
   if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   var today = ymd(bizDate()), tt = tally(list.filter(function (p) { return p.day === today }));
   var latest = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : (a.key < b.key ? 1 : -1) }).slice(0, 10);
@@ -1608,6 +1618,15 @@ $('#exp').addEventListener('click', function (e) {
     $('#xItem').value = keep.item; $('#xAmount').value = keep.amount; $('#xSupplier').value = keep.supplier; $('#xDate').value = keep.date;
     return;
   }
+  if (b.dataset.xedit) {
+    var ed = (purchases() || []).filter(function (x) { return x.key === b.dataset.xedit })[0]; if (!ed) return;
+    EX.edit = ed; EX.mode = 'add'; EX.cat = ed.cat; EX.sub = ed.sub; EX.cur = ed.cur === '$' ? '$' : 'L.L.';
+    drawExpenses();
+    $('#xItem').value = ed.item; $('#xAmount').value = ed.amount; $('#xSupplier').value = ed.supplier; $('#xDate').value = ed.day;
+    $('#exp').scrollIntoView({behavior: 'smooth', block: 'start'});
+    return;
+  }
+  if (b.id === 'xCancel') { EX.edit = null; EX.cat = ''; EX.sub = ''; EX.cur = '$'; return drawExpenses() }
   if (b.id === 'xSave') {
     var amount = Number($('#xAmount').value), day = $('#xDate').value, err = function (ar, en) { $('#xErr').innerHTML = bi(ar, en) };
     if (!EX.cat) return err('اختار النوع', 'Choose a category');
@@ -1615,11 +1634,17 @@ $('#exp').addEventListener('click', function (e) {
       'Choose which one (' + catOf(EX.cat)[4].map(function (t) { return t[0] }).join(', ') + ')');
     if (!(amount > 0)) return err('اكتب المبلغ', 'Enter the amount');
     if (!/^\d{4}-\d\d-\d\d$/.test(day)) return err('اختار التاريخ', 'Choose the date');
-    var p = {key: 'px' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), day: day, cat: EX.cat, sub: catOf(EX.cat)[4] ? EX.sub : '', item: $('#xItem').value.trim(),
+    var p = {key: EX.edit ? EX.edit.key : 'px' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), day: day, cat: EX.cat, sub: catOf(EX.cat)[4] ? EX.sub : '', item: $('#xItem').value.trim(),
       amount: amount, cur: EX.cur, lbp: Math.round(EX.cur === '$' ? amount * RATE : amount), supplier: $('#xSupplier').value.trim()};
-    EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [{'Date': p.day, 'Category': p.cat, 'Type': p.sub, 'Item': p.item, 'Amount': p.amount, 'Currency': p.cur,
-      'Amount (L.L.)': p.lbp, 'Supplier': p.supplier, 'Ref': p.key, 'Added': "'" + EB.ymd(new Date()) + ' ' + EB.hhmm()}]}], {t: 'save', kind: 'purchase', key: p.key, order: p});
-    toast('انحفظ المصروف', 'Purchase saved');
+    var cells = {'Date': p.day, 'Category': p.cat, 'Type': p.sub, 'Item': p.item, 'Amount': p.amount, 'Currency': p.cur, 'Amount (L.L.)': p.lbp, 'Supplier': p.supplier};
+    if (EX.edit) {   // the same row, changed in place
+      EB.send([{op: 'update', tab: 'Purchases', where: {'Ref': p.key}, set: cells}], {t: 'edit', kind: 'purchase', key: p.key, order: p});
+      toast('انحفظ التعديل', 'Purchase updated'); EX.edit = null;
+    } else {
+      cells['Ref'] = p.key; cells['Added'] = "'" + EB.ymd(new Date()) + ' ' + EB.hhmm();
+      EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [cells]}], {t: 'save', kind: 'purchase', key: p.key, order: p});
+      toast('انحفظ المصروف', 'Purchase saved');
+    }
     var d = p.day.split('-'); EX.y = +d[0]; EX.m = +d[1] - 1; EX.cat = ''; EX.sub = ''; EX.cur = '$';
     return drawExpenses();
   }
@@ -1638,5 +1663,6 @@ $('#exp').addEventListener('click', function (e) {
 <script src="printer.js"></script>
 <script src="cashier.js"></script>
 <script src="income.js"></script>
+<script src="website.js"></script>
 </body>
 </html>

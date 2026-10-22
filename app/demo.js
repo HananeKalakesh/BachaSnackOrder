@@ -131,7 +131,7 @@ var EBDemo = (function () {
     }));
     var settings = [['Settings', 'Value'], ['Demo sheet: nothing here is real.'], ['USD rate (L.L. per $1)', rate], ['PIN to lock the Sales screen', "'0000"], [''], [''], [''],
       ['Kitchen screen: minutes until an order turns yellow', 10], ['Kitchen screen: minutes until an order turns red', 20], ['Day ends at (hour, 0-12)', 2], ['App key', 'demo'], [''],
-      ['Opening hours (website), e.g. 13:00-16:00, 18:00-23:00', '13:00-16:00, 18:00-23:00'], ['Closed day (website): a day name, e.g. Monday, or empty for none', 'Monday'],
+      ['Opening hours (website), e.g. 1 PM - 4 PM, 6 PM - 11 PM', '1 PM - 4 PM, 6 PM - 11 PM'], ['Closed day (website): a day name, e.g. Monday, or empty for none', 'Monday'],
       ['Open anyway on (website): dates like 2026-12-25, comma between, e.g. a holiday on the closed day', '']];
     var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P}, sheets = {};
     Object.keys(tabs).forEach(function (n) { sheets[n] = new Sheet(n, tabs[n].map(function (r) { return r.map(parseIn) })) });
