@@ -27,3 +27,5 @@ sends them to the website with the menu. `assets/docs/packaging/` holds the box 
 the costing worksheet.
 Photos put in the "6 Menu photos" folder in Drive, named after the item ("Crispy Meal.jpg"), show on the website menu
 (`menuPhotos_()` in `Code.gs` shares them by link and sends their ids with the menu; kept 10 minutes).
+Management › Costs (`costs.js`) shows each item's price, cost, food cost % and profit from the sheet's Costs tab, which
+brings in the Menu items tab of the El Bash costing worksheet (IMPORTRANGE).

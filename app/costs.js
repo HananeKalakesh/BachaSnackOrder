@@ -58,7 +58,7 @@ function drawCosts() {
       items.map(function (x) {
         var cls = x.pct <= 0.35 ? 'ok' : x.pct <= 0.45 ? 'near' : 'over';
         return '<tr><td>' + bi(x.ar || x.name, x.name) + (x.missing ? '<div class="muted">⚠ ' + bi(x.missing + ' ناقص: الكلفة الحقيقية أعلى', x.missing + ' missing: real cost is higher') + '</div>' : '') + '</td>' +
-          '<td class="r num"><b>' + usd(x.usd) + '</b><div class="muted">' + fmt(x.price) + '</div></td>' +
+          '<td class="r num"><b>' + usd(x.usd) + '</b><div class="muted">' + money(x.price) + '</div></td>' +
           '<td class="r num">' + (x.cost ? usd(x.cost) : '–') + '</td>' +
           '<td class="r num">' + (x.cost ? '<b class="pct ' + cls + '">' + Math.round(x.pct * 100) + '%</b>' : '–') + '</td>' +
           '<td class="r num">' + (x.cost ? usd(x.profit) : '–') + '</td></tr>';
