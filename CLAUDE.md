@@ -36,12 +36,14 @@ How:
 
 Stories, posts, flyers and menus never mention WhatsApp: they say to order online from the menu and give the phone
 number only for calls. Printed materials show the address (`hananekalakesh.github.io/BachaSnackOrder`) and a QR code.
-Stories and posts don't show the address: the owner pastes the link under them, so they say "الرابط تحت" (Arabic file) or "Link below" (English file). The website itself keeps
+Stories and posts don't show the address: the owner pastes the link under them, so they say "الرابط تحت · Link below". The website itself keeps
 WhatsApp: after an order is sent, the customer sends it on WhatsApp too, so the shop can track it and talk to them.
 
-## Rule: one language per file
+## Rule: Arabic first, English as the second language
 
-Never combine Arabic and English on one material. Make each material (menu, story, post, flyer) as two separate files,
-one in Arabic and one in English, with the same design, and save both (e.g. `Menu A3 – Arabic.pdf` and
-`Menu A3 – English.pdf`). The A3 menu's design lives in `assets/print/menu-a3.html` (both languages);
-`node assets/print/split-menu.cjs` makes `menu-a3-ar` and `menu-a3-en` (HTML, PDF, PNG) from it.
+Materials (stories, posts, flyers, the digital menu) are built in Arabic, with English as the smaller second line. A catchy
+title or slogan may lead in English when an Arabic line goes with it. Never make a page that is only in English.
+
+The one exception is the **printed A3 menu**: it is made as two separate files, one in Arabic and one in English, with
+the same design (`Menu A3 – Arabic.pdf` and `Menu A3 – English.pdf`). Its design lives in `assets/print/menu-a3.html`
+(both languages); edit that, then `node assets/print/split-menu.cjs` makes `menu-a3-ar` and `menu-a3-en` (HTML, PDF, PNG).
