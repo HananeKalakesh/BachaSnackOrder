@@ -15,7 +15,7 @@
  *       until staff accept it in the app
  *   {action: 'files'}                 what is in the El Bash folder in Google Drive, by sub-folder
  *   {action: 'file', id}              one file from that folder as data (to share it, e.g. to a WhatsApp story)
- *   {action: 'copyAssets'}            copies the website's menu photos and logos into the folder (new ones only)
+ *   {action: 'copyAssets'}            copies the website's menu photos, logos and materials (stories, menus…) into the folder (new ones only)
  *   {action: 'write', ops: [...]}     done in order, together, under a lock
  *       {op: 'append', tab, rows: [{Header: value}], unique: 'Header'}
  *           adds rows; a header the tab doesn't have yet becomes a new column;
@@ -125,16 +125,24 @@ function file_(id) {
   return { name: f.getName(), type: f.getMimeType(), data: Utilities.base64Encode(f.getBlob().getBytes()) };
 }
 
-/** Copies the website's menu photos and logos (listed in app/assets.json) into the Drive folders, skipping any already there. */
+/** Copies the files listed in app/assets.json into the Drive folders, skipping any already there: the menu photos and
+ *  logos (menu, brand), and under "drive" any material by the name of its sub-folder of the El Bash folder
+ *  (e.g. "2 Social media & stories"), so new materials only need a line in assets.json. */
 function copyAssets_() {
   var list = JSON.parse(UrlFetchApp.fetch(SITE_URL + 'app/assets.json').getContentText()), added = 0, kept = 0;
-  Object.keys(COPY_TO).forEach(function (group) {
-    var folder = DriveApp.getFolderById(COPY_TO[group]), have = {}, it = folder.getFiles();
+  var copy = function (folder, files) {
+    var have = {}, it = folder.getFiles();
     while (it.hasNext()) have[it.next().getName()] = true;
-    (list[group] || []).forEach(function (x) {
+    (files || []).forEach(function (x) {
       if (have[x.name] || !/^[\w\/.-]+$/.test(x.path)) { kept++; return }
       folder.createFile(UrlFetchApp.fetch(SITE_URL + x.path).getBlob().setName(x.name)); added++;
     });
+  };
+  Object.keys(COPY_TO).forEach(function (group) { copy(DriveApp.getFolderById(COPY_TO[group]), list[group]) });
+  var root = DriveApp.getFolderById(FOLDER_ID);
+  Object.keys(list.drive || {}).forEach(function (name) {
+    var subs = root.getFoldersByName(name);
+    copy(subs.hasNext() ? subs.next() : root.createFolder(name), list.drive[name]);
   });
   CacheService.getScriptCache().remove('files');
   return { added: added, kept: kept };
