@@ -337,7 +337,8 @@ td.r,th.r{text-align:end}
 .key{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px}.key.ks{background:var(--g4)}.key.kx{background:#E59AA2}
 .xmo b.neg{color:var(--red)}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
-#exp .kpis,#inc .kpis{margin-top:14px}
+#exp .kpis,#inc .kpis,#cost .kpis{margin-top:14px}
+.cmodes{flex-wrap:wrap;margin:6px 0 4px}.ctable td{vertical-align:top}.ctable .hlink{font:inherit;font-weight:800;background:none;border:0;padding:0;color:inherit;cursor:pointer}
 .xform .wide{grid-column:1/-1}
 @media (max-width:600px){.xform{grid-template-columns:1fr}
   /* phones (the management app): a tighter top bar and headings */
@@ -447,7 +448,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -480,6 +481,7 @@ td.r,th.r{text-align:end}
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="incView"><div class="wrap" id="inc"></div></div>
 <div class="report" id="siteView"><div class="wrap" id="site"></div></div>
+<div class="report" id="costView"><div class="wrap" id="cost"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
 <div class="report" id="stockView"><div class="wrap" id="stock"></div></div>
@@ -596,6 +598,7 @@ function useMenu(r) {
   if (first && $('#expView').style.display === 'block') showExpenses();
   if (first && $('#incView').style.display === 'block') showIncome();
   if (first && $('#siteView').style.display === 'block') showWebsite();
+  if (first && $('#costView').style.display === 'block') showCosts();
   if (first && $('#recView').style.display === 'block') showRecipes();
   if (first) gate();
   // sold-out items stay on the screen (greyed) so they can be brought back
@@ -799,6 +802,7 @@ function showView(v) {
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
   $('#siteView').style.display = v === 'site' ? 'block' : 'none';
+  $('#costView').style.display = v === 'cost' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
   $('#stockView').style.display = v === 'stock' ? 'block' : 'none';
@@ -809,6 +813,7 @@ function showView(v) {
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
   if (v === 'site') showWebsite();
+  if (v === 'cost') showCosts();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
   if (v === 'stock') showStock();
@@ -1349,7 +1354,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.f
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'site'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'cost', 'site'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'rec'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1664,5 +1669,6 @@ $('#exp').addEventListener('click', function (e) {
 <script src="cashier.js"></script>
 <script src="income.js"></script>
 <script src="website.js"></script>
+<script src="costs.js"></script>
 </body>
 </html>

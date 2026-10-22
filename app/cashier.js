@@ -96,7 +96,7 @@ $('#avail').addEventListener('click', function (e) {
 drawBusy();
 
 /* ---------- the receipt printer: 🖨 in the top bar connects it; new orders print by themselves ---------- */
-var BUILD = '22.10-3';   // shown in the printer sheet, to check a tablet runs the newest version
+var BUILD = '22.10-4';   // shown in the printer sheet, to check a tablet runs the newest version
 var BLUEFY = 'https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055';
 function drawPrn() {
   var b = $('#prnBtn');
