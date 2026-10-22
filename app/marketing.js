@@ -1,4 +1,4 @@
-/* ---------- marketing: the photos, videos, stories, logos and menus in the El Bash Drive folder, ready to share ----------
+/* ---------- marketing: the stories, photos, videos and menu photos in the El Bash Drive folder, ready to share ----------
    Tap a photo or video, then Share: the device's share menu opens with the file, where WhatsApp › My status posts it as a
    story. (A web page can't open the WhatsApp status screen itself; the share menu is the way in.) */
 var MK = {files: null, err: '', open: null, ready: null, busy: false, copy: ''};
@@ -25,33 +25,35 @@ function mkCard(x) {
     '<small>' + esc(x.name) + '</small></button>';
 }
 
+// On top: the digital menu and Copy to Drive. Then what can be shared, in order: stories and posts, photos, videos,
+// menu item photos. The other folders (menus & print, logos, documents) only as links to Drive.
+var MK_SHOW = [/stor|social/i, /^\d*\s*photos$/i, /video/i, /menu photo/i];
 function drawMarket() {
   var r = MK.files || EB.cachedFiles(), menu = SITE;
   var h = '<div class="shead"><h2 class="display">' + bi('الماركتنغ', 'Marketing') + '</h2></div>' +
-    '<p class="mkhow">' + bi('اكبس على صورة أو فيديو، بعدين «شارك» واختار واتساب › الحالة. هيك بتنزل ستوري.', 'Tap a photo or video, then Share, and pick WhatsApp › My status to post it as a story.') + '</p>' +
     '<div class="hgrid mklinks">' +
     hubTile('📱', bi('المنيو الرقمي', 'Digital menu'), bi('ابعتو للزباين', 'Send it to customers'), menu).replace('<button class="hcopy"', '<button class="hcopy" data-mkshare="' + menu + '"') +
-    hubTile('🎨', bi('دليل الهوية', 'Brand guidelines'), bi('الألوان، الخطوط، اللوغو، طريقة الكلام', 'Colours, fonts, logo, voice'), BRAND_DOC) +
-    hubTile('📁', bi('كل الملفات بالدرايف', 'All files in Drive'), bi('زيد صور وفيديوهات هون', 'Add photos and videos here'), DRIVE + DRIVE_FOLDERS[0][0]) + '</div>';
+    '<div class="card mkcopy"><b>' + bi('انسخ عالدرايف', 'Copy to Drive') + '</b><p class="muted xhint">' +
+      bi('بينسخ صور الأصناف والستوريات والتصاميم الجديدة عالدرايف. بس الجديد.', 'Copies the menu item photos, stories and new designs into Drive. Only new ones.') + '</p>' +
+      '<button class="ghost" id="mkCopy"' + (MK.copy === 'busy' ? ' disabled' : '') + '>' + (MK.copy === 'busy' ? bi('عم ينسخ… (دقيقة)', 'Copying… (a minute)') : bi('انسخ عالدرايف', 'Copy to Drive')) + '</button>' +
+      (MK.copy && MK.copy !== 'busy' ? '<p class="xhint">' + MK.copy + '</p>' : '') + '</div></div>' +
+    '<p class="mkhow">' + bi('اكبس على صورة أو فيديو، بعدين «شارك» واختار واتساب › الحالة. هيك بتنزل ستوري.', 'Tap a photo or video, then Share, and pick WhatsApp › My status to post it as a story.') + '</p>';
   if (MK.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الملفات من آخر مرة.', 'No internet: these are the files from last time.') + '</p>';
+  var shown = function (name) { return MK_SHOW.some(function (re) { return re.test(name) }) };
   if (!r || !r.folders) {
-    h += (MK.err && MK.err !== 'OFFLINE' ? '<p class="err xhint" dir="ltr">Drive: ' + esc(MK.err) + '</p>' : '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>') +
-      '<div class="hgrid">' + DRIVE_FOLDERS.slice(1).map(function (f) { return hubTile('📁', folderLabel(f[1]), '', DRIVE + f[0]) }).join('') + '</div>';
+    h += MK.err && MK.err !== 'OFFLINE' ? '<p class="err xhint" dir="ltr">Drive: ' + esc(MK.err) + '</p>' : '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
   } else {
-    // stories and videos first, then photos, then the rest
-    var rank = function (n) { return /video|social|stor/i.test(n) ? 0 : /photo/i.test(n) ? 1 : /menu|print/i.test(n) ? 2 : 3 };
-    r.folders.filter(function (f) { return f.files.length }).sort(function (a, b) { return rank(a.name) - rank(b.name) || (a.name < b.name ? -1 : 1) }).forEach(function (f) {
-      h += '<div class="hgroup"><h3 class="display">' + (f.name ? folderLabel(f.name) : bi('بالمجلد الرئيسي', 'In the main folder')) +
-        ' <a class="hlink" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + bi('افتح ↗', 'Open ↗') + '</a></h3><div class="mkgrid">' + f.files.map(mkCard).join('') + '</div></div>';
+    MK_SHOW.forEach(function (re) {
+      r.folders.filter(function (f) { return f.name && re.test(f.name) }).forEach(function (f) {
+        h += '<div class="hgroup"><h3 class="display">' + folderLabel(f.name) + ' <a class="hlink" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + bi('افتح ↗', 'Open ↗') + '</a></h3>' +
+          (f.files.length ? '<div class="mkgrid">' + f.files.map(mkCard).join('') + '</div>' : '<p class="muted">' + bi('لسا فاضي', 'Empty for now') + '</p>') + '</div>';
+      });
     });
-    var empty = r.folders.filter(function (f) { return f.name && !f.files.length });
-    if (empty.length) h += '<div class="hgroup"><h3 class="display">' + bi('مجلدات فاضية', 'Empty folders') + '</h3><div class="hgrid">' +
-      empty.map(function (f) { return hubTile('📁', folderLabel(f.name), bi('زيد ملفات', 'Add files'), f.url) }).join('') + '</div></div>';
   }
-  h += '<div class="card mkcopy"><b>' + bi('صور الأصناف واللوغو من الموقع', 'Menu photos and logos from the website') + '</b><p class="muted xhint">' +
-    bi('بينسخ صور الأصناف (كل صورة باسم الصنف) واللوغو على الدرايف. بس الجديد، فيك تكبسو كل ما زدنا صور.', 'Copies the menu item photos (each named after its item) and the logos into Drive. Only new ones, so tap it whenever photos are added.') + '</p>' +
-    '<button class="ghost" id="mkCopy"' + (MK.copy === 'busy' ? ' disabled' : '') + '>' + (MK.copy === 'busy' ? bi('عم ينسخ… (دقيقة)', 'Copying… (a minute)') : bi('انسخ عالدرايف', 'Copy to Drive')) + '</button>' +
-    (MK.copy && MK.copy !== 'busy' ? '<p class="xhint">' + MK.copy + '</p>' : '') + '</div>';
+  // the rest: links to Drive only
+  h += '<div class="hgroup"><h3 class="display">' + bi('روابط الدرايف', 'Drive links') + '</h3><div class="hgrid">' +
+    DRIVE_FOLDERS.filter(function (f) { return !shown(f[1]) }).map(function (f) { return hubTile('📁', folderLabel(f[1]), '', DRIVE + f[0]) }).join('') +
+    hubTile('🎨', bi('دليل الهوية', 'Brand guidelines'), '', BRAND_DOC) + '</div></div>';
   if (MK.open) h += mkSheet(mkFile(MK.open));
   $('#market').innerHTML = h;
 }
@@ -78,7 +80,7 @@ function mkSheet(x) {
 $('#market').addEventListener('click', function (ev) {
   var b = ev.target.closest('button'); if (!b) return;
   if (b.dataset.mkshare) {
-    if (navigator.share) navigator.share({title: 'El Bash', text: T('منيو الباش، اطلب عالواتساب', 'El Bash menu, order on WhatsApp'), url: b.dataset.mkshare}).catch(function () {});
+    if (navigator.share) navigator.share({title: 'El Bash', text: T('منيو الباش، اطلب أونلاين من هون', 'El Bash menu: order online here'), url: b.dataset.mkshare}).catch(function () {});
     else prompt(T('انسخ الرابط', 'Copy the link'), b.dataset.mkshare);
     return;
   }
