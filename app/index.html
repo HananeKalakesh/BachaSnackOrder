@@ -209,6 +209,8 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 :root{--g1:#E3EDE7;--g2:#C3D9CB;--g3:#94BBA4;--g4:#5E957A;--g5:#336B51;--g6:#1F4A37;--whish-bar:#E4007C}
 .usd{display:block;font-size:28px;font-weight:800;line-height:1.15;margin-top:4px}
 .ll{display:block;font-size:13px;font-weight:600;color:var(--muted)}
+/* amounts are written left to right (.num) but sit on the right in Arabic, under their label */
+[dir=rtl] .usd.num,[dir=rtl] .ll.num{text-align:right}[dir=rtl] .r .num,[dir=rtl] .chead .tot .num{text-align:inherit}
 .shead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .shead h2{margin:0 6px;font-size:36px;color:var(--ink);min-width:0}
 .lang-en .shead h2{font-size:34px}
