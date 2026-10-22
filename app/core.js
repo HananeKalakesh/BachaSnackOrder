@@ -152,7 +152,9 @@ var EB = (function () {
         done: str(o['Kitchen done']), text: str(o.Items), items: [],
         // from the menu website: phone (WhatsApp), address, Status Waiting / Accepted / Rejected, the customer's language
         web: str(o.Source) === 'Website', phone: str(o.Phone).replace(/\D/g, ''), address: str(o.Address), status: str(o.Status),
-        lang: str(o.Language) || 'ar', ready: str(o['Ready sent'])};
+        lang: str(o.Language) || 'ar', ready: str(o['Ready sent']),
+        // a Not paid order paid on a later day: the money counts on that day
+        paidLater: str(o['Paid later']).slice(0, 10)};
       x.live = live(x);
       byKey[x.key] = x; list.push(x);
     });
@@ -225,7 +227,7 @@ var EB = (function () {
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
-      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total }
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total; list[i].paidLater = f.later || '' }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
     });
@@ -315,32 +317,43 @@ var EB = (function () {
   };
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   EB.paid = function (o, payment, day) {
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': day && day !== o.day ? day : ''}}],
-      {t: 'paid', key: o.key, payment: payment});
+    var later = day && day !== o.day ? day : '';
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': later}}],
+      {t: 'paid', key: o.key, payment: payment, later: later});
   };
 
   /* ---------- reports: totals for the days from..to (yyyy-mm-dd) ---------- */
+  // Orders, items and Not paid count on the day the order was placed. Sales are the money received: an order
+  // paid later counts on the day it was paid (Paid later), so a Not paid order isn't in Sales until it is paid.
   EB.report = function (list, from, to) {
-    var s = {orders: 0, items: 0, sales: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0};
-    var days = {}, items = {}, orders = [];
+    var s = {orders: 0, items: 0, sales: 0, ordered: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0,
+      laterOrders: 0, laterLbp: 0};
+    var days = {}, items = {}, orders = [], later = [];
+    var day = function (d) { return days[d] = days[d] || {date: d, orders: 0, sales: 0} };
+    var row = function (o) { return {num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type, paidLater: o.paidLater} };
     list.forEach(function (o) {
-      if (o.day < from || o.day > to || !o.live) return;
-      var got = o.received || (o.payment === 'Unpaid' ? 0 : o.total);
-      s.orders++; s.sales += o.total;
-      if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got }
-      else if (o.payment === 'Unpaid') { s.unpaidOrders++; s.unpaidLbp += o.total }
-      else { s.cashOrders++; s.cashLbp += got }
-      days[o.day] = days[o.day] || {date: o.day, orders: 0, sales: 0};
-      days[o.day].orders++; days[o.day].sales += o.total;
-      o.items.forEach(function (x) {
-        var it = items[x.name] = items[x.name] || {name: x.name, qty: 0, sales: 0};
-        it.qty += x.qty; it.sales += x.qty * x.price; s.items += x.qty;
-      });
-      orders.push({num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type});
+      if (!o.live) return;
+      var placed = o.day >= from && o.day <= to, paidOn = o.payment === 'Unpaid' ? '' : o.paidLater || o.day, paid = paidOn >= from && paidOn <= to;
+      if (placed) {
+        s.orders++; s.ordered += o.total; day(o.day).orders++;
+        if (o.payment === 'Unpaid') { s.unpaidOrders++; s.unpaidLbp += o.total }
+        o.items.forEach(function (x) {
+          var it = items[x.name] = items[x.name] || {name: x.name, qty: 0, sales: 0};
+          it.qty += x.qty; it.sales += x.qty * x.price; s.items += x.qty;
+        });
+        orders.push(row(o));
+      }
+      if (paid) {
+        var got = o.received || o.total;
+        s.sales += got; day(paidOn).sales += got;
+        if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got } else { s.cashOrders++; s.cashLbp += got }
+        if (paidOn !== o.day) { s.laterOrders++; s.laterLbp += got; later.push(row(o)) }
+      }
     });
     orders.sort(function (a, b) { return b.at - a.at });
+    later.sort(function (a, b) { return b.paidLater < a.paidLater ? -1 : b.paidLater > a.paidLater ? 1 : b.at - a.at });
     return {summary: s, days: Object.keys(days).sort().map(function (k) { return days[k] }),
-      items: Object.keys(items).map(function (k) { return items[k] }).sort(function (a, b) { return b.qty - a.qty || b.sales - a.sales }), orders: orders};
+      items: Object.keys(items).map(function (k) { return items[k] }).sort(function (a, b) { return b.qty - a.qty || b.sales - a.sales }), orders: orders, later: later};
   };
 
   return EB;

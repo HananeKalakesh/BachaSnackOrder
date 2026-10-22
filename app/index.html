@@ -330,14 +330,15 @@ td.r,th.r{text-align:end}
 .key{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px}.key.ks{background:var(--g4)}.key.kx{background:#E59AA2}
 .xmo b.neg{color:var(--red)}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
-#exp .kpis{margin-top:14px}
+#exp .kpis,#inc .kpis{margin-top:14px}
+.xform .wide{grid-column:1/-1}
 @media (max-width:600px){.xform{grid-template-columns:1fr}
   /* phones (the management app): a tighter top bar and headings */
   .top{padding:0 10px;gap:6px}.top .logo{display:none}.tabs{margin-inline-start:0;min-width:0}
   .tabs{padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{height:38px;padding:0 10px;font-size:14px;white-space:nowrap;flex:none}
   .langbtn{height:38px;padding:0 10px;font-size:13px}
   .report{padding:12px 12px 70px}.shead{flex-wrap:wrap;gap:8px}.shead h2,.lang-en .shead h2{font-size:26px}
-  #exp .shead{flex-wrap:nowrap}#exp .shead h2{flex:1;font-size:21px;text-align:center}
+  #exp .shead,#inc .shead{flex-wrap:nowrap}#exp .shead h2,#inc .shead h2{flex:1;font-size:21px;text-align:center}
   .kpi{padding:12px 14px;border-radius:20px}.kpi .usd{font-size:22px}.kpi.hero .usd{font-size:26px}}
 
 .pin{max-width:340px;margin:60px auto;text-align:center}
@@ -439,7 +440,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -470,6 +471,7 @@ td.r,th.r{text-align:end}
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
+<div class="report" id="incView"><div class="wrap" id="inc"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
 <div class="report" id="stockView"><div class="wrap" id="stock"></div></div>
@@ -487,7 +489,7 @@ td.r,th.r{text-align:end}
       <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">مخزون اليوم والوصفات</span><span class="en">Today's stock and recipes</span></small></button>
       <button data-role="marketing"><span class="wic">📣</span><b><span class="ar">الماركتنغ</span><span class="en">Marketing</span></b><small><span class="ar">صور، فيديوهات، ستوريات، لوغو ومنيو</span><span class="en">Photos, videos, stories, logos, menus</span></small></button>
       <button data-role="kitchen"><span class="wic">🔥</span><b><span class="ar">المطبخ</span><span class="en">Kitchen</span></b><small><span class="ar">الطلبات اللي لازم تنعمل</span><span class="en">The orders to make</span></small></button>
-      <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، الربح، المصاريف · بالرمز</span><span class="en">Sales, profit, expenses · PIN</span></small></button>
+      <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، الربح، المصاريف، الدخل · بالرمز</span><span class="en">Sales, profit, expenses, income · PIN</span></small></button>
       <button data-role="developer"><span class="wic">🛠</span><b><span class="ar">المطوّر</span><span class="en">Developer</span></b><small><span class="ar">كل الروابط والملفات، الوصفات والأسعار · بالرمز</span><span class="en">Every link and file, recipes and costs · PIN</span></small></button>
     </div>
     <button class="langbtn wlang" id="whoLang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
@@ -584,6 +586,7 @@ function useMenu(r) {
   // Sales and Expenses waited for the Settings (the PIN is there)
   if (first && $('#reportView').style.display === 'block') showReport();
   if (first && $('#expView').style.display === 'block') showExpenses();
+  if (first && $('#incView').style.display === 'block') showIncome();
   if (first && $('#recView').style.display === 'block') showRecipes();
   if (first) gate();
   // sold-out items stay on the screen (greyed) so they can be brought back
@@ -785,6 +788,7 @@ function showView(v) {
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
   $('#reportView').style.display = v === 'report' ? 'block' : 'none';
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
+  $('#incView').style.display = v === 'inc' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
   $('#stockView').style.display = v === 'stock' ? 'block' : 'none';
@@ -793,6 +797,7 @@ function showView(v) {
   if (v === 'orders') { drawOrders(); loadOrders() }
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
+  if (v === 'inc') showIncome();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
   if (v === 'stock') showStock();
@@ -882,10 +887,21 @@ function dayBody(D) {
   }
   h += '<h4>' + bi('الطلبات', 'Orders') + '</h4><table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
     D.orders.map(function (o) {
-      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + esc(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span></div></td>' +
+      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + esc(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
+        (o.paidLater ? ' <small class="muted">' + bi('انْدفع ', 'paid on ') + dayName(o.paidLater) + '</small>' : '') + '</div></td>' +
         '<td class="r">' + amount(o.total) + '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
     }).join('') + '</table>';
   return h;
+}
+
+// Orders from earlier days paid in this period: their money counts here, on the day it was paid
+function laterBody(D) {
+  if (!D.later || !D.later.length) return '';
+  return '<h4>' + bi('دين انْدفع (طلبات من أيام قبل)', 'Paid for earlier orders') + '</h4><table>' + D.later.map(function (o) {
+    return '<tr><td><b class="num">' + o.num + '</b><div class="muted">' + dayName(o.date) + '</div></td><td>' + bi(itemsAr(o.items), o.items) +
+      '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span> <small class="muted">' + bi('انْدفع ', 'paid on ') + dayName(o.paidLater) + '</small></div></td>' +
+      '<td class="r">' + amount(o.total) + '</td></tr>';
+  }).join('') + '</table>';
 }
 
 // The views, side by side at the top of the tab
@@ -899,7 +915,7 @@ function modeSwitch() {
 function sideCards(R, none, every) {
   var wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
   var side = '<div class="card"><h3 class="display">' + bi('الدفع', 'Payments') + '</h3>';
-  if (R && R.summary.orders) {
+  if (R && (R.summary.orders || R.summary.sales)) {
     var s = R.summary, owed = s.unpaidLbp || 0, all = (s.cashLbp + s.whishLbp + owed) || 1;
     var part = function (cls, ar, en, lbp, n) {
       return '<div><span class="dot ' + cls + '"></span>' + bi(ar, en) + ' <small class="muted num">' + Math.round(lbp / all * 100) + '%</small>' + amount(lbp) + '<small class="ll">' + fmt(n) + ' ' + bi('طلب', 'orders') + '</small></div>';
@@ -924,15 +940,16 @@ function sideCards(R, none, every) {
 function dayView(D, empty) {
   var s = D.summary;
   var h = '<div class="kpis six">' +
-    '<div class="kpi hero"><small>' + bi('المبيعات', 'Sales') + '</small>' + amount(s.sales) + '</div>' +
+    '<div class="kpi hero"><small>' + bi('المبيعات', 'Sales') + '</small>' + amount(s.sales) +
+      (s.laterLbp ? '<small class="ll">' + bi('منها ', 'incl. ') + '<span class="num">' + $usd(s.laterLbp) + '</span> ' + bi('دين انْدفع', 'paid for earlier orders') + '</small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
-      (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.sales / s.orders) + '</span></small>' : '') + '</div>' +
+      (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('الأصناف', 'Items') + '</small><b class="usd num">' + fmt(s.items) + '</b></div>' +
     '<div class="kpi"><small>' + bi('كاش', 'Cash') + '</small>' + amount(s.cashLbp) + '</div>' +
     '<div class="kpi"><small>' + bi('ويش', 'Whish') + '</small>' + amount(s.whishLbp) + '</div>' +
     '<div class="kpi' + (s.unpaidLbp ? ' owed' : '') + '"><small>' + bi('ما دفع', 'Not paid') + '</small>' + amount(s.unpaidLbp || 0) +
       (s.unpaidOrders ? '<small class="ll">' + fmt(s.unpaidOrders) + ' ' + bi('طلب', 'orders') + '</small>' : '') + '</div></div>';
-  return h + '<div class="cols"><div class="card dayc">' + (s.orders ? dayBody(D) : '<p class="muted">' + empty + '</p>') + '</div>' +
+  return h + '<div class="cols"><div class="card dayc">' + (s.orders ? dayBody(D) : '<p class="muted">' + empty + '</p>') + laterBody(D) + '</div>' +
     '<div>' + sideCards(D, empty, true) + '</div></div>';
 }
 
@@ -967,7 +984,7 @@ function drawAll() {
   h += '<div class="kpis">' +
     '<div class="kpi hero"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
-      (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.sales / s.orders) + '</span></small>' : '') + '</div>' +
+      (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + ' <span class="num">' + best.date.slice(0, 4) + '</span></small>' : '<b class="usd">–</b>') + '</div>' +
     '<div class="kpi"><small>' + bi('الأصناف المباعة', 'Items sold') + '</small><b class="usd num">' + fmt(s.items) + '</b></div></div>';
 
@@ -1026,7 +1043,7 @@ function drawSales() {
   h += '<div class="kpis">' +
     '<div class="kpi hero"><small>' + bi('مبيعات الشهر', 'Month sales') + '</small>' + (Y ? amount(mSales) : wait) + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + (Y ? fmt(mOrders) : '…') + '</b>' +
-      (mOrders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(mSales / mOrders) + '</span></small>' : '') + '</div>' +
+      (M && M.summary.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(M.summary.ordered / M.summary.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + '</small>' : '<b class="usd">–</b>') + '</div>' +
     '<div class="kpi"><small>' + bi('الأصناف المباعة', 'Items sold') + '</small><b class="usd num">' + (M ? fmt(M.summary.items) : '…') + '</b></div>' +
     '</div>';
@@ -1321,7 +1338,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.f
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['stock', 'rec'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'rec'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1415,6 +1432,8 @@ function showExpenses() {
   });
   // sales for the profit, the same data as the Sales tab
   if (!SALES) EB.read('sales', {'Orders': 0, 'Order Items': 0}).then(function (r) { SALES = r; drawExpenses() }, function () {});
+  // other income for the profit (Other income tab)
+  if (!IN.data) EB.read('income', {'Income': 0}).then(function (r) { IN.data = r; drawExpenses() }, function () {});
 }
 
 // Totals for a list of purchases: running costs (taken off the profit), equipment (an investment, apart), by category and type
@@ -1452,12 +1471,14 @@ function purchaseTable(list, withDate) {
 }
 // Sales between two days (the Sales tab's numbers), or null before they load
 function salesIn(from, to) { return (SALES || EB.cached('sales')) ? EB.report(salesOrders(), from, to).summary.sales : null }
-function profitKpis(sales, t, label) {
-  var profit = sales == null ? null : sales - t.spent;
+function profitKpis(sales, t, label, other) {
+  other = other || 0;
+  var profit = sales == null ? null : sales + other - t.spent;
   return '<div class="kpis">' +
     '<div class="kpi' + (profit != null && profit < 0 ? ' owed' : ' hero') + '"><small>' + bi('الربح', 'Profit') + label + '</small>' + (profit == null ? '<b class="usd">…</b>' : amount(profit)) +
-      '<small class="ll">' + bi('المبيعات ناقص المصاريف', 'Sales minus expenses') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) + '</div>' +
+      '<small class="ll">' + (other ? bi('المبيعات + الدخل التاني ناقص المصاريف', 'Sales + other income minus expenses') : bi('المبيعات ناقص المصاريف', 'Sales minus expenses')) + '</small></div>' +
+    '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) +
+      (other ? '<small class="ll">+ ' + bi('دخل تاني ', 'other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('المصاريف', 'Expenses') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
     '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div></div>';
 }
@@ -1510,7 +1531,7 @@ function expCalendar(list) {
   var month = list.filter(function (p) { return p.day.slice(0, 7) === mk }), t = tally(month), byDay = {}, maxD = 0, k;
   month.forEach(function (p) { byDay[p.day] = (byDay[p.day] || 0) + p.lbp });
   Object.keys(byDay).forEach(function (d) { if (byDay[d] > maxD) maxD = byDay[d] });
-  h += profitKpis(salesIn(mk + '-01', mk + '-' + pad(daysIn(y, m))), t, '');
+  h += profitKpis(salesIn(mk + '-01', mk + '-' + pad(daysIn(y, m))), t, '', incomeIn(mk + '-01', mk + '-' + pad(daysIn(y, m))));
   var first = (new Date(y, m, 1).getDay() + 6) % 7;
   var cal = '<div class="card calcard"><div class="cal">' + WEEK_AR.map(function (w, i) { return '<span class="wd">' + bi(w, WEEK_EN[i]) + '</span>' }).join('');
   for (k = 0; k < first; k++) cal += '<span></span>';
@@ -1540,7 +1561,7 @@ function expDashboard(list) {
   var today = ymd(bizDate()), t = tally(list), A = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2020-01-01', today) : null;
   // from the first purchase or the first sale, whichever came first
   var first = list.reduce(function (a, p) { return p.day < a ? p.day : a }, A && A.days.length ? A.days[0].date : today);
-  h += profitKpis(A ? A.summary.sales : null, t, '') ;
+  h += profitKpis(A ? A.summary.sales : null, t, '', incomeIn('2000-01-01', today));
   // month by month: spent (bar) and profit (sales minus spent)
   var spentM = {}, salesM = {}, keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
   list.forEach(function (p) { if (catOf(p.cat)[3] !== 'investment') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
@@ -1614,5 +1635,6 @@ $('#exp').addEventListener('click', function (e) {
 <script src="marketing.js"></script>
 <script src="printer.js"></script>
 <script src="cashier.js"></script>
+<script src="income.js"></script>
 </body>
 </html>

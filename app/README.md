@@ -6,7 +6,7 @@ Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ 
   (switched from the top bar): Cashier (new order, today's orders in stages, `cashier.js`: the Menu tab to switch items
   off and the busy mode for the website), Kitchen (opens `kitchen.html`), Chef (today's stock, recipes without costs),
   Marketing (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories), Management (PIN:
-  sales, expenses) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
+  sales, expenses, other income in `income.js`: money from before the app and capital) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
   `manage.html` and `?app=manage` open Management, `?role=…` the others. `assets.json` lists the website files the
   script copies into Drive (menu photos named by item, logos).
 - `kitchen.html`: the kitchen screen.
