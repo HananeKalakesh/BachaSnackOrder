@@ -99,6 +99,7 @@ function files_() {
     var files = [], it = folder.getFiles();
     while (it.hasNext() && files.length < 60) {
       var f = it.next();
+      if (f.isTrashed()) continue;   // getFiles() also lists what is in the trash
       files.push({ id: f.getId(), name: f.getName(), url: f.getUrl(), type: f.getMimeType(), size: f.getSize(), updated: f.getLastUpdated().getTime() });
     }
     return files.sort(function (a, b) { return b.updated - a.updated });
@@ -132,7 +133,7 @@ function copyAssets_() {
   var list = JSON.parse(UrlFetchApp.fetch(SITE_URL + 'app/assets.json').getContentText()), added = 0, kept = 0;
   var copy = function (folder, files) {
     var have = {}, it = folder.getFiles();
-    while (it.hasNext()) have[it.next().getName()] = true;
+    while (it.hasNext()) { var f = it.next(); if (!f.isTrashed()) have[f.getName()] = true }
     (files || []).forEach(function (x) {
       if (have[x.name] || !/^[\w\/.-]+$/.test(x.path)) { kept++; return }
       folder.createFile(UrlFetchApp.fetch(SITE_URL + x.path).getBlob().setName(x.name)); added++;
