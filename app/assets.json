@@ -222,6 +222,12 @@
     "name": "Story – new hours, order online.png",
     "path": "assets/stories/new-hours.png"
    }
+  ],
+  "5 Recipes & documents": [
+   {
+    "name": "El Bash – Packaging price comparison (Oct 2026).xlsx",
+    "path": "assets/docs/packaging-price-comparison.xlsx"
+   }
   ]
  }
 }
