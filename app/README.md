@@ -3,7 +3,7 @@
 Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ and installable on the home screen:
 
 - `index.html`: the app, one link for every device. The first time, it asks who uses the device and remembers it
-  (switched from the top bar): Cashier (new order, today's orders in stages, `cashier.js`: the Menu tab to switch items
+  (switched from the top bar): Cashier (new order, today's orders in stages, not paid today with payment reminders, `cashier.js`: the Menu tab to switch items
   off and the busy mode for the website), Kitchen (opens `kitchen.html`), Chef (today's stock, recipes without costs),
   Marketing (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories), Management (PIN:
   sales, expenses, other income in `income.js`: money from before the app and capital) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
