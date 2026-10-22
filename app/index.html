@@ -14,7 +14,7 @@
 <title>El Bash Orders</title>
 <script>
 // One app, one link, four users: each iPad remembers who uses it (switched from the top bar).
-// cashier: new order, today's orders · kitchen: the kitchen screen (kitchen.html) · chef: recipes, stock ·
+// cashier: new order, today's orders, not paid today · kitchen: the kitchen screen (kitchen.html) · chef: recipes, stock ·
 // marketing: photos, videos, stories, links · manage (PIN): sales, not paid, expenses, income, costs · developer (PIN): the links, the
 // website's hours. ?app=manage (manage.html) or ?role=… picks one.
 var ROLE = (function () {
@@ -455,7 +455,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -485,6 +485,7 @@ td.r,th.r{text-align:end}
 
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
 <div class="report" id="owedView"><div class="wrap" id="owe"></div></div>
+<div class="report" id="owedTView"><div class="wrap" id="oweT"></div></div>
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="incView"><div class="wrap" id="inc"></div></div>
@@ -503,7 +504,7 @@ td.r,th.r{text-align:end}
     <img class="wlogo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
     <h1 class="display"><span class="ar">مين عم يستعمل هالجهاز؟</span><span class="en">Who's using this device?</span></h1>
     <div class="wgrid">
-      <button data-role="cashier"><span class="wic">🧾</span><b><span class="ar">الكاشير</span><span class="en">Cashier</span></b><small><span class="ar">طلب جديد وطلبات اليوم</span><span class="en">New order and today's orders</span></small></button>
+      <button data-role="cashier"><span class="wic">🧾</span><b><span class="ar">الكاشير</span><span class="en">Cashier</span></b><small><span class="ar">طلب جديد، طلبات اليوم، ما دفعو اليوم</span><span class="en">New order, today's orders, not paid today</span></small></button>
       <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">الوصفات ومخزون اليوم</span><span class="en">Recipes and today's stock</span></small></button>
       <button data-role="marketing"><span class="wic">📣</span><b><span class="ar">الماركتنغ</span><span class="en">Marketing</span></b><small><span class="ar">صور، فيديوهات، ستوريات، لوغو ومنيو</span><span class="en">Photos, videos, stories, logos, menus</span></small></button>
       <button data-role="kitchen"><span class="wic">🔥</span><b><span class="ar">المطبخ</span><span class="en">Kitchen</span></b><small><span class="ar">الطلبات اللي لازم تنعمل</span><span class="en">The orders to make</span></small></button>
@@ -578,7 +579,7 @@ EB.onError = function (change, e) {
   var f = change.effect || {};
   alert(T('الشيت ما قبل هالتغيير: ', 'The sheet refused this change: ') + (e.message || e) + (f.order ? '\n\n#' + f.order.num + ' · ' + f.order.text : ''));
 };
-EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'block') drawOrders(); if ($('#owedView').style.display === 'block') drawOwed() };
+EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'block') drawOrders(); if ($('#owedView').style.display === 'block') drawOwed(); if ($('#owedTView').style.display === 'block') drawOwedToday() };
 
 /* ---------- menu ---------- */
 // Four fixed columns: sides with sauces and drinks under them, meals, family meals and burgers, sandwiches.
@@ -815,6 +816,7 @@ function showView(v) {
   $('#orderView').style.display = v === 'order' ? '' : 'none';
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
   $('#owedView').style.display = v === 'owed' ? 'block' : 'none';
+  $('#owedTView').style.display = v === 'owedt' ? 'block' : 'none';
   $('#reportView').style.display = v === 'report' ? 'block' : 'none';
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
@@ -827,6 +829,7 @@ function showView(v) {
   $('#availView').style.display = v === 'avail' ? 'block' : 'none';
   if (v === 'orders') { drawOrders(); loadOrders() }
   if (v === 'owed') { drawOwed(); loadOwed() }
+  if (v === 'owedt') { drawOwedToday(); loadRecent().then(function () { TD.err = ''; drawOwedToday() }, function (e) { TD.err = e.offline ? 'OFFLINE' : (e.message || String(e)); drawOwedToday() }) }
   if (v === 'report') showReport();
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
@@ -848,6 +851,14 @@ var WEEK_AR = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخ
 var S = {mode: 'today', y: 0, m: 0, sel: '', rate: 89500, years: {}, months: {}, days: {}, all: {}, busy: {}, locked: false, err: '', hour: -1};
 
 function pad(n) { return ('0' + n).slice(-2) }
+// "14:05" → 2:05 PM (2:05 م in Arabic); the sheet keeps 24-hour times
+function t12(t) {
+  var m = /^(\d{1,2}):(\d{2})/.exec(String(t || '')); if (!m) return esc(t || '');
+  return ampm(+m[1], ':' + m[2]);
+}
+// an hour on its own: 2 PM (2 م); the Arabic reads right to left, so م sits on the left of the time
+function h12(h) { return ampm(h, '') }
+function ampm(h, mm) { h = h % 24; var t = (h % 12 || 12) + mm; return '<span class="ar" dir="rtl">' + t + ' ' + (h < 12 ? 'ص' : 'م') + '</span><span class="en">' + t + ' ' + (h < 12 ? 'AM' : 'PM') + '</span>' }
 function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) }
 function monthKey(y, m) { return y + '-' + pad(m + 1) }
 function daysIn(y, m) { return new Date(y, m + 1, 0).getDate() }
@@ -865,13 +876,13 @@ function pinScreen(msg, where, after, title) {
   $(where).innerHTML = '<div class="pin"><h2 class="display" style="color:var(--green);font-size:34px;margin:0">' + (title || bi('المبيعات', 'Sales')) + '</h2><p class="muted">' + bi('اكتب الرمز', 'Enter the PIN') + '</p>' +
     '<input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="err">' + msg + '</div><button id="pinGo">' + bi('افتح', 'Open') + '</button></div>';
   var go = function () { setPin($('#pinIn').value); after() };
-  $('#pinGo').onclick = go; $('#pinIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#pinIn').focus();
+  $('#pinGo').onclick = go; $('#pinIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; autoOpen($('#pinIn'), go); $('#pinIn').focus();
 }
 
 // No internet: Sales shows what this iPad loaded last time
 function salesNote() {
   if (S.err === 'OFFLINE') {
-    var c = EB.cached('sales'), when = EB.ymd(new Date(c.at)) + ' ' + EB.hhmm(c.at);
+    var c = EB.cached('sales'), when = EB.ymd(new Date(c.at)) + ' ' + t12(EB.hhmm(c.at));
     return '<p class="offline">' + bi('ما في إنترنت: هيدي الأرقام من ' + when, 'No internet: these numbers are from ' + when) + '</p>';
   }
   if (S.err === 'OFFLINE_EMPTY') return '<p class="offline">' + bi('ما في إنترنت، والمبيعات بدها إنترنت أول مرة.', 'No internet: Sales needs the internet the first time.') + '</p>';
@@ -911,17 +922,17 @@ function dayBody(D) {
   var pick = S.hour >= lo && S.hour <= hi ? S.hour : -1;
   if (hi >= lo) {
     h += '<h4>' + bi('المبيعات حسب الساعة', 'Sales by hour') + '</h4><div class="readout">' + (pick >= 0 && hours[pick] ?
-      '<b class="num">' + pad(clock(pick)) + ':00–' + pad(clock(pick + 1)) + ':00</b> · <b class="num">' + $usd(hours[pick].sales) + '</b> <small class="num">' + ll(hours[pick].sales) + '</small> · ' + fmt(hours[pick].orders) + ' ' + bi('طلب', 'orders')
+      '<b class="num">' + h12(clock(pick)) + ' – ' + h12(clock(pick + 1)) + '</b> · <b class="num">' + $usd(hours[pick].sales) + '</b> <small class="num">' + ll(hours[pick].sales) + '</small> · ' + fmt(hours[pick].orders) + ' ' + bi('طلب', 'orders')
       : '<span class="muted">' + bi('دق على ساعة لتشوف رقمها', 'Tap an hour to see its numbers') + '</span>') + '</div><div class="hours">';
     for (k = lo; k <= hi; k++) {
       var v = hours[k] ? hours[k].sales : 0;
-      h += '<button class="hr' + (k === pick ? ' on' : '') + '" data-h="' + k + '"><span class="track">' + (v === maxH && v ? '<em class="num">' + $usd(v) + '</em>' : '') + '<i style="height:' + (v ? Math.max(3, v / maxH * 100) : 0) + '%"></i></span><span class="num">' + pad(clock(k)) + '</span></button>';
+      h += '<button class="hr' + (k === pick ? ' on' : '') + '" data-h="' + k + '"><span class="track">' + (v === maxH && v ? '<em class="num">' + $usd(v) + '</em>' : '') + '<i style="height:' + (v ? Math.max(3, v / maxH * 100) : 0) + '%"></i></span><span class="num">' + h12(clock(k)) + '</span></button>';
     }
     h += '</div>';
   }
   h += '<h4>' + bi('الطلبات', 'Orders') + '</h4><table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
     D.orders.map(function (o) {
-      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + esc(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
+      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + t12(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
         (o.paidLater ? ' <small class="muted">' + bi('انْدفع ', 'paid on ') + dayName(o.paidLater) + '</small>' : '') + '</div></td>' +
         '<td class="r">' + amount(o.total) + '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
     }).join('') + '</table>';
@@ -1178,25 +1189,28 @@ function owedOrders() {
 function sameCustomer(o, list) {
   return list.filter(function (x) { return o.phone ? x.phone === o.phone : o.name && x.name.toLowerCase() === o.name.toLowerCase() || x.key === o.key });
 }
+// one order someone owes: a WhatsApp reminder, and buttons for when they pay
+function owedCard(o, today) {
+  return '<div class="ord owed">' +
+    '<div class="onum"><b class="num">#' + o.num + '</b>' + (o.day === today ? '' : '<span>' + dayName(o.day) + '</span>') + '<span class="num">' + t12(o.time) + '</span></div>' +
+    '<div class="obody">' + who(o) + '<div class="oitems"><span>' + bi(itemsAr(o.text), o.text) + '</span></div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
+    '<div class="oside">' + amount(o.total) + '</div>' +
+    '<div class="oacts"><button class="readyb" data-remind="' + esc(o.key) + '">📲 ' + bi('ذكّرو بالدفع', 'Payment reminder') + '</button>' +
+      '<button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
+      '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button>' +
+      '<button class="splitl" data-paid="' + esc(o.key) + '" data-how="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button></div></div>';
+}
+var REMIND_HINT = ['📲 بيفتح واتساب مع رسالة تذكير بالدفع، وإنت بتبعتها.', '📲 opens WhatsApp with a payment reminder written for you to send.'];
 function drawOwed() {
   var list = owedOrders(), today = EB.bizDay(DAY_END);
   var total = function (l) { return l.reduce(function (a, o) { return a + o.total }, 0) };
   var h = '<div class="shead"><h2 class="display">' + bi('ما دفعو', 'Not paid') + '</h2>' + (list && list.length ? '<span class="since">' + bi('المجموع ', 'Total owed ') +
     '<b class="num owe">' + $usd(total(list)) + '</b> · <span class="num">' + ll(total(list)) + '</span></span>' : '') + '</div>' +
-    '<p class="muted xhint">' + bi('📲 بيفتح واتساب مع رسالة تذكير بالدفع، وإنت بتبعتها.', '📲 opens WhatsApp with a payment reminder written for you to send.') + '</p>';
+    '<p class="muted xhint">' + bi(REMIND_HINT[0], REMIND_HINT[1]) + '</p>';
   if (OWED_ERR === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي اللائحة من آخر مرة.', 'No internet: this list is from last time.') + '</p>';
   else if (OWED_ERR) h += '<p class="err">' + esc(OWED_ERR) + '</p>';
   if (!list) { $('#owe').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
-  var card = function (o) {
-    return '<div class="ord owed">' +
-      '<div class="onum"><b class="num">#' + o.num + '</b>' + (o.day === today ? '' : '<span>' + dayName(o.day) + '</span>') + '<span class="num">' + esc(o.time) + '</span></div>' +
-      '<div class="obody">' + who(o) + '<div class="oitems"><span>' + bi(itemsAr(o.text), o.text) + '</span></div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
-      '<div class="oside">' + amount(o.total) + '</div>' +
-      '<div class="oacts"><button class="readyb" data-remind="' + esc(o.key) + '">📲 ' + bi('ذكّرو بالدفع', 'Payment reminder') + '</button>' +
-        '<button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
-        '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button>' +
-        '<button class="splitl" data-paid="' + esc(o.key) + '" data-how="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button></div></div>';
-  };
+  var card = function (o) { return owedCard(o, today) };
   var part = function (l, ar, en, none) {
     return '<h3 class="display owedh">' + bi(ar, en) + (l.length ? ' <small class="num">' + l.length + ' ' + bi('طلب', l.length > 1 ? 'orders' : 'order') + ' · ' + $usd(total(l)) + ' · ' + ll(total(l)) + '</small>' : '') + '</h3>' +
       (l.length ? '<div class="olist">' + l.map(card).join('') + '</div>' : '<p class="muted">' + none + '</p>');
@@ -1205,19 +1219,44 @@ function drawOwed() {
     part(list.filter(function (o) { return o.day !== today }).reverse(), 'من أيام قبل', 'From earlier days', bi('ما في دين من أيام قبل. 👌', 'Nothing owed from earlier days. 👌'));
   $('#owe').innerHTML = h;
 }
-$('#owe').addEventListener('click', function (e) {
-  var b = e.target.closest('button'); if (!b) return;
-  var o = (owedOrders() || []).filter(function (x) { return x.key === (b.dataset.paid || b.dataset.remind) })[0]; if (!o) return;
-  if (b.dataset.remind) {
-    var url = EB.payReminder(sameCustomer(o, owedOrders()), EB.bizDay(DAY_END), RATE), w = window.open(url, '_blank'); if (!w) location.href = url;
-    return;
-  }
-  var part = b.dataset.how === 'Split' ? askSplit(o) : null;
-  if (b.dataset.how === 'Split' && part == null) return;
-  EB.paid(o, b.dataset.how, EB.bizDay(DAY_END), part);
-  toast('الطلب #' + o.num + ' انْدفع', 'Order #' + o.num + ' marked paid');
-  drawOwed();
-});
+// Remind or mark paid; list(): the orders this tab shows, draw(): redraws it
+function owedClicks(where, list, draw) {
+  $(where).addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var o = (list() || []).filter(function (x) { return x.key === (b.dataset.paid || b.dataset.remind) })[0]; if (!o) return;
+    if (b.dataset.remind) {
+      var url = EB.payReminder(sameCustomer(o, list()), EB.bizDay(DAY_END), RATE), w = window.open(url, '_blank'); if (!w) location.href = url;
+      return;
+    }
+    var part = b.dataset.how === 'Split' ? askSplit(o) : null;
+    if (b.dataset.how === 'Split' && part == null) return;
+    EB.paid(o, b.dataset.how, EB.bizDay(DAY_END), part);
+    toast('الطلب #' + o.num + ' انْدفع', 'Order #' + o.num + ' marked paid');
+    draw();
+  });
+}
+owedClicks('#owe', owedOrders, drawOwed);
+
+/* ---------- Not paid today (cashier): today's orders picked up or delivered without paying, to remind them at the end of the shift ---------- */
+function owedToday() {
+  if (!(RECENT || EB.cached('recent'))) return null;
+  var today = EB.bizDay(DAY_END);
+  return knownOrders().filter(function (o) { return o.live && o.day === today && o.payment === 'Unpaid' && o.done }).sort(function (a, b) { return a.at - b.at });
+}
+function drawOwedToday() {
+  var list = owedToday(), today = EB.bizDay(DAY_END);
+  var total = (list || []).reduce(function (a, o) { return a + o.total }, 0);
+  var h = '<div class="shead"><h2 class="display">' + bi('ما دفعو اليوم', 'Not paid today') + '</h2>' + (list && list.length ? '<span class="since"><b class="num owe">' + list.length + '</b> ' +
+    bi('طلب', list.length > 1 ? 'orders' : 'order') + ' · <b class="num owe">' + $usd(total) + '</b> · <span class="num">' + ll(total) + '</span></span>' : '') + '</div>' +
+    '<p class="muted xhint">' + bi('آخر الشيفت: ذكّر كل واحد ما دفع. ', 'End of shift: remind everyone who hasn\'t paid. ') + bi(REMIND_HINT[0], REMIND_HINT[1]) + '</p>';
+  if (TD.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الطلبات اللي بيعرفها هالآيباد.', 'No internet: these are the orders this iPad knows.') + '</p>';
+  else if (TD.err) h += '<p class="err">' + esc(TD.err) + '</p>';
+  if (!list) h += '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
+  else h += list.length ? '<div class="olist" style="margin-top:14px">' + list.map(function (o) { return owedCard(o, today) }).join('') + '</div>'
+    : '<p class="muted" style="margin-top:14px">' + bi('كل اللي أخدو طلب اليوم دفعو. 👌', 'Everyone who got an order today has paid. 👌') + '</p>';
+  $('#oweT').innerHTML = h;
+}
+owedClicks('#oweT', owedToday, drawOwedToday);
 
 function drawOrders() {
   var now = EB.now(), today = EB.bizDay(DAY_END, now);
@@ -1239,7 +1278,7 @@ function drawOrders() {
   if (!TD.loaded) { $('#ord').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   if (waiting.length) h += '<div class="webq"><h3>🌐 ' + bi('طلبات من الموقع، ناطرة موافقتك', 'Website orders waiting for you') + '</h3>' + waiting.map(function (o) {
     return '<div class="ord web">' +
-      '<div class="onum"><b class="num">🌐 #' + o.num + '</b><span class="num">' + esc(o.time) + '</span></div>' +
+      '<div class="onum"><b class="num">🌐 #' + o.num + '</b><span class="num">' + t12(o.time) + '</span></div>' +
       '<div class="obody">' + who(o) + '<div class="oitems">' + itemsOf(o) + '</div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + typeTag(o) + '</div>' +
       '<div class="oacts"><button class="payb cash" data-accept="' + esc(o.key) + '">' + bi('قبول ✓', 'Accept ✓') + '</button>' +
@@ -1260,7 +1299,7 @@ function drawOrders() {
       : '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
     var owes = o.payment === 'Unpaid' && o.done, later = o.payment === 'Unpaid' && !o.done;
     return '<div class="ord ' + cls + (owes ? ' owes' : '') + '" data-key="' + esc(o.key) + '">' +
-      '<div class="onum"><b class="num">' + (o.web ? '🌐 ' : '') + '#' + o.num + '</b><span class="num">' + esc(o.time) + '</span>' +
+      '<div class="onum"><b class="num">' + (o.web ? '🌐 ' : '') + '#' + o.num + '</b><span class="num">' + t12(o.time) + '</span>' +
         (o.done || o.ready ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
       '<div class="obody">' + stage + who(o) + '<div class="oitems">' + itemsOf(o) + '</div>' +
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
@@ -1386,7 +1425,7 @@ $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' 
 function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
-var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
+var ROLES = {cashier: [['order', 'orders', 'owedt', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
   marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'owed', 'exp', 'inc', 'cost'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
@@ -1410,7 +1449,9 @@ $('#who').addEventListener('click', function (e) {
 });
 $('#whoLang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
 // Management: the PIN once each time the app opens (Settings tab), before anything shows
-function pinOk() { return !SET.pin || pin() === SET.pin || (/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin)) }
+function pinOk(p) { p = p == null ? pin() : p; return !SET.pin || p === SET.pin || (/^\d+$/.test(p) && p.length >= String(SET.pin).length && Number(p) === Number(SET.pin)) }
+// the right PIN opens as soon as it's typed, without tapping Open
+function autoOpen(inp, go) { inp.addEventListener('input', function () { if (SET.loaded && SET.pin && pinOk(inp.value)) go() }) }
 function gate(msg) {
   if (!LOCKED || (SET.loaded && pinOk())) { $('#gate').hidden = true; return }
   $('#gate').hidden = false;
@@ -1420,7 +1461,7 @@ function gate(msg) {
     '<input class="gatein" id="gateIn" type="password" inputmode="numeric" autocomplete="off"><div class="gateerr">' + (msg || '') + '</div>' +
     '<button class="gatego" id="gateGo">' + bi('افتح', 'Open') + '</button><button class="gateback" id="gateBack">' + bi('مستخدم تاني', 'Another user') + '</button>';
   var go = function () { setPin($('#gateIn').value); if (pinOk()) { $('#gate').hidden = true; showView(ROLES[ROLE][0][0]) } else gate(bi('الرمز غلط', 'Wrong PIN')) };
-  $('#gateGo').onclick = go; $('#gateIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; $('#gateIn').focus();
+  $('#gateGo').onclick = go; $('#gateIn').onkeydown = function (e) { if (e.key === 'Enter') go() }; autoOpen($('#gateIn'), go); $('#gateIn').focus();
   $('#gateBack').onclick = function () { try { localStorage.removeItem('elbash-role') } catch (e) {} location.href = 'index.html' + demoQ('?') };
 }
 
