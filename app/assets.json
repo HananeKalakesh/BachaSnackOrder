@@ -222,6 +222,24 @@
     "name": "Story – new hours, order online.png",
     "path": "assets/stories/new-hours.png"
    }
+  ],
+  "1 Menus & print": [
+   {
+    "name": "Menu A3 – English.pdf",
+    "path": "assets/print/menu-a3-en.pdf"
+   },
+   {
+    "name": "Menu A3 – Arabic.pdf",
+    "path": "assets/print/menu-a3-ar.pdf"
+   },
+   {
+    "name": "Menu A3 – English (preview).png",
+    "path": "assets/print/menu-a3-en.png"
+   },
+   {
+    "name": "Menu A3 – Arabic (preview).png",
+    "path": "assets/print/menu-a3-ar.png"
+   }
   ]
  }
 }

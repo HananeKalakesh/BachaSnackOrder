@@ -15,7 +15,7 @@
 <script>
 // One app, one link, four users: each iPad remembers who uses it (switched from the top bar).
 // cashier: new order, today's orders · kitchen: the kitchen screen (kitchen.html) · chef: recipes, stock ·
-// marketing: photos, videos, stories, links · manage (PIN): sales, expenses, income, costs · developer (PIN): the links, the
+// marketing: photos, videos, stories, links · manage (PIN): sales, not paid, expenses, income, costs · developer (PIN): the links, the
 // website's hours. ?app=manage (manage.html) or ?role=… picks one.
 var ROLE = (function () {
   var q = location.search, r = /[?&]app=manage\b/.test(q) ? 'manage' : (q.match(/[?&]role=(cashier|kitchen|chef|marketing|manage|developer)\b/) || [])[1];
@@ -107,23 +107,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .hlink{font:800 14px "Plus Jakarta Sans",Cairo,sans-serif;color:var(--green);margin-inline-start:10px}
 .hfolder{margin-bottom:14px}.hfname{display:inline-block;margin:0 0 8px;font-weight:800;color:var(--ink);text-decoration:none}
 /* marketing */
-.mkhow{margin:0 0 14px;padding:10px 14px;border-radius:14px;background:var(--white);box-shadow:var(--shadow-sm)}
 .mklinks{margin-bottom:18px}
-.mkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.mkcard{display:flex;flex-direction:column;gap:6px;background:var(--white);border-radius:18px;padding:6px;box-shadow:var(--shadow-sm);text-align:start;min-width:0}
-.mkcard small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px 2px}
-.mkimg{position:relative;display:block;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sand)}
-.mkimg img{width:100%;height:100%;object-fit:cover;display:block}.mkimg.noimg img{display:none}
-.mkicon{position:absolute;inset:0;display:grid;place-items:center;font-size:44px}
-.mkplay{position:absolute;inset:auto auto 8px 8px;background:rgba(26,26,23,.7);color:#fff;border-radius:999px;padding:2px 10px;font-size:13px}
-.mksheet{position:fixed;inset:0;z-index:40;background:rgba(26,26,23,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.mkbox{position:relative;width:100%;max-width:520px;max-height:100%;overflow-y:auto;background:var(--paper);border-radius:24px;padding:16px;text-align:center}
-.mkbig{width:100%;max-height:52vh;object-fit:contain;border-radius:16px;background:var(--sand);display:block}div.mkbig{height:200px;display:grid;place-items:center;font-size:70px}
-.mkvid{margin-top:6px;font-size:14px;color:var(--muted)}
-.mkname{font-weight:800;word-break:break-word}
-.save.mkgo{display:flex;align-items:center;justify-content:center;text-decoration:none;background:#25A55F;box-shadow:none}
-.mkmore{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}.mkmore .ghost{display:inline-flex;align-items:center;text-decoration:none}
-.mkclose{position:absolute;top:10px;inset-inline-end:10px;width:40px;height:40px;border-radius:999px;background:var(--white);font-size:18px;z-index:1;box-shadow:var(--shadow-sm)}
 .mkcopy{margin:0}
 .hcopy{height:34px;padding:0 10px;border-radius:999px;background:var(--sand);color:var(--green);font-size:13px;font-weight:800;flex:none}
 .langbtn{height:44px;padding:0 18px;border-radius:999px;border:1.5px solid rgba(250,245,236,.3);background:rgba(250,245,236,.08);color:var(--paper);font-weight:800}
@@ -506,7 +490,7 @@ td.r,th.r{text-align:end}
       <button data-role="chef"><span class="wic">👨‍🍳</span><b><span class="ar">الشيف</span><span class="en">Chef</span></b><small><span class="ar">الوصفات ومخزون اليوم</span><span class="en">Recipes and today's stock</span></small></button>
       <button data-role="marketing"><span class="wic">📣</span><b><span class="ar">الماركتنغ</span><span class="en">Marketing</span></b><small><span class="ar">صور، فيديوهات، ستوريات، لوغو ومنيو</span><span class="en">Photos, videos, stories, logos, menus</span></small></button>
       <button data-role="kitchen"><span class="wic">🔥</span><b><span class="ar">المطبخ</span><span class="en">Kitchen</span></b><small><span class="ar">الطلبات اللي لازم تنعمل</span><span class="en">The orders to make</span></small></button>
-      <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، الربح، المصاريف، الدخل · بالرمز</span><span class="en">Sales, profit, expenses, income · PIN</span></small></button>
+      <button data-role="manage"><span class="wic">🔒</span><b><span class="ar">الإدارة</span><span class="en">Management</span></b><small><span class="ar">المبيعات، ما دفعو، المصاريف، الدخل · بالرمز</span><span class="en">Sales, not paid, expenses, income · PIN</span></small></button>
       <button data-role="developer"><span class="wic">🛠</span><b><span class="ar">المطوّر</span><span class="en">Developer</span></b><small><span class="ar">الروابط وأوقات الموقع · بالرمز</span><span class="en">Links and website hours · PIN</span></small></button>
     </div>
     <button class="langbtn wlang" id="whoLang" type="button"><span class="ar">English</span><span class="en">عربي</span></button>
@@ -1385,8 +1369,8 @@ $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' 
 function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
-var ROLES = {cashier: [['order', 'orders', 'owed', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'exp', 'inc', 'cost'], 'الإدارة', 'Management', '🔒'],
+var ROLES = {cashier: [['order', 'orders', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['report', 'owed', 'exp', 'inc', 'cost'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
