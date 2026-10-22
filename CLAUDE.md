@@ -26,3 +26,9 @@ How:
   name. Once the branch is merged and live, **Marketing › Copy to Drive** in the app copies it into that sub-folder
   (`copyAssets_` in `app/Code.gs`). Tell the owner to tap it, and also send them the file directly.
 - Name files so they read well in Drive, e.g. `Story – new hours (1-4 PM, 6-11 PM).png`.
+
+## Rule: marketing materials send people to the website, not WhatsApp
+
+Stories, posts, flyers and menus never mention WhatsApp: they say to order online from the menu
+(`hananekalakesh.github.io/BachaSnackOrder`) and give the phone number only for calls. The website itself keeps
+WhatsApp: after an order is sent, the customer sends it on WhatsApp too, so the shop can track it and talk to them.
