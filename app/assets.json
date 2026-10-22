@@ -219,6 +219,10 @@
  "drive": {
   "2 Social media & stories": [
    {
+    "name": "Story – new hours (1-4 PM, 6-11 PM).png",
+    "path": "assets/stories/new-hours.png"
+   },
+   {
     "name": "Story – menu online.png",
     "path": "assets/stories/menu-online.png"
    },
