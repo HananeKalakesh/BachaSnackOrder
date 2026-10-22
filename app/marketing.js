@@ -34,7 +34,8 @@ function drawMarket() {
   var h = '<div class="shead"><h2 class="display">' + bi('الماركتنغ', 'Marketing') + '</h2></div>' +
     '<div class="hgrid mklinks">' +
     hubTile('📱', bi('المنيو الرقمي', 'Digital menu'), bi('ابعتو للزباين', 'Send it to customers'), SITE).replace('<button class="hcopy"', '<button class="hcopy" data-mkshare="' + SITE + '"') +
-    hubTile('🖨', bi('المنيو A3', 'A3 menu'), bi('للطباعة، PDF', 'For printing, PDF'), SITE + 'assets/print/menu-a3.pdf') + '</div>' +
+    hubTile('🖨', bi('المنيو A3 (عربي)', 'A3 menu (Arabic)'), bi('للطباعة، PDF', 'For printing, PDF'), SITE + 'assets/print/menu-a3-ar.pdf') +
+    hubTile('🖨', bi('المنيو A3 (إنكليزي)', 'A3 menu (English)'), bi('للطباعة، PDF', 'For printing, PDF'), SITE + 'assets/print/menu-a3-en.pdf') + '</div>' +
     '<p class="mkhow">' + bi('اكبس على صورة أو فيديو، بعدين «شارك» واختار واتساب › الحالة. هيك بتنزل ستوري.', 'Tap a photo or video, then Share, and pick WhatsApp › My status to post it as a story.') + '</p>';
   if (MK.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الملفات من آخر مرة.', 'No internet: these are the files from last time.') + '</p>';
   var shown = function (name) { return MK_SHOW.some(function (re) { return re.test(name) }) };
