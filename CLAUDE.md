@@ -3,6 +3,16 @@
 The shop's website and app live here (see `app/README.md`). Its files and materials live in the **El Bash** folder in
 Google Drive (`1emJrOfqaE3bP1RGid38uyHoYBuPlB76R`), which has a "Read me – what goes where" doc.
 
+## Rule: read the vault first, and save what's decided there
+
+The shop's memory is the **private** repo `HananeKalakesh/elbash-vault` (an Obsidian vault: notes, plus the sheet's data as
+CSV, refreshed every night). Attach it to the session (`add_repo`) and start with `Business/Brief.md` (El Bash in one
+page) and the top of `Business/Decisions.md`, instead of re-reading the sheets, Drive or old chats for what's already
+known. Open other notes or `data/*.csv` only when the task needs them; go to the sheets or Drive only to change
+something or when the vault can't answer. When the owner decides something (a price, a rule, a design choice, a new
+item), add a dated line to `Business/Decisions.md` in the vault, update `Business/Brief.md` if a fact there changed, and
+push. Nothing from the vault (sales, customers, purchases, the PIN, the app key) ever goes into this public repo.
+
 ## Rule: materials go to the El Bash Drive folder only when the owner says to save them
 
 When you create a material (a WhatsApp story or post, a menu, a flyer, a price list, a costing or recipe sheet,
