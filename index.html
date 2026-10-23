@@ -428,7 +428,7 @@ familyGrid: [
   ['Escalope Family Meal 8 PCS', 1750000, 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Zinger Family Meal 20-22 PCS', 2160000, 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Crispy Family Meal 20-22 PCS', 2160000, 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Half & Half Family Meal 20-22 PCS', 2160000, 'Half zinger, half crispy, with fries, garlic sauce, pickles and coleslaw'],
+  ['Half & Half Family Meal 20-22 PCS', 2160000, '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
   ['Broasted Family Meal 10 PCS', 1400000, 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Shawarma Family Meal', '$7.5', 'Chicken shawarma and fries', 'o'],
   ['Tawouk Family Meal', '$7.5', 'Tawouk chicken and fries', 'o'],
@@ -492,7 +492,7 @@ drinkGrid: [
    ingredients (AR.ing) translate by themselves; only unusual sentences need a line in AR.desc.
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
-ui: {'Adjust':'عدّل','Adjust the item':'عدّل الصنف','Tap what to change.':'دق على يلّي بدك تغيّرو.','Something else? (optional)':'شي تاني؟ (اختياري)','Without':'بلا','Bread':'الخبز','Taste':'الطعمة','Change':'غيّر','Only one':'واحد بس','All {n}':'الـ {n} كلّن','Done':'تمام','Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','El Bash — Chicken & Snack':'الباش — تشيكن آند سناك','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi El Bash, I would like to place an order:':'مرحبا الباش، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','El Bash — Chicken & Snack | Menu':'الباش — تشيكن آند سناك | المنيو','Questions? WhatsApp us':'عندك سؤال؟ راسلنا عالواتساب',
+ui: {'Extras':'إضافات','Adjust':'عدّل','Adjust the item':'عدّل الصنف','Tap what to change.':'دق على يلّي بدك تغيّرو.','Something else? (optional)':'شي تاني؟ (اختياري)','Without':'بلا','Bread':'الخبز','Taste':'الطعمة','Change':'غيّر','Only one':'واحد بس','All {n}':'الـ {n} كلّن','Done':'تمام','Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','El Bash — Chicken & Snack':'الباش — تشيكن آند سناك','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi El Bash, I would like to place an order:':'مرحبا الباش، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','El Bash — Chicken & Snack | Menu':'الباش — تشيكن آند سناك | المنيو','Questions? WhatsApp us':'عندك سؤال؟ راسلنا عالواتساب',
   'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
   "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
   'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Not available':'مش متوفر هلّق','Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
@@ -512,7 +512,7 @@ names: {'Small Fries Box':'علبة بطاطا صغيرة','Small Fries Box with
 'Classic Beef Burger':'برغر لحمة كلاسيك','Basha Burger':'باشا برغر','Mushroom Burger':'برغر فطر',
 'Buffalo Sauce':'صوص بوفالو','Honey Mustard Sauce':'صوص هني ماستارد','Barbecue Sauce':'صوص باربكيو','Cocktail Sauce':'صوص كوكتيل','Garlic Sauce':'صوص ثوم','Coleslaw':'سلطة ملفوف','Ketchup':'كاتشاب','Cheddar Sauce':'صوص تشيدر','Cheddar Cup (Small)':'كوب تشيدر (صغير)','Cheddar Cup (Big)':'كوب تشيدر (كبير)',
 'Pepsi':'بيبسي','Pepsi Diet':'بيبسي دايت','7UP':'سفن أب','7UP Diet':'سفن أب دايت'},
-desc: {'Half zinger, half crispy, with fries, garlic sauce, pickles and coleslaw':'نص زنجر ونص كريسبي، مع بطاطا وصوص ثوم وكبيس وسلطة ملفوف','Large fries with 3 crispy pieces, sauce & cheddar':'بطاطا كبيرة مع 3 قطع كريسبي وصوص وتشيدر','Cheesy bites with fries and sauce':'لقيمات الجبنة مع بطاطا وصوص','Crispy onion rings with fries and sauce':'حلقات بصل مقرمشة مع بطاطا وصوص','2 PCS onion rings, 2 PCS mozzarella, 2 PCS nuggets and fries':'2 حلقات بصل، 2 موزاريلا، 2 ناغتس وبطاطا','Sandwich on tortilla bread cut into pieces, with fries and sauce':'ساندويش على خبز التورتيلا مقطّع قطع، مع بطاطا وصوص','Tawouk chicken sandwich on tortilla bread cut into pieces, with fries, coleslaw, pickles and garlic sauce':'ساندويش دجاج طاووق على خبز التورتيلا مقطّع قطع، مع بطاطا وسلطة ملفوف وكبيس وصوص ثوم','Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce':'ساندويش شاورما دجاج على خبز التورتيلا مقطّع قطع، مع بطاطا وكبيس وصوص ثوم','Cheese stuffed chicken with cocktail sauce, lettuce, corn and pickles':'دجاج محشي جبنة مع صوص كوكتيل وخس وذرة وكبيس'},
+desc: {'10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw':'10-11 قطعة زنجر و10-11 قطعة كريسبي، مع بطاطا وصوص ثوم وكبيس وسلطة ملفوف','Large fries with 3 crispy pieces, sauce & cheddar':'بطاطا كبيرة مع 3 قطع كريسبي وصوص وتشيدر','Cheesy bites with fries and sauce':'لقيمات الجبنة مع بطاطا وصوص','Crispy onion rings with fries and sauce':'حلقات بصل مقرمشة مع بطاطا وصوص','2 PCS onion rings, 2 PCS mozzarella, 2 PCS nuggets and fries':'2 حلقات بصل، 2 موزاريلا، 2 ناغتس وبطاطا','Sandwich on tortilla bread cut into pieces, with fries and sauce':'ساندويش على خبز التورتيلا مقطّع قطع، مع بطاطا وصوص','Tawouk chicken sandwich on tortilla bread cut into pieces, with fries, coleslaw, pickles and garlic sauce':'ساندويش دجاج طاووق على خبز التورتيلا مقطّع قطع، مع بطاطا وسلطة ملفوف وكبيس وصوص ثوم','Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce':'ساندويش شاورما دجاج على خبز التورتيلا مقطّع قطع، مع بطاطا وكبيس وصوص ثوم','Cheese stuffed chicken with cocktail sauce, lettuce, corn and pickles':'دجاج محشي جبنة مع صوص كوكتيل وخس وذرة وكبيس'},
 ing: {'chicken':'دجاج','fresh chicken':'دجاج طازج','crispy chicken':'دجاج كريسبي','spicy zinger chicken':'دجاج زنجر حار','fried zinger chicken':'دجاج زنجر مقلي','zinger chicken':'دجاج زنجر','fried chicken':'دجاج مقلي','escalope chicken':'دجاج إسكالوب','cheese stuffed chicken':'دجاج محشي جبنة','tawouk chicken':'دجاج طاووق','chicken shawarma':'شاورما دجاج','shawarma chicken':'شاورما دجاج','grilled chicken':'دجاج مشوي','broasted chicken':'دجاج بروستد','chicken wings':'وينغز','boneless chicken thighs':'فخاد دجاج بلا عضم','chicken nuggets':'ناغتس دجاج','chicken kebab':'كباب دجاج','chicken fajita':'فاهيتا دجاج','chicken burger':'برغر دجاج','beef burger':'برغر لحمة','fillet steak':'ستيك فيليه','steak':'ستيك','spicy beef with hausa spices':'لحمة حارة ببهارات الهوسا',
 'fries':'بطاطا','garlic sauce':'صوص ثوم','garlic paste':'صوص ثوم','pickles':'كبيس','coleslaw':'سلطة ملفوف','cocktail sauce':'صوص كوكتيل','cheddar sauce':'صوص تشيدر','cheddar':'تشيدر','cheddar slice':'شريحة تشيدر','cheese':'جبنة','mozzarella':'موزاريلا','mozzarella patty':'باتي موزاريلا','mushroom':'فطر','mushroom sauce':'صوص فطر','mixed peppers':'فليفلة مشكّلة','onion':'بصل','grilled onion':'بصل مشوي','caramelized onion':'بصل مكرمل','raw onion':'بصل ني','tomato':'بندورة','grilled tomato':'بندورة مشوية','raw tomato':'بندورة نية','lettuce':'خس','corn':'ذرة','mayo':'مايونيز','ketchup':'كاتشاب','guacamole':'غواكامولي','rocca':'جرجير','grilled vegetables':'خضار مشوية','sauce':'صوص'},
 bread: {'submarine bread':'خبز الساب','brown bread':'خبز أسمر','arabic bread':'خبز عربي','bread':'خبز','burger bun':'خبز برغر'}
@@ -556,14 +556,24 @@ const ADJ = {
   'no-mushroom': ['No mushroom', 'بلا فطر'], 'no-cheese': ['No cheese', 'بلا جبنة'], 'no-peppers': ['No peppers', 'بلا فليفلة'],
   'no-guacamole': ['No guacamole', 'بلا غواكامولي'],
   'bread-arabic': ['On Arabic bread', 'على عربي'], 'bread-sub': ['On sub bread', 'على فرنجي'], 'bread-tortilla': ['On tortilla', 'على تورتيلا'],
-  'spicy': ['Spicy', 'حرّ'], 'not-spicy': ['Not spicy', 'بلا حرّ'], 'cocktail-not-garlic': ['Cocktail sauce instead of garlic', 'كوكتيل بدل الثوم']
+  'spicy': ['Spicy', 'حرّ'], 'not-spicy': ['Not spicy', 'بلا حرّ'], 'cocktail-not-garlic': ['Cocktail sauce instead of garlic', 'كوكتيل بدل الثوم'],
+  'add-patty': ['Add a mozzarella patty', 'زيد باتي موزاريلا']
 };
+/* Changes that cost extra are items of their own in the Menu tab (the shop charges them like any item): the price and
+   on/off come from there. 'bread-up' is charged when an Arabic-bread sandwich goes on sub bread or tortilla, only once the
+   Menu tab has a "Bread Change" row switched on. */
+const EXTRA = {'add-patty': {name: 'Extra Mozzarella Patty', price: 150000, on: true}, 'bread-up': {name: 'Bread Change', price: 0, on: false}};
+// the bread each sandwich is made on (from the costing worksheet), so the other breads are offered
+const BREAD_OF = {'Shawarma Sandwich': 'arabic', 'Tawouk Sandwich': 'arabic', 'Chicken Kebab Sandwich': 'arabic', 'Broasted Sandwich': 'arabic',
+  'Crispy Sandwich': 'sub', 'Escalope Sandwich': 'sub', 'Chicken Sub Sandwich': 'sub', 'Francisco Sandwich': 'sub', 'Mushroom Steak Sandwich': 'sub',
+  'Vegetable Steak Sandwich': 'sub', 'Hausa Sandwich': 'sub', 'Fries Sandwich': 'sub', 'Zinger Sandwich': 'tender', 'Cordon Bleu Sandwich': 'tender',
+  'Fajita Sandwich': 'fajita', 'Philadelphia Sandwich': 'fajita', 'Grilled Chicken Sandwich': 'brown'};
 // what in the description can be left out: [words, code]
 const ADJ_NO = [[/garlic (sauce|paste)/, 'no-garlic'], [/pickles/, 'no-pickles'], [/coleslaw/, 'no-coleslaw'], [/lettuce/, 'no-lettuce'],
   [/\bcorn\b/, 'no-corn'], [/cocktail sauce/, 'no-cocktail'], [/\bmayo\b/, 'no-mayo'], [/ketchup/, 'no-ketchup'], [/tomato/, 'no-tomato'],
   [/onion/, 'no-onion'], [/rocca/, 'no-rocca'], [/mushroom/, 'no-mushroom'], [/cheese|cheddar|mozzarella(?! patty)/, 'no-cheese'],
   [/peppers/, 'no-peppers'], [/guacamole/, 'no-guacamole']];
-const ADJ_GROUPS = [['Without', /^no-/], ['Bread', /^bread-/], ['Taste', /spicy|-not-/]];
+const ADJ_GROUPS = [['Without', /^no-/], ['Bread', /^bread-/], ['Taste', /spicy|-not-/], ['Extras', /^add-/]];
 const GRID_OF_ITEM = {};
 Object.entries(data).forEach(([g, list]) => list.forEach(it => GRID_OF_ITEM[it[0]] = g));
 function adjOptions(name) {
@@ -573,9 +583,10 @@ function adjOptions(name) {
   ADJ_NO.forEach(([re, code]) => { if (re.test(d) && !out.includes(code)) out.push(code) });
   if ((sandwich || burger) && /fries/.test(d)) out.push('no-fries');
   if (sandwich) {
-    const has = /arabic bread/.test(d) ? 'bread-arabic' : /submarine/.test(d) ? 'bread-sub' : /tortilla/.test(d) ? 'bread-tortilla' : '';
+    const has = 'bread-' + (BREAD_OF[name] || (/arabic bread/.test(d) ? 'arabic' : /submarine/.test(d) ? 'sub' : ''));
     ['bread-arabic', 'bread-sub', 'bread-tortilla'].forEach(b => { if (b !== has) out.push(b) });
   }
+  if (burger && !/mozzarella patty/i.test(name + ' ' + d) && EXTRA['add-patty'].on) out.push('add-patty');
   if (/zinger/i.test(name) && !/half/i.test(name)) out.push('not-spicy');
   if (/crispy/i.test(name) && !/half/i.test(name)) out.push('spicy');
   if (/meal/i.test(g) && /garlic/.test(d) && !/sandwich/i.test(d)) out.push('cocktail-not-garlic');
@@ -593,6 +604,12 @@ function adjKey(base, codes, note) {
   return codes.length || note ? base + ' {' + codes.join(',') + (note ? '|' + note : '') + '}' : base;
 }
 const itemOf = base => { const m = base.match(/^(.*?) \[(.*)\]$/); return m ? m[1] : base };
+// the paid extras a set of changes brings: ['add-patty', 'bread-up']
+function adjExtras(item, codes) {
+  const x = codes.filter(c => EXTRA[c] && EXTRA[c].on);
+  if (BREAD_OF[item] === 'arabic' && codes.some(c => c === 'bread-sub' || c === 'bread-tortilla') && EXTRA['bread-up'].on) x.push('bread-up');
+  return x;
+}
 function adjWords(key, l) {   // the changes in words, in l ('en' or 'ar', default the page's language)
   const a = splitAdj(key), ar = (l || lang) === 'ar';
   return a.codes.map(c => ADJ[c][ar ? 1 : 0]).concat(a.note ? [a.note] : []);
@@ -654,6 +671,7 @@ function applySheet(sheet) {
       return true;
     });
   });
+  Object.values(EXTRA).forEach(x => { const r = rows[x.name]; used.add(x.name); x.on = !!(r && r.on && (r.price || r.usd)); if (x.on) x.price = r.price || r.usd * rate });
   // new items: added at the end of their section
   Object.values(rows).forEach(r => {
     if (used.has(r.name) || !r.on || !(r.price || r.usd) || !GRID_OF[r.cat] || !data[GRID_OF[r.cat]]) return;
@@ -685,7 +703,10 @@ const store = {
 };
 // Current price for a cart key, so saved carts always use today's menu prices
 function priceOf(key) {
-  key = splitAdj(key).base;
+  const a = splitAdj(key), p = basePrice(a.base);
+  return p && p + adjExtras(itemOf(a.base), a.codes).reduce((s, c) => s + EXTRA[c].price, 0);
+}
+function basePrice(key) {
   const m = key.match(/^(.*?) \[(.*)\]$/), item = ITEMS[m ? m[1] : key];
   if (!item || SOLD.has(item[0])) return null;
   if (item[3] === 'p') return m ? piecesOf(item[0])[parseInt(m[2])] || null : null;
@@ -980,7 +1001,7 @@ document.addEventListener('keydown', e => {
 
 function renderChoiceOptions() {
   const ty = selectedChoice.type, box = (v, label) => `<label><input type="checkbox" value="${esc(v)}"> <span>${label}</span></label>`;
-  $('#choiceFor').textContent = tName(selectedChoice.name);
+  if (ty !== 'adj') $('#choiceFor').textContent = tName(selectedChoice.name);
   $('#choiceErr').textContent = '';
   $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : ty === 'o' ? 'Choose the size' : 'Choose your sauces');
   selectedChoice.sauce = '';
@@ -991,7 +1012,8 @@ function renderChoiceOptions() {
     $('#choiceFor').textContent = tKeyBase(a.base);
     $('#choiceTitle').textContent = t('Adjust the item');
     $('#choiceHint').textContent = t('Tap what to change.');
-    const chip = c => `<label><input type="checkbox" value="${c}"${a.codes.includes(c) ? ' checked' : ''}> <span>${esc(ADJ[c][lang === 'ar' ? 1 : 0])}</span></label>`;
+    const extra = c => { const x = adjExtras(itemOf(a.base), [c]).reduce((s, e) => s + EXTRA[e].price, 0); return x ? ' +' + fmt(x) : '' };
+    const chip = c => `<label><input type="checkbox" value="${c}"${a.codes.includes(c) ? ' checked' : ''}> <span>${esc(ADJ[c][lang === 'ar' ? 1 : 0] + extra(c))}</span></label>`;
     $('#choiceOptions').innerHTML = ADJ_GROUPS.map(([g, re]) => { const c = opts.filter(x => re.test(x)); return c.length ? `<p class="choice-sub">${t(g)}</p><div class="chips">${c.map(chip).join('')}</div>` : '' }).join('') +
       `<input class="adjnote" id="adjNote" maxlength="60" placeholder="${esc(t('Something else? (optional)'))}" value="${esc(a.note)}">` +
       (q > 1 ? `<p class="choice-sub">${t('Change')}</p><div class="chips"><label><input type="radio" name="adjn" value="1" checked> <span>${t('Only one')}</span></label><label><input type="radio" name="adjn" value="all"> <span>${t('All {n}').replace('{n}', q)}</span></label></div>` : '');
@@ -1036,7 +1058,7 @@ $('#confirmChoice').onclick = () => {
     if (line) {
       const codes = $$('#choiceOptions input[type=checkbox]:checked').map(x => x.value), nk = adjKey(a.base, codes, $('#adjNote').value);
       const n = (($$('#choiceOptions input[name=adjn]:checked')[0] || {}).value === 'all') ? line.qty : 1;
-      if (nk !== k) { line.qty -= n; if (line.qty <= 0) delete order[k]; order[nk] ??= {qty: 0, price: line.price}; order[nk].qty += n; saveCart() }
+      if (nk !== k) { line.qty -= n; if (line.qty <= 0) delete order[k]; order[nk] ??= {qty: 0, price: priceOf(nk) || line.price}; order[nk].qty += n; saveCart() }
     }
     $('#choiceModal').classList.remove('open'); selectedChoice = null; cart();
     return;
@@ -1189,7 +1211,7 @@ $('.send').onclick = () => {
   sending = true; btn.disabled = true; btn.textContent = t('Sending…');
   const ctl = 'AbortController' in window ? new AbortController() : null, timer = ctl && setTimeout(() => ctl.abort(), 20000);
   const done = () => { clearTimeout(timer); sending = false; btn.disabled = false; btn.textContent = t('Send order') };
-  const body = JSON.stringify({action: 'webOrder', order: {name, phone, type, address: addr, note, lang, items: entries.map(([k, it]) => sheetItem(k, it.qty))}});
+  const body = JSON.stringify({action: 'webOrder', order: {name, phone, type, address: addr, note, lang, items: entries.flatMap(([k, it]) => [sheetItem(k, it.qty)].concat(adjExtras(itemOf(splitAdj(k).base), splitAdj(k).codes).map(c => ({name: EXTRA[c].name, qty: it.qty, sauces: []}))))}});
   (DEMO ? demoServer().then(d => d.post(JSON.parse(body))) : fetch(CONFIG.orderUrl, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body, signal: ctl && ctl.signal})
     .then(r => r.json())).then(res => {
       done();
