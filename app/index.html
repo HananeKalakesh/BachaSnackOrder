@@ -414,6 +414,12 @@ td.r,th.r{text-align:end}
 .modes b{margin-inline-start:4px}
 .tabbadge{display:inline-block;margin-inline-start:6px;padding:0 8px;border-radius:999px;background:var(--mustard);color:var(--ink);font-size:13px}
 .tabbadge[hidden]{display:none}
+.subnav{display:none;grid-template-columns:repeat(3,1fr);gap:4px;max-width:560px;margin:0 auto 14px;padding:3px;border-radius:14px;background:var(--input)}
+.manage .subnav{display:grid}
+.subnav button{height:40px;padding:0 8px;border-radius:11px;font-weight:700;color:var(--muted);white-space:nowrap}
+.subnav button.on{background:var(--green);color:var(--paper)}
+.subnav .tabbadge{margin-inline-start:4px}
+.kpi[data-go]{cursor:pointer}
 .webq{margin-bottom:16px;padding:12px;border-radius:22px;background:var(--mustard)}
 .webq h3{margin:0 0 10px;font-size:18px}
 .webq .olist,.webq .ord{margin-bottom:8px}
@@ -460,7 +466,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Expenses</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="cost"><span class="ar">الكلفة</span><span class="en">Costs</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="in"><span class="ar">المدخول</span><span class="en">Money in</span><b class="tabbadge" id="inBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Money out</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -489,14 +495,13 @@ td.r,th.r{text-align:end}
 </div>
 
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
-<div class="report" id="owedView"><div class="wrap" id="owe"></div></div>
+<div class="report" id="owedView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="owe"></div></div>
 <div class="report" id="owedTView"><div class="wrap" id="oweT"></div></div>
 <div class="report" id="overView"><div class="wrap" id="ovr"></div></div>
-<div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
+<div class="report" id="reportView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
-<div class="report" id="incView"><div class="wrap" id="inc"></div></div>
+<div class="report" id="incView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="inc"></div></div>
 <div class="report" id="siteView"><div class="wrap" id="site"></div></div>
-<div class="report" id="costView"><div class="wrap" id="cost"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
 <div class="report" id="stockView"><div class="wrap" id="stock"></div></div>
@@ -622,7 +627,6 @@ function useMenu(r) {
   if (first && $('#incView').style.display === 'block') showIncome();
   if (first && $('#overView').style.display === 'block') showOverview();
   if (first && $('#siteView').style.display === 'block') showWebsite();
-  if (first && $('#costView').style.display === 'block') showCosts();
   if (first && $('#recView').style.display === 'block') showRecipes();
   if (first) gate();
   // sold-out items stay on the screen (greyed) so they can be brought back
@@ -818,8 +822,14 @@ $('#save').addEventListener('click', function () {
 });
 
 /* ---------- views ---------- */
+// Management › Money in holds three screens behind one tab; it reopens the last one used
+var IN_SUBS = ['report', 'owed', 'inc'];
 function showView(v) {
-  document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.view === v) });
+  if (v === 'in') v = IN_SUBS.indexOf(store('elbash-in')) >= 0 ? store('elbash-in') : 'report';
+  var sub = MANAGE && IN_SUBS.indexOf(v) >= 0;
+  if (sub) store('elbash-in', v);
+  document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.view === v || sub && x.dataset.view === 'in') });
+  document.querySelectorAll('.subnav button').forEach(function (x) { x.classList.toggle('on', x.dataset.sub === v) });
   $('#orderView').style.display = v === 'order' ? '' : 'none';
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
   $('#owedView').style.display = v === 'owed' ? 'block' : 'none';
@@ -829,7 +839,6 @@ function showView(v) {
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
   $('#siteView').style.display = v === 'site' ? 'block' : 'none';
-  $('#costView').style.display = v === 'cost' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
   $('#stockView').style.display = v === 'stock' ? 'block' : 'none';
@@ -843,7 +852,6 @@ function showView(v) {
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
   if (v === 'site') showWebsite();
-  if (v === 'cost') showCosts();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
   if (v === 'stock') showStock();
@@ -851,6 +859,7 @@ function showView(v) {
   if (v === 'avail') drawAvail();
 }
 document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { showView(b.dataset.view) }) });
+document.querySelectorAll('.subnav button').forEach(function (b) { b.addEventListener('click', function () { showView(b.dataset.sub) }) });
 
 /* ---------- sales: month calendar, year strip, month and day details; amounts in $ with L.L. under them ---------- */
 var MONTHS_AR = ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'];
@@ -1230,6 +1239,7 @@ function drawOwed() {
   if (OWED_ERR === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي اللائحة من آخر مرة.', 'No internet: this list is from last time.') + '</p>';
   else if (OWED_ERR) h += '<p class="err">' + esc(OWED_ERR) + '</p>';
   if (!list) { $('#owe').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  owedBadge(list);
   var card = function (o) { return owedCard(o, today) };
   var part = function (l, ar, en, none) {
     return '<h3 class="display owedh">' + bi(ar, en) + (l.length ? ' <small class="num">' + l.length + ' ' + bi('طلب', l.length > 1 ? 'orders' : 'order') + ' · ' + $usd(total(l)) + ' · ' + ll(total(l)) + '</small>' : '') + '</h3>' +
@@ -1238,6 +1248,13 @@ function drawOwed() {
   h += part(list.filter(function (o) { return o.day === today }), 'اليوم', 'Today', bi('ما حدا عليه شي من اليوم. 👌', 'Nobody owes anything from today. 👌')) +
     part(list.filter(function (o) { return o.day !== today }).reverse(), 'من أيام قبل', 'From earlier days', bi('ما في دين من أيام قبل. 👌', 'Nothing owed from earlier days. 👌'));
   $('#owe').innerHTML = h;
+}
+// how many orders are not paid, on the Money in tab and its Not paid switch
+function owedBadge(list) {
+  var n = list ? list.length : 0;
+  ['#inBadge'].concat([].slice.call(document.querySelectorAll('[data-owed]'))).forEach(function (b) {
+    b = typeof b === 'string' ? $(b) : b; if (!b) return; b.textContent = n; b.hidden = !n;
+  });
 }
 // Remind or mark paid; list(): the orders this tab shows, draw(): redraws it
 function owedClicks(where, list, draw) {
@@ -1442,11 +1459,11 @@ function setLang(l) {
 }
 $('#lang').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en') });
 
-function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); EB.flush() }
+function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); if (MANAGE) loadOwed(); EB.flush() }   // Management: the Not paid badge
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'owedt', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['over', 'report', 'owed', 'exp', 'inc', 'cost'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['over', 'in', 'exp'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1769,7 +1786,6 @@ $('#exp').addEventListener('click', function (e) {
 <script src="cashier.js"></script>
 <script src="income.js"></script>
 <script src="website.js"></script>
-<script src="costs.js"></script>
 <script src="overview.js"></script>
 </body>
 </html>

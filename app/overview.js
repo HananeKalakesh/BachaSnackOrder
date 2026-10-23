@@ -2,6 +2,8 @@
    Money in (sales + other income) against money out (purchases), the profit, where the money goes, the days, month by
    month, and the food that sells most. Uses the same data as Sales, Expenses and Other income; nothing is typed here. */
 var OV = {p: 'month'};
+// item costs and prices live in the costing worksheet (the app's Costs tab was removed: the sheet is the one place)
+var COSTING_URL = 'https://docs.google.com/spreadsheets/d/1xIpuEHK0kfOqg6WFGBV-SBCLakFRj4bH0v4AjPa9Qlg/edit';
 
 function showOverview() {
   if (!SET.loaded) { $('#ovr').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
@@ -29,7 +31,8 @@ function drawOverview() {
   if (OV.locked) return;
   var h = '<div class="shead"><div class="modes">' + [['month', 'هالشهر', 'This month'], ['last', 'الشهر الماضي', 'Last month'], ['all', 'كل الوقت', 'All time']].map(function (x) {
     return '<button data-ovp="' + x[0] + '"' + (OV.p === x[0] ? ' class="on"' : '') + '>' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
-    '<h2 class="display">' + bi('نظرة عامة', 'Overview') + '</h2></div>';
+    '<h2 class="display">' + bi('نظرة عامة', 'Overview') + '</h2>' +
+    '<a class="ghost" href="' + COSTING_URL + '" target="_blank" rel="noopener">' + bi('شيت الكلفة ↗', 'Costing sheet ↗') + '</a></div>';
   if (OV.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الأرقام من آخر مرة.', 'No internet: these are the numbers from last time.') + '</p>';
   else if (OV.err) h += '<p class="err">' + esc(OV.err) + '</p>';
   var list = purchases(), haveSales = !!(SALES || EB.cached('sales'));
@@ -44,12 +47,12 @@ function drawOverview() {
   var pctOf = function (v) { return moneyIn ? Math.round(v / moneyIn * 100) : 0 };
 
   h += '<div class="kpis">' +
-    '<div class="kpi"><small>' + bi('اللي دخل', 'Money in') + '</small>' + amount(moneyIn) +
+    '<div class="kpi" data-go="report"><small>' + bi('اللي دخل', 'Money in') + '</small>' + amount(moneyIn) +
       '<small class="ll">' + bi('مبيعات', 'sales') + ' <span class="num">' + $usd(s.sales) + '</span>' + (other ? ' + ' + bi('دخل تاني', 'other') + ' <span class="num">' + $usd(other) + '</span>' : '') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('اللي طلع', 'Money out') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
+    '<div class="kpi" data-go="exp"><small>' + bi('اللي طلع', 'Money out') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
     '<div class="kpi ' + (profit < 0 ? 'owed' : 'hero') + '"><small>' + bi('الربح', 'Profit') + '</small>' + amount(profit) +
       '<small class="ll">' + (moneyIn ? '<span class="num">' + pctOf(profit) + '%</span> ' + bi('من اللي دخل', 'of the money in') : '') + '</small></div>' +
-    '<div class="kpi' + (s.unpaidLbp ? ' owed' : '') + '"><small>' + bi('ما دفعو', 'Not paid') + '</small>' + amount(s.unpaidLbp) +
+    '<div class="kpi' + (s.unpaidLbp ? ' owed' : '') + '" data-go="owed"><small>' + bi('ما دفعو', 'Not paid') + '</small>' + amount(s.unpaidLbp) +
       '<small class="ll">' + fmt(s.unpaidOrders) + ' ' + bi('طلب', 'orders') + '</small></div></div>';
 
   // where each dollar that came in went
@@ -108,6 +111,7 @@ function drawOverview() {
   $('#ovr').innerHTML = h;
 }
 $('#ovr').addEventListener('click', function (e) {
+  var go = e.target.closest('[data-go]'); if (go && !OV.locked) return showView(go.dataset.go);   // a tile opens its screen
   var b = e.target.closest('button'); if (!b || OV.locked) return;
   if (b.dataset.ovp) { OV.p = b.dataset.ovp; drawOverview() }
 });

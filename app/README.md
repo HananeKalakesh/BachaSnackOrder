@@ -5,8 +5,8 @@ Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ 
 - `index.html`: the app, one link for every device. The first time, it asks who uses the device and remembers it
   (switched from the top bar): Cashier (new order, today's orders in stages, not paid today with payment reminders, `cashier.js`: the Menu tab to switch items
   off and the busy mode for the website), Kitchen (opens `kitchen.html`), Chef (today's stock, recipes without costs),
-  Marketing (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories), Management (PIN:
-  `overview.js`: money in vs out, profit, where the money goes, month by month; sales, expenses, other income in `income.js`: money from before the app and capital) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
+  Marketing (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories), Management (PIN, three tabs:
+  Overview (`overview.js`: money in vs out, profit, where the money goes, month by month; its tiles open the screens), Money in (a switch between Sales, Not paid and Other income, `income.js`: money from before the app and capital) and Money out (expenses)) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
   `manage.html` and `?app=manage` open Management, `?role=…` the others. `assets.json` lists the website files the
   script copies into Drive (menu photos named by item, logos).
 - `kitchen.html`: the kitchen screen.
@@ -30,5 +30,5 @@ sends them to the website with the menu. `assets/docs/packaging/` holds the box 
 the costing worksheet.
 Photos put in the "6 Menu photos" folder in Drive, named after the item ("Crispy Meal.jpg"), show on the website menu
 (`menuPhotos_()` in `Code.gs` shares them by link and sends their ids with the menu; kept 10 minutes).
-Management › Costs (`costs.js`) shows each item's price, cost, food cost % and profit from the sheet's Costs tab, which
-brings in the Menu items tab of the El Bash costing worksheet (IMPORTRANGE).
+Item costs and prices are not in the app: Overview links to the El Bash costing worksheet. The sheet's Costs tab
+(IMPORTRANGE of the costing worksheet's Menu items) stays for the vault's nightly copy.
