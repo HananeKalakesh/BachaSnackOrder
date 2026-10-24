@@ -173,7 +173,9 @@ var EB = (function () {
         // sent to the kitchen: '-' saved but not sent yet, a time once sent; empty = an order from before this step (sent)
         sent: str(o['Kitchen sent']).replace(/^'/, ''),
         // the delivery fee goes to the driver: printed for the customer, never in the total, the sales or the cash box
-        fee: num(o['Delivery fee (L.L.)'])};
+        fee: num(o['Delivery fee (L.L.)']),
+        // a discount (family, friends…): the order keeps its menu total, the money received is the total minus this
+        disc: num(o['Discount (L.L.)']), discWhy: str(o['Discount note'])};
       x.live = live(x);
       byKey[x.key] = x; list.push(x);
     });
@@ -249,7 +251,7 @@ var EB = (function () {
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
-      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' ? 0 : list[i].total; list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0 }
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' ? 0 : list[i].total - (f.disc || 0); list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0; list[i].disc = f.disc || 0; list[i].discWhy = f.why || '' }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
       if (f.t === 'unsent' && i >= 0) { list[i].sent = '-'; list[i].items.forEach(function (x) { x.sentQty = 0 }) }
@@ -389,10 +391,12 @@ var EB = (function () {
   };
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   // Split: whish is the part paid by Whish (L.L.), the rest was cash
-  EB.paid = function (o, payment, day, whish) {
+  EB.paid = function (o, payment, day, whish, disc, why) {
     var later = day && day !== o.day && payment !== 'House' ? day : '', part = payment === 'Split' ? whish || 0 : '';
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': payment === 'House' ? 0 : o.total, 'Paid later': later, 'Whish part (L.L.)': part}}],
-      {t: 'paid', key: o.key, payment: payment, later: later, whish: part || 0});
+    disc = payment === 'House' ? 0 : Math.max(0, Math.min(o.total, disc || 0));
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': payment === 'House' ? 0 : o.total - disc, 'Paid later': later, 'Whish part (L.L.)': part,
+      'Discount (L.L.)': disc || '', 'Discount note': disc ? why || '' : ''}}],
+      {t: 'paid', key: o.key, payment: payment, later: later, whish: part || 0, disc: disc, why: disc ? why || '' : ''});
   };
 
   /* ---------- reports: totals for the days from..to (yyyy-mm-dd) ---------- */
@@ -400,7 +404,7 @@ var EB = (function () {
   // paid later counts on the day it was paid (Paid later), so a Not paid order isn't in Sales until it is paid.
   EB.report = function (list, from, to) {
     var s = {orders: 0, items: 0, sales: 0, ordered: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0, houseOrders: 0, houseLbp: 0,
-      laterOrders: 0, laterLbp: 0, marinatedLbp: 0};   // marinated chicken: raw chicken sold, in the sales but apart from the shop's food
+      laterOrders: 0, laterLbp: 0, marinatedLbp: 0, discOrders: 0, discLbp: 0};   // marinated chicken: raw chicken sold, in the sales but apart from the shop's food
     var days = {}, items = {}, orders = [], later = [];
     var day = function (d) { return days[d] = days[d] || {date: d, orders: 0, sales: 0} };
     var row = function (o) { return {num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type, paidLater: o.paidLater} };
@@ -418,7 +422,8 @@ var EB = (function () {
         orders.push(row(o));
       }
       if (paid) {
-        var got = o.received || o.total;
+        var got = o.received || (o.disc ? o.total - o.disc : o.total);
+        if (o.disc) { s.discOrders++; s.discLbp += o.disc }   // given on the day it was paid
         s.sales += got; day(paidOn).sales += got;
         var mar = o.items.reduce(function (a, x) { return a + (x.cat === 'Marinated Chicken' ? x.qty * x.price : 0) }, 0);
         if (mar) s.marinatedLbp += Math.min(mar, got);
