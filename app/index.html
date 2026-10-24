@@ -227,7 +227,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .months.week .mn{font-size:13px}
 .months.week b{font-size:14px}
 .months.hrs .mn{font-size:11px;line-height:1.15;white-space:normal}.months.hrs .mn b{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:-.04em;white-space:nowrap}.months.hrs{gap:2px}.months.hrs .mo{overflow:visible}.months.hrs b{font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
-.note2{margin:10px 0 0;font-size:13px}.kpis.three{grid-template-columns:repeat(3,minmax(0,1fr))}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.note2{margin:10px 0 0;font-size:13px}.kpis.three{grid-template-columns:repeat(3,minmax(0,1fr))}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -364,7 +364,24 @@ td.r,th.r{text-align:end}
 .ghost.wide{width:100%}
 .achouse{display:flex;flex-wrap:wrap;gap:6px}.achouse span{background:var(--sand);border-radius:999px;padding:4px 10px;font-size:14px}
 .acfoot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}.acfoot p{width:100%;margin:0}
-#box .instore{text-align:center;padding:18px}#box .instore>.usd{font-size:40px}#box .instore .num{text-align:center!important}#box .kpis.rsplit{margin:12px 0 0;grid-template-columns:1fr 1fr;gap:8px}#box .kpis.rsplit.r3{grid-template-columns:repeat(3,minmax(0,1fr))}#box .rsplit .kpi{padding:12px 8px;border-radius:18px}#box .rsplit .usd{font-size:20px}#box .rsplit .ll{font-size:11px}#box .tcount{margin-top:12px;padding-top:10px;border-top:1px solid var(--line,#eee)}.okm{color:#2e7d32;font-weight:700}
+#box .tgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start;margin-bottom:16px}#box .tgrid>.card{margin:0}
+#box .resto{padding:0;overflow:hidden}#box .rhero{background:var(--green);color:var(--paper);padding:20px 22px;text-align:center}#box .rhero small{opacity:.85;font-weight:700}
+#box .rhero .usd{font-size:46px;color:var(--paper);margin:4px 0 0}#box .rhero .ll{color:rgba(250,245,236,.75)}#box .req{margin-top:10px;display:inline-block;background:rgba(250,245,236,.12);border-radius:999px;padding:6px 14px;font-size:14px}
+#box .resto .rh{margin:16px 18px 8px;font-size:14px;color:var(--muted)}#box .rchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 18px}
+#box .rchip{background:var(--input);border-radius:16px;padding:10px 12px;text-align:center}#box .rchip small{display:block;font-weight:700}#box .rchip b{display:block;font-size:20px;margin-top:2px}#box .rchip .ll{font-size:11px;color:var(--muted)}
+#box .rchip.owe b{color:var(--red)}#box .rchip.keep,#box .rafter .keep,#box .ccalc .keep{background:#E2ECE6}
+#box .rafter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 18px}#box .rafter>div{background:var(--input);border-radius:16px;padding:10px 12px;text-align:center}#box .rafter small{display:block;font-weight:700}#box .rafter b{font-size:20px}
+#box .resto>.note2{margin:14px 18px 18px;font-size:12px}#box .rdiff{margin:10px 18px 0}
+#box .count .chead{align-items:center}#box .count .chead input{width:auto;max-width:170px;margin:0}
+#box .cgrp{background:var(--input);border-radius:18px;padding:12px 14px;margin-top:10px}#box .cgh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}#box .cgh b{font-size:17px}
+#box .cin{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}#box .cin label{display:flex;align-items:center;gap:6px;background:var(--white);border-radius:12px;padding:0 10px}#box .cin span{font-weight:800;color:var(--muted);font-size:13px}
+#box .cin input{border:0;background:transparent;width:100%;min-width:0;font-size:20px;padding:10px 0;margin:0;font-family:inherit}#box .count #bNote{margin-top:10px}
+#box .ccalc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}#box .ccalc>div{background:var(--input);border-radius:16px;padding:10px;text-align:center}#box .ccalc small{display:block;font-weight:700}#box .ccalc b{font-size:20px}#box .ccalc .ll{font-size:11px;color:var(--muted)}
+#box .cdiff{margin-top:10px}
+#box .rhero>.num,#box .rchip .num,#box .ccalc .num,#box .rafter .num{text-align:center!important;display:block}#box .req .num{display:inline}#box .count .xhint{font-size:13px;margin:6px 0 0}
+#box .count input[type=date],#box .count #bNote{border:0;background:var(--input);border-radius:14px;padding:10px 14px;font:inherit;font-size:15px;color:var(--ink,#1A1A17);width:100%;box-sizing:border-box}#box .count .chead input[type=date]{width:auto}
+@media (max-width:900px){#box .tgrid{grid-template-columns:1fr}}
+@media (max-width:420px){#box .rchips,#box .ccalc{gap:6px}#box .rchip,#box .ccalc>div{padding:8px 6px}#box .rchip b,#box .ccalc b,#box .rafter b{font-size:17px}}
 .xamt > span.muted{align-self:center;min-width:76px;font-weight:700;white-space:nowrap}
 .cmodes{flex-wrap:wrap;margin:6px 0 4px}.ctable td{vertical-align:top}.ctable .hlink{font:inherit;font-weight:800;background:none;border:0;padding:0;color:inherit;cursor:pointer}
 .xform .wide{grid-column:1/-1}
@@ -1131,7 +1148,7 @@ function dayMoney(day) {
 }
 function dayView(D, empty, day) {
   var s = D.summary;
-  var h = dayMoney(day) + '<div class="kpis three">' +
+  var h = '<div class="kpis three">' +
     '<div class="kpi hero"><small>' + bi('المبيعات', 'Sales') + '</small>' + amount(s.sales) +
       (s.laterLbp ? '<small class="ll">' + bi('منها ', 'incl. ') + '<span class="num">' + $usd(s.laterLbp) + '</span> ' + bi('دين انْدفع', 'paid for earlier orders') + '</small>' : '') +
       (s.marinatedLbp ? '<small class="ll">🍗 ' + bi('منها دجاج متبّل ', 'incl. marinated chicken ') + '<span class="num">' + $usd(s.marinatedLbp) + '</span></small>' : '') + '</div>' +
@@ -1139,7 +1156,7 @@ function dayView(D, empty, day) {
       (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('الأصناف', 'Items') + '</small><b class="usd num">' + fmt(s.items) + '</b></div></div>';   // cash, Whish and not paid: in Payments
   return h + '<div class="cols"><div class="card dayc">' + (s.orders ? dayBody(D) : '<p class="muted">' + empty + '</p>') + laterBody(D) + '</div>' +
-    '<div>' + sideCards(D, empty, true) + '</div></div>';
+    '<div>' + dayMoney(day) + sideCards(D, empty, true) + '</div></div>';   // the cash box beside payments and food sold
 }
 
 /* Today: today's numbers, sales by hour, cash and Whish, best sellers and every order */
@@ -1697,6 +1714,40 @@ var EXP_CATS = [
   ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]],
   // what the owners take each week as their pay: shown apart, after the profit
   ['Owners', 'ربح', ['اللي بياخدو أصحاب المحل كل جمعة كمعاش', 'what the owners take each week as their pay'], 'owners']];
+/* Expense groups: the calendar and the dashboard show these general groups; a day's details show the categories and
+   their types. The add form shows every choice at once (category + type in one tap), under its group.
+   [key, Arabic, English, colour, [[category, type, Arabic, English]…]] */
+var EXP_GROUPS = [
+  ['food', 'أكل', 'Food', '#1F4A37', [['Chicken', '', 'دجاج', 'Chicken'], ['Beef', '', 'لحمة', 'Beef'], ['Bread', '', 'خبز', 'Bread'], ['Vegetables', '', 'خضار', 'Vegetables'],
+    ['Ingredients', 'Cooking', 'مواد أولية (زيت، صوصات، جبنة…)', 'Ingredients (oil, sauces, cheese…)']]],
+  ['pack', 'تغليف ولوازم', 'Packaging & supplies', '#F2B705', [['Packaging', '', 'تغليف (علب، أكياس)', 'Packaging (boxes, bags)'], ['Ingredients', 'Supplies', 'تنظيف ولوازم (كفوف…)', 'Cleaning & supplies (gloves…)']]],
+  ['staff', 'رواتب', 'Salaries', '#C8102E', [['Salaries', 'Staff', 'رواتب موظفين', 'Staff salaries'], ['Salaries', 'Cleaning', 'راتب تنظيف', 'Cleaning salary']]],
+  ['bills', 'فواتير وغيرها', 'Bills & other', '#E0707C', [['Utilities', 'Gas', 'غاز', 'Gas'], ['Utilities', 'Water', 'مي', 'Water'], ['Utilities', 'Internet', 'إنترنت', 'Internet'], ['Other', '', 'غير ذلك', 'Other']]],
+  ['equip', 'معدّات', 'Equipment', '#6B655C', [['Equipment', 'Machines', 'آلات', 'Machines'], ['Equipment', 'Kitchen supplies', 'أدوات مطبخ', 'Kitchen supplies']]],
+  ['owners', 'ربح الأصحاب', 'Owners', '#8C5A00', [['Owners', '', 'ربح الأصحاب', 'Owners\' pay']]]];
+function expGroup(p) {
+  var hit = null;
+  EXP_GROUPS.forEach(function (g) { g[4].forEach(function (c) { if (!hit && c[0] === p.cat && (c[1] === (p.sub || '') || !c[1] && !p.sub)) hit = g }) });
+  if (!hit) EXP_GROUPS.forEach(function (g) { g[4].forEach(function (c) { if (!hit && c[0] === p.cat) hit = g }) });   // a type not listed: its category's first group
+  return hit || EXP_GROUPS[3];
+}
+// Bars by group, biggest first; with cats, each group's categories under it (the dashboard)
+function groupBars(list, none, cats) {
+  var by = {}, inG = {}, all = 0;
+  list.forEach(function (p) {
+    var g = expGroup(p); by[g[0]] = (by[g[0]] || 0) + p.lbp; all += p.lbp;
+    var lab = expLabel(catOf(p.cat), p.sub), m = inG[g[0]] = inG[g[0]] || {}; m[lab] = (m[lab] || 0) + p.lbp;
+  });
+  var gs = EXP_GROUPS.filter(function (g) { return by[g[0]] }).sort(function (a, b) { return by[b[0]] - by[a[0]] }), max = gs.length ? by[gs[0][0]] : 1;
+  return '<div class="card"><h3 class="display">' + bi('حسب النوع', 'By group') + '</h3>' + (gs.length ? gs.map(function (g) {
+    var v = by[g[0]];
+    return '<div class="seller"><div class="tn">' + bi(g[1], g[2]) + (g[0] === 'equip' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : '') +
+      '<span class="tq num">' + $usd(v) + ' <small class="muted">' + Math.round(v / (all || 1) * 100) + '%</small></span></div>' +
+      '<div class="tb"><i style="width:' + Math.max(3, v / max * 100) + '%;background:' + g[3] + '"></i></div><small class="ll num">' + ll(v) + '</small>' +
+      (cats ? '<div class="xsplit">' + Object.keys(inG[g[0]]).sort(function (a, b) { return inG[g[0]][b] - inG[g[0]][a] }).map(function (k) {
+        return '<span>' + k + ' <b class="num">' + $usd(inG[g[0]][k]) + '</b></span>' }).join('') + '</div>' : '') + '</div>';
+  }).join('') + (cats ? '' : '<p class="muted note2">' + bi('دق على يوم لتشوف التفاصيل', 'Tap a day for the details') + '</p>') : '<p class="muted">' + none + '</p>') + '</div>';
+}
 // A purchase's label: the category, and its type when it has one (e.g. Utilities · Gas)
 function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
 function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
@@ -1824,11 +1875,12 @@ function drawExpenses() {
 function expForm(CHEF) {
   var c = EX.cat ? catOf(EX.cat) : null;
   var h = '<div class="shead"><h2 class="display">' + (EX.edit ? bi('عدّل المصروف', 'Edit expense') : bi('زيد مصروف', 'Add an expense')) + '</h2></div>' + expNote() +
-    '<div class="card addx"><div class="xcats">' +
-    EXP_CATS.filter(function (k) { return !CHEF || k[0] !== 'Owners' }).map(function (k) { return '<button class="xcat' + (EX.cat === k[0] ? ' on' : '') + '" data-xcat="' + k[0] + '" style="--c:' + EXP_COLOR[k[3]] + '">' + bi(k[1], k[0]) + '</button>' }).join('') + '</div>' +
-    (c && c[4] ? '<div class="xcats xsubs">' + c[4].map(function (t) {
-      return '<button class="xcat' + (EX.sub === t[0] ? ' on' : '') + '" data-xsub="' + esc(t[0]) + '" style="--c:' + EXP_COLOR[c[3]] + '">' + bi(t[1], t[0]) + '</button>' }).join('') + '</div>' : '') +
-    (c && c[2][0] ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
+    '<div class="card addx">' + EXP_GROUPS.filter(function (g) { return !CHEF || g[0] !== 'owners' }).map(function (g) {
+      return '<div class="xgrp"><small style="color:' + g[3] + '">' + bi(g[1], g[2]) + '</small><div class="xcats">' + g[4].map(function (k) {
+        var on = EX.cat === k[0] && (EX.sub || '') === k[1];
+        return '<button class="xcat' + (on ? ' on' : '') + '" data-xpick="' + esc(k[0] + '|' + k[1]) + '" style="--c:' + g[3] + '">' + bi(k[2], k[3]) + '</button>' }).join('') + '</div></div>';
+    }).join('') +
+    (c && c[2][0] && (c[3] === 'investment' || c[3] === 'owners') ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
     '<div class="xform"><input id="xItem" placeholder="' + esc(T('شو اشتريت؟ (مثلاً: 10 كيلو صدر دجاج)', 'What did you buy? (e.g. 10 kg chicken breast)')) + '" maxlength="80">' +
     '<div class="xamt"><input id="xAmount" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('المبلغ', 'Amount')) + '">' +
     '<div class="xcur"><button data-xcur="$" class="' + (EX.cur === '$' ? 'on' : '') + '">$</button><button data-xcur="L.L." class="' + (EX.cur === 'L.L.' ? 'on' : '') + '">L.L.</button></div></div>' +
@@ -1858,7 +1910,7 @@ function expCalendar(list) {
   }
   cal += '</div><div class="legend">' + bi('أقل', 'Less') + '<i class="x1"></i><i class="x2"></i><i class="x3"></i><i class="x4"></i><i class="x5"></i><i class="x6"></i>' + bi('أكتر', 'More') +
     '<span class="hint">' + bi('دق على يوم لتشوف مصاريفو', 'Tap a day to see its expenses') + '</span></div></div>';
-  h += '<div class="cols">' + cal + '<div>' + catBars(t, bi('ما في مصاريف بهالشهر', 'No expenses this month')) + '</div></div>';
+  h += '<div class="cols">' + cal + '<div>' + groupBars(month, bi('ما في مصاريف بهالشهر', 'No expenses this month'), false) + '</div></div>';
   if (EX.sel && EX.sel.slice(0, 7) === mk) {
     var day = month.filter(function (p) { return p.day === EX.sel }), dt = tally(day);
     h += '<section class="dayx" id="xDayCard"><div class="shead"><h2 class="display">' + dayName(EX.sel) + '</h2>' +
@@ -1886,7 +1938,7 @@ function expAll(list, A) {
       return '<tr><td class="num">' + x.day.slice(8) + '/' + x.day.slice(5, 7) + '/' + x.day.slice(2, 4) + '</td><td>' + esc(x.note || '') + '</td><td class="r"><b class="num">' + (x.cur === '$' ? '$' + fmt2(x.amount) : fmt(x.amount) + ' L.L.') + '</b></td></tr>' }).join('') + '</table>' +
       '<p class="muted note2">' + bi('المصاري اللي انحطّت بالمحل من برّا (مش من المبيعات): بدّن يرجعوها.', 'Money put into the resto from outside (not from the sales): to be paid back.') + '</p>'
       : '<p class="muted">' + bi('زيد رأس المال من «دخل تاني ورأس مال».', 'Add capital in "Other income & capital".') + '</p>') + '<div class="morelinks"><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div></div>';
-  return '<div class="cols">' + catBars(t, bi('لسا ما في مصاريف', 'No expenses yet')) + '<div>' + supCard +
+  return '<div class="cols">' + groupBars(list, bi('لسا ما في مصاريف', 'No expenses yet'), true) + '<div>' + supCard +
     '<div class="card"><h3 class="display">' + bi('معدّل الشهر', 'Monthly average') + '</h3><p>' + bi('مصاريف', 'Expenses') + ': <b class="num">' +
     $usd(t.spent / Math.max(1, keys.length)) + '</b> · ' + bi('مبيعات', 'Sales') + ': <b class="num">' + (A ? $usd(A.summary.sales / Math.max(1, keys.length)) : '…') + '</b></p>' +
     '<p class="muted note2">' + bi('من ', 'Since ') + dayName(first) + ' <span class="num">' + first.slice(0, 4) + '</span></p></div></div></div>';
@@ -1921,10 +1973,11 @@ $('#exp').addEventListener('click', function (e) {
   if (b.dataset.xday) { EX.sel = b.dataset.xday; drawExpenses(); var c = $('#xDayCard'); if (c) c.scrollIntoView({behavior: 'smooth', block: 'start'}); return }
   if (b.dataset.xclose) { EX.sel = ''; return drawExpenses() }
   if (b.dataset.xgoto) { EX.mode = 'cal'; EX.y = +b.dataset.xgoto.slice(0, 4); EX.m = +b.dataset.xgoto.slice(5) - 1; EX.sel = ''; return drawExpenses() }
-  if (b.dataset.xcat || b.dataset.xcur || b.dataset.xsub) {
+  if (b.dataset.xcat || b.dataset.xcur || b.dataset.xsub || b.dataset.xpick) {
     // keep what was typed while the form redraws
     var keep = {item: $('#xItem').value, amount: $('#xAmount').value, supplier: $('#xSupplier').value, date: $('#xDate').value};
-    if (b.dataset.xcat) { if (EX.cat !== b.dataset.xcat) EX.sub = ''; EX.cat = b.dataset.xcat }
+    if (b.dataset.xpick) { var pk = b.dataset.xpick.split('|'); EX.cat = pk[0]; EX.sub = pk[1] || '' }
+    else if (b.dataset.xcat) { if (EX.cat !== b.dataset.xcat) EX.sub = ''; EX.cat = b.dataset.xcat }
     else if (b.dataset.xsub) EX.sub = b.dataset.xsub; else EX.cur = b.dataset.xcur;
     drawExpenses();
     $('#xItem').value = keep.item; $('#xAmount').value = keep.amount; $('#xSupplier').value = keep.supplier; $('#xDate').value = keep.date;
