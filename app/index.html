@@ -596,7 +596,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=47"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=48"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1466,6 +1466,9 @@ function owedCard(o, today) {
     '<div class="obody">' + who(o) + '<div class="oitems"><span>' + bi(itemsAr(o.text), o.text) + '</span></div>' + (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
     '<div class="oside">' + amount(o.total) + '</div>' +
     '<div class="oacts"><button class="readyb" data-remind="' + esc(o.key) + '">📲 ' + bi('ذكّرو بالدفع', 'Payment reminder') + '</button>' +
+      (OWED_DISC === o.key ? '<div class="discbox"><b>🏷️ ' + bi('خصم', 'Discount') + '</b><input class="odPaid" inputmode="decimal" placeholder="' + esc(T('قدّيش دفعو؟ ($ أو ليرة) أو خصم متل 10%', 'How much did they pay? ($ or L.L.) or a discount like 10%')) + '">' +
+        '<input class="odWhy" maxlength="40" placeholder="' + esc(T('ليش؟ (عيلة، صاحب…) اختياري', 'Why? (family, friend…) optional')) + '"><small class="muted">' + bi('بعدين دق دفع كاش أو ويش', 'then tap Paid cash or Paid Whish') + '</small></div>'
+        : '<button class="splitl" data-paid="' + esc(o.key) + '" data-odisc="1">🏷️ ' + bi('في خصم', 'There\'s a discount') + '</button>') +
       '<button class="payb cash" data-paid="' + esc(o.key) + '" data-how="Cash">' + bi('دفع كاش', 'Paid cash') + '</button>' +
       '<button class="payb whish" data-paid="' + esc(o.key) + '" data-how="Whish">' + bi('دفع ويش', 'Paid Whish') + '</button>' +
       '<button class="splitl" data-paid="' + esc(o.key) + '" data-how="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button>' +
@@ -1499,6 +1502,7 @@ function owedBadge(list) {
   });
 }
 // Remind or mark paid; list(): the orders this tab shows, draw(): redraws it
+var OWED_DISC = null;   // the not-paid order whose discount box is open
 function owedClicks(where, list, draw) {
   $(where).addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -1507,9 +1511,17 @@ function owedClicks(where, list, draw) {
       var url = EB.payReminder(sameCustomer(o, list()), EB.bizDay(DAY_END), RATE), w = window.open(url, '_blank'); if (!w) location.href = url;
       return;
     }
-    var part = b.dataset.how === 'Split' ? askSplit(o) : null;
+    if (b.dataset.odisc) { OWED_DISC = o.key; draw(); var inp = $(where).querySelector('.odPaid'); if (inp) inp.focus(); return }
+    var disc = 0, why = '', card = b.closest('.ord');
+    if (OWED_DISC === o.key && b.dataset.how !== 'House' && card && card.querySelector('.odPaid')) {
+      disc = discOf(o, card.querySelector('.odPaid').value); why = card.querySelector('.odWhy').value.trim();
+      if (disc == null) return toast('اكتب قدّيش دفعو (أقل من الحساب) أو نسبة الخصم', 'Type what they paid (less than the total) or the discount %');
+    }
+    var part = b.dataset.how === 'Split' ? askSplit({total: o.total - disc}) : null;
     if (b.dataset.how === 'Split' && part == null) return;
-    EB.paid(o, b.dataset.how, EB.bizDay(DAY_END), part);
+    OWED_DISC = null;
+    EB.paid(o, b.dataset.how, EB.bizDay(DAY_END), part, disc, why);
+    if (disc) toast('الطلب #' + o.num + ' انْدفع بخصم ' + $usd(disc), 'Order #' + o.num + ' paid with a discount of ' + $usd(disc)); else
     if (b.dataset.how === 'House') toast('الطلب #' + o.num + ': للبيت', 'Order #' + o.num + ': for the house'); else toast('الطلب #' + o.num + ' انْدفع', 'Order #' + o.num + ' marked paid');
     draw();
   });
@@ -2151,15 +2163,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=47"></script>
-<script src="hub.js?v=47"></script>
-<script src="marketing.js?v=47"></script>
-<script src="printer.js?v=47"></script>
-<script src="cashier.js?v=47"></script>
-<script src="income.js?v=47"></script>
-<script src="sandouk.js?v=47"></script>
-<script src="adjust.js?v=47"></script>
-<script src="website.js?v=47"></script>
-<script src="overview.js?v=47"></script>
+<script src="recipes.js?v=48"></script>
+<script src="hub.js?v=48"></script>
+<script src="marketing.js?v=48"></script>
+<script src="printer.js?v=48"></script>
+<script src="cashier.js?v=48"></script>
+<script src="income.js?v=48"></script>
+<script src="sandouk.js?v=48"></script>
+<script src="adjust.js?v=48"></script>
+<script src="website.js?v=48"></script>
+<script src="overview.js?v=48"></script>
 </body>
 </html>
