@@ -1,12 +1,12 @@
 /* Keeps a copy of the app on the iPad so it opens without internet.
    Online, the newest files are used (and saved); offline, the saved copy. Orders themselves are not handled here:
    the app keeps unsent changes in its own outbox (core.js). */
-var CACHE = 'elbash-app-v35';
+var CACHE = 'elbash-app-v36';
 var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'cashier.js', 'printer.js', 'income.js', 'sandouk.js', 'adjust.js', 'website.js', 'overview.js', 'favicon-32.png', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../assets/elbash/noar-green.svg'];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES) }).then(function () { return self.skipWaiting() }));
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES.map(function (f) { return new Request(f, {cache: 'reload'}) })) }).then(function () { return self.skipWaiting() }));
 });
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
@@ -18,7 +18,7 @@ self.addEventListener('activate', function (e) {
 function fresh(req) {
   return caches.open(CACHE).then(function (c) {
     var keep = function () { return c.match(req, {ignoreSearch: true}) };
-    var net = fetch(req).then(function (res) { if (res.ok) c.put(req, res.clone()); return res });
+    var net = fetch(req, {cache: 'no-cache'}).then(function (res) { if (res.ok) c.put(req, res.clone()); return res });   // ask GitHub every time (it answers 'same' quickly), so a new page never runs with yesterday's scripts
     var wait = new Promise(function (ok) { setTimeout(ok, 4000) });
     return Promise.race([net, wait]).then(function (res) { return res || keep().then(function (m) { return m || net }) })
       .catch(function () { return keep().then(function (m) { return m || Response.error() }) });
