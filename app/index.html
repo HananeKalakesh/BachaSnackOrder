@@ -1094,7 +1094,8 @@ function drawToday() {
 /* All time: the same numbers for every order so far, by month and by day of the week */
 // Dashboard, top: the money with the chef, then cash box, income and expenses, then the profit in one box (owners + business)
 function dashMoney(sales, today) {
-  var bxs = boxes(), buys = purchases(), wait = '<b class="usd">…</b>', bal = chefBalance();
+  // a device that still has yesterday's sandouk.js (GitHub keeps files up to 10 minutes) must still open the dashboard
+  var bxs = typeof boxes === 'function' ? boxes() : null, buys = purchases(), wait = '<b class="usd">…</b>', bal = typeof chefBalance === 'function' ? chefBalance() : null;
   var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
   var h = '<div class="kpis four">' +
     '<div class="kpi hero" data-goview="box"><small>💼 ' + bi('مع الشيف هلّق', 'With the chef now') + '</small>' + (bal == null ? wait : amount(bal)) + '<small class="ll">' + bi('مفصول عن عدّ الصندوق الليلة', 'apart from tonight\'s count') + '</small></div>' +
@@ -1119,7 +1120,7 @@ function drawAll() {
     months[d.date.slice(0, 7)] = (months[d.date.slice(0, 7)] || 0) + d.sales;
     var w = (new Date(d.date + 'T12:00').getDay() + 6) % 7; wk[w] += d.sales; wkDays[w]++;
   });
-  h += dashMoney(s.sales, today);
+  try { h += dashMoney(s.sales, today) } catch (e) { h += '<p class="offline">' + bi('سكّر التطبيق وافتحو من جديد ليحمّل آخر نسخة.', 'Close and reopen the app to load the latest version.') + '</p>' }
   h += '<div class="kpis">' +
     '<div class="kpi"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
