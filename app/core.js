@@ -239,7 +239,7 @@ var EB = (function () {
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
-      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = list[i].total; list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0 }
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' ? 0 : list[i].total; list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0 }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
     });
@@ -257,9 +257,9 @@ var EB = (function () {
     });
   }
   function orderCells(o) {
-    var usd = o.payment === 'Unpaid' ? 0 : o.paidUsd || 0;
+    var nopay = o.payment === 'Unpaid' || o.payment === 'House', usd = nopay ? 0 : o.paidUsd || 0;   // House: food for the owners' house, no money
     return {'Items': o.text, 'Item count': o.items.reduce(function (a, x) { return a + x.qty }, 0), 'Order total (L.L.)': o.total,
-      'Payment': o.payment, 'Paid ($)': usd, 'Paid (L.L.)': o.payment === 'Unpaid' ? 0 : Math.max(0, o.total - usd * o.rate),
+      'Payment': o.payment, 'Paid ($)': usd, 'Paid (L.L.)': nopay ? 0 : Math.max(0, o.total - usd * o.rate),
       'Note': o.note, 'Name': o.name, 'Pickup / Delivery': o.type};
   }
   function where(o) { return {'Date': o.day, 'Order #': o.num} }
@@ -360,8 +360,8 @@ var EB = (function () {
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   // Split: whish is the part paid by Whish (L.L.), the rest was cash
   EB.paid = function (o, payment, day, whish) {
-    var later = day && day !== o.day ? day : '', part = payment === 'Split' ? whish || 0 : '';
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': o.total, 'Paid later': later, 'Whish part (L.L.)': part}}],
+    var later = day && day !== o.day && payment !== 'House' ? day : '', part = payment === 'Split' ? whish || 0 : '';
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': payment === 'House' ? 0 : o.total, 'Paid later': later, 'Whish part (L.L.)': part}}],
       {t: 'paid', key: o.key, payment: payment, later: later, whish: part || 0});
   };
 
@@ -369,17 +369,18 @@ var EB = (function () {
   // Orders, items and Not paid count on the day the order was placed. Sales are the money received: an order
   // paid later counts on the day it was paid (Paid later), so a Not paid order isn't in Sales until it is paid.
   EB.report = function (list, from, to) {
-    var s = {orders: 0, items: 0, sales: 0, ordered: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0,
+    var s = {orders: 0, items: 0, sales: 0, ordered: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0, houseOrders: 0, houseLbp: 0,
       laterOrders: 0, laterLbp: 0};
     var days = {}, items = {}, orders = [], later = [];
     var day = function (d) { return days[d] = days[d] || {date: d, orders: 0, sales: 0} };
     var row = function (o) { return {num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type, paidLater: o.paidLater} };
     list.forEach(function (o) {
       if (!o.live) return;
-      var placed = o.day >= from && o.day <= to, paidOn = o.payment === 'Unpaid' ? '' : o.paidLater || o.day, paid = paidOn >= from && paidOn <= to;
+      var placed = o.day >= from && o.day <= to, paidOn = o.payment === 'Unpaid' || o.payment === 'House' ? '' : o.paidLater || o.day, paid = paidOn >= from && paidOn <= to;
       if (placed) {
         s.orders++; s.ordered += o.total; day(o.day).orders++;
         if (o.payment === 'Unpaid') { s.unpaidOrders++; s.unpaidLbp += o.total }
+        if (o.payment === 'House') { s.houseOrders++; s.houseLbp += o.total }   // the owners' house: items count, not sales
         o.items.forEach(function (x) {
           var it = items[x.name] = items[x.name] || {name: x.name, qty: 0, sales: 0};
           it.qty += x.qty; it.sales += x.qty * x.price; s.items += x.qty;
