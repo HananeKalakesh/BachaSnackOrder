@@ -231,7 +231,11 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .dfee .dch{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}.dfee .dch button{background:#fff;border:0;border-radius:10px;padding:7px 0;font:inherit;font-weight:800;font-size:13px;cursor:pointer}.dfee .dch button.on{background:var(--green);color:var(--paper)}
 .dfee .dcol{display:flex;justify-content:space-between;margin-top:6px;font-weight:800}.dfee .dcol b{font-size:16px}
 .stage.s0{background:#EFE6D6;color:#1A1A17}.newi{background:#C8102E;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;font-style:normal;margin-inline-start:6px}.senti{color:#1F4A37;font-weight:800;font-size:12px;font-style:normal;margin-inline-start:6px}
-.stepb.second{background:var(--mustard);color:#1A1A17}.prtb{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:4px 8px;cursor:pointer;border-radius:10px}.prtb:active{background:var(--input)}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.stepb.second{background:var(--mustard);color:#1A1A17}.prtb{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:4px 8px;cursor:pointer;border-radius:10px}.prtb:active{background:var(--input)}.pbox2{padding:16px 18px}.pbox2 .pbrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;align-items:stretch}.pbox2 .pbmain b{display:block;font-size:30px;font-weight:800;margin:2px 0}
+.pbox2 .pbpart{background:var(--input);border-radius:16px;padding:10px 12px}.pbox2 .pbpart.keep{background:#E2ECE6}.pbox2 .pbpart.own{background:#FDF1CC}.pbox2 .pbpart small{display:block;font-weight:700}
+.pbox2 .pbpart b{font-size:22px;font-weight:800}.pbox2 .pct{margin-inline-start:6px;font-weight:800;color:var(--muted);font-size:14px}.pbox2 .split{margin:12px 0 8px}.pbox2 .pbeq{margin:6px 0 0;font-size:13px}
+@media (max-width:700px){.pbox2 .pbrow{grid-template-columns:1fr 1fr}.pbox2 .pbmain{grid-column:1/-1}}
+.feetag.disc{background:#FDF1CC;color:#1A1A17}.discbox{background:var(--input);border-radius:14px;padding:10px 12px;margin:8px 0;text-align:start}.discbox input{display:block;width:100%;box-sizing:border-box;border:0;border-radius:10px;padding:10px;margin-top:6px;font:inherit;background:#fff}.discbox #discShow{margin-top:6px;font-size:14px}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.mo .xm{display:block;color:var(--red);font-weight:700;font-size:11px}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -592,7 +596,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=45"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=47"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1134,7 +1138,7 @@ function sideCards(R, none, every) {
       (owed ? '<i class="unpaid" style="width:' + (owed / all * 100) + '%"></i>' : '') + '</div>' +
       '<div class="pay2' + (owed ? ' three' : '') + '">' + part('cash', 'كاش', 'Cash', s.cashLbp, s.cashOrders) + part('whish', 'ويش', 'Whish', s.whishLbp, s.whishOrders) +
       (owed ? part('unpaid', 'ما دفع', 'Not paid', owed, s.unpaidOrders) : '') + '</div>' +
-      '';
+      (s.discLbp ? '<p class="muted note2">🏷️ ' + bi('خصومات: ', 'Discounts: ') + '<b class="num">' + $usd(s.discLbp) + '</b> <span class="num">' + ll(s.discLbp) + '</span> · ' + fmt(s.discOrders) + ' ' + bi('طلب', s.discOrders === 1 ? 'order' : 'orders') + ' ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>' : '');
   } else side += R ? '<p class="muted">' + none + '</p>' : wait;
   side += '</div><div class="card"><h3 class="display">' + (every ? bi('الأكل المباع', 'Food sold') : bi('الأكتر مبيعاً', 'Best sellers')) + '</h3>';
   var food = R ? R.items.filter(function (x) { return !isSide(x.name) && !OPEN_CAT[x.cat] }) : [];
@@ -1209,11 +1213,34 @@ function dashMoney(sales, today) {
   var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
   var h = '<div class="kpis four">' +
     '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null || !drw ? wait : amount(bal + (drw.counted ? 0 : drw.sales))) + '<small class="ll">' + (bal == null || !drw || drw.counted ? bi('لآخر عدّ', 'up to the last count') : bi('لآخر عدّ ', 'last count ') + $usd(bal) + ' + ' + bi('اليوم ', 'today ') + $usd(drw.sales)) + '</small></div>' +
-    '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق المعدود', 'Cash box counted') + '</small>' + (bxs ? amount(counted) : wait) + '<small class="ll">' + (bxs ? fmt(bxs.length) + ' ' + bi('ليلة', 'nights') : '') + '</small></div>' +
+    '<div class="kpi own"><small>💰 ' + bi('أخدو الأصحاب', 'Taken by the owners') + '</small>' + (t ? amount(t.owners) : wait) + '<small class="ll">' + (bxs ? bi(OWNERS_PCT + '٪ من ' + fmt(bxs.length) + ' صندوق معدود', OWNERS_PCT + '% of ' + fmt(bxs.length) + ' counted cash boxes') : '') + '</small></div>' +
     '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';
-  if (t) h += profitKpis(sales, t, '', other).replace(/<div class="kpis">[\s\S]*$/, '');
+  // no profit card: the money with the resto is the real number (owner, 24 Oct); discounts given, as a note
+  var disc = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2000-01-01', today).summary.discLbp : 0;
+  if (disc) h += '<p class="muted note2">🏷️ ' + bi('خصومات من الأول ', 'Discounts since the start ') + '<b class="num">' + $usd(disc) + '</b> ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>';
   return h + '<div class="morelinks"><button data-goview="owed">' + bi('ما دفعو', 'Not paid') + '</button><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div>';
+}
+/* Dashboard: the profit in one compact card — what the owners took and the resto's part side by side with their %,
+   then one line that links the resto's profit to the money it has now, so the two numbers never look like they clash */
+function profitBox(sales, t, other, now, today) {
+  var profit = sales + other - t.spent, own = t.owners, rest = profit - own, pw = profit > 0 ? Math.max(0, Math.min(100, Math.round(own / profit * 100))) : 0;
+  var put = (incomes() || []).filter(function (x) { return !incCat(x.src)[2] }).reduce(function (a, x) { return a + x.lbp }, 0);   // capital + starting money
+  var disc = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2000-01-01', today).summary.discLbp : 0;
+  var part = function (cls, icon, ar, en, v, pct) { return '<div class="pbpart ' + cls + '"><small>' + icon + ' ' + bi(ar, en) + '</small><b class="num">' + $usd(v) + '</b><span class="pct num">' + pct + '%</span><small class="ll num">' + ll(v) + '</small></div>' };
+  var h = '<div class="card pbox2"><div class="pbrow"><div class="pbmain"><small>📈 ' + bi('الربح من الأول', 'Profit since the start') + '</small><b class="num">' + $usd(profit) + '</b>' +
+      '<small class="ll">' + bi(other ? 'المبيعات والدخل التاني ناقص المصاريف' : 'المبيعات ناقص المصاريف', other ? 'Sales and other income minus expenses' : 'Sales minus expenses') + '</small></div>' +
+    part('own', '💰', 'أخدو الأصحاب', 'Taken by the owners', own, pw) + part('keep', '🏪', 'ربح المطعم', 'The resto\'s profit', rest, 100 - pw) + '</div>' +
+    '<div class="split"><i class="cash" style="width:' + (100 - pw) + '%"></i><i class="own" style="width:' + pw + '%"></i></div>';
+  if (now != null) {
+    var gap = now - (rest + put - t.invest);
+    h += '<p class="pbeq">🏪 ' + bi('مع المطعم هلّق ', 'With the resto now ') + '<b class="num">' + $usd(now) + '</b> = ' + bi('ربح المطعم ', 'its profit ') + '<b class="num">' + $usd(rest) + '</b>' +
+      (put ? ' + ' + bi('رأس المال ومصاري البداية ', 'capital & starting money ') + '<b class="num">' + $usd(put) + '</b>' : '') +
+      (t.invest ? ' − ' + bi('المعدّات ', 'equipment ') + '<b class="num">' + $usd(t.invest) + '</b>' : '') +
+      (Math.abs(gap) >= RATE ? (gap > 0 ? ' + ' : ' − ') + bi('فرق الصناديق المعدودة ', 'cash box differences ') + '<b class="num">' + $usd(Math.abs(gap)) + '</b>' : '') + '</p>';
+  }
+  if (disc) h += '<p class="pbeq muted">🏷️ ' + bi('خصومات من الأول ', 'Discounts since the start ') + '<b class="num">' + $usd(disc) + '</b> ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>';
+  return h + '</div>';
 }
 // Dashboard, sales part: totals, average by weekday and by hour, payments and best sellers, for every order so far
 function salesAll(A) {
@@ -1566,7 +1593,7 @@ function drawOrders() {
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + (later ? 'Later' : esc(o.payment)) + '">' +
         (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + '</span>' +
-        typeTag(o) + '</span>' + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
+        typeTag(o) + '</span>' + (o.disc ? '<span class="feetag disc">🏷️ ' + bi('خصم ', 'Discount ') + '<b class="num">' + $usd(o.disc) + '</b>' + (o.discWhy ? ' · ' + esc(o.discWhy) : '') + '</span>' : '') + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
           '<br>' + bi('عالزبون: ', 'Customer pays: ') + '<b class="num">' + money(o.total + o.fee) + '</b></span>' : '') + '</div>' +
       '<div class="oacts">' + acts + (PRN.can() && !(o.sent === '-' && !o.done && !o.ready) && !(fresh.length && !o.done && !o.ready) ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
         '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
@@ -1580,6 +1607,9 @@ function drawOrders() {
   var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
   if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + bi('الطلب #' + pf.num + ': الحساب', 'Order #' + pf.num + ': payment') + '</h3>' +
     '<p>' + bi('كيف انْدفع؟', 'How was it paid?') + ' <b class="num">' + $usd(pf.total) + '</b> <small class="muted num">' + ll(pf.total) + '</small></p>' +
+    (TD.disc ? '<div class="discbox"><b>🏷️ ' + bi('خصم', 'Discount') + '</b><input id="discPaid" inputmode="decimal" placeholder="' + esc(T('قدّيش دفعو؟ ($ أو ليرة) أو خصم متل 10%', 'How much did they pay? ($ or L.L.) or a discount like 10%')) + '">' +
+      '<input id="discWhy" maxlength="40" placeholder="' + esc(T('ليش؟ (عيلة، صاحب…) اختياري', 'Why? (family, friend…) optional')) + '"><div id="discShow" class="muted"></div></div>'
+      : '<button class="splitl" data-disc="1">🏷️ ' + bi('في خصم', 'There\'s a discount') + '</button>') +
     '<div class="paybtns"><button class="payb cash" data-payhow="Cash">' + bi('كاش', 'Cash') + '</button><button class="payb whish" data-payhow="Whish">' + bi('ويش', 'Whish') + '</button></div>' +
     '<button class="splitl" data-payhow="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button>' +
     '<button class="splitl" data-payhow="House">🏠 ' + bi('للبيت (أكل لبيت الأصحاب، ما بينحسب مبيعات)', 'House (food for the owners, not a sale)') + '</button>' +
@@ -1587,6 +1617,15 @@ function drawOrders() {
   $('#ord').innerHTML = h;
 }
 function hhmmNow() { return EB.hhmm() }
+// what was typed in the discount box -> the discount in L.L.: "10%" off the total, else what they paid ($ for a small
+// number, L.L. for a big one); null when it doesn't make sense, 0 when empty
+function discOf(o, text) {
+  var t = String(text || '').trim(); if (!t) return 0;
+  var n = Number(t.replace(/[^0-9.]/g, '')); if (!(n > 0)) return null;
+  if (/%/.test(t)) return n < 100 ? Math.round(o.total * n / 100) : null;
+  var paid = Math.round(n > 10000 ? n : n * RATE);
+  return paid < o.total ? o.total - paid : null;
+}
 // tickets sent to the kitchen whose second copy hasn't been printed yet: order key -> ticket
 // After Accept and Ready: ask before opening WhatsApp, so skipping it keeps the cashier in the app
 function askWhatsapp(o, kind) { if (o && o.phone) { TD.wa = {o: o, kind: kind}; } }
@@ -1605,6 +1644,13 @@ function itemsOf(o, marks) {
 function typeTag(o) { return o.type ? '<span class="otype">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '' }
 // Opens WhatsApp with the message written; staff press send
 function whatsapp(o, kind) { var w = window.open(EB.whatsapp(o, kind), '_blank'); if (!w) location.href = EB.whatsapp(o, kind) }
+$('#ord').addEventListener('input', function (e) {
+  if (e.target.id !== 'discPaid') return;
+  var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0]; if (!q) return;
+  var d = discOf(q, e.target.value);
+  $('#discShow').innerHTML = d ? bi('خصم ', 'Discount ') + '<b class="num">' + $usd(d) + '</b> · ' + bi('بيدفعو ', 'they pay ') + '<b class="num">' + $usd(q.total - d) + '</b> <span class="num">' + ll(q.total - d) + '</span>'
+    : d === null ? '<span class="owe">' + bi('لازم يكون أقل من الحساب', 'Must be less than the total') + '</span>' : '';
+});
 $('#ord').addEventListener('click', function (e) {
   var b = e.target.closest('button');
   if (b && (b.dataset.accept || b.dataset.reject)) {
@@ -1651,18 +1697,24 @@ $('#ord').addEventListener('click', function (e) {
       EB.ready(s, hhmmNow()); askWhatsapp(s, 'ready');
       toast(s.type === 'Delivery' ? 'الطلب #' + s.num + ' طلع للتوصيل' : 'الطلب #' + s.num + ' جاهز', 'Order #' + s.num + (s.type === 'Delivery' ? ' out for delivery' : ' ready'));
     }
-    if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; return drawOrders() } EB.done(s, hhmmNow()) }
+    if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; TD.disc = false; return drawOrders() } EB.done(s, hhmmNow()) }
     if (b.dataset.step === 'back') { if (s.done) EB.done(s, ''); else EB.ready(s, '') }
     return drawOrders();
   }
   if (b && b.dataset.wa) { var wa = TD.wa; TD.wa = null; if (wa && b.dataset.wa === 'send') whatsapp(wa.o, wa.kind); return drawOrders() }
   if (b && b.dataset.msg) { var u = TD.list.filter(function (x) { return x.key === b.dataset.msg })[0]; if (u) whatsapp(u, 'ready'); return }
+  if (b && b.dataset.disc) { TD.disc = true; drawOrders(); var di = $('#discPaid'); if (di) di.focus(); return }
   if (b && b.dataset.payhow) {
-    var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0], part = null;
-    if (q && b.dataset.payhow === 'Split' && (part = askSplit(q)) == null) return;
-    TD.payFor = null;
+    var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0], part = null, disc = 0, why = '';
+    if (q && TD.disc && ['Cash', 'Whish', 'Split'].indexOf(b.dataset.payhow) >= 0) {
+      disc = discOf(q, $('#discPaid').value); why = $('#discWhy').value.trim();
+      if (disc == null) { $('#discShow').innerHTML = '<span class="owe">' + bi('اكتب قدّيش دفعو (أقل من الحساب) أو نسبة الخصم', 'Type what they paid (less than the total) or the discount %') + '</span>'; return }
+    }
+    if (q && b.dataset.payhow === 'Split' && (part = askSplit({total: q.total - disc})) == null) return;
+    TD.payFor = null; TD.disc = false;
     if (q && b.dataset.payhow !== 'cancel') {
-      if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END), part);
+      if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END), part, disc, why);
+      if (disc) toast('خصم ' + $usd(disc) + ' على #' + q.num, 'Discount ' + $usd(disc) + ' on #' + q.num);
       EB.done(q, hhmmNow());
     }
     return drawOrders();
@@ -2036,8 +2088,8 @@ function monthsBoth(list, A) {
       var s = salesM[k] || 0, x = spentM[k] || 0, mi = +k.slice(5) - 1, p = s - x;
       return '<button class="mo xmo" data-goto="' + k + '"><span class="track two"><i class="ks" style="height:' + (s ? Math.max(3, s / maxM * 100) : 0) + '%"></i><i class="kx" style="height:' + (x ? Math.max(3, x / maxM * 100) : 0) + '%"></i></span>' +
         '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span>' +
-        '<b class="num' + (p < 0 ? ' neg' : '') + '">' + (s || x ? $usd(p) : '–') + '</b></button>';
-    }).join('') + '</div><p class="muted note2">' + bi('الرقم تحت كل شهر هو الربح. دق على شهر لتفتح تقويمو.', 'The number under each month is its profit. Tap a month to open its calendar.') + '</p></div>';
+        '<b class="num">' + (s ? $usd(s) : '–') + '</b>' + (x ? '<small class="num xm">−' + $usd(x) + '</small>' : '') + '</button>';
+    }).join('') + '</div><p class="muted note2">' + bi('تحت كل شهر: المبيعات، وتحتها المصاريف. دق على شهر لتفتح تقويمو.', 'Under each month: the sales, and under them the expenses. Tap a month to open its calendar.') + '</p></div>';
   return h;
 }
 $('#exp').addEventListener('click', function (e) {
@@ -2099,15 +2151,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=45"></script>
-<script src="hub.js?v=45"></script>
-<script src="marketing.js?v=45"></script>
-<script src="printer.js?v=45"></script>
-<script src="cashier.js?v=45"></script>
-<script src="income.js?v=45"></script>
-<script src="sandouk.js?v=45"></script>
-<script src="adjust.js?v=45"></script>
-<script src="website.js?v=45"></script>
-<script src="overview.js?v=45"></script>
+<script src="recipes.js?v=47"></script>
+<script src="hub.js?v=47"></script>
+<script src="marketing.js?v=47"></script>
+<script src="printer.js?v=47"></script>
+<script src="cashier.js?v=47"></script>
+<script src="income.js?v=47"></script>
+<script src="sandouk.js?v=47"></script>
+<script src="adjust.js?v=47"></script>
+<script src="website.js?v=47"></script>
+<script src="overview.js?v=47"></script>
 </body>
 </html>

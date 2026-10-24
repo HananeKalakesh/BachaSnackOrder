@@ -13,7 +13,11 @@ function boxes() {
   var list = EB.rows(r.Sandouk).filter(function (x) { return x.Ref && x.Date }).map(function (x) {
     return {key: String(x.Ref), day: String(x.Date).slice(0, 10), cashLbp: Number(x['Cash (L.L.)']) || 0, cashUsd: Number(x['Cash ($)']) || 0,
       whish: Number(x['Whish (L.L.)']) || 0, whishUsd: Number(x['Whish ($)']) || 0, total: Number(x['Total (L.L.)']) || 0, pct: Number(x['Owners %']) || OWNERS_PCT,
-      owners: Number(x['Owners (L.L.)']) || 0, left: Number(x['Left (L.L.)']) || 0, note: String(x.Note || '')};
+      owners: Number(x['Owners (L.L.)']) || 0, left: Number(x['Left (L.L.)']) || 0, note: String(x.Note || ''),
+      // what the orders said when the count was saved (frozen, so orders paid later don't move the difference)
+      snap: x['Orders (L.L.)'] === '' || x['Orders (L.L.)'] == null ? null : Number(x['Orders (L.L.)']) || 0,
+      snapCash: x['Orders cash (L.L.)'] === '' || x['Orders cash (L.L.)'] == null ? null : Number(x['Orders cash (L.L.)']) || 0,
+      snapWhish: x['Orders Whish (L.L.)'] === '' || x['Orders Whish (L.L.)'] == null ? null : Number(x['Orders Whish (L.L.)']) || 0};
   });
   return EB.withPending(list, r.at, 'sandouk');
 }
@@ -31,13 +35,19 @@ function boxCalc(cashLbp, cashUsd, whish, whishUsd) {
    money); the difference is only reported. Live, so an order marked paid later moves it. null until the orders load. */
 function boxDiff(x) {
   var s = boxSales(x.day); if (!s) return null;
-  var cash = Math.round(x.cashLbp + x.cashUsd * RATE), whish = Math.round(x.whish + (x.whishUsd || 0) * RATE);
-  return {cash: cash, whish: whish, oCash: s.cash, oWhish: s.whish, orders: s.cash + s.whish, dCash: cash - s.cash, dWhish: whish - s.whish, diff: x.total - s.cash - s.whish};
+  var cash = Math.round(x.cashLbp + x.cashUsd * RATE), whish = Math.round(x.whish + (x.whishUsd || 0) * RATE), live = s.cash + s.whish;
+  if (x.snap != null) {   // a saved count: against the orders as they were at that moment; anything paid since is shown apart
+    var sc = x.snapCash != null ? x.snapCash : null, sw = x.snapWhish != null ? x.snapWhish : null;
+    return {cash: cash, whish: whish, oCash: sc, oWhish: sw, orders: x.snap, dCash: sc != null ? cash - sc : null, dWhish: sw != null ? whish - sw : null,
+      diff: x.total - x.snap, after: Math.max(0, live - x.snap)};
+  }
+  return {cash: cash, whish: whish, oCash: s.cash, oWhish: s.whish, orders: live, dCash: cash - s.cash, dWhish: whish - s.whish, diff: x.total - live, after: 0};
 }
 function signed(v) { return '<b class="num' + (v < 0 ? ' owe' : '') + '">' + (v > 0 ? '+' : v < 0 ? '−' : '') + $usd(Math.abs(v)) + '</b>' }
 function diffLine(d) {
-  if (!d.diff && !d.dCash) return '<span class="okm">' + bi('مطابق للطلبات ✓', 'Matches the orders ✓') + '</span>';
-  return bi('الفرق عن الطلبات ', 'Difference vs orders ') + signed(d.diff) + ' <span class="muted">(' + bi('كاش ', 'cash ') + signed(d.dCash) + ' · ' + bi('ويش ', 'Whish ') + signed(d.dWhish) + ')</span>';
+  var after = d.after ? ' <span class="owe">· ' + bi('بعد العدّ انقبض ', 'paid after the count ') + '<b class="num">' + $usd(d.after) + '</b> ' + bi('(مش بهالعدّ: عدّو من جديد آخر الليل بـ «عدّل»)', '(not in this count: count again at the end of the night with Edit)') + '</span>' : '';
+  if (!d.diff && !d.dCash) return '<span class="okm">' + bi('مطابق للطلبات ✓', 'Matches the orders ✓') + '</span>' + after;
+  return bi('الفرق عن الطلبات ', 'Difference vs orders ') + signed(d.diff) + (d.dCash != null ? ' <span class="muted">(' + bi('كاش ', 'cash ') + signed(d.dCash) + ' · ' + bi('ويش ', 'Whish ') + signed(d.dWhish) + ')</span>' : '') + after;
 }
 // Owners lines typed by hand on a day (not the one the cash box records)
 /* The money with the resto: every night 30% of the count goes to the owners and the rest stays with the resto (the
@@ -131,8 +141,14 @@ function drawBoxCalc() {
   $('#bCalc').innerHTML = h;
 }
 
+// what is being typed in the count form, so a redraw (data arriving) doesn't wipe it
+function boxTyped() {
+  if (!$('#bCash')) return null;
+  return {day: $('#bDate').value, cashLbp: $('#bCash').value, cashUsd: $('#bUsd').value, whish: $('#bWhish').value, whishUsd: $('#bWhishUsd').value, note: $('#bNote').value};
+}
 function drawSandouk() {
   if (BX.locked) return;
+  var typed = boxTyped();
   var today = ymd(bizDate()), list = boxes();
   var h = '<div class="shead"><h2 class="display">' + bi('اليوم', 'Today') + '</h2><span class="since">' + dayName(today) + '</span></div>' +
     (BX.err === 'OFFLINE' ? '<p class="offline">' + bi('ما في إنترنت: الصندوق بينحفظ وبينبعت لحالو.', 'No internet: the count is kept and sent by itself.') + '</p>'
@@ -152,7 +168,7 @@ function drawSandouk() {
     '<input id="bNote" class="wide" placeholder="' + esc(T('ملاحظة (اختياري)', 'Note (optional)')) + '" maxlength="80">' +
     '<div id="bCalc"></div>' +
     '<button class="save" id="bSave">' + bi('احفظ الصندوق', 'Save the cash box') + '</button><div class="err" id="bErr"></div></div></div>';
-  if (!list) { $('#box').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; boxFill(mine); drawBoxCalc(); return }
+  if (!list) { $('#box').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; boxRestore(typed); drawBoxCalc(); return }
 
   // every day, newest first
   var rows = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1 });
@@ -170,8 +186,12 @@ function drawSandouk() {
       '<td><button class="del" data-bedit="' + esc(x.key) + '">' + bi('عدّل', 'Edit') + '</button> <button class="del" data-bdel="' + esc(x.key) + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
   }).join('') + '</table>' : '<p class="muted">' + bi('لسا ما في صندوق محفوظ', 'No cash box saved yet') + '</p>') + '</div>';
   $('#box').innerHTML = h;
-  boxFill(mine);
+  boxRestore(typed);   // the form starts empty; a saved day comes back only with its Edit button
   drawBoxCalc();
+}
+function boxRestore(t) {
+  if (!t || !$('#bCash')) return;
+  $('#bDate').value = t.day || $('#bDate').value; $('#bCash').value = t.cashLbp; $('#bUsd').value = t.cashUsd; $('#bWhish').value = t.whish; $('#bWhishUsd').value = t.whishUsd; $('#bNote').value = t.note;
 }
 // a day already counted: its numbers in the form, to change them
 function boxFill(x) {
@@ -195,7 +215,9 @@ $('#box').addEventListener('click', function (e) {
     var cells = {'Date': day, 'Cash (L.L.)': cashLbp, 'Cash ($)': cashUsd, 'Whish (L.L.)': whish, 'Whish ($)': whishUsd, 'Total (L.L.)': c.total, 'Owners %': OWNERS_PCT,
       'Owners (L.L.)': c.owners, 'Left (L.L.)': c.left, 'Note': x.note};
     var sd = boxDiff(x);
-    if (sd) { cells['Orders (L.L.)'] = sd.orders; cells['Difference (L.L.)'] = sd.diff }
+    var sl = boxSales(day);
+    if (sl) { cells['Orders (L.L.)'] = sl.cash + sl.whish; cells['Orders cash (L.L.)'] = sl.cash; cells['Orders Whish (L.L.)'] = sl.whish; cells['Difference (L.L.)'] = x.total - sl.cash - sl.whish;
+      x.snap = sl.cash + sl.whish; x.snapCash = sl.cash; x.snapWhish = sl.whish; sd = boxDiff(x) }
     if (had) EB.send([{op: 'update', tab: 'Sandouk', where: {'Ref': key}, set: cells}], {t: 'edit', kind: 'sandouk', key: key, order: x});
     else {
       cells['Ref'] = key; cells['Added'] = "'" + EB.ymd(new Date()) + ' ' + EB.hhmm();
@@ -212,6 +234,8 @@ $('#box').addEventListener('click', function (e) {
         EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [pc]}], {t: 'save', kind: 'purchase', key: pk, order: p});
       }
     }
+    ['#bCash', '#bUsd', '#bWhish', '#bWhishUsd', '#bNote'].forEach(function (id) { $(id).value = '' });   // saved: the form empties
+    $('#bDate').value = ymd(bizDate());
     toast('انحفظ الصندوق: ربح الأصحاب ' + $usd(c.owners) + (sd && sd.diff ? ' · الفرق ' + (sd.diff > 0 ? '+' : '−') + $usd(Math.abs(sd.diff)) : ''), 'Cash box saved: owners ' + $usd(c.owners) + (sd && sd.diff ? ' · difference ' + (sd.diff > 0 ? '+' : '−') + $usd(Math.abs(sd.diff)) : ''));
     return drawSandouk();
   }
