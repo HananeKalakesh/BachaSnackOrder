@@ -227,7 +227,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .months.week .mn{font-size:13px}
 .months.week b{font-size:14px}
 .months.hrs .mn{font-size:11px;line-height:1.15;white-space:normal}.months.hrs .mn b{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:-.04em;white-space:nowrap}.months.hrs{gap:2px}.months.hrs .mo{overflow:visible}.months.hrs b{font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
-.note2{margin:10px 0 0;font-size:13px}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.note2{margin:10px 0 0;font-size:13px}.kpis.three{grid-template-columns:repeat(3,minmax(0,1fr))}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -481,7 +481,7 @@ td.r,th.r{text-align:end}
 .toast.show{transform:translate(-50%,0)}
 
 @media (max-width:1000px){.order{grid-template-columns:1fr 310px}.tiles{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}.cols{grid-template-columns:1fr}}
-@media (max-width:700px){.kpis,.kpis.six{grid-template-columns:1fr 1fr}.pay2.three{grid-template-columns:1fr}.months{grid-template-columns:repeat(6,minmax(0,1fr))}.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 68px)}.top .logo{height:38px}.tabs button{padding:0 12px}.grid{padding-bottom:20px}}
+@media (max-width:700px){.kpis,.kpis.six,.kpis.three{grid-template-columns:1fr 1fr}.kpis.three .hero{grid-column:1/-1}.pay2.three{grid-template-columns:1fr}.months{grid-template-columns:repeat(6,minmax(0,1fr))}.order{grid-template-columns:1fr;grid-template-rows:1fr auto;height:auto;min-height:calc(100% - 68px)}.top .logo{height:38px}.tabs button{padding:0 12px}.grid{padding-bottom:20px}}
 </style>
 </head>
 <body class="lang-ar">
@@ -1076,7 +1076,8 @@ function modeSwitch() {
 // Cash, Whish and not paid, and the best sellers (4, or every item for a single day), for whatever period R covers
 function sideCards(R, none, every) {
   var wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
-  var side = '<div class="card"><h3 class="display">' + bi('الدفع', 'Payments') + '</h3>';
+  var side = '<div class="card"><div class="chead"><h3 class="display">' + bi('الدفع', 'Payments') + '</h3>' +
+    (R && R.summary.sales ? '<span class="tot">' + bi('المجموع ', 'Total ') + '<b class="num">' + $usd(R.summary.cashLbp + R.summary.whishLbp) + '</b> <small class="muted num">' + ll(R.summary.cashLbp + R.summary.whishLbp) + '</small></span>' : '') + '</div>';
   if (R && (R.summary.orders || R.summary.sales)) {
     var s = R.summary, owed = s.unpaidLbp || 0, all = (s.cashLbp + s.whishLbp + owed) || 1;
     var part = function (cls, ar, en, lbp, n) {
@@ -1130,17 +1131,13 @@ function dayMoney(day) {
 }
 function dayView(D, empty, day) {
   var s = D.summary;
-  var h = dayMoney(day) + '<div class="kpis six">' +
+  var h = dayMoney(day) + '<div class="kpis three">' +
     '<div class="kpi hero"><small>' + bi('المبيعات', 'Sales') + '</small>' + amount(s.sales) +
       (s.laterLbp ? '<small class="ll">' + bi('منها ', 'incl. ') + '<span class="num">' + $usd(s.laterLbp) + '</span> ' + bi('دين انْدفع', 'paid for earlier orders') + '</small>' : '') +
       (s.marinatedLbp ? '<small class="ll">🍗 ' + bi('منها دجاج متبّل ', 'incl. marinated chicken ') + '<span class="num">' + $usd(s.marinatedLbp) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
       (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
-    '<div class="kpi"><small>' + bi('الأصناف', 'Items') + '</small><b class="usd num">' + fmt(s.items) + '</b></div>' +
-    '<div class="kpi"><small>' + bi('كاش', 'Cash') + '</small>' + amount(s.cashLbp) + '</div>' +
-    '<div class="kpi"><small>' + bi('ويش', 'Whish') + '</small>' + amount(s.whishLbp) + '</div>' +
-    '<div class="kpi' + (s.unpaidLbp ? ' owed' : '') + '"><small>' + bi('ما دفع', 'Not paid') + '</small>' + amount(s.unpaidLbp || 0) +
-      (s.unpaidOrders ? '<small class="ll">' + fmt(s.unpaidOrders) + ' ' + bi('طلب', 'orders') + '</small>' : '') + '</div></div>';
+    '<div class="kpi"><small>' + bi('الأصناف', 'Items') + '</small><b class="usd num">' + fmt(s.items) + '</b></div></div>';   // cash, Whish and not paid: in Payments
   return h + '<div class="cols"><div class="card dayc">' + (s.orders ? dayBody(D) : '<p class="muted">' + empty + '</p>') + laterBody(D) + '</div>' +
     '<div>' + sideCards(D, empty, true) + '</div></div>';
 }
