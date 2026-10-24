@@ -349,6 +349,7 @@ td.r,th.r{text-align:end}
 .xmo b.neg{color:var(--red)}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
 #exp .kpis,#inc .kpis,#cost .kpis,#box .kpis{margin-top:14px}
+.profitbox{margin-top:14px}.profitbox .pbhead .usd{font-size:34px}.profitbox .split{margin:12px 0}.split i.own,.dot.own{background:var(--mustard)}
 .kpis.four{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:760px){.kpis.four{grid-template-columns:1fr 1fr}}
 [data-goview]{cursor:pointer}.kpi.owedk .usd{color:var(--red)}
 .morelinks{display:flex;gap:8px;justify-content:flex-end;margin:8px 0 4px}.morelinks button{border:0;background:var(--sand);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;cursor:pointer}
@@ -955,7 +956,7 @@ function showReport() {
     S.locked = true; var had = pin(); setPin('');
     return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '');
   }
-  if (!S.y) { var t = bizDate(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
+  if (!S.y || !S.sel) { var t = bizDate(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t) }
   drawSales();
   EB.read('sandouk', {'Sandouk': 0}).then(function (r) { BX.data = r; drawSales() }, function (e) { if (/Unknown tab/.test(e.message)) { BX.data = {Sandouk: null, at: 0}; drawSales() } });
   EB.read('purchases', {'Purchases': 0}).then(function (r) { EX.data = r; drawSales() }, function () {});
@@ -1006,9 +1007,8 @@ function laterBody(D) {
 
 // The views, side by side at the top of the tab
 function modeSwitch() {
-  return '<div class="modes"><button data-mode="today"' + (S.mode === 'today' ? ' class="on"' : '') + '>' + bi('اليوم', 'Today') + '</button>' +
-    '<button data-mode="month"' + (S.mode === 'month' ? ' class="on"' : '') + '>' + bi('الشهر', 'Month') + '</button>' +
-    '<button data-mode="all"' + (S.mode === 'all' ? ' class="on"' : '') + '>' + bi('كل الوقت', 'All time') + '</button></div>';
+  return '<div class="modes"><button data-mode="month"' + (S.mode === 'month' ? ' class="on"' : '') + '>' + bi('التقويم', 'Calendar') + '</button>' +
+    '<button data-mode="all"' + (S.mode === 'all' ? ' class="on"' : '') + '>' + bi('الملخّص', 'Dashboard') + '</button></div>';
 }
 // Cash vs Whish and the 4 best sellers, for whatever period R covers
 // Cash, Whish and not paid, and the best sellers (4, or every item for a single day), for whatever period R covers
@@ -1055,7 +1055,7 @@ function dayMoney(day) {
   var bx = (boxes() || []).filter(function (x) { return x.day === day })[0], buys = (purchases() || []).filter(function (p) { return p.day === day });
   var own = buys.filter(function (p) { return p.cat === 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0), exp = buys.filter(function (p) { return p.cat !== 'Owners' });
   var h = '<div class="cols daymoney"><div class="card"><h3 class="display">📦 ' + bi('الصندوق', 'Cash box') + '</h3>' + (bx ?
-    '<div class="pay2 three"><div>' + bi('كاش', 'Cash') + amount(bx.cashLbp + bx.cashUsd * S.rate) + '</div><div>' + bi('ويش', 'Whish') + amount(bx.whish) + '</div><div>' + bi('بقي بالمحل', 'Left in the store') + amount(bx.left) + '</div></div>'
+    '<div class="pay2 three"><div>' + bi('كاش', 'Cash') + amount(bx.cashLbp + bx.cashUsd * S.rate) + '</div><div>' + bi('ويش', 'Whish') + amount(bx.whish + (bx.whishUsd || 0) * S.rate) + '</div><div>' + bi('للشيف', 'To the chef') + amount(bx.left) + '</div></div>'
     : '<p class="muted">' + bi('ما انعدّ الصندوق بهاليوم.', 'The cash box was not counted this day.') + '</p>') +
     '<p class="note2">💰 ' + bi('ربح الأصحاب: ', 'Owners\' share: ') + '<b class="num">' + $usd(own) + '</b> <small class="muted num">' + ll(own) + '</small></p></div>' +
     '<div class="card"><h3 class="display">📉 ' + bi('المصاريف', 'Expenses') + ' <small class="num">' + $usd(exp.reduce(function (a, p) { return a + p.lbp }, 0)) + '</small></h3>' + (exp.length ? '<table>' + exp.map(function (p) {
@@ -1092,6 +1092,18 @@ function drawToday() {
 }
 
 /* All time: the same numbers for every order so far, by month and by day of the week */
+// Dashboard, top: the money with the chef, then cash box, income and expenses, then the profit in one box (owners + business)
+function dashMoney(sales, today) {
+  var bxs = boxes(), buys = purchases(), wait = '<b class="usd">…</b>', bal = chefBalance();
+  var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
+  var h = '<div class="kpis four">' +
+    '<div class="kpi hero" data-goview="box"><small>💼 ' + bi('مع الشيف هلّق', 'With the chef now') + '</small>' + (bal == null ? wait : amount(bal)) + '<small class="ll">' + bi('مفصول عن عدّ الصندوق الليلة', 'apart from tonight\'s count') + '</small></div>' +
+    '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق المعدود', 'Cash box counted') + '</small>' + (bxs ? amount(counted) : wait) + '<small class="ll">' + (bxs ? fmt(bxs.length) + ' ' + bi('ليلة', 'nights') : '') + '</small></div>' +
+    '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
+    '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';
+  if (t) h += profitKpis(sales, t, '', other).replace(/<div class="kpis">[\s\S]*$/, '');
+  return h + '<div class="morelinks"><button data-goview="owed">' + bi('ما دفعو', 'Not paid') + '</button><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div>';
+}
 function drawAll() {
   var today = ymd(bizDate());
   fetchR('all', 'all', '2020-01-01', today);
@@ -1107,8 +1119,9 @@ function drawAll() {
     months[d.date.slice(0, 7)] = (months[d.date.slice(0, 7)] || 0) + d.sales;
     var w = (new Date(d.date + 'T12:00').getDay() + 6) % 7; wk[w] += d.sales; wkDays[w]++;
   });
+  h += dashMoney(s.sales, today);
   h += '<div class="kpis">' +
-    '<div class="kpi hero"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
+    '<div class="kpi"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
       (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + ' <span class="num">' + best.date.slice(0, 4) + '</span></small>' : '<b class="usd">–</b>') + '</div>' +
@@ -1154,7 +1167,7 @@ function drawAll() {
 function drawSales() {
   if (S.locked) return;
   if (S.mode === 'all') return drawAll();
-  if (S.mode === 'today') return drawToday();
+  if (S.mode !== 'month') S.mode = 'month';
   var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(bizDate());
   fetchR('years', y, y + '-01-01', y + '-12-31');
   fetchR('months', mk, mk + '-01', mk + '-' + pad(daysIn(y, m)));
@@ -1178,34 +1191,6 @@ function drawSales() {
     (mk !== today.slice(0, 7) ? '<button class="today" data-today="1">' + bi('هالشهر', 'This month') + '</button>' : '') + '</div>';
   h += salesNote();
 
-  // the four numbers for the month: cash box, owners' share (ربح), income, expenses; each kept on its own
-  var mFrom = mk + '-01', mTo = mk + '-' + pad(daysIn(y, m)), bxs = boxes(), buys = purchases();
-  var inM = function (d) { return d >= mFrom && d <= mTo };
-  var boxM = bxs ? bxs.filter(function (x) { return inM(x.day) }) : null, buyM = buys ? buys.filter(function (p) { return inM(p.day) }) : null;
-  var counted = boxM ? boxM.reduce(function (a, x) { return a + x.total }, 0) : 0;
-  var owners = buyM ? buyM.filter(function (p) { return p.cat === 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0) : 0;
-  var spent = buyM ? buyM.filter(function (p) { var g = catOf(p.cat)[3]; return g === 'food' || g === 'packaging' || g === 'running' }).reduce(function (a, p) { return a + p.lbp }, 0) : 0;
-  var equipM = buyM ? buyM.filter(function (p) { return catOf(p.cat)[3] === 'investment' }).reduce(function (a, p) { return a + p.lbp }, 0) : 0;
-  var otherM = incomeIn(mFrom, mTo), lastBox = bxs && bxs.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1 })[0];
-  h += '<div class="kpis four">' +
-    '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق', 'Cash box') + '</small>' + (bxs ? amount(counted) : wait) +
-      '<small class="ll">' + (boxM ? fmt(boxM.length) + ' ' + bi('يوم معدود', 'days counted') : '') + (lastBox ? ' · ' + bi('بالمحل هلّق ', 'in the store now ') + '<span class="num">' + $usd(lastBox.left) + '</span>' : '') + '</small></div>' +
-    '<div class="kpi"><small>💰 ' + bi('ربح الأصحاب', 'Owners\' share') + '</small>' + (buys ? amount(owners) : wait) + '<small class="ll">' + bi('اللي أخدوه هالشهر', 'taken this month') + '</small></div>' +
-    '<div class="kpi hero"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + (Y ? amount(mSales + otherM) : wait) +
-      '<small class="ll">' + (Y ? fmt(mOrders) + ' ' + bi('طلب', 'orders') : '') + (otherM ? ' · ' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(otherM) + '</span>' : '') + '</small></div>' +
-    '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (buys ? amount(spent) : wait) +
-      '<small class="ll">' + bi('أكل، تغليف، موظفين وفواتير', 'food, packaging, staff & bills') + (equipM ? ' · ' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(equipM) + '</span>' : '') + '</small></div>' +
-    '</div><div class="morelinks"><button data-goview="owed">' + bi('ما دفعو', 'Not paid') + '</button><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div>';
-
-  // the year strip: one bar per month, tap to open it
-  var maxM = Math.max.apply(null, byMonth) || 1, yTotal = byMonth.reduce(function (a, b) { return a + b }, 0);
-  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('السنة ' + y, y + ' by month') + '</h3>' +
-    (Y ? '<span class="tot">' + amount(yTotal) + '</span>' : '') + '</div><div class="months">' +
-    byMonth.map(function (v, i) {
-      return '<button class="mo' + (i === m ? ' on' : '') + '" data-m="' + i + '"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxM * 100) : 0) + '%"></i></span>' +
-        '<span class="mn">' + bi(MONTHS_AR[i], MONTHS_EN[i].slice(0, 3)) + '</span><b class="num">' + (v ? $usd(v) : '–') + '</b></button>';
-    }).join('') + '</div></div>';
-
   // the month calendar, Monday first; each day shaded by its sales (one green, darker = more)
   var first = (new Date(y, m, 1).getDay() + 6) % 7, maxD = 0;
   for (k = 1; k <= daysIn(y, m); k++) { d = byDay[mk + '-' + pad(k)]; if (d && d.sales > maxD) maxD = d.sales }
@@ -1220,13 +1205,12 @@ function drawSales() {
   cal += '</div><div class="legend">' + bi('أقل', 'Less') + '<i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i>' + bi('أكتر', 'More') +
     '<span class="hint">' + bi('دق على يوم لتشوف طلباتو', 'Tap a day to see its orders') + '</span></div></div>';
 
-  var side = sideCards(M, bi('ما في طلبات بهالشهر', 'No orders this month'));
-  h += '<div class="cols">' + cal + '<div>' + side + '</div></div>';
+  h += cal;
 
   // the selected day: total, sales by hour, every order
   if (S.sel) {
     h += '<section class="dayx" id="dayCard"><div class="shead"><h2 class="display">' + dayName(S.sel) + '</h2>' +
-      '<button class="today" data-close="1">' + bi('سكّر', 'Close') + '</button></div>' +
+      '</div>' +
       (D ? dayView(D, bi('ما في طلبات بهاليوم', 'No orders on this day'), S.sel) : wait) + '</section>';
   }
   $('#rep').innerHTML = h;
@@ -1236,11 +1220,11 @@ $('#rep').addEventListener('click', function (e) {
   var g = e.target.closest('[data-goview]'); if (g && !S.locked) return showView(g.dataset.goview);
   var b = e.target.closest('button'); if (!b || S.locked) return;
   if (b.dataset.mv) { moveMonth(+b.dataset.mv); return }
-  if (b.dataset.mode) { S.mode = b.dataset.mode; S.err = ''; if (S.mode === 'today') delete S.days[ymd(bizDate())]; drawSales(); return }
-  if (b.dataset.goto) { S.mode = 'month'; S.y = +b.dataset.goto.slice(0, 4); S.m = +b.dataset.goto.slice(5) - 1; S.sel = ''; drawSales(); return }
+  if (b.dataset.mode) { S.mode = b.dataset.mode; S.err = ''; if (!S.sel) S.sel = monthDay(); drawSales(); return }
+  if (b.dataset.goto) { S.mode = 'month'; S.y = +b.dataset.goto.slice(0, 4); S.m = +b.dataset.goto.slice(5) - 1; S.sel = monthDay(); drawSales(); return }
   if (b.dataset.close) { S.sel = ''; drawSales(); return }
   if (b.dataset.today) { var t = bizDate(); S.y = t.getFullYear(); S.m = t.getMonth(); S.sel = ymd(t); drawSales(); return }
-  if (b.dataset.m) { S.m = +b.dataset.m; S.sel = ''; drawSales(); return }
+  if (b.dataset.m) { S.m = +b.dataset.m; S.sel = monthDay(); drawSales(); return }
   if (b.dataset.h) { S.hour = +b.dataset.h === S.hour ? -1 : +b.dataset.h; drawSales(); return }
   if (b.dataset.d && b.classList.contains('day')) {
     S.sel = b.dataset.d; S.hour = -1; drawSales();
@@ -1253,7 +1237,9 @@ $('#rep').addEventListener('click', function (e) {
     if (gone) { EB.remove(gone); toast('انمسح الطلب', 'Order deleted'); S.years = {}; S.months = {}; S.days = {}; S.all = {}; drawSales() }
   }
 });
-function moveMonth(k) { S.m += k; if (S.m < 0) { S.m = 11; S.y-- } if (S.m > 11) { S.m = 0; S.y++ } S.sel = ''; drawSales() }
+// the day shown under the calendar when a month opens: today in this month, else the 1st
+function monthDay() { var t = ymd(bizDate()), mk = monthKey(S.y, S.m); return t.slice(0, 7) === mk ? t : mk + '-01' }
+function moveMonth(k) { S.m += k; if (S.m < 0) { S.m = 11; S.y-- } if (S.m > 11) { S.m = 0; S.y++ } S.sel = monthDay(); S.hour = -1; drawSales() }
 // swipe the calendar sideways to change month
 (function () {
   var x0 = null, y0 = 0;
@@ -1682,16 +1668,19 @@ function purchaseTable(list, withDate) {
 function salesIn(from, to) { return (SALES || EB.cached('sales')) ? EB.report(salesOrders(), from, to).summary.sales : null }
 function profitKpis(sales, t, label, other) {
   other = other || 0;
-  var profit = sales == null ? null : sales + other - t.spent;
-  return '<div class="kpis">' +
-    '<div class="kpi' + (profit != null && profit < 0 ? ' owed' : ' hero') + '"><small>' + bi('الربح', 'Profit') + label + '</small>' + (profit == null ? '<b class="usd">…</b>' : amount(profit)) +
-      '<small class="ll">' + (other ? bi('المبيعات + الدخل التاني ناقص المصاريف', 'Sales + other income minus expenses') : bi('المبيعات ناقص المصاريف', 'Sales minus expenses')) + '</small></div>' +
+  var profit = sales == null ? null : sales + other - t.spent, rest = profit == null ? null : profit - t.owners;
+  var w = profit > 0 ? Math.max(0, Math.min(100, t.owners / profit * 100)) : 0;
+  // the profit in one box: the owners' part (ربح) and what stays in the business
+  var box = '<div class="card profitbox"><div class="pbhead"><div><small>' + bi('الربح', 'Profit') + label + '</small>' + (profit == null ? '<b class="usd">…</b>' : amount(profit)) +
+      '<small class="ll">' + (other ? bi('المبيعات + الدخل التاني ناقص المصاريف', 'Sales + other income minus expenses') : bi('المبيعات ناقص المصاريف', 'Sales minus expenses')) + '</small></div></div>' +
+    (profit == null ? '' : '<div class="split"><i class="cash" style="width:' + (100 - w) + '%"></i><i class="own" style="width:' + w + '%"></i></div>' +
+      '<div class="pay2"><div><span class="dot cash"></span>' + bi('بقي للمحل', 'Kept by the business') + amount(rest) + '</div>' +
+      '<div><span class="dot own"></span>' + bi('للأصحاب (ربح)', 'Owners (ربح)') + amount(t.owners) + '</div></div>') + '</div>';
+  return box + '<div class="kpis">' +
     '<div class="kpi"><small>' + bi('المبيعات', 'Sales') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) +
       (other ? '<small class="ll">+ ' + bi('دخل تاني ', 'other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('المصاريف', 'Expenses') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div>' +
-    (t.owners ? '<div class="kpi"><small>' + bi('ربح (للأصحاب)', 'Owners\' pay (ربح)') + '</small>' + amount(t.owners) +
-      (profit == null ? '' : '<small class="ll">' + bi('بيبقى بالمحل ', 'left in the business ') + '<span class="num">' + $usd(profit - t.owners) + '</span></small>') + '</div>' : '') + '</div>';
+    '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div></div>';
 }
 function expModes() {
   return '<div class="modes">' + [['add', 'زيد مصروف', 'Add'], ['cal', 'التقويم', 'Calendar'], ['dash', 'الملخّص', 'Dashboard']].map(function (x) {
@@ -1743,7 +1732,6 @@ function expCalendar(list) {
   var month = list.filter(function (p) { return p.day.slice(0, 7) === mk }), t = tally(month), byDay = {}, maxD = 0, k;
   month.forEach(function (p) { byDay[p.day] = (byDay[p.day] || 0) + p.lbp });
   Object.keys(byDay).forEach(function (d) { if (byDay[d] > maxD) maxD = byDay[d] });
-  h += profitKpis(salesIn(mk + '-01', mk + '-' + pad(daysIn(y, m))), t, '', incomeIn(mk + '-01', mk + '-' + pad(daysIn(y, m))));
   var first = (new Date(y, m, 1).getDay() + 6) % 7;
   var cal = '<div class="card calcard"><div class="cal">' + WEEK_AR.map(function (w, i) { return '<span class="wd">' + bi(w, WEEK_EN[i]) + '</span>' }).join('');
   for (k = 0; k < first; k++) cal += '<span></span>';
