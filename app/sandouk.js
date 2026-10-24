@@ -36,7 +36,7 @@ function showSandouk() {
   if (!SET.loaded) { $('#box').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   if (SET.pin && pin() !== SET.pin && !(/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin))) {
     BX.locked = true; var had = pin(); setPin('');
-    return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '', '#box', showSandouk, bi('الصندوق', 'Cash box'));
+    return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '', '#box', showSandouk, bi('اليوم', 'Tonight'));
   }
   BX.locked = false;
   drawSandouk();
@@ -72,12 +72,21 @@ function drawBoxCalc() {
 function drawSandouk() {
   if (BX.locked) return;
   var today = ymd(bizDate()), list = boxes();
-  var h = '<div class="shead"><h2 class="display">' + bi('الصندوق', 'Cash box') + '</h2></div>' +
+  var h = '<div class="shead"><h2 class="display">' + bi('اليوم · الصندوق', 'Tonight · cash box') + '</h2></div>' +
     (BX.err === 'OFFLINE' ? '<p class="offline">' + bi('ما في إنترنت: الصندوق بينحفظ وبينبعت لحالو.', 'No internet: the count is kept and sent by itself.') + '</p>'
       : BX.err ? '<p class="err">' + esc(BX.err) + '</p>' : '') +
     '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ منن ربح للأصحاب، بينسجّل لحالو بالمصاريف، والباقي بيبقى بالمحل.',
       'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% of it is the owners\' pay, recorded in Money out by itself; the rest stays in the business.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
+  // the one number for the money in the store: the latest count, after the owners' share
+  var last = list && list.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1 })[0];
+  if (last) {
+    var since = (purchases() || []).filter(function (p) { return p.day > last.day && p.cat !== 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0);
+    h += '<div class="card instore"><small>' + bi('بالمحل هلّق', 'In the store now') + '</small>' + amount(last.left) +
+      '<p class="muted note2">' + bi('آخر عدّ: ', 'Last count: ') + dayName(last.day) + bi(' · بعد ربح الأصحاب', ' · after the owners\' share') + '</p>' +
+      (since ? '<p class="muted note2">' + bi('من بعدها انكتب مصاريف ', 'Since then, expenses of ') + '<b class="num">' + $usd(since) + '</b>' +
+        bi(': إذا اندفعت من الصندوق، بيكون فيه أقل.', ': if they were paid from the drawer, there is that much less.') + '</p>' : '') + '</div>';
+  } else if (list) h += '<div class="card instore"><small>' + bi('بالمحل هلّق', 'In the store now') + '</small><p class="muted">' + bi('عدّ الصندوق الليلة وبيطلع الرقم هون.', 'Count the cash box tonight and the number shows here.') + '</p></div>';
   h += '<div class="card addx"><div class="xform">' +
     '<input id="bDate" type="date" value="' + today + '">' +
     '<div class="xamt"><input id="bCash" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('كاش بالليرة', 'Cash in L.L.')) + '"><span class="muted">' + bi('كاش', 'Cash') + ' L.L.</span></div>' +
@@ -87,15 +96,6 @@ function drawSandouk() {
     '<div id="bCalc"></div>' +
     '<button class="save" id="bSave">' + bi('احفظ الصندوق', 'Save the cash box') + '</button><div class="err" id="bErr"></div></div></div>';
   if (!list) { $('#box').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; boxFill(mine); drawBoxCalc(); return }
-
-  // this month and since the start
-  var month = today.slice(0, 7), inMonth = list.filter(function (x) { return x.day.slice(0, 7) === month });
-  var sum = function (l, k) { return l.reduce(function (a, x) { return a + x[k] }, 0) };
-  h += '<div class="kpis">' +
-    '<div class="kpi"><small>' + bi('عدّينا هالشهر', 'Counted this month') + '</small>' + amount(sum(inMonth, 'total')) + '<small class="ll">' + fmt(inMonth.length) + ' ' + bi('يوم', 'days') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('ربح الأصحاب هالشهر', 'Owners this month') + '</small>' + amount(sum(inMonth, 'owners')) + '</div>' +
-    '<div class="kpi hero"><small>' + bi('بقي بالمحل هالشهر', 'Left this month') + '</small>' + amount(sum(inMonth, 'left')) + '</div>' +
-    '<div class="kpi"><small>' + bi('بقي بالمحل من الأول', 'Left since the start') + '</small>' + amount(sum(list, 'left')) + '</div></div>';
 
   // every day, newest first
   var rows = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1 });

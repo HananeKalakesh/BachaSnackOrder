@@ -65,16 +65,10 @@ function drawIncome() {
   var list = incomes();
   if (!list) { $('#inc').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
 
-  // the money the business should have: everything that came in minus everything spent
-  var today = ymd(bizDate()), all = list.reduce(function (a, x) { return a + x.lbp }, 0);
-  var sales = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2020-01-01', today).summary.sales : null;
-  var spent = purchases() ? purchases().reduce(function (a, p) { return a + p.lbp }, 0) : null;
+  // what came in besides the orders (capital, starting money, other income): on its own, never mixed with sales
+  var all = list.reduce(function (a, x) { return a + x.lbp }, 0);
   h += '<div class="kpis">' +
-    '<div class="kpi hero"><small>' + bi('الدخل التاني', 'Other income') + '</small>' + amount(all) + '<small class="ll">' + fmt(list.length) + ' ' + bi('دفعة', 'entries') + '</small></div>' +
-    '<div class="kpi"><small>' + bi('المبيعات (كل الوقت)', 'Sales (all time)') + '</small>' + (sales == null ? '<b class="usd">…</b>' : amount(sales)) + '</div>' +
-    '<div class="kpi"><small>' + bi('المصاريف (كل الوقت)', 'Expenses (all time)') + '</small>' + (spent == null ? '<b class="usd">…</b>' : amount(spent)) + '</div>' +
-    '<div class="kpi' + (sales != null && spent != null && all + sales - spent < 0 ? ' owed' : '') + '"><small>' + bi('الرصيد', 'Balance') + '</small>' +
-      (sales == null || spent == null ? '<b class="usd">…</b>' : amount(all + sales - spent)) + '<small class="ll">' + bi('الدخل + المبيعات − المصاريف', 'Income + sales − expenses') + '</small></div></div>';
+    '<div class="kpi hero"><small>' + bi('الدخل التاني', 'Other income') + '</small>' + amount(all) + '<small class="ll">' + fmt(list.length) + ' ' + bi('دفعة', 'entries') + '</small></div></div>';
 
   // every entry, newest first
   var rows = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : (a.key < b.key ? 1 : -1) });
