@@ -271,7 +271,7 @@ a[data-phone=tel]{unicode-bidi:isolate}
   <div id="closedBanner" class="closed-banner" role="status" hidden></div>
   <div id="busyBanner" class="closed-banner busy-banner" role="status" hidden></div>
 </header>
-<button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go">$7.5 <i>→</i></span></button>
+<button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go"><bdi id="promoPrice">$9</bdi> <i>→</i></span></button>
 <nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
 <p id="noResults" class="noresults" hidden data-t>No items match your search.</p>
 <noscript><p class="note">Please turn on JavaScript to see the menu, or call us on 76 075 724.</p></noscript>
@@ -906,7 +906,15 @@ function card([name, price, desc, type]) {
     + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${USD[name] ? `<bdi dir="ltr">$${USD[name]}</bdi><span class="ll">${fmt(price)}</span>` : fmt(price)}</div>${controls}</div></div>`;
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
+// the offer banner shows the lowest family meal price it talks about (Shawarma, Tawouk, Fajita), from the sheet
+function promoPrice() {
+  const o = ['Shawarma Family Meal', 'Tawouk Family Meal', 'Fajita Family Meal'].flatMap(n => (OPTS[n] || []).filter(x => !x.sold));
+  if (!o.length || !$('#promoPrice')) return;
+  const low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
+  $('#promoPrice').textContent = low.usd ? '$' + low.usd : fmt(low.price);
+}
 function render() {
+  promoPrice();
   Object.entries(data).forEach(([id, items]) => {
     const avail = items.filter(it => !SOLD.has(it[0])), sold = items.filter(it => SOLD.has(it[0]));   // not available last
     const sorted = [...avail.filter(it => CONFIG.photos[it[0]]), ...avail.filter(it => !CONFIG.photos[it[0]]), ...sold];
