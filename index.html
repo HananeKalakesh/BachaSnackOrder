@@ -122,6 +122,7 @@ section[hidden]{display:none}
 .actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:10px 4px 0}
 .has-photo .actions{padding:8px 6px 0}
 .price{font-weight:800;font-size:15px;letter-spacing:.01em;white-space:nowrap}
+.price .ll{display:block;font-size:11.5px;font-weight:600;opacity:.6;letter-spacing:0}
 .price bdi{font-weight:600;color:var(--muted)}
 .stepper{display:flex;align-items:center;gap:4px;background:var(--sand);border-radius:14px;padding:3px}
 .stepper button,.add{display:flex;align-items:center;justify-content:center;gap:5px;min-width:38px;padding:0 10px;height:40px;border:0;border-radius:12px;background:var(--green);color:#fff;font-size:20px;font-weight:700;line-height:1;cursor:pointer;touch-action:manipulation}
@@ -337,13 +338,13 @@ const CONFIG = {
   openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
   hours: [['13:00', '16:00'], ['18:00', '23:00']], // opening hours each open day (Beirut time)
   timeZone: 'Asia/Beirut',
-  pieces: {4: 500000, 5: 600000, 6: 700000, 7: 800000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
+  pieces: {4: 600000, 7: 900000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
   // cards with sizes (type 'o'): [label, item in the sheet, price until the sheet loads, sauces 's1' / 's2']
   options: {
-    'Wings Meal': [['7 PCS', 'Half Wings Meal 7 PCS', 400000, 's1'], ['14 PCS', 'Wings Meal 14 PCS', 800000, 's2']],
-    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', '$7.5'], ['1 KG', 'Shawarma Family Meal 1 KG', '$15']],
-    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', '$7.5'], ['1 KG', 'Tawouk Family Meal 1 KG', '$15']],
-    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', '$10'], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
+    'Wings Meal': [['7 PCS', 'Half Wings Meal 7 PCS', 500000, 's1'], ['14 PCS', 'Wings Meal 14 PCS', 800000, 's2']],
+    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', '$9'], ['1 KG', 'Shawarma Family Meal 1 KG', '$17']],
+    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', '$9'], ['1 KG', 'Tawouk Family Meal 1 KG', '$17']],
+    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', '$11'], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
   },
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
@@ -414,25 +415,25 @@ appetizerGrid: [
   ['Mix Appetizer Box', 600000, '2 PCS onion rings, 2 PCS mozzarella, 2 PCS nuggets and fries']
 ],
 mealGrid: [
-  ['Crispy Meal', 500000, 'Crispy chicken, fries, garlic sauce, pickles, coleslaw', 'p'],
-  ['Zinger Meal', 500000, 'Spicy zinger chicken, fries, garlic sauce, pickles, coleslaw', 'p'],
+  ['Crispy Meal', 600000, 'Crispy chicken, fries, garlic sauce, pickles, coleslaw', 'p'],
+  ['Zinger Meal', 600000, 'Spicy zinger chicken, fries, garlic sauce, pickles, coleslaw', 'p'],
   ['Escalope Meal 3 PCS', 800000, 'Escalope chicken, fries, garlic sauce, pickles, coleslaw'],
   ['Cordon Bleu Meal 2 PCS', 700000, 'Cheese stuffed chicken, fries, garlic sauce, pickles, coleslaw'],
-  ['Half Broasted Meal 5 PCS', 700000, 'Broasted chicken, fries, garlic sauce, pickles, coleslaw'],
-  ['Wings Meal', 400000, 'Chicken wings, fries, garlic sauce, pickles, coleslaw', 'o'],
+  ['Half Broasted Meal 5 PCS', 900000, 'Broasted chicken, fries, garlic sauce, pickles, coleslaw'],
+  ['Wings Meal', 500000, 'Chicken wings, fries, garlic sauce, pickles, coleslaw', 'o'],
   ['Chicken Quesadilla', 700000, 'Sandwich on tortilla bread cut into pieces, with fries and sauce'],
   ['Tawouk Meal', 750000, 'Tawouk chicken sandwich on tortilla bread cut into pieces, with fries, coleslaw, pickles and garlic sauce'],
   ['Shawarma Meal', 700000, 'Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce']
 ],
 familyGrid: [
-  ['Escalope Family Meal 8 PCS', 1750000, 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Zinger Family Meal 20-22 PCS', 2160000, 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Crispy Family Meal 20-22 PCS', 2160000, 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Half & Half Family Meal 20-22 PCS', 2160000, '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
-  ['Broasted Family Meal 10 PCS', 1400000, 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Shawarma Family Meal', '$7.5', 'Chicken shawarma and fries', 'o'],
-  ['Tawouk Family Meal', '$7.5', 'Tawouk chicken and fries', 'o'],
-  ['Fajita Family Meal', '$10', 'Chicken fajita and fries', 'o'],
+  ['Escalope Family Meal 8 PCS', '$20', 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Zinger Family Meal 20-22 PCS', '$25', 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Crispy Family Meal 20-22 PCS', '$25', 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Half & Half Family Meal 20-22 PCS', '$25', '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
+  ['Broasted Family Meal 10 PCS', '$17', 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Shawarma Family Meal', '$9', 'Chicken shawarma and fries', 'o'],
+  ['Tawouk Family Meal', '$9', 'Tawouk chicken and fries', 'o'],
+  ['Fajita Family Meal', '$11', 'Chicken fajita and fries', 'o'],
   ['Wings Family Meal 1 KG', '$15', 'Chicken wings and fries'],
   ['Boneless Chicken Thighs Family Meal', '$10', 'Boneless chicken thighs and fries']
 ],
@@ -492,7 +493,7 @@ drinkGrid: [
    ingredients (AR.ing) translate by themselves; only unusual sentences need a line in AR.desc.
    Anything without a translation shows in English and is listed in the browser console. */
 const AR = {
-ui: {'Extras':'إضافات','Adjust':'عدّل','Adjust the item':'عدّل الصنف','Tap what to change.':'دق على يلّي بدك تغيّرو.','Something else? (optional)':'شي تاني؟ (اختياري)','Without':'بلا','Bread':'الخبز','Taste':'الطعمة','Change':'غيّر','Only one':'واحد بس','All {n}':'الـ {n} كلّن','Done':'تمام','Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','El Bash — Chicken & Snack':'الباش — تشيكن آند سناك','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4-7 PCS':'اختار من 4 لـ 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi El Bash, I would like to place an order:':'مرحبا الباش، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','El Bash — Chicken & Snack | Menu':'الباش — تشيكن آند سناك | المنيو','Questions? WhatsApp us':'عندك سؤال؟ راسلنا عالواتساب',
+ui: {'Extras':'إضافات','Adjust':'عدّل','Adjust the item':'عدّل الصنف','Tap what to change.':'دق على يلّي بدك تغيّرو.','Something else? (optional)':'شي تاني؟ (اختياري)','Without':'بلا','Bread':'الخبز','Taste':'الطعمة','Change':'غيّر','Only one':'واحد بس','All {n}':'الـ {n} كلّن','Done':'تمام','Digital Menu':'المنيو الرقمي','MENU':'المنيو','basha':'باشا','chicken and snack':'تشيكن آند سناك','Closed on Mondays':'مسكّرين يوم الاثنين','Appetizers':'مقبلات','Meals':'وجبات','Family Meals':'وجبات عائلية','Plates':'صحون','Sandwiches':'ساندويشات','Burgers':'برغر','Sauces & Extras':'صوصات وإضافات','Fries':'بطاطا','Other Appetizers':'مقبلات أخرى','Chicken':'دجاج','Beef':'لحمة','Sauce Cups':'أكواب الصوص','Drinks':'مشروبات','Your Order':'طلبك','Total':'المجموع','Delivery':'توصيل','Pickup':'استلام','Clear order':'مسح الطلب','Send via WhatsApp':'ابعت عبر واتساب','Cancel':'إلغاء','Add to order':'ضيف على الطلب','El Bash — Chicken & Snack':'الباش — تشيكن آند سناك','Prices may change based on market rates.':'الأسعار ممكن تتغيّر حسب أسعار السوق.','Your name':'اسمك','Delivery address (area, street, building, floor)':'عنوان التوصيل (المنطقة، الشارع، البناية، الطابق)','Notes (optional)':'ملاحظات (اختياري)','Order on WhatsApp':'اطلب عبر واتساب','View Order':'شوف الطلب','No items selected yet.':'لسا ما اخترت شي.','From':'من','Choose 4 or 7 PCS':'اختار 4 أو 7 قطع','Choose 1 or 2 sauces':'اختار صوص أو صوصين','Choose 1 sauce':'اختار صوص واحد','Choose your sauces':'اختار الصوصات','Choose number of pieces':'اختار عدد القطع','Choose one.':'اختار واحد.','Select one or more sauces.':'اختار صوص أو أكتر.','Choose 1 sauce.':'اختار صوص واحد.','Choose 1 or 2 sauces.':'اختار صوص أو صوصين.','Please choose the number of pieces.':'رجاءً اختار عدد القطع.','Please choose 1 sauce.':'رجاءً اختار صوص واحد.','Please choose at least one sauce.':'رجاءً اختار صوص واحد على الأقل.','Your order is empty. Add some items first.':'طلبك فاضي. ضيف شي أول.','Please enter your name.':'رجاءً اكتب اسمك.','Please choose Delivery or Pickup.':'رجاءً اختار توصيل أو استلام.','Please enter your delivery address.':'رجاءً اكتب عنوان التوصيل.','Hi El Bash, I would like to place an order:':'مرحبا الباش، بدي أطلب:','Name':'الاسم','Order type':'نوع الطلب','Address':'العنوان','Notes':'ملاحظات','El Bash — Chicken & Snack | Menu':'الباش — تشيكن آند سناك | المنيو','Questions? WhatsApp us':'عندك سؤال؟ راسلنا عالواتساب',
   'Your WhatsApp number':'رقم الواتساب تبعك','Please enter your WhatsApp number.':'رجاءً اكتب رقم الواتساب تبعك.','Send order':'ابعت الطلب','Order now':'اطلب هلّق',
   "We have a lot of orders right now, so we've paused online orders until {t}. Please try again then, or call us.":'عنا طلبات كتير هلّق، فوقّفنا الطلب أونلاين لـ {t}. جرّب بعدها أو اتصل فينا.',
   'We have a lot of orders right now: expect about {m} extra minutes. Thanks for your patience!':'عنا طلبات كتير هلّق: الطلب ممكن ياخد حوالي {m} دقيقة زيادة. شكراً على صبرك يا باشا!','Sending…':'عم نبعت…','Order #{n}':'طلب رقم {n}','Not available':'مش متوفر هلّق','Choose':'اختار','or':'أو','Choose the size':'اختار الحجم','Please choose the size.':'رجاءً اختار الحجم.','Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries':'شاورما، طاووق أو فاهيتا: نص كيلو أو كيلو مع بطاطا','🌐 Order #{n} (already in the app)':'🌐 طلب رقم {n} (موجود بالتطبيق)','Phone':'الرقم',
@@ -878,7 +879,7 @@ function qty(s) { return String(s).replace(/(\d+(?:-\d+)?\s*(?:PCS|PC|KG|KGS|ق�
 function card([name, price, desc, type]) {
   const sold = SOLD.has(name), pick = type === 'p' || type === 'o', choice = !!type && !sold, label = esc(tName(name));
   const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label)).join(' ' + t('or') + ' ')
-    : t({p: 'Choose 4-7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '');
+    : t({p: 'Choose 4 or 7 PCS', s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
   const search = [name, inLang('ar', () => tName(name)), desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
   const pop = CONFIG.popular.includes(name), src = CONFIG.photos[name];
@@ -890,7 +891,7 @@ function card([name, price, desc, type]) {
     + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
     + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${esc(choiceText)}</div>` : ''}</div>`
-    + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${fmt(price)}${USD[name] ? ` <bdi dir="ltr">($${USD[name]})</bdi>` : ''}</div>${controls}</div></div>`;
+    + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${USD[name] ? `<bdi dir="ltr">$${USD[name]}</bdi><span class="ll">${fmt(price)}</span>` : fmt(price)}</div>${controls}</div></div>`;
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
 function render() {
@@ -1020,7 +1021,7 @@ function renderChoiceOptions() {
   }
   if (ty === 'o') {
     $('#choiceHint').textContent = t('Choose one.');
-    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label${o.sold ? ' class="off"' : ''}><input type="radio" name="opt" value="${esc(o.label)}"${o.sold ? ' disabled' : ''}> <span>${esc(optLabel(o.label))} — ${o.sold ? t('Not available') : fmt(o.price) + (o.usd ? ` <bdi dir="ltr">($${o.usd})</bdi>` : '')}</span></label>`).join('') +
+    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label${o.sold ? ' class="off"' : ''}><input type="radio" name="opt" value="${esc(o.label)}"${o.sold ? ' disabled' : ''}> <span>${esc(optLabel(o.label))} — ${o.sold ? t('Not available') : o.usd ? `<bdi dir="ltr">$${o.usd}</bdi> (${fmt(o.price)})` : fmt(o.price)}</span></label>`).join('') +
       '<div id="optSauces"></div>';
   } else if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
