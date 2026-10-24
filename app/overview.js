@@ -19,17 +19,16 @@ function showOverview() {
   EB.read('income', {'Income': 0}).then(function (r) { IN.data = r; drawOverview() }, function (e) { if (/Unknown tab/.test(e.message)) { IN.data = {Income: null, at: 0}; drawOverview() } });
 }
 
-// The days the period covers: this month, last month or everything
+// The days the period covers: this month or everything
 function ovRange() {
   var t = bizDate(), y = t.getFullYear(), m = t.getMonth(), today = ymd(t);
-  if (OV.p === 'last') { if (--m < 0) { m = 11; y-- } return [monthKey(y, m) + '-01', monthKey(y, m) + '-' + pad(daysIn(y, m))] }
   if (OV.p === 'all') return ['2000-01-01', today];
   return [monthKey(y, m) + '-01', today];
 }
 
 function drawOverview() {
   if (OV.locked) return;
-  var h = '<div class="shead"><div class="modes">' + [['month', 'هالشهر', 'This month'], ['last', 'الشهر الماضي', 'Last month'], ['all', 'كل الوقت', 'All time']].map(function (x) {
+  var h = '<div class="shead"><div class="modes">' + [['month', 'هالشهر', 'This month'], ['all', 'كل الوقت', 'All time']].map(function (x) {
     return '<button data-ovp="' + x[0] + '"' + (OV.p === x[0] ? ' class="on"' : '') + '>' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>' +
     '<h2 class="display">' + bi('نظرة عامة', 'Overview') + '</h2>' +
     '<a class="ghost" href="' + COSTING_URL + '" target="_blank" rel="noopener">' + bi('شيت الكلفة ↗', 'Costing sheet ↗') + '</a></div>';

@@ -226,6 +226,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .months.week .track{max-width:44px;height:120px}
 .months.week .mn{font-size:13px}
 .months.week b{font-size:14px}
+.months.hrs .mn{font-size:11px;line-height:1.15;white-space:normal}.months.hrs .mn b{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:-.04em;white-space:nowrap}.months.hrs{gap:2px}.months.hrs .mo{overflow:visible}.months.hrs b{font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
 .note2{margin:10px 0 0;font-size:13px}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
@@ -1080,7 +1081,20 @@ function drawAll() {
     avg.map(function (v, i) {
       return '<div class="mo"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxW * 100) : 0) + '%"></i></span><span class="mn">' + bi(WEEK_AR[i], WEEK_EN[i]) + '</span><b class="num">' + (v ? $usd(v) : '–') + '</b></div>';
     }).join('') + '</div><p class="muted note2">' + bi('معدّل الأيام اللي فيها طلبات', 'Average of days with orders') + '</p></div>';
-  h += '<div class="cols">' + week + '<div>' + sideCards(A, bi('لسا ما في طلبات', 'No orders yet')) + '</div></div>';
+  // average sales in each hour of the business day (the same days), so 00:00 and 01:00 come after 23:00
+  var hrs = {}, lo = 24, hi = -1, clock = function (k) { return (k + DAY_END) % 24 };
+  A.orders.forEach(function (o) { var hr = +String(o.time).slice(0, 2); if (isNaN(hr)) return; hr = (hr + 24 - DAY_END) % 24; hrs[hr] = (hrs[hr] || 0) + o.total; lo = Math.min(lo, hr); hi = Math.max(hi, hr) });
+  var nDays = A.days.length || 1, hourly = '';
+  if (hi >= lo) {
+    var cols = [], maxHr = 0, k;
+    for (k = lo; k <= hi; k++) { cols.push(k); maxHr = Math.max(maxHr, (hrs[k] || 0) / nDays) }
+    hourly = '<div class="card"><h3 class="display">' + bi('معدّل المبيعات حسب الساعة', 'Average sales by hour') + '</h3><div class="months week hrs" style="grid-template-columns:repeat(' + cols.length + ',minmax(0,1fr))">' +
+      cols.map(function (k) {
+        var v = (hrs[k] || 0) / nDays;
+        return '<div class="mo"><span class="track"><i style="height:' + (v ? Math.max(4, v / (maxHr || 1) * 100) : 0) + '%"></i></span><span class="mn"><b class="num">' + (clock(k) % 12 || 12) + '</b><br>' + bi(clock(k) < 12 ? 'ص' : 'م', clock(k) < 12 ? 'AM' : 'PM') + '</span><b class="num">' + (v ? $usd(v) : '–') + '</b></div>';
+      }).join('') + '</div><p class="muted note2">' + bi('معدّل الساعة بالأيام اللي فيها طلبات', 'Average per hour on days with orders') + '</p></div>';
+  }
+  h += '<div class="cols"><div>' + week + hourly + '</div><div>' + sideCards(A, bi('لسا ما في طلبات', 'No orders yet')) + '</div></div>';
   $('#rep').innerHTML = h;
   var strip = document.querySelector('.months.all');  // open the month strip on the latest months
   if (strip && strip.lastElementChild) strip.lastElementChild.scrollIntoView({block: 'nearest', inline: 'nearest'});
