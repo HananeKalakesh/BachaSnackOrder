@@ -48,7 +48,7 @@ function drawOverview() {
   h += '<div class="kpis">' +
     '<div class="kpi" data-go="report"><small>' + bi('اللي دخل', 'Money in') + '</small>' + amount(moneyIn) +
       '<small class="ll">' + bi('مبيعات', 'sales') + ' <span class="num">' + $usd(s.sales) + '</span>' + (other ? ' + ' + bi('دخل تاني', 'other') + ' <span class="num">' + $usd(other) + '</span>' : '') + '</small></div>' +
-    '<div class="kpi" data-go="exp"><small>' + bi('اللي طلع', 'Money out') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'purchases') + '</small></div>' +
+    '<div class="kpi" data-go="exp"><small>' + bi('اللي طلع', 'Expenses') + '</small>' + amount(t.spent) + '<small class="ll">' + fmt(t.count) + ' ' + bi('مصروف', 'expenses') + '</small></div>' +
     '<div class="kpi ' + (profit < 0 ? 'owed' : 'hero') + '"><small>' + bi('الربح', 'Profit') + '</small>' + amount(profit) +
       '<small class="ll">' + (moneyIn ? '<span class="num">' + pctOf(profit) + '%</span> ' + bi('من اللي دخل', 'of the money in') : '') + '</small></div>' +
     '<div class="kpi' + (s.unpaidLbp ? ' owed' : '') + '" data-go="owed"><small>' + bi('ما دفعو', 'Not paid') + '</small>' + amount(s.unpaidLbp) +
@@ -104,7 +104,7 @@ function drawOverview() {
   // the money the business should have: everything that came in minus everything spent, all time
   var cash = (incomes() || []).reduce(function (a, x) { return a + x.lbp }, 0) + A.summary.sales - allBought.reduce(function (a, p) { return a + p.lbp }, 0);
   var bal = '<div class="card"><h3 class="display">' + bi('المصاري بالمحل', 'Money in the business') + '</h3>' + amount(cash) +
-    '<p class="muted note2">' + bi('كل الدخل والمبيعات ناقص كل المصاريف (مع المعدّات وربح الأصحاب)، من الأول.', 'All income and sales minus every purchase (equipment and owners\' pay too), since the start.') + '</p></div>';
+    '<p class="muted note2">' + bi('كل الدخل والمبيعات ناقص كل المصاريف (مع المعدّات وربح الأصحاب)، من الأول.', 'All income and sales minus every expense (equipment and owners\' pay too), since the start.') + '</p></div>';
 
   h += '<div class="cols"><div>' + where + perDay + months + '</div><div>' + sellers + bal + '</div></div>';
   $('#ovr').innerHTML = h;
