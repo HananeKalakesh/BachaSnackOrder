@@ -596,7 +596,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=48"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=49"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1285,7 +1285,8 @@ function salesAll(A) {
 // The month's sales by menu group, like the expenses by category next to their calendar (ordered value of the items)
 var SALES_GROUPS = [['Appetizers', 'مقبلات وبطاطا', /^(Fries|Appetizers)$/, 'Fries'], ['Meals', 'وجبات وصحون', /^(Meals|Plates)$/, 'Meals'],
   ['Family Meals', 'وجبات عائلية', /^Family Meals$/, 'Family Meals'], ['Sandwiches', 'ساندويشات', /Sandwiches$/, 'Chicken Sandwiches'],
-  ['Burgers', 'برغر', /Burgers$/, 'Chicken Burgers'], ['Drinks & extras', 'مشروبات وصوصات وإضافات', /^(Drinks|Sauces & Extras|Extras)$/, '#6B655C'],
+  ['Burgers', 'برغر', /Burgers$/, 'Chicken Burgers'], ['Drinks', 'مشروبات', /^Drinks$/, '#2E6FB5'],
+  ['Sauces & extras', 'صوصات وإضافات', /^(Sauces & Extras|Extras)$/, '#6B655C'],
   ['Marinated chicken', 'دجاج متبّل', /^Marinated Chicken$/, OPEN_SEC], ['Other', 'غير', /./, '#9A8F80']];
 function salesCats(R) {
   var h = '<div class="card"><h3 class="display">' + bi('حسب الصنف', 'By category') + '</h3>';
@@ -1293,7 +1294,7 @@ function salesCats(R) {
   var by = {}, all = 0;
   R.items.forEach(function (x) {
     var cat = x.cat || (MENU_ALL.filter(function (m) { return m.name === x.name })[0] || {}).cat || '';
-    var g = SALES_GROUPS.filter(function (k) { return k[2].test(cat) })[0] || SALES_GROUPS[7];
+    var g = SALES_GROUPS.filter(function (k) { return k[2].test(cat) })[0] || SALES_GROUPS[SALES_GROUPS.length - 1];
     by[g[0]] = (by[g[0]] || 0) + x.sales; all += x.sales;
   });
   var list = SALES_GROUPS.filter(function (g) { return by[g[0]] }).sort(function (a, b) { return by[b[0]] - by[a[0]] }), max = list.length ? by[list[0][0]] : 1;
@@ -2163,15 +2164,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=48"></script>
-<script src="hub.js?v=48"></script>
-<script src="marketing.js?v=48"></script>
-<script src="printer.js?v=48"></script>
-<script src="cashier.js?v=48"></script>
-<script src="income.js?v=48"></script>
-<script src="sandouk.js?v=48"></script>
-<script src="adjust.js?v=48"></script>
-<script src="website.js?v=48"></script>
-<script src="overview.js?v=48"></script>
+<script src="recipes.js?v=49"></script>
+<script src="hub.js?v=49"></script>
+<script src="marketing.js?v=49"></script>
+<script src="printer.js?v=49"></script>
+<script src="cashier.js?v=49"></script>
+<script src="income.js?v=49"></script>
+<script src="sandouk.js?v=49"></script>
+<script src="adjust.js?v=49"></script>
+<script src="website.js?v=49"></script>
+<script src="overview.js?v=49"></script>
 </body>
 </html>
