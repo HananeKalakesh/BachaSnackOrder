@@ -231,7 +231,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .dfee .dch{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}.dfee .dch button{background:#fff;border:0;border-radius:10px;padding:7px 0;font:inherit;font-weight:800;font-size:13px;cursor:pointer}.dfee .dch button.on{background:var(--green);color:var(--paper)}
 .dfee .dcol{display:flex;justify-content:space-between;margin-top:6px;font-weight:800}.dfee .dcol b{font-size:16px}
 .stage.s0{background:#EFE6D6;color:#1A1A17}.newi{background:#C8102E;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;font-style:normal;margin-inline-start:6px}.senti{color:#1F4A37;font-weight:800;font-size:12px;font-style:normal;margin-inline-start:6px}
-.prtb{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:4px 8px;cursor:pointer;border-radius:10px}.prtb:active{background:var(--input)}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.stepb.second{background:var(--mustard);color:#1A1A17}.prtb{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:4px 8px;cursor:pointer;border-radius:10px}.prtb:active{background:var(--input)}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -1563,7 +1563,7 @@ function drawOrders() {
         (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + '</span>' +
         typeTag(o) + '</span>' + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
           '<br>' + bi('عالزبون: ', 'Customer pays: ') + '<b class="num">' + money(o.total + o.fee) + '</b></span>' : '') + '</div>' +
-      '<div class="oacts">' + acts + (PRN.can() ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
+      '<div class="oacts">' + (SECOND[o.key] ? '<button class="stepb second" data-second="' + esc(o.key) + '">🖨 ' + bi('النسخة التانية', 'Second copy') + '</button>' : '') + acts + (PRN.can() ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
         '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
   }).join('') + '</div>';
   // Done on an order not paid yet: how it was paid
@@ -1577,6 +1577,8 @@ function drawOrders() {
   $('#ord').innerHTML = h;
 }
 function hhmmNow() { return EB.hhmm() }
+// tickets sent to the kitchen whose second copy hasn't been printed yet: order key -> ticket
+var SECOND = {};
 function who(o) {
   var bits = (o.name ? '<b>' + esc(o.name) + '</b>' : '') + (o.phone ? '<span class="num ph">+' + esc(o.phone) + '</span>' : '');
   return (bits ? '<div class="ohead">' + bits + '</div>' : '') + (o.type === 'Delivery' && o.address ? '<div class="addr">📍 ' + esc(o.address) + '</div>' : '');
@@ -1608,6 +1610,7 @@ $('#ord').addEventListener('click', function (e) {
     return drawOrders();
   }
   // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
+  if (b && b.dataset.second) { var sc = SECOND[b.dataset.second]; delete SECOND[b.dataset.second]; if (sc) printOrder(sc); return drawOrders() }
   // print again (one copy): a ticket lost or a bag reprinted
   if (b && b.dataset.print) { var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (pr) printOrder(pr); return }
   if (b && b.dataset.step) {
@@ -1619,7 +1622,8 @@ $('#ord').addEventListener('click', function (e) {
       var tk = add ? JSON.parse(JSON.stringify(sentO)) : sentO;
       if (add) { tk.items = add; tk.extra = true; tk.total = add.reduce(function (a2, x) { return a2 + x.qty * x.price }, 0) }
       markPrinted(sentO);
-      if (printerSet()) printOrder(tk, 2);   // both copies in one job (RawBT loses a second job sent straight after)
+      // one ticket now; the second when the cashier taps "Second copy" (one print at a time, so the printer cuts each one)
+      if (printerSet()) { printOrder(tk); SECOND[s.key] = tk }
       toast((add ? 'انبعت الجديد عالمطبخ #' : 'انبعت عالمطبخ #') + s.num, (add ? 'New items sent to the kitchen #' : 'Sent to the kitchen #') + s.num);
       return drawOrders();
     }
