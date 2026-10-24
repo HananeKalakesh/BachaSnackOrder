@@ -27,6 +27,18 @@ function boxCalc(cashLbp, cashUsd, whish, whishUsd) {
   var total = Math.round(cashLbp + cashUsd * RATE + whish + (whishUsd || 0) * RATE), owners = Math.round(total * OWNERS_PCT / 100);
   return {total: total, owners: owners, left: total - owners};
 }
+/* A counted day against the platform: the count is always what is kept (it replaces the orders' sales in the resto's
+   money); the difference is only reported. Live, so an order marked paid later moves it. null until the orders load. */
+function boxDiff(x) {
+  var s = boxSales(x.day); if (!s) return null;
+  var cash = Math.round(x.cashLbp + x.cashUsd * RATE), whish = Math.round(x.whish + (x.whishUsd || 0) * RATE);
+  return {cash: cash, whish: whish, oCash: s.cash, oWhish: s.whish, orders: s.cash + s.whish, dCash: cash - s.cash, dWhish: whish - s.whish, diff: x.total - s.cash - s.whish};
+}
+function signed(v) { return '<b class="num' + (v < 0 ? ' owe' : '') + '">' + (v > 0 ? '+' : v < 0 ? '−' : '') + $usd(Math.abs(v)) + '</b>' }
+function diffLine(d) {
+  if (!d.diff && !d.dCash) return '<span class="okm">' + bi('مطابق للطلبات ✓', 'Matches the orders ✓') + '</span>';
+  return bi('الفرق عن الطلبات ', 'Difference vs orders ') + signed(d.diff) + ' <span class="muted">(' + bi('كاش ', 'cash ') + signed(d.dCash) + ' · ' + bi('ويش ', 'Whish ') + signed(d.dWhish) + ')</span>';
+}
 // Owners lines typed by hand on a day (not the one the cash box records)
 /* The money with the resto: every night 30% of the count goes to the owners and the rest stays with the resto (the
    chef pays the expenses from it); the drawer starts from zero the next day. So: all income + each past day's money (the
@@ -59,6 +71,10 @@ function restoCard() {
   h += amount(bal + today) + '<div class="kpis rsplit">' +
     '<div class="kpi"><small>' + bi('لآخر عدّ', 'Up to the last count') + '</small>' + amount(bal) + '</div>' +
     '<div class="kpi"><small>' + (d.counted ? bi('اليوم (انعدّ ✓)', 'Today (counted ✓)') : bi('اليوم بالجارور', 'Today in the drawer')) + '</small>' + amount(today) + '</div></div>';
+  var tc = d.counted && (boxes() || []).filter(function (x) { return x.day === ymd(bizDate()) })[0], td = tc && boxDiff(tc);
+  if (tc) h += '<div class="tcount"><p class="note2">📦 ' + bi('عدّ الليلة: ', 'Tonight\'s count: ') + '<b class="num">' + $usd(tc.total) + '</b>' + (td ? ' · ' + bi('الطلبات ', 'orders ') + '<b class="num">' + $usd(td.orders) + '</b>' : '') + '</p>' +
+    (td ? '<p class="note2">' + diffLine(td) + '</p>' : '') +
+    '<p class="note2">' + bi('ربح الأصحاب ', 'Owners ') + OWNERS_PCT + '٪ <b class="num">' + $usd(tc.owners) + '</b> · ' + bi('للمطعم ', 'to the resto ') + '<b class="num">' + $usd(tc.left) + '</b> ' + bi('(صار محسوب فوق)', '(already in the total above)') + '</p></div>';
   if (!d.counted) {
     h += '<div class="kpis rsplit r3">' +
       '<div class="kpi"><small>💵 ' + bi('كاش', 'Cash') + '</small>' + amount(d.cash) + '</div>' +
@@ -102,10 +118,12 @@ function drawBoxCalc() {
   var h = '<div class="kpis">' +
     '<div class="kpi"><small>' + bi('المجموع (كاش + ويش)', 'Total (cash + Whish)') + '</small>' + amount(c.total) + '</div>' +
     '<div class="kpi"><small>' + bi('ربح الأصحاب ' + OWNERS_PCT + '٪', 'Owners\' ' + OWNERS_PCT + '%') + '</small>' + amount(c.owners) + '</div>' +
-    '<div class="kpi hero"><small>' + bi('للشيف (للمصاريف)', 'To the chef (for payments)') + '</small>' + amount(c.left) + '</div></div>';
-  if (s) h += '<p class="muted xhint">' + bi('حسب طلبات هاليوم: كاش ', 'The orders that day: cash ') + '<b class="num">' + ll(s.cash) + '</b> · ' + bi('ويش ', 'Whish ') +
-    '<b class="num">' + ll(s.whish) + '</b>' + (c.total ? ' · ' + bi('الفرق ', 'difference ') + '<b class="num' + (c.total - s.cash - s.whish < 0 ? ' owe' : '') + '">' +
-      (c.total - s.cash - s.whish >= 0 ? '+' : '−') + ll(Math.abs(c.total - s.cash - s.whish)) + '</b>' : '') + '</p>';
+    '<div class="kpi hero"><small>' + bi('بيبقى مع المطعم', 'Left with the resto') + '</small>' + amount(c.left) + '</div></div>';
+  if (s) {
+    var d = boxDiff({day: day, cashLbp: Number($('#bCash').value) || 0, cashUsd: Number($('#bUsd').value) || 0, whish: Number($('#bWhish').value) || 0, whishUsd: Number($('#bWhishUsd').value) || 0, total: c.total});
+    h += '<p class="muted xhint">' + bi('حسب الطلبات بهاليوم: كاش ', 'The orders that day: cash ') + '<b class="num">' + $usd(s.cash) + '</b> · ' + bi('ويش ', 'Whish ') + '<b class="num">' + $usd(s.whish) + '</b> = <b class="num">' + $usd(s.cash + s.whish) + '</b></p>';
+    if (c.total) h += '<p class="xhint">' + diffLine(d) + '</p>' + (d.diff ? '<p class="muted xhint">' + bi('بينحسب المعدود مش الطلبات: الـ' + OWNERS_PCT + '٪ من المعدود، والباقي بيروح للمطعم. الفرق بينسجّل مع هاليوم.', 'The counted money is what counts, not the orders: the ' + OWNERS_PCT + '% is taken from the count and the rest goes to the resto. The difference is recorded with the day.') + '</p>' : '');
+  }
   if (hand.length) h += '<p class="offline">' + bi('في ربح للأصحاب مكتوب باليد بهاليوم (', 'Owners\' pay was already typed by hand for this day (') +
     '<b class="num">' + $usd(hand.reduce(function (a, p) { return a + p.lbp }, 0)) + '</b>' +
     bi(')، ما رح ينزاد واحد تاني. امسحو من المصاريف إذا بدك الصندوق يسجّلو.', '), so no second one is added. Delete it in Money out if the cash box should record it.') + '</p>';
@@ -118,8 +136,8 @@ function drawSandouk() {
   var h = '<div class="shead"><h2 class="display">' + bi('اليوم · الصندوق', 'Tonight · cash box') + '</h2></div>' +
     (BX.err === 'OFFLINE' ? '<p class="offline">' + bi('ما في إنترنت: الصندوق بينحفظ وبينبعت لحالو.', 'No internet: the count is kept and sent by itself.') + '</p>'
       : BX.err ? '<p class="err">' + esc(BX.err) + '</p>' : '') +
-    '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيروح للشيف للمصاريف. تاني يوم الجارور بيبلّش من صفر.',
-      'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest goes to the chef for the payments. The next day the drawer starts from zero.') + '</p>';
+    '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيبقى مع المطعم (الشيف بيدفع منو المصاريف). تاني يوم الجارور بيبلّش من صفر.',
+      'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest stays with the resto (the chef pays the expenses from it). The next day the drawer starts from zero.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
   // the money with the resto: up to the last count + today's drawer = the total, with today split for the count
   h += restoCard();
@@ -136,9 +154,13 @@ function drawSandouk() {
 
   // every day, newest first
   var rows = list.slice().sort(function (a, b) { return a.day < b.day ? 1 : -1 });
-  h += '<div class="card"><h3 class="display">' + bi('كل يوم', 'Day by day') + '</h3>' + (rows.length ? '<table><tr><th></th><th class="r">' + bi('كاش', 'Cash') + '</th><th class="r">' + bi('ويش', 'Whish') +
+  var month = today.slice(0, 7), dAll = 0, dMonth = 0, nDiff = 0;
+  rows.forEach(function (x) { var d = boxDiff(x); if (d && d.diff) { dAll += d.diff; nDiff++; if (x.day.slice(0, 7) === month) dMonth += d.diff } });
+  h += '<div class="card"><h3 class="display">' + bi('كل يوم', 'Day by day') + '</h3>' +
+    (rows.length ? '<p class="muted note2">' + bi('فرق الصناديق عن الطلبات: هالشهر ', 'Cash box vs orders: this month ') + signed(dMonth) + ' · ' + bi('من الأول ', 'since the start ') + signed(dAll) +
+      (nDiff ? ' <span class="muted">(' + nDiff + ' ' + bi('يوم فيه فرق', nDiff === 1 ? 'day with a difference' : 'days with a difference') + ')</span>' : '') + '</p>' : '') + (rows.length ? '<table><tr><th></th><th class="r">' + bi('كاش', 'Cash') + '</th><th class="r">' + bi('ويش', 'Whish') +
     '</th><th class="r">' + bi('ربح', 'Owners') + '</th><th class="r">' + bi('بقي', 'Left') + '</th><th></th></tr>' + rows.map(function (x) {
-    var s = boxSales(x.day), diff = s ? x.total - s.cash - s.whish : null;
+    var dd = boxDiff(x), diff = dd ? dd.diff : null;
     return '<tr><td class="num">' + boxDate(x.day) + (x.note ? '<div class="muted">' + esc(x.note) + '</div>' : '') + '</td>' +
       '<td class="r num">' + $usd(x.cashLbp + x.cashUsd * RATE) + '</td><td class="r num">' + $usd(x.whish + x.whishUsd * RATE) + '</td>' +
       '<td class="r num">' + $usd(x.owners) + '</td><td class="r"><b class="num">' + $usd(x.left) + '</b>' +
@@ -170,6 +192,8 @@ $('#box').addEventListener('click', function (e) {
     var x = {key: key, day: day, cashLbp: cashLbp, cashUsd: cashUsd, whish: whish, whishUsd: whishUsd, total: c.total, pct: OWNERS_PCT, owners: c.owners, left: c.left, note: $('#bNote').value.trim()};
     var cells = {'Date': day, 'Cash (L.L.)': cashLbp, 'Cash ($)': cashUsd, 'Whish (L.L.)': whish, 'Whish ($)': whishUsd, 'Total (L.L.)': c.total, 'Owners %': OWNERS_PCT,
       'Owners (L.L.)': c.owners, 'Left (L.L.)': c.left, 'Note': x.note};
+    var sd = boxDiff(x);
+    if (sd) { cells['Orders (L.L.)'] = sd.orders; cells['Difference (L.L.)'] = sd.diff }
     if (had) EB.send([{op: 'update', tab: 'Sandouk', where: {'Ref': key}, set: cells}], {t: 'edit', kind: 'sandouk', key: key, order: x});
     else {
       cells['Ref'] = key; cells['Added'] = "'" + EB.ymd(new Date()) + ' ' + EB.hhmm();
@@ -186,7 +210,7 @@ $('#box').addEventListener('click', function (e) {
         EB.send([{op: 'append', tab: 'Purchases', unique: 'Ref', rows: [pc]}], {t: 'save', kind: 'purchase', key: pk, order: p});
       }
     }
-    toast('انحفظ الصندوق: ربح الأصحاب ' + ll(c.owners), 'Cash box saved: owners ' + ll(c.owners));
+    toast('انحفظ الصندوق: ربح الأصحاب ' + $usd(c.owners) + (sd && sd.diff ? ' · الفرق ' + (sd.diff > 0 ? '+' : '−') + $usd(Math.abs(sd.diff)) : ''), 'Cash box saved: owners ' + $usd(c.owners) + (sd && sd.diff ? ' · difference ' + (sd.diff > 0 ? '+' : '−') + $usd(Math.abs(sd.diff)) : ''));
     return drawSandouk();
   }
   if (b.dataset.bedit) {

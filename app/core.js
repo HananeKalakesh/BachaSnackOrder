@@ -173,7 +173,9 @@ var EB = (function () {
     EB.rows(r && r['Order Items']).forEach(function (it) {
       var o = byKey[str(it.Date).slice(0, 10) + '#' + num(it['Order #'])]; if (!o) return;
       var m = info[str(it.Item)] || {};
-      o.items.push({name: str(it.Item), ar: m.ar || '', cat: str(it.Category), station: m.station || '', qty: num(it.Qty),
+      // marinated chicken and Other lines aren't menu items: they show on the kitchen screen too
+      var oc = /^(Marinated Chicken|Other)$/.test(str(it.Category));
+      o.items.push({name: str(it.Item), ar: m.ar || (str(it.Category) === 'Marinated Chicken' ? 'دجاج متبّل' : oc ? str(it.Item) : ''), cat: str(it.Category), station: m.station || (oc ? 'Kitchen' : ''), qty: num(it.Qty),
         price: num(it['Unit price (L.L.)']), sauces: str(it.Sauces) ? str(it.Sauces).split(', ') : []});
     });
     return list;
@@ -370,7 +372,7 @@ var EB = (function () {
   // paid later counts on the day it was paid (Paid later), so a Not paid order isn't in Sales until it is paid.
   EB.report = function (list, from, to) {
     var s = {orders: 0, items: 0, sales: 0, ordered: 0, cashOrders: 0, cashLbp: 0, whishOrders: 0, whishLbp: 0, unpaidOrders: 0, unpaidLbp: 0, houseOrders: 0, houseLbp: 0,
-      laterOrders: 0, laterLbp: 0};
+      laterOrders: 0, laterLbp: 0, marinatedLbp: 0};   // marinated chicken: raw chicken sold, in the sales but apart from the shop's food
     var days = {}, items = {}, orders = [], later = [];
     var day = function (d) { return days[d] = days[d] || {date: d, orders: 0, sales: 0} };
     var row = function (o) { return {num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type, paidLater: o.paidLater} };
@@ -382,7 +384,7 @@ var EB = (function () {
         if (o.payment === 'Unpaid') { s.unpaidOrders++; s.unpaidLbp += o.total }
         if (o.payment === 'House') { s.houseOrders++; s.houseLbp += o.total }   // the owners' house: items count, not sales
         o.items.forEach(function (x) {
-          var it = items[x.name] = items[x.name] || {name: x.name, qty: 0, sales: 0};
+          var it = items[x.name] = items[x.name] || {name: x.name, cat: x.cat || '', qty: 0, sales: 0};
           it.qty += x.qty; it.sales += x.qty * x.price; s.items += x.qty;
         });
         orders.push(row(o));
@@ -390,6 +392,8 @@ var EB = (function () {
       if (paid) {
         var got = o.received || o.total;
         s.sales += got; day(paidOn).sales += got;
+        var mar = o.items.reduce(function (a, x) { return a + (x.cat === 'Marinated Chicken' ? x.qty * x.price : 0) }, 0);
+        if (mar) s.marinatedLbp += Math.min(mar, got);
         if (o.payment === 'Whish') { s.whishOrders++; s.whishLbp += got }
         else if (o.payment === 'Split') { var w = Math.min(o.whish || 0, got); s.whishOrders++; s.whishLbp += w; s.cashOrders++; s.cashLbp += got - w }
         else { s.cashOrders++; s.cashLbp += got }
