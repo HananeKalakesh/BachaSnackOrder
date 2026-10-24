@@ -235,6 +235,9 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .pbox2 .pbpart{background:var(--input);border-radius:16px;padding:10px 12px}.pbox2 .pbpart.keep{background:#E2ECE6}.pbox2 .pbpart.own{background:#FDF1CC}.pbox2 .pbpart small{display:block;font-weight:700}
 .pbox2 .pbpart b{font-size:22px;font-weight:800}.pbox2 .pct{margin-inline-start:6px;font-weight:800;color:var(--muted);font-size:14px}.pbox2 .split{margin:12px 0 8px}.pbox2 .pbeq{margin:6px 0 0;font-size:13px}
 @media (max-width:700px){.pbox2 .pbrow{grid-template-columns:1fr 1fr}.pbox2 .pbmain{grid-column:1/-1}}
+.lowbar{background:#FBE4E8;color:#8A0B1F;border-radius:14px;padding:8px 12px;margin:0 0 10px;font-weight:700;font-size:14px}#lowbar .lowbar{margin:8px 10px 0}
+.stockt{width:100%}.stockt input{width:100%;max-width:150px;box-sizing:border-box;border:0;background:var(--input);border-radius:10px;padding:8px;font:inherit;font-size:16px}.stockt tr.low td{background:#FFF4F6}
+.stnow{font-weight:800}.stnow.low{color:var(--red)}.stockt .small{font-size:12px;margin-top:2px}
 .feetag.disc{background:#FDF1CC;color:#1A1A17}.discbox{background:var(--input);border-radius:14px;padding:10px 12px;margin:8px 0;text-align:start}.discbox input{display:block;width:100%;box-sizing:border-box;border:0;border-radius:10px;padding:10px;margin-top:6px;font:inherit;background:#fff}.discbox #discShow{margin-top:6px;font-size:14px}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.mo .xm{display:block;color:var(--red);font-weight:700;font-size:11px}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
@@ -523,6 +526,7 @@ td.r,th.r{text-align:end}
 <div class="order" id="orderView">
   <div class="left">
 
+    <div id="lowbar"></div>
     <div class="grid" id="grid"><div class="muted" style="padding:20px"><span class="ar">عم يحمّل المنيو…</span><span class="en">Loading menu…</span></div></div>
   </div>
   <div class="right">
@@ -596,7 +600,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=49"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=51"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -859,6 +863,7 @@ function renderCart() {
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
   $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE); drawFee();
+  if (typeof drawLowBar === 'function') drawLowBar();
   updateSave();
 }
 $('#lines').addEventListener('click', function (e) {
@@ -1567,6 +1572,7 @@ function drawOrders() {
       (unpaid ? ' · <b class="num owe">' + unpaid + '</b> <span class="owe">' + bi('ما دفع', 'not paid') + '</span>' : '') + '</span><span class="hint2">' + bi('دق على طلب لتغيّر فيه', 'Tap an order to change it') + '</span>' : '') + '</div>';
   if (TD.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الطلبات اللي بيعرفها هالآيباد. التغييرات بتنبعت لحالها.', 'No internet: these are the orders this iPad knows. Changes send by themselves.') + '</p>';
   else if (TD.err) h += '<p class="err">' + bi('ما قدرنا نحمّل الطلبات', 'Could not load the orders') + ' · <small>' + esc(TD.err) + '</small></p>';
+  if (typeof lowBar === 'function') h += lowBar();   // things running low (chef's stock)
   if (!TD.loaded) { $('#ord').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
   if (waiting.length) h += '<div class="webq"><h3>🌐 ' + bi('طلبات من الموقع، ناطرة موافقتك', 'Website orders waiting for you') + '</h3>' + waiting.map(function (o) {
     return '<div class="ord web">' +
@@ -2164,15 +2170,16 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=49"></script>
-<script src="hub.js?v=49"></script>
-<script src="marketing.js?v=49"></script>
-<script src="printer.js?v=49"></script>
-<script src="cashier.js?v=49"></script>
-<script src="income.js?v=49"></script>
-<script src="sandouk.js?v=49"></script>
-<script src="adjust.js?v=49"></script>
-<script src="website.js?v=49"></script>
-<script src="overview.js?v=49"></script>
+<script src="recipes.js?v=51"></script>
+<script src="hub.js?v=51"></script>
+<script src="marketing.js?v=51"></script>
+<script src="stock.js?v=51"></script>
+<script src="printer.js?v=51"></script>
+<script src="cashier.js?v=51"></script>
+<script src="income.js?v=51"></script>
+<script src="sandouk.js?v=51"></script>
+<script src="adjust.js?v=51"></script>
+<script src="website.js?v=51"></script>
+<script src="overview.js?v=51"></script>
 </body>
 </html>
