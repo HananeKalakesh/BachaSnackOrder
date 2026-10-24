@@ -349,6 +349,17 @@ td.r,th.r{text-align:end}
 .xmo b.neg{color:var(--red)}
 .xtag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--c);color:#fff}
 #exp .kpis,#inc .kpis,#cost .kpis,#box .kpis{margin-top:14px}
+.acgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px;align-items:start}
+.acbox h4{margin:14px 0 6px;font-size:15px}
+.acrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--sand)}
+.acrow .num{text-align:end;font-weight:700}.acrow .ll{display:block;font-weight:600}
+.acrow.tot{border-bottom:0;font-size:19px;font-weight:800}.acrow.tot .num{font-weight:800}.acrow.owe .num{color:var(--red)}
+.acowe{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 8px;padding:10px 12px;border-radius:12px;background:var(--sand)}
+.acowe.owe b{color:var(--red)}
+.ghost.wide{width:100%}
+.achouse{display:flex;flex-wrap:wrap;gap:6px}.achouse span{background:var(--sand);border-radius:999px;padding:4px 10px;font-size:14px}
+.acfoot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}.acfoot p{width:100%;margin:0}
+#box .instore{text-align:center;padding:18px}#box .instore .usd{font-size:40px}
 .xamt > span.muted{align-self:center;min-width:76px;font-weight:700;white-space:nowrap}
 .cmodes{flex-wrap:wrap;margin:6px 0 4px}.ctable td{vertical-align:top}.ctable .hlink{font:inherit;font-weight:800;background:none;border:0;padding:0;color:inherit;cursor:pointer}
 .xform .wide{grid-column:1/-1}
@@ -358,7 +369,7 @@ td.r,th.r{text-align:end}
   .tabs{padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{height:38px;padding:0 10px;font-size:14px;white-space:nowrap;flex:none}
   .langbtn{height:38px;padding:0 10px;font-size:13px}
   .report{padding:12px 12px 70px}.shead{flex-wrap:wrap;gap:8px}.shead h2,.lang-en .shead h2{font-size:26px}
-  #exp .shead,#inc .shead,#box .shead{flex-wrap:nowrap}#exp .shead h2,#inc .shead h2,#box .shead h2{flex:1;font-size:21px;text-align:center}
+  #exp .shead,#inc .shead,#box .shead,#acc .shead{flex-wrap:nowrap}#exp .shead h2,#inc .shead h2,#box .shead h2,#acc .shead h2{flex:1;font-size:21px;text-align:center}
   .kpi{padding:12px 14px;border-radius:20px}.kpi .usd{font-size:22px}.kpi.hero .usd{font-size:26px}}
 
 .pin{max-width:340px;margin:60px auto;text-align:center}
@@ -469,7 +480,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="box"><span class="ar">الصندوق</span><span class="en">Cash box</span></button><button data-view="in"><span class="ar">المدخول</span><span class="en">Money in</span><b class="tabbadge" id="inBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Money out</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="box"><span class="ar">اليوم</span><span class="en">Tonight</span></button><button data-view="acct"><span class="ar">الحسابات</span><span class="en">Accounts</span><b class="tabbadge" data-owed hidden></b></button><button data-view="in"><span class="ar">المدخول</span><span class="en">Money in</span><b class="tabbadge" id="inBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Money out</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -498,13 +509,14 @@ td.r,th.r{text-align:end}
 </div>
 
 <div class="report" id="ordersView"><div class="wrap" id="ord"></div></div>
-<div class="report" id="owedView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="owe"></div></div>
+<div class="report" id="owedView"><div class="subnav"><button data-sub="acct"><span class="ar">→ الحسابات</span><span class="en">← Accounts</span></button></div><div class="wrap" id="owe"></div></div>
 <div class="report" id="owedTView"><div class="wrap" id="oweT"></div></div>
 <div class="report" id="overView"><div class="wrap" id="ovr"></div></div>
-<div class="report" id="reportView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="rep"></div></div>
+<div class="report" id="reportView"><div class="subnav"><button data-sub="acct"><span class="ar">→ الحسابات</span><span class="en">← Accounts</span></button></div><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
+<div class="report" id="acctView"><div class="wrap" id="acc"></div></div>
 <div class="report" id="boxView"><div class="wrap" id="box"></div></div>
-<div class="report" id="incView"><div class="subnav"><button data-sub="report"><span class="ar">المبيعات</span><span class="en">Sales</span></button><button data-sub="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span><b class="tabbadge" data-owed hidden></b></button><button data-sub="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button></div><div class="wrap" id="inc"></div></div>
+<div class="report" id="incView"><div class="subnav"><button data-sub="acct"><span class="ar">→ الحسابات</span><span class="en">← Accounts</span></button></div><div class="wrap" id="inc"></div></div>
 <div class="report" id="siteView"><div class="wrap" id="site"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
 <div class="report" id="homeView"><div class="wrap" id="hub"></div></div>
@@ -834,7 +846,7 @@ function showView(v) {
   if (v === 'in') v = IN_SUBS.indexOf(store('elbash-in')) >= 0 ? store('elbash-in') : 'report';
   var sub = MANAGE && IN_SUBS.indexOf(v) >= 0;
   if (sub) store('elbash-in', v);
-  document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.view === v || sub && x.dataset.view === 'in') });
+  document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x.dataset.view === v || sub && x.dataset.view === 'acct') });
   document.querySelectorAll('.subnav button').forEach(function (x) { x.classList.toggle('on', x.dataset.sub === v) });
   $('#orderView').style.display = v === 'order' ? '' : 'none';
   $('#ordersView').style.display = v === 'orders' ? 'block' : 'none';
@@ -845,6 +857,7 @@ function showView(v) {
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
   $('#boxView').style.display = v === 'box' ? 'block' : 'none';
+  $('#acctView').style.display = v === 'acct' ? 'block' : 'none';
   $('#siteView').style.display = v === 'site' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
@@ -859,6 +872,7 @@ function showView(v) {
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
   if (v === 'box') showSandouk();
+  if (v === 'acct') showAccounts();
   if (v === 'site') showWebsite();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
@@ -995,7 +1009,7 @@ function sideCards(R, none, every) {
       (owed ? '<i class="unpaid" style="width:' + (owed / all * 100) + '%"></i>' : '') + '</div>' +
       '<div class="pay2' + (owed ? ' three' : '') + '">' + part('cash', 'كاش', 'Cash', s.cashLbp, s.cashOrders) + part('whish', 'ويش', 'Whish', s.whishLbp, s.whishOrders) +
       (owed ? part('unpaid', 'ما دفع', 'Not paid', owed, s.unpaidOrders) : '') + '</div>' +
-      (s.houseOrders ? '<p class="muted note2">🏠 ' + bi('للبيت', 'House') + ': <b class="num">' + fmt(s.houseOrders) + '</b> ' + bi('طلب', 'orders') + ' · <span class="num">' + ll(s.houseLbp) + '</span> ' + bi('(مش محسوبة مبيعات)', '(not counted as sales)') + '</p>' : '');
+      '';
   } else side += R ? '<p class="muted">' + none + '</p>' : wait;
   side += '</div><div class="card"><h3 class="display">' + (every ? bi('الأكل المباع', 'Food sold') : bi('الأكتر مبيعاً', 'Best sellers')) + '</h3>';
   var food = R ? R.items.filter(function (x) { return !isSide(x.name) }) : [];
@@ -1487,7 +1501,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); if (
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'owedt', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['over', 'box', 'in', 'exp'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['box', 'exp', 'acct'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1810,6 +1824,7 @@ $('#exp').addEventListener('click', function (e) {
 <script src="cashier.js"></script>
 <script src="income.js"></script>
 <script src="sandouk.js"></script>
+<script src="accounts.js"></script>
 <script src="website.js"></script>
 <script src="overview.js"></script>
 </body>
