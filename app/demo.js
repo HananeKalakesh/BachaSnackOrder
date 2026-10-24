@@ -143,7 +143,19 @@ var EBDemo = (function () {
     var KI = [['Ingredient', 'Arabic', 'What we buy (pack)', 'How much is in one pack', 'Unit (g, ml or piece)'], ['Chicken breast', 'صدر دجاج', '', '', 'g'],
       ['Salt', 'ملح', '', '', 'g'], ['Garlic powder', 'بودرة توم', '', '', 'g'], ['Flour', 'طحين', '', '', 'g'], ['Garlic', 'توم', '', '', 'g'],
       ['Vegetable oil', 'زيت نباتي', '', '', 'ml'], ['Eggs', 'بيض', '', '', 'piece']];
-    var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P, 'Kitchen recipes': KR, 'Kitchen lines': KL, 'Kitchen ingredients': KI}, sheets = {};
+    // the chef's stock: what is counted, what menu items use (from the costing), and yesterday's count
+    var PI = [['Item', 'Arabic', 'Unit (piece or g)', 'Low at (warn under this)', 'Group', 'Counts (preparations in the costing worksheet, comma between)'],
+      ['Crispy piece', 'قطعة كريسبي', 'piece', 20, 'Fried', 'Crispy piece'], ['Zinger piece', 'قطعة زنجر', 'piece', 20, 'Fried', 'Zinger piece'],
+      ['Shawarma chicken', 'شاورما دجاج', 'g', 1000, 'Grill', 'Shawarma chicken'], ['Garlic sauce', 'صوص ثوم', 'g', 600, 'Sauces', 'Garlic sauce'], ['Coleslaw', 'سلطة ملفوف', 'g', 600, 'Sauces', 'Coleslaw']];
+    var KT = [['Item', 'Uses', 'Amount'], ['Crispy Meal 4 PCS', 'Crispy piece', 4], ['Crispy Meal 4 PCS', 'Meal sides', 1], ['Crispy Meal 7 PCS', 'Crispy piece', 7], ['Crispy Meal 7 PCS', 'Meal sides', 1],
+      ['Zinger Meal 4 PCS', 'Zinger piece', 4], ['Zinger Meal 7 PCS', 'Zinger piece', 7], ['Zinger Meal 7 PCS', 'Meal sides', 1], ['Crispy Sandwich', 'Crispy piece', 2], ['Crispy Sandwich', 'Garlic sauce', 30],
+      ['Crispy Sandwich', 'Coleslaw', 25], ['Shawarma Sandwich', 'Shawarma chicken', 120], ['Shawarma Sandwich', 'Garlic sauce', 30]];
+    var KB = [['Base', 'Uses', 'Amount'], ['Meal sides', 'Coleslaw', 110], ['Meal sides', 'Garlic sauce', 60]];
+    var yd = ymd(new Date(Date.now() - 86400000 - 2 * 3600000));
+    var PR = [['Date', 'Item', 'Left (counted in the morning)', 'Made', 'Ref', 'Added'], [yd, 'Crispy piece', 10, 57, 'prep-' + yd + '-crispy-piece', ''], [yd, 'Zinger piece', 5, 38, 'prep-' + yd + '-zinger-piece', ''],
+      [yd, 'Garlic sauce', 400, 1720, 'prep-' + yd + '-garlic-sauce', ''], [yd, 'Coleslaw', 300, 1950, 'prep-' + yd + '-coleslaw', '']];
+    var tabs = {Settings: settings, Menu: menuTab, Orders: orders, 'Order Items': lines, Purchases: P, 'Kitchen recipes': KR, 'Kitchen lines': KL, 'Kitchen ingredients': KI,
+      'Prep items': PI, 'Kitchen items': KT, 'Kitchen bases': KB, Prep: PR}, sheets = {};
     Object.keys(tabs).forEach(function (n) { sheets[n] = new Sheet(n, tabs[n].map(function (r) { return r.map(parseIn) })) });
     return sheets;
   }
