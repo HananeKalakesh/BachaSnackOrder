@@ -235,7 +235,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .pbox2 .pbpart{background:var(--input);border-radius:16px;padding:10px 12px}.pbox2 .pbpart.keep{background:#E2ECE6}.pbox2 .pbpart.own{background:#FDF1CC}.pbox2 .pbpart small{display:block;font-weight:700}
 .pbox2 .pbpart b{font-size:22px;font-weight:800}.pbox2 .pct{margin-inline-start:6px;font-weight:800;color:var(--muted);font-size:14px}.pbox2 .split{margin:12px 0 8px}.pbox2 .pbeq{margin:6px 0 0;font-size:13px}
 @media (max-width:700px){.pbox2 .pbrow{grid-template-columns:1fr 1fr}.pbox2 .pbmain{grid-column:1/-1}}
-.feetag.disc{background:#FDF1CC;color:#1A1A17}.discbox{background:var(--input);border-radius:14px;padding:10px 12px;margin:8px 0;text-align:start}.discbox input{display:block;width:100%;box-sizing:border-box;border:0;border-radius:10px;padding:10px;margin-top:6px;font:inherit;background:#fff}.discbox #discShow{margin-top:6px;font-size:14px}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.feetag.disc{background:#FDF1CC;color:#1A1A17}.discbox{background:var(--input);border-radius:14px;padding:10px 12px;margin:8px 0;text-align:start}.discbox input{display:block;width:100%;box-sizing:border-box;border:0;border-radius:10px;padding:10px;margin-top:6px;font:inherit;background:#fff}.discbox #discShow{margin-top:6px;font-size:14px}.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.mo .xm{display:block;color:var(--red);font-weight:700;font-size:11px}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -1213,10 +1213,12 @@ function dashMoney(sales, today) {
   var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
   var h = '<div class="kpis four">' +
     '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null || !drw ? wait : amount(bal + (drw.counted ? 0 : drw.sales))) + '<small class="ll">' + (bal == null || !drw || drw.counted ? bi('لآخر عدّ', 'up to the last count') : bi('لآخر عدّ ', 'last count ') + $usd(bal) + ' + ' + bi('اليوم ', 'today ') + $usd(drw.sales)) + '</small></div>' +
-    '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق المعدود', 'Cash box counted') + '</small>' + (bxs ? amount(counted) : wait) + '<small class="ll">' + (bxs ? fmt(bxs.length) + ' ' + bi('ليلة', 'nights') : '') + '</small></div>' +
+    '<div class="kpi own"><small>💰 ' + bi('أخدو الأصحاب', 'Taken by the owners') + '</small>' + (t ? amount(t.owners) : wait) + '<small class="ll">' + (bxs ? bi(OWNERS_PCT + '٪ من ' + fmt(bxs.length) + ' صندوق معدود', OWNERS_PCT + '% of ' + fmt(bxs.length) + ' counted cash boxes') : '') + '</small></div>' +
     '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';
-  if (t) h += profitBox(sales, t, other, bal == null || !drw ? null : bal + (drw.counted ? 0 : drw.sales), today);
+  // no profit card: the money with the resto is the real number (owner, 24 Oct); discounts given, as a note
+  var disc = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2000-01-01', today).summary.discLbp : 0;
+  if (disc) h += '<p class="muted note2">🏷️ ' + bi('خصومات من الأول ', 'Discounts since the start ') + '<b class="num">' + $usd(disc) + '</b> ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>';
   return h + '<div class="morelinks"><button data-goview="owed">' + bi('ما دفعو', 'Not paid') + '</button><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div>';
 }
 /* Dashboard: the profit in one compact card — what the owners took and the resto's part side by side with their %,
@@ -2086,8 +2088,8 @@ function monthsBoth(list, A) {
       var s = salesM[k] || 0, x = spentM[k] || 0, mi = +k.slice(5) - 1, p = s - x;
       return '<button class="mo xmo" data-goto="' + k + '"><span class="track two"><i class="ks" style="height:' + (s ? Math.max(3, s / maxM * 100) : 0) + '%"></i><i class="kx" style="height:' + (x ? Math.max(3, x / maxM * 100) : 0) + '%"></i></span>' +
         '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span>' +
-        '<b class="num' + (p < 0 ? ' neg' : '') + '">' + (s || x ? $usd(p) : '–') + '</b></button>';
-    }).join('') + '</div><p class="muted note2">' + bi('الرقم تحت كل شهر هو الربح. دق على شهر لتفتح تقويمو.', 'The number under each month is its profit. Tap a month to open its calendar.') + '</p></div>';
+        '<b class="num">' + (s ? $usd(s) : '–') + '</b>' + (x ? '<small class="num xm">−' + $usd(x) + '</small>' : '') + '</button>';
+    }).join('') + '</div><p class="muted note2">' + bi('تحت كل شهر: المبيعات، وتحتها المصاريف. دق على شهر لتفتح تقويمو.', 'Under each month: the sales, and under them the expenses. Tap a month to open its calendar.') + '</p></div>';
   return h;
 }
 $('#exp').addEventListener('click', function (e) {
