@@ -97,18 +97,33 @@ var PRN = (function () {
   // RawBT: the ticket goes to the RawBT app, which prints it on the printer chosen there.
   // As a picture (RawBT turns it into dots with its own printer settings), or as ready ESC/POS bytes.
   var RAWBT = '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-  function sendRawbt(canvas) {
-    if (opts().rawfmt !== 'escpos') { api.go('intent:' + canvas.toDataURL('image/png') + RAWBT); return Promise.resolve() }
-    var data = bytesOf(canvas), s = '';
+  // copies: RawBT takes one job per hand-over (a second one sent straight after is lost), so the copies go in the same job:
+  // as commands, each copy with its own cut; as a picture, the copies one under the other with a cut line between
+  function sendRawbt(canvas, copies) {
+    copies = copies || 1;
+    if (opts().rawfmt !== 'escpos') {
+      var pic = canvas;
+      if (copies > 1) {
+        var gap = 40; pic = document.createElement('canvas'); pic.width = canvas.width; pic.height = canvas.height * copies + gap * (copies - 1);
+        var g = pic.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, pic.width, pic.height);
+        for (var k = 0; k < copies; k++) {
+          g.drawImage(canvas, 0, k * (canvas.height + gap));
+          if (k < copies - 1) { var yy = (k + 1) * canvas.height + k * gap + gap / 2; g.fillStyle = '#000'; for (var x = 10; x < pic.width - 10; x += 24) g.fillRect(x, yy, 12, 3); g.font = '700 22px sans-serif'; g.textAlign = 'center'; g.fillText('✂', pic.width / 2, yy - 6) }
+        }
+      }
+      api.go('intent:' + pic.toDataURL('image/png') + RAWBT); return Promise.resolve();
+    }
+    var one = bytesOf(canvas), data = new Uint8Array(one.length * copies), s = '';
+    for (var c = 0; c < copies; c++) data.set(one, c * one.length);
     for (var i = 0; i < data.length; i += 8192) s += String.fromCharCode.apply(null, data.subarray(i, i + 8192));
     api.go('intent:base64,' + btoa(s) + RAWBT);
     return Promise.resolve();
   }
   // One print at a time, reconnecting first if the printer dropped
-  function printCanvas(canvas) {
-    if (rawbt()) return sendRawbt(canvas);
-    var job = busy.then(function () { return ready() ? null : dev ? attach(dev) : Promise.reject(new Error('NOT_CONNECTED')) })
-      .then(function () { return send(bytesOf(canvas)) });
+  function printCanvas(canvas, copies) {
+    if (rawbt()) return sendRawbt(canvas, copies);
+    var bytes = bytesOf(canvas), job = busy.then(function () { return ready() ? null : dev ? attach(dev) : Promise.reject(new Error('NOT_CONNECTED')) });
+    for (var c = 0; c < (copies || 1); c++) job = job.then(function () { return send(bytes) });
     busy = job.catch(function () {});
     return job;
   }
@@ -162,7 +177,7 @@ var PRN = (function () {
     // the driver's fee: paid by the customer with the order, not part of the total (nor of the sales)
     if (o.fee && !o.extra) {
       var fee = money ? money(o.fee).replace(' L.L.', '') : String(o.fee), all = money ? money(o.total + o.fee).replace(' L.L.', '') : String(o.total + o.fee);
-      var fy = y + 28; ops.push(function () { g.font = '700 24px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(fee, M, fy); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '700 24px ' + AR; g.fillText('🛵 توصيل (للسائق)', W - M, fy) });
+      var fy = y + 28; ops.push(function () { g.font = '700 24px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(fee, M, fy); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '700 24px ' + AR; g.fillText('🛵 توصيل', W - M, fy) });
       y += 38;
       var ay = y + 32; ops.push(function () { g.font = '800 30px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(all, M, ay); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '800 30px ' + AR; g.fillText('عالزبون يدفع', W - M, ay) });
       y += 44;
@@ -179,7 +194,7 @@ var PRN = (function () {
     ops.forEach(function (f) { f() });
     return c;
   }
-  function print(o, money) { return printCanvas(ticket(o, money)) }
+  function print(o, money, copies) { return printCanvas(ticket(o, money), copies) }
 
   var api = {go: function (u) { location.href = u }, can: can, ble: ble, android: ANDROID, ready: ready, connect: connect, resume: resume, forget: forget, print: print, ticket: ticket, bytesOf: bytesOf,
     opts: opts, setOpts: setOpts, name: function () { return rawbt() ? 'RawBT' : dev ? dev.name || opts().name : opts().name }, on: function (f) { listeners.push(f) }};

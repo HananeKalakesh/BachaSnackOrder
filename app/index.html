@@ -592,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=37"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=38"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1616,7 +1616,7 @@ $('#ord').addEventListener('click', function (e) {
       var tk = add ? JSON.parse(JSON.stringify(sentO)) : sentO;
       if (add) { tk.items = add; tk.extra = true; tk.total = add.reduce(function (a2, x) { return a2 + x.qty * x.price }, 0) }
       markPrinted(sentO);
-      if (printerSet()) printOrder(tk).then(function () { return printOrder(tk) });
+      if (printerSet()) printOrder(tk, 2);   // both copies in one job (RawBT loses a second job sent straight after)
       toast((add ? 'انبعت الجديد عالمطبخ #' : 'انبعت عالمطبخ #') + s.num, (add ? 'New items sent to the kitchen #' : 'Sent to the kitchen #') + s.num);
       return drawOrders();
     }
@@ -2071,15 +2071,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=37"></script>
-<script src="hub.js?v=37"></script>
-<script src="marketing.js?v=37"></script>
-<script src="printer.js?v=37"></script>
-<script src="cashier.js?v=37"></script>
-<script src="income.js?v=37"></script>
-<script src="sandouk.js?v=37"></script>
-<script src="adjust.js?v=37"></script>
-<script src="website.js?v=37"></script>
-<script src="overview.js?v=37"></script>
+<script src="recipes.js?v=38"></script>
+<script src="hub.js?v=38"></script>
+<script src="marketing.js?v=38"></script>
+<script src="printer.js?v=38"></script>
+<script src="cashier.js?v=38"></script>
+<script src="income.js?v=38"></script>
+<script src="sandouk.js?v=38"></script>
+<script src="adjust.js?v=38"></script>
+<script src="website.js?v=38"></script>
+<script src="overview.js?v=38"></script>
 </body>
 </html>

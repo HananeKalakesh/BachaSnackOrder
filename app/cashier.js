@@ -175,10 +175,10 @@ $('#prnSheet').addEventListener('click', function (e) {
     total: 640000, note: 'بلا بصل'});
   this.hidden = true;
 });
-function printOrder(o) {
+function printOrder(o, copies) {
   if (!PRN.can()) return prnSheet();
   toast('عم يطبع #' + o.num, 'Printing #' + o.num);
-  return PRN.print(o, money).catch(function (e) {
+  return PRN.print(o, money, copies).catch(function (e) {
     toast(e.message === 'NOT_CONNECTED' ? 'الطابعة مش موصولة: دق 🖨' : 'ما طبع: ' + esc(e.message), e.message === 'NOT_CONNECTED' ? 'Printer not connected: tap 🖨' : 'Didn\'t print: ' + e.message);
     drawPrn();
   });
