@@ -166,7 +166,11 @@ var EB = (function () {
         // a Not paid order paid on a later day: the money counts on that day
         paidLater: str(o['Paid later']).slice(0, 10),
         // paid partly by Whish and the rest cash (Payment "Split"): the Whish part
-        whish: num(o['Whish part (L.L.)'])};
+        whish: num(o['Whish part (L.L.)']),
+        // sent to the kitchen: '-' saved but not sent yet, a time once sent; empty = an order from before this step (sent)
+        sent: str(o['Kitchen sent']).replace(/^'/, ''),
+        // the delivery fee goes to the driver: printed for the customer, never in the total, the sales or the cash box
+        fee: num(o['Delivery fee (L.L.)'])};
       x.live = live(x);
       byKey[x.key] = x; list.push(x);
     });
@@ -176,7 +180,8 @@ var EB = (function () {
       // marinated chicken and Other lines aren't menu items: they show on the kitchen screen too
       var oc = /^(Marinated Chicken|Other)$/.test(str(it.Category));
       o.items.push({name: str(it.Item), ar: m.ar || (str(it.Category) === 'Marinated Chicken' ? 'دجاج متبّل' : oc ? str(it.Item) : ''), cat: str(it.Category), station: m.station || (oc ? 'Kitchen' : ''), qty: num(it.Qty),
-        price: num(it['Unit price (L.L.)']), sauces: str(it.Sauces) ? str(it.Sauces).split(', ') : []});
+        price: num(it['Unit price (L.L.)']), sauces: str(it.Sauces) ? str(it.Sauces).split(', ') : [],
+        sentQty: str(it['Sent qty']) === '' ? num(it.Qty) : num(it['Sent qty'])});   // how many of this line the kitchen has
     });
     return list;
   };
@@ -255,14 +260,15 @@ var EB = (function () {
   function itemRows(o) {
     return o.items.map(function (x) {
       return {'Order #': o.num, 'Date': o.day, 'Item': x.name, 'Category': x.cat, 'Qty': x.qty, 'Unit price (L.L.)': x.price,
-        'Line total (L.L.)': F_LINE, 'Sauces': x.sauces.join(', '), 'Ref': o.uid};
+        'Line total (L.L.)': F_LINE, 'Sauces': x.sauces.join(', '), 'Ref': o.uid, 'Sent qty': x.sentQty == null ? x.qty : x.sentQty};
     });
   }
   function orderCells(o) {
     var nopay = o.payment === 'Unpaid' || o.payment === 'House', usd = nopay ? 0 : o.paidUsd || 0;   // House: food for the owners' house, no money
     return {'Items': o.text, 'Item count': o.items.reduce(function (a, x) { return a + x.qty }, 0), 'Order total (L.L.)': o.total,
       'Payment': o.payment, 'Paid ($)': usd, 'Paid (L.L.)': nopay ? 0 : Math.max(0, o.total - usd * o.rate),
-      'Note': o.note, 'Name': o.name, 'Pickup / Delivery': o.type};
+      'Note': o.note, 'Name': o.name, 'Pickup / Delivery': o.type,
+      'Kitchen sent': o.sent === '-' ? '-' : o.sent ? "'" + o.sent : '', 'Delivery fee (L.L.)': o.fee || ''};
   }
   function where(o) { return {'Date': o.day, 'Order #': o.num} }
   // "2 × Loaded Fries — Ketchup + Cheddar Sauce, 1 × Pepsi"
@@ -279,6 +285,19 @@ var EB = (function () {
   EB.update = function (o) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: orderCells(o)}, {op: 'remove', tab: 'Order Items', where: where(o)},
       {op: 'append', tab: 'Order Items', rows: itemRows(o)}], {t: 'edit', key: o.key, order: o});
+  };
+  // Send to the kitchen: the whole order, or the lines added since; it then shows on the kitchen screen
+  EB.toKitchen = function (o, at) {
+    var x = JSON.parse(JSON.stringify(o));
+    x.sent = x.sent && x.sent !== '-' ? x.sent : at;
+    x.items.forEach(function (it) { it.sentQty = it.qty });
+    EB.update(x);
+    return x;
+  };
+  // the lines (and extra quantities) the kitchen doesn't have yet
+  EB.unsent = function (o) {
+    return o.items.filter(function (x) { return x.qty > (x.sentQty == null ? x.qty : x.sentQty) }).map(function (x) {
+      var y = JSON.parse(JSON.stringify(x)); y.qty = x.qty - (x.sentQty || 0); return y });
   };
   EB.done = function (o, done) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Kitchen done': done ? "'" + done : ''}}], {t: 'done', key: o.key, done: done});

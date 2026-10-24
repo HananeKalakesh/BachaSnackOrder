@@ -142,6 +142,7 @@ var PRN = (function () {
     y += 6;
     text((o.web ? '🌐 من الموقع · ' : '') + o.day + '  ' + o.time, EN, 22, 'center', W / 2);
     if (kind) text(kind, AR, 28, 'center', W / 2, {bold: true});
+    if (o.extra) text('➕ إضافة على الطلب', AR, 28, 'center', W / 2, {bold: true});
     if (o.name || o.phone) text([o.name, o.phone ? '+' + o.phone : ''].filter(Boolean).join(' · '), AR, 26, 'center', W / 2, {bold: true});
     if (o.type === 'Delivery' && o.address) text('📍 ' + o.address, AR, 24, 'right', W - M, {rtl: true});
     rule(2);
@@ -158,6 +159,14 @@ var PRN = (function () {
     var tot = money ? money(o.total).replace(' L.L.', '') : String(o.total), ty = y + 34;
     ops.push(function () { g.font = '800 34px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(tot, M, ty); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '800 30px ' + AR; g.fillText('المجموع ل.ل.', W - M, ty) });
     y += 46;
+    // the driver's fee: paid by the customer with the order, not part of the total (nor of the sales)
+    if (o.fee && !o.extra) {
+      var fee = money ? money(o.fee).replace(' L.L.', '') : String(o.fee), all = money ? money(o.total + o.fee).replace(' L.L.', '') : String(o.total + o.fee);
+      var fy = y + 28; ops.push(function () { g.font = '700 24px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(fee, M, fy); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '700 24px ' + AR; g.fillText('🛵 توصيل (للسائق)', W - M, fy) });
+      y += 38;
+      var ay = y + 32; ops.push(function () { g.font = '800 30px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(all, M, ay); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '800 30px ' + AR; g.fillText('عالزبون يدفع', W - M, ay) });
+      y += 44;
+    }
     var pay = o.payment === 'Unpaid' ? (o.type === 'Delivery' ? 'الدفع عند التوصيل' : 'الدفع عند الاستلام') : {Cash: 'كاش', Whish: 'ويش', Split: 'كاش + ويش', House: 'للبيت'}[o.payment] || o.payment || '';
     if (pay) text(pay, AR, 26, 'center', W / 2, {bold: true});
     rule(1);

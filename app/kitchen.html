@@ -149,6 +149,9 @@ function build(r) {
   var now = EB.now(), named = MENU_ALL.some(function (m) { return m.station });
   return EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r && r.at).filter(function (o) {
     if (o.done || o.ready || !o.live || o.at < SINCE - 60000 || now - o.at > 12 * 3600000) return false;
+    if (o.sent === '-') return false;   // saved but not sent to the kitchen yet
+    // only what was sent: lines added later show once the cashier sends them
+    o.items = o.items.filter(function (x) { return x.sentQty > 0 }).map(function (x) { x.qty = x.sentQty; return x });
     o.other = o.items.filter(function (x) { return named && x.station !== STATION });
     o.items = o.items.filter(function (x) { return !named || x.station === STATION });
     return o.items.length;
