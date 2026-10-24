@@ -592,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=40"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=41"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1544,7 +1544,7 @@ function drawOrders() {
     var stage = o.done ? '<span class="stage s3">✓ ' + bi('خلص ' + o.done, 'Done ' + o.done) + '</span>'
       : o.ready ? '<span class="stage s2">' + (del ? '🛵 ' + bi('طلع للتوصيل ' + o.ready, 'Out for delivery ' + o.ready) : '✅ ' + bi('جاهز للاستلام ' + o.ready, 'Ready for pickup ' + o.ready)) + '</span>'
       : o.sent === '-' ? '<span class="stage s0">📝 ' + bi('جديد · لسا ما انبعت عالمطبخ', 'New · not sent to the kitchen yet') + '</span>'
-      : '<span class="stage s1">👨‍🍳 ' + (o.sent ? bi('بالمطبخ من ' + t12(o.sent), 'In the kitchen since ' + t12(o.sent)) : bi('بالمطبخ', 'In the kitchen')) + '</span>';
+      : '<span class="stage s1">👨‍🍳 ' + (o.sent ? bi('بالمطبخ من ', 'In the kitchen since ') + '<span class="num">' + t12(o.sent) + '</span>' : bi('بالمطبخ', 'In the kitchen')) + '</span>';
     var fresh = EB.unsent(o);
     var acts = o.done ? '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
       : o.ready ? '<button class="stepb go" data-step="done" data-k="' + esc(o.key) + '">✓ ' + (del ? bi('وصل وانقبض', 'Delivered & paid') : bi('استلمو', 'Picked up')) + '</button>' +
@@ -2074,15 +2074,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=40"></script>
-<script src="hub.js?v=40"></script>
-<script src="marketing.js?v=40"></script>
-<script src="printer.js?v=40"></script>
-<script src="cashier.js?v=40"></script>
-<script src="income.js?v=40"></script>
-<script src="sandouk.js?v=40"></script>
-<script src="adjust.js?v=40"></script>
-<script src="website.js?v=40"></script>
-<script src="overview.js?v=40"></script>
+<script src="recipes.js?v=41"></script>
+<script src="hub.js?v=41"></script>
+<script src="marketing.js?v=41"></script>
+<script src="printer.js?v=41"></script>
+<script src="cashier.js?v=41"></script>
+<script src="income.js?v=41"></script>
+<script src="sandouk.js?v=41"></script>
+<script src="adjust.js?v=41"></script>
+<script src="website.js?v=41"></script>
+<script src="overview.js?v=41"></script>
 </body>
 </html>

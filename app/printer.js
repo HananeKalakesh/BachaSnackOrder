@@ -76,7 +76,7 @@ var PRN = (function () {
         out.push(b);
       }
     }
-    out.push(0x1d, 0x56, 0x42, 0);
+    out.push(0x1b, 0x64, 4, 0x1d, 0x56, 0x42, 0);   // feed 4 lines past the tear bar, then cut
     return new Uint8Array(out);
   }
   function send(data) {
@@ -97,21 +97,18 @@ var PRN = (function () {
   // RawBT: the ticket goes to the RawBT app, which prints it on the printer chosen there.
   // As a picture (RawBT turns it into dots with its own printer settings), or as ready ESC/POS bytes.
   var RAWBT = '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-  // copies: RawBT takes one job per hand-over (a second one sent straight after is lost), so the copies go in the same job:
-  // as commands, each copy with its own cut; as a picture, the copies one under the other with a cut line between
+  // copies: RawBT loses a job handed over straight after another, so as a picture each copy is its own job, 3 seconds
+  // apart (RawBT then cuts each one with its own printer settings); as commands, the copies go in one job, each with a cut
   function sendRawbt(canvas, copies) {
     copies = copies || 1;
     if (opts().rawfmt !== 'escpos') {
-      var pic = canvas;
-      if (copies > 1) {
-        var gap = 40; pic = document.createElement('canvas'); pic.width = canvas.width; pic.height = canvas.height * copies + gap * (copies - 1);
-        var g = pic.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, pic.width, pic.height);
-        for (var k = 0; k < copies; k++) {
-          g.drawImage(canvas, 0, k * (canvas.height + gap));
-          if (k < copies - 1) { var yy = (k + 1) * canvas.height + k * gap + gap / 2; g.fillStyle = '#000'; for (var x = 10; x < pic.width - 10; x += 24) g.fillRect(x, yy, 12, 3); g.font = '700 22px sans-serif'; g.textAlign = 'center'; g.fillText('✂', pic.width / 2, yy - 6) }
-        }
-      }
-      api.go('intent:' + pic.toDataURL('image/png') + RAWBT); return Promise.resolve();
+      var url = 'intent:' + canvas.toDataURL('image/png') + RAWBT;
+      api.go(url);
+      if (copies < 2) return Promise.resolve();
+      return new Promise(function (ok) {
+        var k = 1, next = function () { api.go(url); if (++k < copies) setTimeout(next, 3000); else ok() };
+        setTimeout(next, 3000);
+      });
     }
     var one = bytesOf(canvas), data = new Uint8Array(one.length * copies), s = '';
     for (var c = 0; c < copies; c++) data.set(one, c * one.length);
