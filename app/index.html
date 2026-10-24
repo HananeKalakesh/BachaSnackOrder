@@ -364,7 +364,7 @@ td.r,th.r{text-align:end}
 .ghost.wide{width:100%}
 .achouse{display:flex;flex-wrap:wrap;gap:6px}.achouse span{background:var(--sand);border-radius:999px;padding:4px 10px;font-size:14px}
 .acfoot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}.acfoot p{width:100%;margin:0}
-#box .instore{text-align:center;padding:18px}#box .instore>.usd{font-size:40px}#box .instore .num{text-align:center!important}#box .kpis.rsplit{margin:12px 0 0;grid-template-columns:1fr 1fr;gap:8px}#box .kpis.rsplit.r3{grid-template-columns:repeat(3,minmax(0,1fr))}#box .rsplit .kpi{padding:12px 8px;border-radius:18px}#box .rsplit .usd{font-size:20px}#box .rsplit .ll{font-size:11px}
+#box .instore{text-align:center;padding:18px}#box .instore>.usd{font-size:40px}#box .instore .num{text-align:center!important}#box .kpis.rsplit{margin:12px 0 0;grid-template-columns:1fr 1fr;gap:8px}#box .kpis.rsplit.r3{grid-template-columns:repeat(3,minmax(0,1fr))}#box .rsplit .kpi{padding:12px 8px;border-radius:18px}#box .rsplit .usd{font-size:20px}#box .rsplit .ll{font-size:11px}#box .tcount{margin-top:12px;padding-top:10px;border-top:1px solid var(--line,#eee)}.okm{color:#2e7d32;font-weight:700}
 .xamt > span.muted{align-self:center;min-width:76px;font-weight:700;white-space:nowrap}
 .cmodes{flex-wrap:wrap;margin:6px 0 4px}.ctable td{vertical-align:top}.ctable .hlink{font:inherit;font-weight:800;background:none;border:0;padding:0;color:inherit;cursor:pointer}
 .xform .wide{grid-column:1/-1}
@@ -1055,7 +1055,7 @@ function dayMoney(day) {
   var bx = (boxes() || []).filter(function (x) { return x.day === day })[0], buys = (purchases() || []).filter(function (p) { return p.day === day });
   var own = buys.filter(function (p) { return p.cat === 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0), exp = buys.filter(function (p) { return p.cat !== 'Owners' });
   var h = '<div class="cols daymoney"><div class="card"><h3 class="display">📦 ' + bi('الصندوق', 'Cash box') + '</h3>' + (bx ?
-    '<div class="pay2 three"><div>' + bi('كاش', 'Cash') + amount(bx.cashLbp + bx.cashUsd * S.rate) + '</div><div>' + bi('ويش', 'Whish') + amount(bx.whish + (bx.whishUsd || 0) * S.rate) + '</div><div>' + bi('للشيف', 'To the chef') + amount(bx.left) + '</div></div>'
+    '<div class="pay2 three"><div>' + bi('كاش', 'Cash') + amount(bx.cashLbp + bx.cashUsd * S.rate) + '</div><div>' + bi('ويش', 'Whish') + amount(bx.whish + (bx.whishUsd || 0) * S.rate) + '</div><div>' + bi('للمطعم', 'To the resto') + amount(bx.left) + '</div></div>' + (typeof boxDiff === 'function' && boxDiff(bx) ? '<p class="note2">' + diffLine(boxDiff(bx)) + '</p>' : '')
     : '<p class="muted">' + bi('ما انعدّ الصندوق بهاليوم.', 'The cash box was not counted this day.') + '</p>') +
     '<p class="note2">💰 ' + bi('ربح الأصحاب: ', 'Owners\' share: ') + '<b class="num">' + $usd(own) + '</b> <small class="muted num">' + ll(own) + '</small></p></div>' +
     '<div class="card"><h3 class="display">📉 ' + bi('المصاريف', 'Expenses') + ' <small class="num">' + $usd(exp.reduce(function (a, p) { return a + p.lbp }, 0)) + '</small></h3>' + (exp.length ? '<table>' + exp.map(function (p) {
