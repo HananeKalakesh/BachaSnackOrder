@@ -227,7 +227,7 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .months.week .mn{font-size:13px}
 .months.week b{font-size:14px}
 .months.hrs .mn{font-size:11px;line-height:1.15;white-space:normal}.months.hrs .mn b{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:-.04em;white-space:nowrap}.months.hrs{gap:2px}.months.hrs .mo{overflow:visible}.months.hrs b{font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
-.note2{margin:10px 0 0;font-size:13px}
+.note2{margin:10px 0 0;font-size:13px}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -488,7 +488,7 @@ td.r,th.r{text-align:end}
 <div class="top">
   <img class="logo" src="https://hananekalakesh.github.io/BachaSnackOrder/assets/elbash/noar-green.svg" alt="El Bash">
   <span class="net" id="net"></span>
-  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="box"><span class="ar">اليوم</span><span class="en">Tonight</span></button><button data-view="in"><span class="ar">المدخول</span><span class="en">Money in</span><b class="tabbadge" id="inBadge" hidden></b></button><button data-view="report"><span class="ar">الحسابات</span><span class="en">Accounts</span><b class="tabbadge" data-owed hidden></b></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Money out</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
+  <div class="tabs"><button data-view="home"><span class="ar">الرئيسية</span><span class="en">Home</span></button><button class="on" data-view="order"><span class="ar">طلب جديد</span><span class="en">New order</span></button><button data-view="orders"><span class="ar">طلبات اليوم</span><span class="en">Today's orders</span><b class="tabbadge" id="webBadge" hidden></b></button><button data-view="owedt"><span class="ar">ما دفعو اليوم</span><span class="en">Not paid today</span></button><button data-view="owed"><span class="ar">ما دفعو</span><span class="en">Not paid</span></button><button data-view="over"><span class="ar">نظرة عامة</span><span class="en">Overview</span></button><button data-view="box"><span class="ar">اليوم</span><span class="en">Today</span></button><button data-view="dash"><span class="ar">الملخّص</span><span class="en">Dashboard</span></button><button data-view="in"><span class="ar">المدخول</span><span class="en">Money in</span><b class="tabbadge" id="inBadge" hidden></b></button><button data-view="report"><span class="ar">المبيعات</span><span class="en">Sales</span><b class="tabbadge" data-owed hidden></b></button><button data-view="exp"><span class="ar">المصاريف</span><span class="en">Money out</span></button><button data-view="inc"><span class="ar">دخل تاني</span><span class="en">Other income</span></button><button data-view="site"><span class="ar">الموقع</span><span class="en">Website</span></button><button data-view="rec"><span class="ar">الوصفات</span><span class="en">Recipes</span></button><button data-view="stock"><span class="ar">مخزون اليوم</span><span class="en">Today's stock</span></button><button data-view="avail"><span class="ar">المنيو</span><span class="en">Menu</span></button><button data-view="market"><span class="ar">ماركتنغ</span><span class="en">Marketing</span></button></div>
   <button class="langbtn busybtn" id="busyBtn" type="button" hidden></button>
   <button class="langbtn prnbtn" id="prnBtn" type="button" hidden></button>
   <button class="langbtn rolebtn" id="roleBtn" type="button"></button>
@@ -523,6 +523,7 @@ td.r,th.r{text-align:end}
 <div class="report" id="reportView"><div class="wrap" id="rep"></div></div>
 <div class="report" id="expView"><div class="wrap" id="exp"></div></div>
 <div class="report" id="boxView"><div class="wrap" id="box"></div></div>
+<div class="report" id="dashView"><div class="wrap" id="dash"></div></div>
 <div class="report" id="incView"><div class="subnav"><button data-sub="report"><span class="ar">→ الحسابات</span><span class="en">← Accounts</span></button></div><div class="wrap" id="inc"></div></div>
 <div class="report" id="siteView"><div class="wrap" id="site"></div></div>
 <div class="report" id="recView"><div class="wrap" id="rec"></div></div>
@@ -930,6 +931,7 @@ function showView(v) {
   $('#expView').style.display = v === 'exp' ? 'block' : 'none';
   $('#incView').style.display = v === 'inc' ? 'block' : 'none';
   $('#boxView').style.display = v === 'box' ? 'block' : 'none';
+  $('#dashView').style.display = v === 'dash' ? 'block' : 'none';
   $('#siteView').style.display = v === 'site' ? 'block' : 'none';
   $('#recView').style.display = v === 'rec' ? 'block' : 'none';
   $('#homeView').style.display = v === 'home' ? 'block' : 'none';
@@ -944,6 +946,7 @@ function showView(v) {
   if (v === 'exp') showExpenses();
   if (v === 'inc') showIncome();
   if (v === 'box') showSandouk();
+  if (v === 'dash') showDash();
   if (v === 'site') showWebsite();
   if (v === 'rec') showRecipes();
   if (v === 'home') showHub();
@@ -1065,6 +1068,7 @@ function laterBody(D) {
 
 // The views, side by side at the top of the tab
 function modeSwitch() {
+  return '';   // the Sales tab is the calendar only: all time lives in the Dashboard tab
   return '<div class="modes"><button data-mode="month"' + (S.mode === 'month' ? ' class="on"' : '') + '>' + bi('التقويم', 'Calendar') + '</button>' +
     '<button data-mode="all"' + (S.mode === 'all' ? ' class="on"' : '') + '>' + bi('الملخّص', 'Dashboard') + '</button></div>';
 }
@@ -1170,40 +1174,21 @@ function dashMoney(sales, today) {
   if (t) h += profitKpis(sales, t, '', other).replace(/<div class="kpis">[\s\S]*$/, '');
   return h + '<div class="morelinks"><button data-goview="owed">' + bi('ما دفعو', 'Not paid') + '</button><button data-goview="inc">' + bi('دخل تاني ورأس مال', 'Other income & capital') + '</button></div>';
 }
-function drawAll() {
+// Dashboard, sales part: totals, average by weekday and by hour, payments and best sellers, for every order so far
+function salesAll(A) {
   var today = ymd(bizDate());
-  fetchR('all', 'all', '2020-01-01', today);
-  if (S.locked) return;
-  var A = S.all.all, wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
-  var h = '<div class="shead">' + modeSwitch() + '<h2 class="display">' + bi('كل الوقت', 'All time') + '</h2>' +
-    (A && A.days.length ? '<span class="since">' + bi('من ', 'Since ') + dayName(A.days[0].date) + ' <span class="num">' + A.days[0].date.slice(0, 4) + '</span></span>' : '') + '</div>';
-  h += salesNote();
-  if (!A) { $('#rep').innerHTML = h + wait; return }
   var s = A.summary, best = null, months = {}, wk = [0, 0, 0, 0, 0, 0, 0], wkDays = [0, 0, 0, 0, 0, 0, 0];
   A.days.forEach(function (d) {
     if (!best || d.sales > best.sales) best = d;
     months[d.date.slice(0, 7)] = (months[d.date.slice(0, 7)] || 0) + d.sales;
     var w = (new Date(d.date + 'T12:00').getDay() + 6) % 7; wk[w] += d.sales; wkDays[w]++;
   });
-  try { h += dashMoney(s.sales, today) } catch (e) { h += '<p class="offline">' + bi('سكّر التطبيق وافتحو من جديد ليحمّل آخر نسخة.', 'Close and reopen the app to load the latest version.') + '</p>' }
-  h += '<div class="kpis">' +
+  var h = '<div class="kpis">' +
     '<div class="kpi"><small>' + bi('كل المبيعات', 'All sales') + '</small>' + amount(s.sales) + '</div>' +
     '<div class="kpi"><small>' + bi('الطلبات', 'Orders') + '</small><b class="usd num">' + fmt(s.orders) + '</b>' +
       (s.orders ? '<small class="ll">' + bi('معدّل الطلب', 'Average order') + ' <span class="num">' + $usd(s.ordered / s.orders) + '</span></small>' : '') + '</div>' +
     '<div class="kpi"><small>' + bi('أحسن يوم', 'Best day') + '</small>' + (best ? '<b class="usd num">' + $usd(best.sales) + '</b><small class="ll">' + dayName(best.date) + ' <span class="num">' + best.date.slice(0, 4) + '</span></small>' : '<b class="usd">–</b>') + '</div>' +
     '<div class="kpi"><small>' + bi('الأصناف المباعة', 'Items sold') + '</small><b class="usd num">' + fmt(s.items) + '</b></div></div>';
-
-  // every month since the first order, tap one to open it
-  var keys = [], k0 = A.days.length ? A.days[0].date.slice(0, 7) : today.slice(0, 7);
-  var y = +k0.slice(0, 4), m = +k0.slice(5) - 1;
-  while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
-  var maxM = Math.max.apply(null, keys.map(function (k) { return months[k] || 0 })) || 1;
-  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('حسب الشهر', 'By month') + '</h3></div><div class="months all">' +
-    keys.map(function (k) {
-      var v = months[k] || 0, mi = +k.slice(5) - 1;
-      return '<button class="mo" data-goto="' + k + '"><span class="track"><i style="height:' + (v ? Math.max(4, v / maxM * 100) : 0) + '%"></i></span>' +
-        '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span><b class="num">' + (v ? $usd(v) : '–') + '</b></button>';
-    }).join('') + '</div></div>';
 
   // average sales on each day of the week (days with orders only)
   var avg = wk.map(function (v, i) { return wkDays[i] ? v / wkDays[i] : 0 }), maxW = Math.max.apply(null, avg) || 1;
@@ -1225,14 +1210,52 @@ function drawAll() {
       }).join('') + '</div><p class="muted note2">' + bi('معدّل الساعة بالأيام اللي فيها طلبات', 'Average per hour on days with orders') + '</p></div>';
   }
   h += '<div class="cols"><div>' + week + hourly + '</div><div>' + sideCards(A, bi('لسا ما في طلبات', 'No orders yet')) + '</div></div>';
-  $('#rep').innerHTML = h;
-  var strip = document.querySelector('.months.all');  // open the month strip on the latest months
+  return h;
+}
+
+
+/* ---------- Dashboard (Management): everything all time in one place ---------- */
+var DS = {locked: false};
+function showDash() {
+  if (!SET.loaded) { $('#dash').innerHTML = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
+  if (SET.pin && pin() !== SET.pin && !(/^\d+$/.test(pin()) && Number(pin()) === Number(SET.pin))) {
+    DS.locked = true; var had = pin(); setPin('');
+    return pinScreen(had ? bi('الرمز غلط', 'Wrong PIN') : '', '#dash', showDash, bi('الملخّص', 'Dashboard'));
+  }
+  DS.locked = false; S.all = {}; S.rate = RATE;
+  drawDash();
+  EB.read('sales', {'Orders': 0, 'Order Items': 0}).then(function (r) { SALES = r; S.all = {}; S.years = {}; S.months = {}; S.days = {}; S.err = ''; drawDash() }, function (e) {
+    S.err = e.offline ? (EB.cached('sales') ? 'OFFLINE' : 'OFFLINE_EMPTY') : (e.message || String(e)); drawDash();
+  });
+  EB.read('purchases', {'Purchases': 0}).then(function (r) { EX.data = r; drawDash() }, function () {});
+  EB.read('sandouk', {'Sandouk': 0}).then(function (r) { BX.data = r; drawDash() }, function (e) { if (/Unknown tab/.test(e.message)) { BX.data = {Sandouk: null, at: 0}; drawDash() } });
+  if (!IN.data) EB.read('income', {'Income': 0}).then(function (r) { IN.data = r; drawDash() }, function (e) { if (/Unknown tab/.test(e.message)) { IN.data = {Income: null, at: 0}; drawDash() } });
+}
+function drawDash() {
+  if (DS.locked || $('#dashView').style.display !== 'block') return;
+  var today = ymd(bizDate()), wait = '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>';
+  fetchR('all', 'all', '2020-01-01', today);
+  var A = S.all.all, list = purchases();
+  var h = '<div class="shead"><h2 class="display">' + bi('الملخّص · كل الوقت', 'Dashboard · all time') + '</h2>' +
+    (A && A.days.length ? '<span class="since">' + bi('من ', 'Since ') + dayName(A.days[0].date) + ' <span class="num">' + A.days[0].date.slice(0, 4) + '</span></span>' : '') + '</div>' + salesNote();
+  if (!A) { $('#dash').innerHTML = h + wait; return }
+  try { h += dashMoney(A.summary.sales, today) } catch (e) { h += '<p class="offline">' + bi('سكّر التطبيق وافتحو من جديد ليحمّل آخر نسخة.', 'Close and reopen the app to load the latest version.') + '</p>' }
+  h += monthsBoth(list, A);
+  h += '<h2 class="display dsec">📈 ' + bi('المبيعات', 'Sales') + '</h2>' + salesAll(A);
+  h += '<h2 class="display dsec">📉 ' + bi('المصاريف', 'Expenses') + '</h2>' + (list ? expAll(list, A) : wait);
+  $('#dash').innerHTML = h;
+  var strip = document.querySelector('#dash .months.all');  // open the month strip on the latest months
   if (strip && strip.lastElementChild) strip.lastElementChild.scrollIntoView({block: 'nearest', inline: 'nearest'});
 }
+$('#dash').addEventListener('click', function (e) {
+  if (DS.locked) return;
+  var g = e.target.closest('[data-goview]'); if (g) return showView(g.dataset.goview);
+  var b = e.target.closest('[data-goto]');
+  if (b) { S.mode = 'month'; S.y = +b.dataset.goto.slice(0, 4); S.m = +b.dataset.goto.slice(5) - 1; S.sel = monthDay(); showView('report') }
+});
 
 function drawSales() {
   if (S.locked) return;
-  if (S.mode === 'all') return drawAll();
   if (S.mode !== 'month') S.mode = 'month';
   var y = S.y, m = S.m, mk = monthKey(y, m), today = ymd(bizDate());
   fetchR('years', y, y + '-01-01', y + '-12-31');
@@ -1593,7 +1616,7 @@ function start() { loadMenu(); loadRecent().then(checkWeb, function () {}); if (
 /* ---------- who uses this device ---------- */
 // each user's tabs, in order; the first one opens
 var ROLES = {cashier: [['order', 'orders', 'owedt', 'avail'], 'الكاشير', 'Cashier', '🧾'], chef: [['rec', 'stock', 'exp'], 'الشيف', 'Chef', '👨‍🍳'],
-  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['box', 'report', 'exp'], 'الإدارة', 'Management', '🔒'],
+  marketing: [['market'], 'الماركتنغ', 'Marketing', '📣'], manage: [['box', 'report', 'exp', 'dash'], 'الإدارة', 'Management', '🔒'],
   developer: [['home', 'site'], 'المطوّر', 'Developer', '🛠']};
 function roleTabs() {
   var r = ROLES[ROLE], tabs = $('.tabs');
@@ -1751,7 +1774,7 @@ function profitKpis(sales, t, label, other) {
     '<div class="kpi"><small>' + bi('معدّات (استثمار)', 'Equipment (investment)') + '</small>' + amount(t.invest) + '</div></div>';
 }
 function expModes() {
-  return '<div class="modes">' + [['add', 'زيد مصروف', 'Add'], ['cal', 'التقويم', 'Calendar'], ['dash', 'الملخّص', 'Dashboard']].map(function (x) {
+  return '<div class="modes">' + [['add', 'زيد مصروف', 'Add'], ['cal', 'التقويم', 'Calendar']].map(function (x) {
     return '<button data-xmode="' + x[0] + '"' + (EX.mode === x[0] ? ' class="on"' : '') + '>' + bi(x[1], x[2]) + '</button>' }).join('') + '</div>';
 }
 function expNote() {
@@ -1767,7 +1790,7 @@ function drawExpenses() {
   EX.mode = CHEF ? 'add' : EX.mode || 'add';
   var list = purchases();
   if (EX.mode === 'cal') return expCalendar(list);
-  if (EX.mode === 'dash') return expDashboard(list);
+  if (EX.mode === 'dash') EX.mode = 'add';   // the dashboard is its own tab now
   // Add: the form, then the latest purchases
   var c = EX.cat ? catOf(EX.cat) : null;
   var h = '<div class="shead">' + (CHEF ? '' : expModes()) + '<h2 class="display">' + (EX.edit ? bi('عدّل المصروف', 'Edit purchase') : bi('زيد مصروف', 'Add a purchase')) + '</h2></div>' + expNote() +
@@ -1825,27 +1848,12 @@ function expCalendar(list) {
 }
 
 // Dashboard: everything so far, month by month, by category and by supplier
-function expDashboard(list) {
-  var h = '<div class="shead">' + expModes() + '<h2 class="display">' + bi('الملخّص · كل الوقت', 'Dashboard · all time') + '</h2></div>' + expNote();
-  if (!list) { $('#exp').innerHTML = h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>'; return }
-  var today = ymd(bizDate()), t = tally(list), A = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2020-01-01', today) : null;
-  // from the first purchase or the first sale, whichever came first
+// Dashboard, expenses part: by category, by supplier and the monthly averages, since the first sale or purchase
+function expAll(list, A) {
+  var today = ymd(bizDate()), t = tally(list);
   var first = list.reduce(function (a, p) { return p.day < a ? p.day : a }, A && A.days.length ? A.days[0].date : today);
-  h += profitKpis(A ? A.summary.sales : null, t, '', incomeIn('2000-01-01', today));
-  // month by month: spent (bar) and profit (sales minus spent)
-  var spentM = {}, salesM = {}, keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
-  list.forEach(function (p) { if (catOf(p.cat)[3] === 'food' || catOf(p.cat)[3] === 'packaging' || catOf(p.cat)[3] === 'running') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
-  if (A) A.days.forEach(function (d) { salesM[d.date.slice(0, 7)] = (salesM[d.date.slice(0, 7)] || 0) + d.sales });
+  var keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
   while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
-  var maxM = Math.max.apply(null, keys.map(function (k) { return Math.max(spentM[k] || 0, salesM[k] || 0) })) || 1;
-  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('كل شهر', 'Month by month') + '</h3>' +
-    '<span class="tot"><i class="key ks"></i>' + bi('المبيعات', 'Sales') + ' <i class="key kx"></i>' + bi('المصاريف', 'Expenses') + '</span></div><div class="months all">' +
-    keys.map(function (k) {
-      var s = salesM[k] || 0, x = spentM[k] || 0, mi = +k.slice(5) - 1, p = s - x;
-      return '<button class="mo xmo" data-xgoto="' + k + '"><span class="track two"><i class="ks" style="height:' + (s ? Math.max(3, s / maxM * 100) : 0) + '%"></i><i class="kx" style="height:' + (x ? Math.max(3, x / maxM * 100) : 0) + '%"></i></span>' +
-        '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span>' +
-        '<b class="num' + (p < 0 ? ' neg' : '') + '">' + (s || x ? $usd(p) : '–') + '</b></button>';
-    }).join('') + '</div><p class="muted note2">' + bi('الرقم تحت كل شهر هو الربح. دق على شهر لتفتح تقويمو.', 'The number under each month is its profit. Tap a month to open its calendar.') + '</p></div>';
   // by supplier
   var bySup = {};
   list.forEach(function (p) { var s = p.supplier || ''; if (s) bySup[s] = (bySup[s] || 0) + p.lbp });
@@ -1853,13 +1861,32 @@ function expDashboard(list) {
   var supCard = '<div class="card"><h3 class="display">' + bi('حسب المورّد', 'By supplier') + '</h3>' + (sups.length ? sups.map(function (s) {
     return '<div class="seller"><div class="tn">' + esc(s) + '<span class="tq num">' + $usd(bySup[s]) + '</span></div><div class="tb"><i style="width:' + Math.max(3, bySup[s] / maxS * 100) + '%"></i></div></div>';
   }).join('') : '<p class="muted">' + bi('اكتب «من وين» لما تزيد مصروف لتبيّن هون.', 'Fill in "Supplier" when adding a purchase to see it here.') + '</p>') + '</div>';
-  h += '<div class="cols">' + catBars(t, bi('لسا ما في مصاريف', 'No purchases yet')) + '<div>' + supCard +
+  return '<div class="cols">' + catBars(t, bi('لسا ما في مصاريف', 'No purchases yet')) + '<div>' + supCard +
     '<div class="card"><h3 class="display">' + bi('معدّل الشهر', 'Monthly average') + '</h3><p>' + bi('مصاريف', 'Expenses') + ': <b class="num">' +
     $usd(t.spent / Math.max(1, keys.length)) + '</b> · ' + bi('مبيعات', 'Sales') + ': <b class="num">' + (A ? $usd(A.summary.sales / Math.max(1, keys.length)) : '…') + '</b></p>' +
     '<p class="muted note2">' + bi('من ', 'Since ') + dayName(first) + ' <span class="num">' + first.slice(0, 4) + '</span></p></div></div></div>';
-  $('#exp').innerHTML = h;
 }
 
+// Dashboard, middle: sales and expenses side by side for every month, the profit under each; tap one to open it in Sales
+function monthsBoth(list, A) {
+  var today = ymd(bizDate()), h = '';
+  var first = (list || []).reduce(function (a, p) { return p.day < a ? p.day : a }, A && A.days.length ? A.days[0].date : today);
+  // month by month: spent (bar) and profit (sales minus spent)
+  var spentM = {}, salesM = {}, keys = [], y = +first.slice(0, 4), m = +first.slice(5, 7) - 1;
+  (list || []).forEach(function (p) { if (catOf(p.cat)[3] === 'food' || catOf(p.cat)[3] === 'packaging' || catOf(p.cat)[3] === 'running') spentM[p.day.slice(0, 7)] = (spentM[p.day.slice(0, 7)] || 0) + p.lbp });
+  if (A) A.days.forEach(function (d) { salesM[d.date.slice(0, 7)] = (salesM[d.date.slice(0, 7)] || 0) + d.sales });
+  while (monthKey(y, m) <= today.slice(0, 7)) { keys.push(monthKey(y, m)); if (++m > 11) { m = 0; y++ } }
+  var maxM = Math.max.apply(null, keys.map(function (k) { return Math.max(spentM[k] || 0, salesM[k] || 0) })) || 1;
+  h += '<div class="card year"><div class="chead"><h3 class="display">' + bi('كل شهر', 'Month by month') + '</h3>' +
+    '<span class="tot"><i class="key ks"></i>' + bi('المبيعات', 'Sales') + ' <i class="key kx"></i>' + bi('المصاريف', 'Expenses') + '</span></div><div class="months all">' +
+    keys.map(function (k) {
+      var s = salesM[k] || 0, x = spentM[k] || 0, mi = +k.slice(5) - 1, p = s - x;
+      return '<button class="mo xmo" data-goto="' + k + '"><span class="track two"><i class="ks" style="height:' + (s ? Math.max(3, s / maxM * 100) : 0) + '%"></i><i class="kx" style="height:' + (x ? Math.max(3, x / maxM * 100) : 0) + '%"></i></span>' +
+        '<span class="mn">' + bi(MONTHS_AR[mi], MONTHS_EN[mi].slice(0, 3)) + ' <span class="num">' + k.slice(2, 4) + '</span></span>' +
+        '<b class="num' + (p < 0 ? ' neg' : '') + '">' + (s || x ? $usd(p) : '–') + '</b></button>';
+    }).join('') + '</div><p class="muted note2">' + bi('الرقم تحت كل شهر هو الربح. دق على شهر لتفتح تقويمو.', 'The number under each month is its profit. Tap a month to open its calendar.') + '</p></div>';
+  return h;
+}
 $('#exp').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || EX.locked) return;
   if (b.dataset.xmode) { EX.mode = b.dataset.xmode; return drawExpenses() }
