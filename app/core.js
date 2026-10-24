@@ -251,7 +251,7 @@ var EB = (function () {
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
       if (f.t === 'delete' && i >= 0) list.splice(i, 1);
-      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' ? 0 : list[i].total - (f.disc || 0); list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0; list[i].disc = f.disc || 0; list[i].discWhy = f.why || '' }
+      if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' || f.payment === 'Unpaid' ? 0 : list[i].total - (f.disc || 0); list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0; list[i].disc = f.disc || 0; list[i].discWhy = f.why || '' }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
       if (f.t === 'unsent' && i >= 0) { list[i].sent = '-'; list[i].items.forEach(function (x) { x.sentQty = 0 }) }
@@ -392,9 +392,9 @@ var EB = (function () {
   // A Not paid order paid in full, Cash or Whish: on pickup / delivery the same day, or later (then the day it was paid)
   // Split: whish is the part paid by Whish (L.L.), the rest was cash
   EB.paid = function (o, payment, day, whish, disc, why) {
-    var later = day && day !== o.day && payment !== 'House' ? day : '', part = payment === 'Split' ? whish || 0 : '';
-    disc = payment === 'House' ? 0 : Math.max(0, Math.min(o.total, disc || 0));
-    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': payment === 'House' ? 0 : o.total - disc, 'Paid later': later, 'Whish part (L.L.)': part,
+    var none = payment === 'House' || payment === 'Unpaid', later = day && day !== o.day && !none ? day : '', part = payment === 'Split' ? whish || 0 : '';
+    disc = none ? 0 : Math.max(0, Math.min(o.total, disc || 0));
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Payment': payment, 'Paid ($)': 0, 'Paid (L.L.)': none ? 0 : o.total - disc, 'Paid later': later, 'Whish part (L.L.)': part,
       'Discount (L.L.)': disc || '', 'Discount note': disc ? why || '' : ''}}],
       {t: 'paid', key: o.key, payment: payment, later: later, whish: part || 0, disc: disc, why: disc ? why || '' : ''});
   };

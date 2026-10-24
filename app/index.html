@@ -416,6 +416,7 @@ td.r,th.r{text-align:end}
 .pill.Unpaid{background:var(--red);color:#fff}
 .pill.House{background:var(--mustard,#F2B705);color:var(--ink)}
 .pill.Later{background:var(--sand);color:var(--ink)}
+button.pill.paychg{border:0;font:inherit;font-size:13px;cursor:pointer;line-height:inherit}
 
 /* today's orders */
 .offline{margin:0 0 12px;padding:8px 14px;border-radius:12px;background:var(--mustard);color:var(--ink);font-weight:700}
@@ -600,7 +601,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=51"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=52"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1610,8 +1611,8 @@ function drawOrders() {
         (o.done || o.ready ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
       '<div class="obody">' + stage + who(o) + '<div class="oitems">' + itemsOf(o, !o.done && !o.ready && o.sent !== '-' && fresh.length) + '</div>' +
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
-      '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + (later ? 'Later' : esc(o.payment)) + '">' +
-        (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + '</span>' +
+      '<div class="oside">' + amount(o.total) + '<span class="tags"><button class="pill paychg ' + (later ? 'Later' : esc(o.payment)) + '" data-paychg="' + esc(o.key) + '" title="' + esc(T('غيّر طريقة الدفع', 'Change the payment')) + '">' +
+        (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + ' ✎</button>' +
         typeTag(o) + '</span>' + (o.disc ? '<span class="feetag disc">🏷️ ' + bi('خصم ', 'Discount ') + '<b class="num">' + $usd(o.disc) + '</b>' + (o.discWhy ? ' · ' + esc(o.discWhy) : '') + '</span>' : '') + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
           '<br>' + bi('عالزبون: ', 'Customer pays: ') + '<b class="num">' + money(o.total + o.fee) + '</b></span>' : '') + '</div>' +
       '<div class="oacts">' + acts + (PRN.can() && !(o.sent === '-' && !o.done && !o.ready) && !(fresh.length && !o.done && !o.ready) ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
@@ -1624,10 +1625,11 @@ function drawOrders() {
     '<div class="paybtns"><button class="payb cash" data-wa="send">📲 ' + bi('ابعت واتساب', 'Send WhatsApp') + '</button><button class="payb whish" data-wa="skip">' + bi('تجاهل', 'Skip') + '</button></div></div></div>';
   // Done on an order not paid yet: how it was paid
   var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
-  if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + bi('الطلب #' + pf.num + ': الحساب', 'Order #' + pf.num + ': payment') + '</h3>' +
+  if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + (TD.chg ? bi('الطلب #' + pf.num + ': غيّر الدفع', 'Order #' + pf.num + ': change the payment') : bi('الطلب #' + pf.num + ': الحساب', 'Order #' + pf.num + ': payment')) + '</h3>' +
+    (TD.chg ? '<p class="muted">' + bi('هلّق: ', 'Now: ') + '<b>' + bi(PAY_AR[pf.payment] || pf.payment, pf.payment) + '</b>' + (pf.disc ? ' · ' + bi('خصم ', 'discount ') + $usd(pf.disc) : '') + '</p>' : '') +
     '<p>' + bi('كيف انْدفع؟', 'How was it paid?') + ' <b class="num">' + $usd(pf.total) + '</b> <small class="muted num">' + ll(pf.total) + '</small></p>' +
-    (TD.disc ? '<div class="discbox"><b>🏷️ ' + bi('خصم', 'Discount') + '</b><input id="discPaid" inputmode="decimal" placeholder="' + esc(T('قدّيش دفعو؟ ($ أو ليرة) أو خصم متل 10%', 'How much did they pay? ($ or L.L.) or a discount like 10%')) + '">' +
-      '<input id="discWhy" maxlength="40" placeholder="' + esc(T('ليش؟ (عيلة، صاحب…) اختياري', 'Why? (family, friend…) optional')) + '"><div id="discShow" class="muted"></div></div>'
+    (TD.disc ? '<div class="discbox"><b>🏷️ ' + bi('خصم', 'Discount') + '</b><input id="discPaid" inputmode="decimal" value="' + (TD.chg && pf.disc ? pf.total - pf.disc : '') + '" placeholder="' + esc(T('قدّيش دفعو؟ ($ أو ليرة) أو خصم متل 10%', 'How much did they pay? ($ or L.L.) or a discount like 10%')) + '">' +
+      '<input id="discWhy" maxlength="40" value="' + (TD.chg && pf.disc ? esc(pf.discWhy || '') : '') + '" placeholder="' + esc(T('ليش؟ (عيلة، صاحب…) اختياري', 'Why? (family, friend…) optional')) + '"><div id="discShow" class="muted"></div></div>'
       : '<button class="splitl" data-disc="1">🏷️ ' + bi('في خصم', 'There\'s a discount') + '</button>') +
     '<div class="paybtns"><button class="payb cash" data-payhow="Cash">' + bi('كاش', 'Cash') + '</button><button class="payb whish" data-payhow="Whish">' + bi('ويش', 'Whish') + '</button></div>' +
     '<button class="splitl" data-payhow="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button>' +
@@ -1716,12 +1718,14 @@ $('#ord').addEventListener('click', function (e) {
       EB.ready(s, hhmmNow()); askWhatsapp(s, 'ready');
       toast(s.type === 'Delivery' ? 'الطلب #' + s.num + ' طلع للتوصيل' : 'الطلب #' + s.num + ' جاهز', 'Order #' + s.num + (s.type === 'Delivery' ? ' out for delivery' : ' ready'));
     }
-    if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; TD.disc = false; return drawOrders() } EB.done(s, hhmmNow()) }
+    if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; TD.disc = false; TD.chg = false; return drawOrders() } EB.done(s, hhmmNow()) }
     if (b.dataset.step === 'back') { if (s.done) EB.done(s, ''); else EB.ready(s, '') }
     return drawOrders();
   }
   if (b && b.dataset.wa) { var wa = TD.wa; TD.wa = null; if (wa && b.dataset.wa === 'send') whatsapp(wa.o, wa.kind); return drawOrders() }
   if (b && b.dataset.msg) { var u = TD.list.filter(function (x) { return x.key === b.dataset.msg })[0]; if (u) whatsapp(u, 'ready'); return }
+  // the payment tag: change how an order was paid (a mistake, Whish that was really cash…)
+  if (b && b.dataset.paychg) { var pc = TD.list.filter(function (x) { return x.key === b.dataset.paychg })[0]; if (!pc) return; TD.payFor = pc.key; TD.chg = true; TD.disc = !!pc.disc; return drawOrders() }
   if (b && b.dataset.disc) { TD.disc = true; drawOrders(); var di = $('#discPaid'); if (di) di.focus(); return }
   if (b && b.dataset.payhow) {
     var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0], part = null, disc = 0, why = '';
@@ -1730,7 +1734,16 @@ $('#ord').addEventListener('click', function (e) {
       if (disc == null) { $('#discShow').innerHTML = '<span class="owe">' + bi('اكتب قدّيش دفعو (أقل من الحساب) أو نسبة الخصم', 'Type what they paid (less than the total) or the discount %') + '</span>'; return }
     }
     if (q && b.dataset.payhow === 'Split' && (part = askSplit({total: q.total - disc})) == null) return;
-    TD.payFor = null; TD.disc = false;
+    var chg = TD.chg; TD.payFor = null; TD.disc = false; TD.chg = false;
+    if (q && chg && b.dataset.payhow !== 'cancel') {
+      // keeps the day it was paid on; an order not paid before counts as paid today
+      var same = b.dataset.payhow === q.payment && disc === (q.disc || 0) && (b.dataset.payhow !== 'Split' || part === q.whish);
+      if (!same) {
+        EB.paid(q, b.dataset.payhow, q.payment === 'Unpaid' ? EB.bizDay(DAY_END) : q.paidLater || q.day, part, disc, why);
+        toast('#' + q.num + ': ' + (PAY_AR[b.dataset.payhow] || b.dataset.payhow), '#' + q.num + ': ' + b.dataset.payhow);
+      }
+      return drawOrders();
+    }
     if (q && b.dataset.payhow !== 'cancel') {
       if (b.dataset.payhow !== 'Unpaid') EB.paid(q, b.dataset.payhow, EB.bizDay(DAY_END), part, disc, why);
       if (disc) toast('خصم ' + $usd(disc) + ' على #' + q.num, 'Discount ' + $usd(disc) + ' on #' + q.num);
@@ -2170,16 +2183,16 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=51"></script>
-<script src="hub.js?v=51"></script>
-<script src="marketing.js?v=51"></script>
-<script src="stock.js?v=51"></script>
-<script src="printer.js?v=51"></script>
-<script src="cashier.js?v=51"></script>
-<script src="income.js?v=51"></script>
-<script src="sandouk.js?v=51"></script>
-<script src="adjust.js?v=51"></script>
-<script src="website.js?v=51"></script>
-<script src="overview.js?v=51"></script>
+<script src="recipes.js?v=52"></script>
+<script src="hub.js?v=52"></script>
+<script src="marketing.js?v=52"></script>
+<script src="stock.js?v=52"></script>
+<script src="printer.js?v=52"></script>
+<script src="cashier.js?v=52"></script>
+<script src="income.js?v=52"></script>
+<script src="sandouk.js?v=52"></script>
+<script src="adjust.js?v=52"></script>
+<script src="website.js?v=52"></script>
+<script src="overview.js?v=52"></script>
 </body>
 </html>
