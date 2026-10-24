@@ -592,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=43"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=44"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1609,7 +1609,8 @@ $('#ord').addEventListener('click', function (e) {
     var w = (TD.waiting || []).filter(function (x) { return x.key === (b.dataset.accept || b.dataset.reject) })[0]; if (!w) return;
     // accepted: it joins the orders, and WhatsApp opens with the confirmation for the customer (the cashier taps send)
     if (b.dataset.accept) {
-      EB.status(w, 'Accepted'); autoPrint(w); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
+      // it waits as New until 🖨 Print sends it to the kitchen, like the orders typed here
+      EB.status(w, 'Accepted'); EB.notSent(w); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
       askWhatsapp(w, 'confirm');
     }
     else if (confirm(T('ترفض الطلب #' + w.num + '؟', 'Reject order #' + w.num + '?'))) {
@@ -2096,15 +2097,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=43"></script>
-<script src="hub.js?v=43"></script>
-<script src="marketing.js?v=43"></script>
-<script src="printer.js?v=43"></script>
-<script src="cashier.js?v=43"></script>
-<script src="income.js?v=43"></script>
-<script src="sandouk.js?v=43"></script>
-<script src="adjust.js?v=43"></script>
-<script src="website.js?v=43"></script>
-<script src="overview.js?v=43"></script>
+<script src="recipes.js?v=44"></script>
+<script src="hub.js?v=44"></script>
+<script src="marketing.js?v=44"></script>
+<script src="printer.js?v=44"></script>
+<script src="cashier.js?v=44"></script>
+<script src="income.js?v=44"></script>
+<script src="sandouk.js?v=44"></script>
+<script src="adjust.js?v=44"></script>
+<script src="website.js?v=44"></script>
+<script src="overview.js?v=44"></script>
 </body>
 </html>

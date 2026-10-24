@@ -249,6 +249,7 @@ var EB = (function () {
       if (f.t === 'paid' && i >= 0) { list[i].payment = f.payment; list[i].received = f.payment === 'House' ? 0 : list[i].total; list[i].paidLater = f.later || ''; list[i].whish = f.whish || 0 }
       if (f.t === 'status' && i >= 0) list[i].status = f.status;
       if (f.t === 'ready' && i >= 0) list[i].ready = f.ready;
+      if (f.t === 'unsent' && i >= 0) { list[i].sent = '-'; list[i].items.forEach(function (x) { x.sentQty = 0 }) }
     });
     list.forEach(function (o) { o.live = live(o) });
     return list;
@@ -287,6 +288,11 @@ var EB = (function () {
       {op: 'append', tab: 'Order Items', rows: itemRows(o)}], {t: 'edit', key: o.key, order: o});
   };
   // Send to the kitchen: the whole order, or the lines added since; it then shows on the kitchen screen
+  // A website order just accepted: not in the kitchen yet, like an order typed at the till (Print sends it)
+  EB.notSent = function (o) {
+    EB.send([{op: 'update', tab: 'Orders', where: where(o), set: {'Kitchen sent': '-'}}, {op: 'update', tab: 'Order Items', where: where(o), set: {'Sent qty': 0}}],
+      {t: 'unsent', key: o.key});
+  };
   EB.toKitchen = function (o, at) {
     var x = JSON.parse(JSON.stringify(o));
     x.sent = x.sent && x.sent !== '-' ? x.sent : at;
