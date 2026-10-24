@@ -1098,7 +1098,7 @@ function dashMoney(sales, today) {
   var bxs = typeof boxes === 'function' ? boxes() : null, buys = purchases(), wait = '<b class="usd">…</b>', bal = typeof chefBalance === 'function' ? chefBalance() : null;
   var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
   var h = '<div class="kpis four">' +
-    '<div class="kpi hero" data-goview="box"><small>💼 ' + bi('مع الشيف هلّق', 'With the chef now') + '</small>' + (bal == null ? wait : amount(bal)) + '<small class="ll">' + bi('مفصول عن عدّ الصندوق الليلة', 'apart from tonight\'s count') + '</small></div>' +
+    '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null ? wait : amount(bal)) + '<small class="ll">' + bi('لآخر عدّ، بلا جارور اليوم', 'up to the last count, without today\'s drawer') + '</small></div>' +
     '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق المعدود', 'Cash box counted') + '</small>' + (bxs ? amount(counted) : wait) + '<small class="ll">' + (bxs ? fmt(bxs.length) + ' ' + bi('ليلة', 'nights') : '') + '</small></div>' +
     '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';

@@ -28,17 +28,27 @@ function boxCalc(cashLbp, cashUsd, whish, whishUsd) {
   return {total: total, owners: owners, left: total - owners};
 }
 // Owners lines typed by hand on a day (not the one the cash box records)
-/* The money with the chef: every night 30% of the count goes to the owners and the rest to the chef, who pays the
-   expenses; the drawer starts from zero the next day. So: all income + each day's money (the count when there is one,
-   else the orders' sales) − every purchase (the owners' share and equipment included). Null until everything loads. */
+/* The money with the resto: every night 30% of the count goes to the owners and the rest stays with the resto (the
+   chef pays the expenses from it); the drawer starts from zero the next day. So: all income + each past day's money (the
+   count when there is one, else the orders' sales) − every purchase (the owners' share and equipment included).
+   Today's money is still in the drawer: it joins only once tonight's count is saved (see drawerToday). Null until
+   everything loads. */
 function chefBalance() {
   var buys = purchases(), inc = incomes();
   if (!buys || !inc || !(SALES || EB.cached('sales'))) return null;
-  var counted = {}; (boxes() || []).forEach(function (x) { counted[x.day] = x.total });
+  var today = ymd(bizDate()), counted = {}; (boxes() || []).forEach(function (x) { counted[x.day] = x.total });
   var money = 0;
-  EB.report(salesOrders(), '2000-01-01', ymd(bizDate())).days.forEach(function (d) { if (!(d.date in counted)) money += d.sales });
+  EB.report(salesOrders(), '2000-01-01', today).days.forEach(function (d) { if (!(d.date in counted) && d.date !== today) money += d.sales });
   Object.keys(counted).forEach(function (d) { money += counted[d] });
   return inc.reduce(function (a, x) { return a + x.lbp }, 0) + money - buys.reduce(function (a, p) { return a + p.lbp }, 0);
+}
+// today's paid sales still in the drawer (0 once tonight's count is saved); null until the orders load
+function drawerToday() {
+  if (!(SALES || EB.cached('sales'))) return null;
+  var today = ymd(bizDate());
+  if ((boxes() || []).some(function (x) { return x.day === today })) return 0;
+  var d = EB.report(salesOrders(), today, today).days.filter(function (x) { return x.date === today })[0];
+  return d ? d.sales : 0;
 }
 function handOwners(day) {
   return (purchases() || []).filter(function (p) { return p.cat === 'Owners' && p.day === day && p.key.indexOf('own-') !== 0 });
@@ -91,10 +101,12 @@ function drawSandouk() {
     '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيروح للشيف للمصاريف. تاني يوم الجارور بيبلّش من صفر.',
       'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest goes to the chef for the payments. The next day the drawer starts from zero.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
-  // the money with the chef, apart from tonight's count
-  var bal = chefBalance();
-  h += '<div class="card instore"><small>💼 ' + bi('مع الشيف هلّق', 'With the chef now') + '</small>' + (bal == null ? '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>' : amount(bal)) +
-    '<p class="muted note2">' + bi('كل الدخل والمبيعات (أو الصندوق المعدود) ناقص كل المصاريف وربح الأصحاب، من الأول.', 'All income and sales (or the counted cash box) minus every expense and the owners\' share, since the start.') + '</p></div>';
+  // the money with the resto, apart from what is still in today's drawer
+  var bal = chefBalance(), drw = drawerToday();
+  h += '<div class="card instore"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null ? '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>' : amount(bal)) +
+    (drw ? '<p class="muted note2">' + bi('ومبيعات اليوم بالجارور (لسا ما انعدّت): ', 'Today\'s sales in the drawer (not counted yet): ') + '<b class="num">' + $usd(drw) + '</b>' +
+      bi(' — بتنضاف بعد عدّ الليلة ناقص ' + OWNERS_PCT + '٪.', ' — added after tonight\'s count, minus ' + OWNERS_PCT + '%.') + '</p>' : '') +
+    '<p class="muted note2">' + bi('كل الدخل والصناديق المعدودة ناقص كل المصاريف وربح الأصحاب، لآخر عدّ.', 'All income and counted cash boxes minus every expense and the owners\' share, up to the last count.') + '</p></div>';
   h += '<div class="card addx"><div class="xform">' +
     '<input id="bDate" type="date" value="' + today + '">' +
     '<div class="xamt"><input id="bCash" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('كاش بالليرة', 'Cash in L.L.')) + '"><span class="muted">' + bi('كاش', 'Cash') + ' L.L.</span></div>' +
