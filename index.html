@@ -336,7 +336,8 @@ const CONFIG = {
   // ("Opening hours", "Closed day", "Open anyway on"), which the shop changes there or in the app (Menu tab)
   closedDay: 1,                  // day off (Beirut time): 0=Sun 1=Mon 2=Tue ... 6=Sat, or null for none
   openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
-  hours: [['13:00', '16:00'], ['18:00', '23:00']], // opening hours each open day (Beirut time)
+  hours: [['13:00', '16:00'], ['18:00', '24:00']], // opening hours each open day (Beirut time); past 24:00 = after midnight
+  dayHours: {5: [['13:00', '16:00'], ['18:00', '24:30']], 6: [['13:00', '16:00'], ['18:00', '24:30']], 0: [['13:00', '16:00'], ['18:00', '24:30']]}, // other hours on some days (Fri, Sat, Sun)
   timeZone: 'Asia/Beirut',
   pieces: {4: 600000, 5: 700000, 6: 800000, 7: 900000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
   // cards with sizes (type 'o'): [label, item in the sheet, price until the sheet loads, sauces 's1' / 's2']
@@ -761,23 +762,31 @@ function beirutNow() {
 function isClosedToday() { const n = beirutNow(); return CONFIG.closedDay != null && n.day === CONFIG.closedDay && !(CONFIG.openDates || []).includes(n.date) }
 const mins = hm => { const [h, m] = hm.split(':'); return +h * 60 + +m };
 function timeText(hm) {
-  const [h, m] = hm.split(':').map(Number), h12 = h % 12 || 12, mm = m ? ':' + String(m).padStart(2, '0') : '';
+  let [h, m] = hm.split(':').map(Number); h = h % 24;
+  const h12 = h % 12 || 12, mm = m ? ':' + String(m).padStart(2, '0') : '';
   return h12 + mm + (lang === 'ar' ? (h < 12 ? ' ص' : ' م') : (h < 12 ? ' AM' : ' PM'));
 }
 // "Open now · until 5 PM" / "Closed now · opens at 7 PM" / "Closed today · opens tomorrow at 1 PM"
+// A day's hours can run past midnight ("6 PM - 12:30 AM" is 18:00-24:30): after midnight it is still that day's evening.
+const hoursFor = d => (CONFIG.dayHours && CONFIG.dayHours[d]) || CONFIG.hours || [];
+function isClosedOn(d, date) { return CONFIG.closedDay != null && d === CONFIG.closedDay && !(CONFIG.openDates || []).includes(date) }
 function openStatus() {
-  const {day, min} = beirutNow(), hours = CONFIG.hours || [];
-  if (!hours.length) return null;
-  const closedDay = isClosedToday();
+  const {day, min, date} = beirutNow();
+  if (!hoursFor(day).length) return null;
+  const until = b => t('Open now · until {t}').replace('{t}', timeText(b));
+  // yesterday's evening still open after midnight
+  const prev = (day + 6) % 7, late = !isClosedOn(prev, '') && hoursFor(prev).find(([a, b]) => mins(b) > 1440 && min < mins(b) - 1440);
+  if (late) return {open: true, text: until(late[1])};
+  const closedDay = isClosedToday(), hours = hoursFor(day);
   if (!closedDay) {
     const now = hours.find(([a, b]) => min >= mins(a) && min < mins(b));
-    if (now) return {open: true, text: t('Open now · until {t}').replace('{t}', timeText(now[1]))};
+    if (now) return {open: true, text: until(now[1])};
     const later = hours.find(([a]) => mins(a) > min);
     if (later) return {open: false, text: t('Closed now · opens at {t}').replace('{t}', timeText(later[0]))};
   }
   let d = 1; while ((day + d) % 7 === CONFIG.closedDay) d++;
   const dayName = d === 1 ? t('tomorrow') : DAY_NAMES[lang][(day + d) % 7];
-  return {open: false, text: t(closedDay ? 'Closed today · opens {d} at {t}' : 'Closed now · opens {d} at {t}').replace('{d}', dayName).replace('{t}', timeText(hours[0][0]))};
+  return {open: false, text: t(closedDay ? 'Closed today · opens {d} at {t}' : 'Closed now · opens {d} at {t}').replace('{d}', dayName).replace('{t}', timeText(hoursFor((day + d) % 7)[0][0]))};
 }
 // The hours from the sheet: "13:00-16:00, 18:00-23:00" (or "1-4 pm, 6-11 pm"), a day name ("Monday", "الاثنين", or
 // empty for none) and dates "2026-10-19, 2026-12-25". Anything that doesn't read well keeps the page's own.
@@ -790,13 +799,25 @@ function applyHours(sheet) {
     if ((s === 'pm' || s === 'م') && h < 12) h += 12; if ((s === 'am' || s === 'ص') && h === 12) h = 0;
     return h > 24 || +(m[2] || 0) > 59 ? null : String(h).padStart(2, '0') + ':' + (m[2] || '00');
   };
-  if (sheet.hours) {
-    const list = String(sheet.hours).split(/[,،;]+/).map(r => {
+  // "1 PM - 4 PM, 6 PM - 12:30 AM": a closing time at or before its opening time is after midnight (24:30)
+  const ranges = text => {
+    const list = String(text).split(/[,،;]+/).filter(r => r.trim()).map(r => {
       const p = r.split(/\s*[-–—]\s*|\s+to\s+/i), ap = (String(p[1] || '').match(/am|pm|ص|م/i) || [''])[0];
-      const a = hm(p[0], ap), b = hm(p[1] || '');
-      return a && b && mins(a) < mins(b) ? [a, b] : null;
+      const a = hm(p[0], ap); let b = hm(p[1] || '');
+      if (a && b && mins(b) <= mins(a)) b = String(+b.slice(0, 2) + 24) + b.slice(2);
+      return a && b && mins(b) - mins(a) < 1440 ? [a, b] : null;
     });
-    if (list.length && list.every(Boolean)) CONFIG.hours = list;
+    return list.length && list.every(Boolean) ? list : null;
+  };
+  const dayIdx = n => { n = n.trim().toLowerCase(); const i = [...DAY_NAMES.en, ...DAY_NAMES.ar].findIndex(x => x.toLowerCase() === n || /^[a-z]{3,}$/.test(n) && x.toLowerCase().startsWith(n.slice(0, 3))); return i < 0 ? -1 : i % 7 };
+  if (sheet.hours) {
+    // "1 PM - 4 PM, 6 PM - 12 AM | Friday Saturday Sunday: 1 PM - 4 PM, 6 PM - 12:30 AM"
+    const parts = String(sheet.hours).split('|'), main = ranges(parts[0]), days = {};
+    parts.slice(1).forEach(p => {
+      const m = p.split(':'), names = m[0], list = ranges(m.slice(1).join(':'));
+      if (list) names.split(/[\s,،]+/).filter(Boolean).map(dayIdx).forEach(i => { if (i >= 0) days[i] = list });
+    });
+    if (main) { CONFIG.hours = main; CONFIG.dayHours = days }
   }
   if (sheet.closedDay !== undefined) {
     const d = String(sheet.closedDay).trim(), i = [...DAY_NAMES.en, ...DAY_NAMES.ar].findIndex(n => n.toLowerCase() === d.toLowerCase() || n.slice(0, 3).toLowerCase() === d.slice(0, 3).toLowerCase() && /^[a-z]/i.test(d));
@@ -806,9 +827,12 @@ function applyHours(sheet) {
 }
 // "Daily 1 PM – 4 PM & 6 PM – 11 PM · Closed on Mondays"
 function hoursLine() {
-  const r = (CONFIG.hours || []).map(([a, b]) => lang === 'ar' ? 'من ' + timeText(a) + ' لـ ' + timeText(b) : timeText(a) + ' – ' + timeText(b));
+  const fmt = list => list.map(([a, b]) => lang === 'ar' ? 'من ' + timeText(a) + ' لـ ' + timeText(b) : timeText(a) + ' – ' + timeText(b)).join(lang === 'ar' ? ' و' : ' & ');
+  const r = CONFIG.hours || [], other = {};
+  Object.keys(CONFIG.dayHours || {}).forEach(d => { if (+d !== CONFIG.closedDay) { const k = fmt(CONFIG.dayHours[d]); (other[k] = other[k] || []).push(+d) } });
+  const extra = Object.keys(other).map(k => (lang === 'ar' ? ' · ' + other[k].sort((a, b) => ((a + 2) % 7) - ((b + 2) % 7)).map(d => DAY_NAMES.ar[d]).join(' و') + ' ' : ' · ' + other[k].sort((a, b) => ((a + 2) % 7) - ((b + 2) % 7)).map(d => DAY_NAMES.en[d].slice(0, 3)).join(', ') + ' ') + k).join('');
   const off = CONFIG.closedDay == null ? '' : lang === 'ar' ? ' · مسكّرين يوم ' + DAY_NAMES.ar[CONFIG.closedDay] : ' · Closed on ' + DAY_NAMES.en[CONFIG.closedDay] + 's';
-  return r.length ? (lang === 'ar' ? 'كل يوم ' + r.join(' و') : 'Daily ' + r.join(' & ')) + off : '';
+  return r.length ? (lang === 'ar' ? 'كل يوم ' + fmt(r) : 'Daily ' + fmt(r)) + extra + off : '';
 }
 function updateStatus() {
   $('#hoursLine').textContent = hoursLine();
