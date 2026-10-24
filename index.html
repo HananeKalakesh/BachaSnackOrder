@@ -626,7 +626,9 @@ function optLabel(l) {
    A row the sheet unticks ("On order screen") is hidden; a row the page doesn't know yet is added to its section. */
 const GRID_OF = {'Fries': 'friesGrid', 'Appetizers': 'appetizerGrid', 'Meals': 'mealGrid', 'Family Meals': 'familyGrid', 'Plates': 'plateGrid',
   'Chicken Sandwiches': 'sandwichChickenGrid', 'Beef Sandwiches': 'sandwichBeefGrid', 'Other Sandwiches': 'sandwichOtherGrid',
-  'Chicken Burgers': 'burgerChickenGrid', 'Beef Burgers': 'burgerBeefGrid', 'Sauces & Extras': 'sauceGrid', 'Extras': 'sauceGrid', 'Drinks': 'drinkGrid'};
+  'Chicken Burgers': 'burgerChickenGrid', 'Beef Burgers': 'burgerBeefGrid', 'Sauces & Extras': 'sauceGrid', 'Drinks': 'drinkGrid'};
+// Menu category 'Extras' (extra pieces, mozzarella stick…) is for the cashier only: not shown here. The mozzarella patty
+// is offered on burgers through Adjust (EXTRA below), and Bread Change when a sandwich changes bread (owner, 24 Oct).
 const PIECES = {};              // 'Crispy Meal' -> {4: price, 5: price, ...}, from the sheet's "Crispy Meal 4 PCS" rows
 const SOLD = new Set();         // cards sold out for now (Sold out ticked in the sheet): shown greyed, "Not available"
 const piecesOf = name => PIECES[name] || CONFIG.pieces;
