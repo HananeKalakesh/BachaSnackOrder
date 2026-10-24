@@ -570,7 +570,7 @@ function bizDate() { return new Date(EB.now() - DAY_END * 3600000) }
 var PKEY = 'elbash-pos-pin', LKEY = 'elbash-pos-lang';
 var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
-  'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات وإضافات', 'Drinks': 'مشروبات'};
+  'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات', 'Extras': 'إضافات', 'Drinks': 'مشروبات'};
 var PAY_AR = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع', Split: 'كاش + ويش', House: 'للبيت'};
 // Paid partly by Whish, the rest cash: asks the Whish part ($, or L.L. for a big number); null when cancelled or not a part
 function askSplit(o) {
@@ -586,13 +586,13 @@ var MUSTARD = ['#F2B705', '#1A1A17', '#FDF1CC'], RED = ['#C8102E', '#FFFFFF', '#
   INK = ['#1A1A17', '#FAF5EC', '#E9E7E2'], SAND = ['#EFE6D6', '#1A1A17', '#F6EFE2'];
 var CAT_COLOR = {'Fries': MUSTARD, 'Appetizers': MUSTARD, 'Meals': RED, 'Family Meals': RED, 'Plates': RED,
   'Chicken Sandwiches': GREEN, 'Beef Sandwiches': GREEN, 'Other Sandwiches': GREEN, 'Chicken Burgers': INK, 'Beef Burgers': INK,
-  'Sauces & Extras': SAND, 'Drinks': SAND};
+  'Sauces & Extras': SAND, 'Extras': MUSTARD, 'Drinks': SAND};
 function catColor(c) { return CAT_COLOR[c] || SAND }
 function catVars(c) { var k = catColor(c); return '--c:' + k[0] + ';--f:' + k[1] + ';--t:' + k[2] }
 // Words the colored section header already says are left off the menu buttons (the ticket keeps full names)
 var SANDWICH = [/^ساندويش\s+/, /\s+Sandwich$/];
 var TRIM = {'Family Meals': [/^وجبة عائلية\s+/, /\s+Family Meal/], 'Meals': [/^وجبة\s+/, /\s+Meal\b/], 'Plates': [/^صحن\s+/, /\s+Plate$/],
-  'Chicken Sandwiches': SANDWICH, 'Beef Sandwiches': SANDWICH, 'Other Sandwiches': SANDWICH, 'Sauces & Extras': [/^صوص\s+/, /\s+Sauce$/]};
+  'Chicken Sandwiches': SANDWICH, 'Beef Sandwiches': SANDWICH, 'Other Sandwiches': SANDWICH, 'Sauces & Extras': [/^صوص\s+/, /\s+Sauce$/], 'Extras': [/\s+إضافي(ة)?$/, /^Extra\s+/]};
 function trim(text, cat, k) { var t = TRIM[cat]; return t ? text.replace(t[k], '') || text : text }
 var lang = 'ar';
 function T(ar, en) { return lang === 'en' ? en : ar }
@@ -623,9 +623,9 @@ EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'b
 /* ---------- menu ---------- */
 // Four fixed columns: sides with sauces and drinks under them, meals, family meals and burgers, sandwiches.
 // A section not listed here joins the column with the fewest items.
-var LAYOUT = [['Fries', 'Appetizers', 'Sauces & Extras', 'Drinks'], ['Meals', 'Plates'], ['Family Meals', 'Chicken Burgers', 'Beef Burgers'],
+var LAYOUT = [['Fries', 'Appetizers', 'Sauces & Extras', 'Drinks'], ['Meals', 'Plates', 'Extras'], ['Family Meals', 'Chicken Burgers', 'Beef Burgers'],
   ['Chicken Sandwiches', 'Beef Sandwiches', 'Other Sandwiches']];
-var PAIRED = ['Sauces & Extras', 'Drinks'];  // short names: two buttons per row
+var PAIRED = ['Sauces & Extras', 'Extras', 'Drinks'];  // short names: two buttons per row
 // Items that come with sauces to choose, the same as on the website: [sauces, fewest, most]
 var SAUCES = {fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'], wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce']};
 var CHOICE = {'Small Fries Box with Sauce & Cheddar': ['fries', 1, 4], 'Large Fries Box with Sauce & Cheddar': ['fries', 1, 4], 'Loaded Fries': ['fries', 1, 4],
