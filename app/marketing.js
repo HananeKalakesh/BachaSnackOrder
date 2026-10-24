@@ -111,11 +111,4 @@ $('#market').addEventListener('click', function (ev) {
   }
 });
 
-/* ---------- the chef's stock for today: coming next ---------- */
-function showStock() {
-  $('#stock').innerHTML = '<div class="shead"><h2 class="display">' + bi('مخزون اليوم', 'Today\'s stock') + '</h2></div>' +
-    '<div class="card"><p>' + bi('قريباً: كل يوم الصبح بتعدّو شو في بالبرّاد (كريسبي، زنجر، صوصات، خبز…)، والتطبيق بيقلّكن شو لازم تحضّرو، وبينبّه الكاشير لما شي يخلص.',
-      'Coming next: each morning you count what is in the fridge (crispy, zinger, sauces, bread…), the app tells you what to prepare, and warns the cashier when something runs low.') + '</p>' +
-    '<button class="ghost" data-view-go="rec">' + bi('شوف الوصفات', 'See the recipes') + '</button></div>';
-}
-$('#stock').addEventListener('click', function (e) { var b = e.target.closest('[data-view-go]'); if (b) showView(b.dataset.viewGo) });
+/* the chef's stock for today: stock.js */
