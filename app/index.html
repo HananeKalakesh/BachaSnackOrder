@@ -1121,14 +1121,11 @@ function sidesLine(items) {
 function dayMoney(day) {
   if (!day) return '';
   var bx = (boxes() || []).filter(function (x) { return x.day === day })[0], buys = (purchases() || []).filter(function (p) { return p.day === day });
-  var own = buys.filter(function (p) { return p.cat === 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0), exp = buys.filter(function (p) { return p.cat !== 'Owners' });
-  var h = '<div class="cols daymoney"><div class="card"><h3 class="display">📦 ' + bi('الصندوق', 'Cash box') + '</h3>' + (bx ?
+  var own = buys.filter(function (p) { return p.cat === 'Owners' }).reduce(function (a, p) { return a + p.lbp }, 0);   // the day's expenses are in the Expenses tab
+  var h = '<div class="daymoney"><div class="card"><h3 class="display">📦 ' + bi('الصندوق', 'Cash box') + '</h3>' + (bx ?
     '<div class="pay2 three"><div>' + bi('كاش', 'Cash') + amount(bx.cashLbp + bx.cashUsd * S.rate) + '</div><div>' + bi('ويش', 'Whish') + amount(bx.whish + (bx.whishUsd || 0) * S.rate) + '</div><div>' + bi('للمطعم', 'To the resto') + amount(bx.left) + '</div></div>' + (typeof boxDiff === 'function' && boxDiff(bx) ? '<p class="note2">' + diffLine(boxDiff(bx)) + '</p>' : '')
     : '<p class="muted">' + bi('ما انعدّ الصندوق بهاليوم.', 'The cash box was not counted this day.') + '</p>') +
-    '<p class="note2">💰 ' + bi('ربح الأصحاب: ', 'Owners\' share: ') + '<b class="num">' + $usd(own) + '</b> <small class="muted num">' + ll(own) + '</small></p></div>' +
-    '<div class="card"><h3 class="display">📉 ' + bi('المصاريف', 'Expenses') + ' <small class="num">' + $usd(exp.reduce(function (a, p) { return a + p.lbp }, 0)) + '</small></h3>' + (exp.length ? '<table>' + exp.map(function (p) {
-      return '<tr><td>' + bi(catOf(p.cat)[1], p.cat) + (p.item ? ' <span class="muted">' + esc(p.item) + '</span>' : '') + '</td><td class="r"><b class="num">' + (p.cur === '$' ? '$' + fmt2(p.amount) : fmt(p.amount) + ' L.L.') + '</b></td></tr>' }).join('') + '</table>'
-      : '<p class="muted">' + bi('ما في مصاريف بهاليوم.', 'No expenses this day.') + '</p>') + '</div></div>';
+    '<p class="note2">💰 ' + bi('ربح الأصحاب: ', 'Owners\' share: ') + '<b class="num">' + $usd(own) + '</b> <small class="muted num">' + ll(own) + '</small></p></div>' + '</div>';
   return h;
 }
 function dayView(D, empty, day) {
