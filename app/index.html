@@ -227,7 +227,11 @@ button{cursor:pointer;border:0;background:none;touch-action:manipulation}
 .months.week .mn{font-size:13px}
 .months.week b{font-size:14px}
 .months.hrs .mn{font-size:11px;line-height:1.15;white-space:normal}.months.hrs .mn b{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:-.04em;white-space:nowrap}.months.hrs{gap:2px}.months.hrs .mo{overflow:visible}.months.hrs b{font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto}
-.note2{margin:10px 0 0;font-size:13px}.kpis.three{grid-template-columns:repeat(3,minmax(0,1fr))}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
+.note2{margin:10px 0 0;font-size:13px}.kpis.three{grid-template-columns:repeat(3,minmax(0,1fr))}.dfee{margin-top:6px;background:var(--input);border-radius:14px;padding:8px 10px}.dfee[hidden]{display:none}.dfee .dfh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.dfee .dfh b{font-size:14px}.dfee .dfh small{color:var(--muted);font-weight:700;font-size:11px}
+.dfee .dch{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}.dfee .dch button{background:#fff;border:0;border-radius:10px;padding:7px 0;font:inherit;font-weight:800;font-size:13px;cursor:pointer}.dfee .dch button.on{background:var(--green);color:var(--paper)}
+.dfee .dcol{display:flex;justify-content:space-between;margin-top:6px;font-weight:800}.dfee .dcol b{font-size:16px}
+.stage.s0{background:#EFE6D6;color:#1A1A17}.newi{background:#C8102E;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;font-style:normal;margin-inline-start:6px}.senti{color:#1F4A37;font-weight:800;font-size:12px;font-style:normal;margin-inline-start:6px}
+.feetag{display:block;margin-top:6px;font-size:12px;font-weight:700;color:#1F4A37;background:#E2ECE6;border-radius:10px;padding:4px 8px;text-align:center}.xaddb{border:0;border-radius:999px;background:var(--red);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:10px 18px;cursor:pointer;white-space:nowrap}.xsheet .box{width:min(560px,100%);max-height:90vh;overflow:auto;text-align:start}.xsheet .addx{box-shadow:none;padding:0;margin:0}.xgrp{margin-bottom:10px}.xgrp>small{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.xgrp .xcats{margin:0}.dsec{margin:28px 0 10px;font-size:26px;color:var(--green)}
 .today{margin-inline-start:auto;height:44px;padding:0 18px;border-radius:999px;background:var(--sand);color:var(--green);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .kpi{background:var(--white);border-radius:24px;padding:16px 18px;box-shadow:var(--shadow);min-width:0}
@@ -464,7 +468,7 @@ td.r,th.r{text-align:end}
 .addr{font-size:14px;color:var(--body);margin-bottom:4px}
 /* stages */
 .stage{display:inline-block;font-size:13px;font-weight:800;padding:2px 10px;border-radius:999px;margin-bottom:4px}
-.stage.s1{background:var(--sand);color:var(--ink)}.stage.s2{background:#DCEBDD;color:var(--green)}.stage.s3{background:var(--sand);color:var(--muted)}
+.stage.s1{background:#FDF1CC;color:var(--ink)}.stage.s2{background:#DCEBDD;color:var(--green)}.stage.s3{background:var(--sand);color:var(--muted)}
 .ord.ready{--age:#25A55F;--on-age:#fff;box-shadow:inset 0 0 0 2px #25A55F,var(--shadow-sm)}
 .stepb{height:46px;padding:0 14px;border-radius:12px;background:var(--green);color:var(--paper);font-weight:800;white-space:nowrap}
 .stepb.go{background:var(--ink)}
@@ -527,6 +531,7 @@ td.r,th.r{text-align:end}
     <div class="pay">
       <div class="total"><span class="display"><span class="ar">المجموع</span><span class="en">Total</span></span><div><b class="num" id="tot">0 L.L.</b><small class="num" id="totUsd">$0.00</small></div></div>
       <div class="kind"><button data-k="Pickup" type="button"><span class="ar">استلام</span><span class="en">Pickup</span></button><button data-k="Delivery" type="button"><span class="ar">توصيل</span><span class="en">Delivery</span></button></div>
+      <div class="dfee" id="dfee" hidden></div>
       <div class="fields"><input class="note" id="cname" placeholder="الاسم (اختياري)" autocomplete="off" maxlength="40"><input class="note" id="note" placeholder="ملاحظة (اختياري)" autocomplete="off"></div>
       <button class="save" id="save" disabled></button>
     </div>
@@ -587,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=37"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -849,7 +854,7 @@ function renderCart() {
       '<small>' + bi('الواحد', 'each') + ' <span class="num">' + (it.usd ? '$' + usdTxt(it.usd) : fmt(it.price)) + '</span></small></div></div>';
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
-  $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
+  $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE); drawFee();
   updateSave();
 }
 $('#lines').addEventListener('click', function (e) {
@@ -859,10 +864,32 @@ $('#lines').addEventListener('click', function (e) {
   renderGrid(); renderCart();
 });
 $('#clear').addEventListener('click', function () { if (!Object.keys(cart).length || confirm(T('تمسح هالطلب؟', 'Clear this order?'))) resetOrder() });
-function resetOrder() { cart = {}; CUSTOM = {}; method = ''; $('#note').value = ''; $('#cname').value = ''; setKind(''); setMethod(''); renderGrid(); renderCart() }
+function resetOrder() { cart = {}; CUSTOM = {}; fee = 0; method = ''; $('#note').value = ''; $('#cname').value = ''; setKind(''); setMethod(''); renderGrid(); renderCart() }
 // Pickup or Delivery is optional: tap the chosen one again to clear it
 var kind = '';
-function setKind(k) { kind = k; document.querySelectorAll('.kind button').forEach(function (b) { b.classList.toggle('on', b.dataset.k === k) }) }
+function setKind(k) { kind = k; document.querySelectorAll('.kind button').forEach(function (b) { b.classList.toggle('on', b.dataset.k === k) }); drawFee() }
+/* Delivery fee: for the driver. Printed for the customer to pay with the order, never in the order total, the sales,
+   the cash box or the owners' share. */
+var fee = 0, FEES = [0, 100000, 150000, 200000];
+function drawFee() {
+  var d = $('#dfee'); if (!d) return;
+  d.hidden = kind !== 'Delivery';
+  if (d.hidden) return;
+  var other = fee && FEES.indexOf(fee) < 0;
+  d.innerHTML = '<div class="dfh"><b>🛵 ' + bi('رسوم التوصيل', 'Delivery fee') + '</b><small>' + bi('للسائق · مش من المبيعات', 'For the driver · not a sale') + '</small></div>' +
+    '<div class="dch">' + FEES.map(function (v) { return '<button type="button" data-fee="' + v + '"' + (fee === v ? ' class="on"' : '') + '>' + (v ? short(v) : bi('بلا', 'None')) + '</button>' }).join('') +
+    '<button type="button" data-fee="other"' + (other ? ' class="on"' : '') + '>' + (other ? short(fee) : bi('غير…', 'Other…')) + '</button></div>' +
+    (fee ? '<div class="dcol"><span>' + bi('عالزبون يدفع', 'Customer pays') + '</span><b class="num">' + money(total() + fee) + '</b></div>' : '');
+}
+$('#dfee').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-fee]'); if (!b) return;
+  if (b.dataset.fee === 'other') {
+    var a = prompt(T('قدّيش رسوم التوصيل؟ (بالليرة، أو بالدولار)', 'How much is the delivery fee? (L.L., or $)'), fee || '');
+    if (a == null) return;
+    var n = Number(String(a).replace(/[^0-9.]/g, '')); fee = Math.round(n > 1000 ? n : n * RATE);
+  } else fee = Number(b.dataset.fee);
+  drawFee();
+});
 document.querySelectorAll('.kind button').forEach(function (b) { b.addEventListener('click', function () { setKind(kind === b.dataset.k ? '' : b.dataset.k) }) });
 
 // How they paid is chosen in Today's orders, when the order is picked up or delivered; a new order starts "not paid yet"
@@ -890,7 +917,7 @@ function editOrder(o) {
     var key = String(i) + (x.sauces.length ? '|' + x.sauces.join('+') : '');
     cart[key] = (cart[key] || 0) + x.qty;
   });
-  EDIT = {day: o.day, num: o.num, order: o};
+  EDIT = {day: o.day, num: o.num, order: o}; fee = o.fee || 0;
   $('#note').value = o.note || ''; $('#cname').value = o.name || ''; setKind(o.type || ''); setMethod(o.payment);
   showView('order'); renderGrid(); renderCart();
   if (gone.length) alert(T('هالأصناف مش عالمنيو هلّق، رح تنشال إذا حفظت: ', 'These items are no longer on the menu and will be removed if you save: ') + gone.join(', '));
@@ -912,8 +939,12 @@ $('#save').addEventListener('click', function () {
   var items = cartItems(), t = total(), o;
   if (EDIT) {
     o = JSON.parse(JSON.stringify(EDIT.order));
+    // the kitchen keeps what it already had: each line's sent quantity carries over, anything more waits to be sent
+    var had = {};
+    (EDIT.order.items || []).forEach(function (x) { var k = x.name + '|' + x.sauces.join('+'); had[k] = (had[k] || 0) + (x.sentQty == null ? x.qty : x.sentQty) });
+    items.forEach(function (x) { var k = x.name + '|' + x.sauces.join('+'), n = Math.min(x.qty, had[k] || 0); x.sentQty = n; had[k] = (had[k] || 0) - n });
     o.items = items; o.text = EB.text(items); o.total = t; o.payment = method;
-    o.note = $('#note').value.trim(); o.name = $('#cname').value.trim(); o.type = kind;
+    o.note = $('#note').value.trim(); o.name = $('#cname').value.trim(); o.type = kind; o.fee = kind === 'Delivery' ? fee : 0;
     if (!o.rate) o.rate = RATE;
     EB.update(o);
     toast('انحفظ التعديل على الطلب #' + o.num, 'Order #' + o.num + ' updated');
@@ -922,10 +953,9 @@ $('#save').addEventListener('click', function () {
   }
   var now = EB.now(), day = EB.bizDay(DAY_END, now), time = EB.hhmm(now), n = nextNum(day);
   o = {key: day + '#' + n, num: n, day: day, time: time, at: EB.at(day, time, DAY_END), uid: now.toString(36) + Math.random().toString(36).slice(2, 7),
-    items: items, text: EB.text(items), total: t, payment: method, paidUsd: 0, rate: RATE, received: method === 'Unpaid' ? 0 : t,
-    note: $('#note').value.trim(), name: $('#cname').value.trim(), type: kind, done: ''};
-  EB.save(o);
-  autoPrint(o, true);
+    items: items.map(function (x) { x.sentQty = 0; return x }), text: EB.text(items), total: t, payment: method, paidUsd: 0, rate: RATE, received: method === 'Unpaid' ? 0 : t,
+    note: $('#note').value.trim(), name: $('#cname').value.trim(), type: kind, done: '', sent: '-', fee: kind === 'Delivery' ? fee : 0};
+  EB.save(o);   // it waits in Today's orders until "Send to kitchen" (which prints the two tickets)
   resetOrder();
   toast('انحفظ الطلب رقم <span class="num">' + n + '</span> · <span class="num">' + money(t) + '</span>', 'Order #' + n + ' saved');
 });
@@ -1513,22 +1543,27 @@ function drawOrders() {
     // where the order is: preparing → ready for pickup / out for delivery → done
     var stage = o.done ? '<span class="stage s3">✓ ' + bi('خلص ' + o.done, 'Done ' + o.done) + '</span>'
       : o.ready ? '<span class="stage s2">' + (del ? '🛵 ' + bi('طلع للتوصيل ' + o.ready, 'Out for delivery ' + o.ready) : '✅ ' + bi('جاهز للاستلام ' + o.ready, 'Ready for pickup ' + o.ready)) + '</span>'
-      : '<span class="stage s1">🔥 ' + bi('عم يتحضّر', 'Preparing') + '</span>';
+      : o.sent === '-' ? '<span class="stage s0">📝 ' + bi('جديد · لسا ما انبعت عالمطبخ', 'New · not sent to the kitchen yet') + '</span>'
+      : '<span class="stage s1">👨‍🍳 ' + (o.sent ? bi('بالمطبخ من ' + t12(o.sent), 'In the kitchen since ' + t12(o.sent)) : bi('بالمطبخ', 'In the kitchen')) + '</span>';
+    var fresh = EB.unsent(o);
     var acts = o.done ? '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
       : o.ready ? '<button class="stepb go" data-step="done" data-k="' + esc(o.key) + '">✓ ' + (del ? bi('وصل وانقبض', 'Delivered & paid') : bi('استلمو', 'Picked up')) + '</button>' +
           '<button class="readyb" data-msg="' + esc(o.key) + '">📲 ' + bi('ابعت تحديث', 'Send update') + '</button>' +
           '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
-      : '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
+      : o.sent === '-' ? '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت عالمطبخ', 'Send to kitchen') + '</button>'
+      : (fresh.length ? '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت الجديد عالمطبخ', 'Send the new items') + '</button>' : '') +
+        '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
     var owes = o.payment === 'Unpaid' && o.done, later = o.payment === 'Unpaid' && !o.done;
     return '<div class="ord ' + cls + (owes ? ' owes' : '') + '" data-key="' + esc(o.key) + '">' +
       '<div class="onum"><b class="num">' + (o.web ? '🌐 ' : '') + '#' + o.num + '</b><span class="num">' + t12(o.time) + '</span>' +
         (o.done || o.ready ? '' : '<small>' + bi(m < 1 ? 'هلّق' : 'من ' + m + ' د', m < 1 ? 'just now' : m + ' min') + '</small>') + '</div>' +
-      '<div class="obody">' + stage + who(o) + '<div class="oitems">' + itemsOf(o) + '</div>' +
+      '<div class="obody">' + stage + who(o) + '<div class="oitems">' + itemsOf(o, !o.done && !o.ready && o.sent !== '-' && fresh.length) + '</div>' +
         (o.note ? '<div class="onote">' + esc(o.note) + '</div>' : '') + '</div>' +
       '<div class="oside">' + amount(o.total) + '<span class="tags"><span class="pill ' + (later ? 'Later' : esc(o.payment)) + '">' +
         (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + '</span>' +
-        typeTag(o) + '</span></div>' +
-      '<div class="oacts">' + acts + (PRN.can() ? '<button class="backb" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') + '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
+        typeTag(o) + '</span>' + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
+          '<br>' + bi('عالزبون: ', 'Customer pays: ') + '<b class="num">' + money(o.total + o.fee) + '</b></span>' : '') + '</div>' +
+      '<div class="oacts">' + acts + '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
   }).join('') + '</div>';
   // Done on an order not paid yet: how it was paid
   var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
@@ -1545,9 +1580,12 @@ function who(o) {
   var bits = (o.name ? '<b>' + esc(o.name) + '</b>' : '') + (o.phone ? '<span class="num ph">+' + esc(o.phone) + '</span>' : '');
   return (bits ? '<div class="ohead">' + bits + '</div>' : '') + (o.type === 'Delivery' && o.address ? '<div class="addr">📍 ' + esc(o.address) + '</div>' : '');
 }
-function itemsOf(o) {
+// marks: after items were added to an order already in the kitchen, which lines it has and which are new
+function itemsOf(o, marks) {
   return o.items.map(function (x) {
-    return '<span>' + bi(x.qty + ' × ' + (x.ar || x.name), x.qty + ' × ' + x.name) + (x.sauces.length ? ' <small>(' + sauceList(x.sauces) + ')</small>' : '') + '</span>';
+    var sent = x.sentQty == null ? x.qty : x.sentQty, mark = !marks ? '' : sent >= x.qty ? '<i class="senti">✓ ' + bi('انبعت', 'sent') + '</i>'
+      : '<i class="newi">' + (sent ? bi((x.qty - sent) + ' جديد · لسا ما انبعت', (x.qty - sent) + ' new · not sent') : bi('جديد · لسا ما انبعت', 'new · not sent')) + '</i>';
+    return '<span>' + bi(x.qty + ' × ' + (x.ar || x.name), x.qty + ' × ' + x.name) + (x.sauces.length ? ' <small>(' + sauceList(x.sauces) + ')</small>' : '') + mark + '</span>';
   }).join('');
 }
 function typeTag(o) { return o.type ? '<span class="otype">' + (o.type === 'Delivery' ? bi('توصيل', 'Delivery') : bi('استلام', 'Pickup')) + '</span>' : '' }
@@ -1569,9 +1607,19 @@ $('#ord').addEventListener('click', function (e) {
     return drawOrders();
   }
   // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
-  if (b && b.dataset.print) { var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (pr) printOrder(pr); return }
   if (b && b.dataset.step) {
     var s = TD.list.filter(function (x) { return x.key === b.dataset.k })[0]; if (!s) return;
+    if (b.dataset.step === 'kitchen') {
+      // the whole order the first time, then only what was added; two tickets print (one for the kitchen, one for the bag)
+      var add = s.sent === '-' ? null : EB.unsent(s);
+      var sentO = EB.toKitchen(s, hhmmNow());
+      var tk = add ? JSON.parse(JSON.stringify(sentO)) : sentO;
+      if (add) { tk.items = add; tk.extra = true; tk.total = add.reduce(function (a2, x) { return a2 + x.qty * x.price }, 0) }
+      markPrinted(sentO);
+      if (printerSet()) printOrder(tk).then(function () { return printOrder(tk) });
+      toast((add ? 'انبعت الجديد عالمطبخ #' : 'انبعت عالمطبخ #') + s.num, (add ? 'New items sent to the kitchen #' : 'Sent to the kitchen #') + s.num);
+      return drawOrders();
+    }
     if (b.dataset.step === 'ready') {
       EB.ready(s, hhmmNow()); if (s.phone) whatsapp(s, 'ready');
       toast(s.type === 'Delivery' ? 'الطلب #' + s.num + ' طلع للتوصيل' : 'الطلب #' + s.num + ' جاهز', 'Order #' + s.num + (s.type === 'Delivery' ? ' out for delivery' : ' ready'));
@@ -2023,15 +2071,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js"></script>
-<script src="hub.js"></script>
-<script src="marketing.js"></script>
-<script src="printer.js"></script>
-<script src="cashier.js"></script>
-<script src="income.js"></script>
-<script src="sandouk.js"></script>
-<script src="adjust.js"></script>
-<script src="website.js"></script>
-<script src="overview.js"></script>
+<script src="recipes.js?v=37"></script>
+<script src="hub.js?v=37"></script>
+<script src="marketing.js?v=37"></script>
+<script src="printer.js?v=37"></script>
+<script src="cashier.js?v=37"></script>
+<script src="income.js?v=37"></script>
+<script src="sandouk.js?v=37"></script>
+<script src="adjust.js?v=37"></script>
+<script src="website.js?v=37"></script>
+<script src="overview.js?v=37"></script>
 </body>
 </html>
