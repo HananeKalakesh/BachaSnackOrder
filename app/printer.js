@@ -158,7 +158,7 @@ var PRN = (function () {
     var tot = money ? money(o.total).replace(' L.L.', '') : String(o.total), ty = y + 34;
     ops.push(function () { g.font = '800 34px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(tot, M, ty); g.textAlign = 'right'; g.direction = 'rtl'; g.font = '800 30px ' + AR; g.fillText('المجموع ل.ل.', W - M, ty) });
     y += 46;
-    var pay = o.payment === 'Unpaid' ? (o.type === 'Delivery' ? 'الدفع عند التوصيل' : 'الدفع عند الاستلام') : {Cash: 'كاش', Whish: 'ويش', Split: 'كاش + ويش'}[o.payment] || o.payment || '';
+    var pay = o.payment === 'Unpaid' ? (o.type === 'Delivery' ? 'الدفع عند التوصيل' : 'الدفع عند الاستلام') : {Cash: 'كاش', Whish: 'ويش', Split: 'كاش + ويش', House: 'للبيت'}[o.payment] || o.payment || '';
     if (pay) text(pay, AR, 26, 'center', W / 2, {bold: true});
     rule(1);
     text('شكراً يا باشا', AR, 22, 'center', W / 2);
