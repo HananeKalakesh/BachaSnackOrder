@@ -28,17 +28,47 @@ function boxCalc(cashLbp, cashUsd, whish, whishUsd) {
   return {total: total, owners: owners, left: total - owners};
 }
 // Owners lines typed by hand on a day (not the one the cash box records)
-/* The money with the chef: every night 30% of the count goes to the owners and the rest to the chef, who pays the
-   expenses; the drawer starts from zero the next day. So: all income + each day's money (the count when there is one,
-   else the orders' sales) − every purchase (the owners' share and equipment included). Null until everything loads. */
+/* The money with the resto: every night 30% of the count goes to the owners and the rest stays with the resto (the
+   chef pays the expenses from it); the drawer starts from zero the next day. So: all income + each past day's money (the
+   count when there is one, else the orders' sales) − every purchase (the owners' share and equipment included).
+   Today's money is still in the drawer: it joins only once tonight's count is saved (see drawerToday). Null until
+   everything loads. */
 function chefBalance() {
   var buys = purchases(), inc = incomes();
   if (!buys || !inc || !(SALES || EB.cached('sales'))) return null;
-  var counted = {}; (boxes() || []).forEach(function (x) { counted[x.day] = x.total });
+  var today = ymd(bizDate()), counted = {}; (boxes() || []).forEach(function (x) { counted[x.day] = x.total });
   var money = 0;
-  EB.report(salesOrders(), '2000-01-01', ymd(bizDate())).days.forEach(function (d) { if (!(d.date in counted)) money += d.sales });
+  EB.report(salesOrders(), '2000-01-01', today).days.forEach(function (d) { if (!(d.date in counted) && d.date !== today) money += d.sales });
   Object.keys(counted).forEach(function (d) { money += counted[d] });
   return inc.reduce(function (a, x) { return a + x.lbp }, 0) + money - buys.reduce(function (a, p) { return a + p.lbp }, 0);
+}
+// today's money not counted yet: paid sales split cash / Whish, and what is not paid. null until the orders load,
+// {counted: true} once tonight's count is saved (it is then in the resto's balance)
+function drawerToday() {
+  if (!(SALES || EB.cached('sales'))) return null;
+  var today = ymd(bizDate());
+  if ((boxes() || []).some(function (x) { return x.day === today })) return {counted: true};
+  var r = EB.report(salesOrders(), today, today), d = r.days.filter(function (x) { return x.date === today })[0], m = r.summary;
+  return {sales: d ? d.sales : 0, cash: m.cashLbp, whish: m.whishLbp, unpaid: m.unpaidLbp, unpaidN: m.unpaidOrders};
+}
+function restoCard() {
+  var bal = chefBalance(), d = drawerToday();
+  var h = '<div class="card instore"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>';
+  if (bal == null || !d) return h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p></div>';
+  var today = d.counted ? 0 : d.sales;
+  h += amount(bal + today) + '<div class="kpis rsplit">' +
+    '<div class="kpi"><small>' + bi('لآخر عدّ', 'Up to the last count') + '</small>' + amount(bal) + '</div>' +
+    '<div class="kpi"><small>' + (d.counted ? bi('اليوم (انعدّ ✓)', 'Today (counted ✓)') : bi('اليوم بالجارور', 'Today in the drawer')) + '</small>' + amount(today) + '</div></div>';
+  if (!d.counted) {
+    h += '<div class="kpis rsplit r3">' +
+      '<div class="kpi"><small>💵 ' + bi('كاش', 'Cash') + '</small>' + amount(d.cash) + '</div>' +
+      '<div class="kpi"><small>📱 ' + bi('ويش', 'Whish') + '</small>' + amount(d.whish) + '</div>' +
+      '<div class="kpi"><small>⏳ ' + bi('مش مدفوع', 'Not paid') + (d.unpaidN ? ' (' + d.unpaidN + ')' : '') + '</small>' + amount(d.unpaid) + '</div></div>';
+    if (today) h += '<p class="muted note2">' + bi('بعد عدّ الليلة: ' + OWNERS_PCT + '٪ للأصحاب ', 'After tonight\'s count: owners\' ' + OWNERS_PCT + '% ') +
+      '<b class="num">' + $usd(Math.round(today * OWNERS_PCT / 100)) + '</b> · ' + bi('بيبقى مع المطعم ', 'the resto keeps ') +
+      '<b class="num">' + $usd(bal + today - Math.round(today * OWNERS_PCT / 100)) + '</b>' + bi(' (حسب الطلبات، العدّ هو اللي بيعتمد)', ' (from the orders; the count is what counts)') + '</p>';
+  }
+  return h + '<p class="muted note2">' + bi('كل الدخل والصناديق المعدودة ناقص كل المصاريف وربح الأصحاب، ومبيعات اليوم اللي لسا ما انعدّت. المش مدفوع مش محسوب.', 'All income and counted cash boxes minus every expense and the owners\' share, plus today\'s sales not counted yet. Not paid isn\'t included.') + '</p></div>';
 }
 function handOwners(day) {
   return (purchases() || []).filter(function (p) { return p.cat === 'Owners' && p.day === day && p.key.indexOf('own-') !== 0 });
@@ -91,10 +121,8 @@ function drawSandouk() {
     '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيروح للشيف للمصاريف. تاني يوم الجارور بيبلّش من صفر.',
       'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest goes to the chef for the payments. The next day the drawer starts from zero.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
-  // the money with the chef, apart from tonight's count
-  var bal = chefBalance();
-  h += '<div class="card instore"><small>💼 ' + bi('مع الشيف هلّق', 'With the chef now') + '</small>' + (bal == null ? '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>' : amount(bal)) +
-    '<p class="muted note2">' + bi('كل الدخل والمبيعات (أو الصندوق المعدود) ناقص كل المصاريف وربح الأصحاب، من الأول.', 'All income and sales (or the counted cash box) minus every expense and the owners\' share, since the start.') + '</p></div>';
+  // the money with the resto: up to the last count + today's drawer = the total, with today split for the count
+  h += restoCard();
   h += '<div class="card addx"><div class="xform">' +
     '<input id="bDate" type="date" value="' + today + '">' +
     '<div class="xamt"><input id="bCash" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('كاش بالليرة', 'Cash in L.L.')) + '"><span class="muted">' + bi('كاش', 'Cash') + ' L.L.</span></div>' +
