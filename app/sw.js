@@ -1,7 +1,7 @@
 /* Keeps a copy of the app on the iPad so it opens without internet.
    Online, the newest files are used (and saved); offline, the saved copy. Orders themselves are not handled here:
    the app keeps unsent changes in its own outbox (core.js). */
-var CACHE = 'elbash-app-v50';
+var CACHE = 'elbash-app-v51';
 var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'cashier.js', 'printer.js', 'income.js', 'sandouk.js', 'stock.js', 'adjust.js', 'website.js', 'overview.js', 'favicon-32.png', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../assets/elbash/noar-green.svg'];
 
