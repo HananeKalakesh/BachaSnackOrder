@@ -662,7 +662,7 @@ function section(c) {
     var q = qtyOf(i);
     h += '<button class="tile' + (q ? ' has' : '') + (it.soldOut ? ' out' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
       '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b>' +
-      (it.soldOut ? '<span class="gone">' + bi('نفد', 'Sold out') + '</span>' : '<span class="pr num">' + short(it.price) + '</span>') + '</button>';
+      (it.soldOut ? '<span class="gone">' + bi('نفد', 'Sold out') + '</span>' : '<span class="pr num">' + (it.usd ? '$' + usdTxt(it.usd) : short(it.price)) + '</span>') + '</button>';
   });
   return h + '</div></div>';
 }
@@ -739,15 +739,17 @@ $('#shOk').addEventListener('click', function () {
 });
 
 /* ---------- ticket ---------- */
+// items priced in dollars (the family meals) show their $ price: $25, $7.5
+function usdTxt(v) { return String(Math.round(v * 100) / 100) }
 function total() { var t = 0; for (var k in cart) t += cart[k] * lineOf(k).it.price; return t }
 function renderCart() {
   var keys = Object.keys(cart);
   $('#lines').innerHTML = keys.length ? keys.map(function (k) {
     var l = lineOf(k), it = l.it;
     return '<div class="line" style="' + catVars(it.cat) + '"><i></i><span class="n">' + bi(it.ar || it.name, it.name) +
-      (l.sauces.length ? '<small class="sauces">' + sauceList(l.sauces) + '</small>' : '') + '</span><span class="lt num">' + fmt(cart[k] * it.price) + '</span>' +
+      (l.sauces.length ? '<small class="sauces">' + sauceList(l.sauces) + '</small>' : '') + '</span><span class="lt num">' + (it.usd ? '$' + usdTxt(cart[k] * it.usd) : fmt(cart[k] * it.price)) + '</span>' +
       '<div class="stepper"><button data-d="1" data-k="' + esc(k) + '" aria-label="+1">+</button><span class="num">' + cart[k] + '</span><button data-d="-1" data-k="' + esc(k) + '" aria-label="-1">−</button>' +
-      '<small>' + bi('الواحد', 'each') + ' <span class="num">' + fmt(it.price) + '</span></small></div></div>';
+      '<small>' + bi('الواحد', 'each') + ' <span class="num">' + (it.usd ? '$' + usdTxt(it.usd) : fmt(it.price)) + '</span></small></div></div>';
   }).join('') : '<div class="empty">' + bi('دق على الأصناف لتنضاف عالطلب.', 'Tap items to add them.') + '</div>';
   var t = total();
   $('#tot').textContent = money(t); $('#totUsd').textContent = usd(t / RATE);
