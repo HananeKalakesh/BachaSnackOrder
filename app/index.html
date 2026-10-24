@@ -592,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=42"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=43"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1544,14 +1544,17 @@ function drawOrders() {
     var stage = o.done ? '<span class="stage s3">✓ ' + bi('خلص ' + o.done, 'Done ' + o.done) + '</span>'
       : o.ready ? '<span class="stage s2">' + (del ? '🛵 ' + bi('طلع للتوصيل ' + o.ready, 'Out for delivery ' + o.ready) : '✅ ' + bi('جاهز للاستلام ' + o.ready, 'Ready for pickup ' + o.ready)) + '</span>'
       : o.sent === '-' ? '<span class="stage s0">📝 ' + bi('جديد · لسا ما انبعت عالمطبخ', 'New · not sent to the kitchen yet') + '</span>'
-      : '<span class="stage s1">👨‍🍳 ' + (o.sent ? bi('بالمطبخ من ', 'In the kitchen since ') + '<span class="num">' + t12(o.sent) + '</span>' : bi('بالمطبخ', 'In the kitchen')) + '</span>';
+      : '<span class="stage s1">🔥 ' + (o.sent ? bi('عم يتحضّر · من ', 'Preparing · since ') + '<span class="num">' + t12(o.sent) + '</span>' : bi('عم يتحضّر', 'Preparing')) + '</span>';
     var fresh = EB.unsent(o);
     var acts = o.done ? '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
       : o.ready ? '<button class="stepb go" data-step="done" data-k="' + esc(o.key) + '">✓ ' + (del ? bi('وصل وانقبض', 'Delivered & paid') : bi('استلمو', 'Picked up')) + '</button>' +
           '<button class="readyb" data-msg="' + esc(o.key) + '">📲 ' + bi('ابعت تحديث', 'Send update') + '</button>' +
           '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
-      : o.sent === '-' ? '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت عالمطبخ', 'Send to kitchen') + '</button>'
-      : (fresh.length ? '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت الجديد عالمطبخ', 'Send the new items') + '</button>' : '') +
+      // printing sends it to the kitchen (no printer set up: a plain Send to kitchen button)
+      : o.sent === '-' ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>'
+          : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت عالمطبخ', 'Send to kitchen') + '</button>')
+      : (fresh.length ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع الجديد', 'Print the new items') + '</button>'
+          : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت الجديد عالمطبخ', 'Send the new items') + '</button>') : '') +
         '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
     var owes = o.payment === 'Unpaid' && o.done, later = o.payment === 'Unpaid' && !o.done;
     return '<div class="ord ' + cls + (owes ? ' owes' : '') + '" data-key="' + esc(o.key) + '">' +
@@ -1563,9 +1566,14 @@ function drawOrders() {
         (later ? bi('لسا ما دفع', 'Not paid yet') : bi(PAY_AR[o.payment] || o.payment, o.payment)) + '</span>' +
         typeTag(o) + '</span>' + (o.fee ? '<span class="feetag">🛵 ' + bi('توصيل ', 'Delivery ') + '<b class="num">' + short(o.fee) + '</b> ' + bi('للسائق', 'for the driver') +
           '<br>' + bi('عالزبون: ', 'Customer pays: ') + '<b class="num">' + money(o.total + o.fee) + '</b></span>' : '') + '</div>' +
-      '<div class="oacts">' + (SECOND[o.key] ? '<button class="stepb second" data-second="' + esc(o.key) + '">🖨 ' + bi('النسخة التانية', 'Second copy') + '</button>' : '') + acts + (PRN.can() ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
+      '<div class="oacts">' + acts + (PRN.can() && !(o.sent === '-' && !o.done && !o.ready) && !(fresh.length && !o.done && !o.ready) ? '<button class="prtb" data-print="' + esc(o.key) + '" title="' + esc(T('اطبع مرة تانية', 'Print again')) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' : '') +
         '<button class="odel" data-del="' + esc(o.key) + '">' + bi('امسح', 'Delete') + '</button></div></div>';
   }).join('') + '</div>';
+  // WhatsApp or not, after Accept / Ready
+  if (TD.wa) h += '<div class="paysheet"><div class="paybox"><h3 class="display">📲 ' + bi('رسالة واتساب للزبون؟', 'WhatsApp the customer?') + '</h3>' +
+    '<p>' + bi('الطلب #' + TD.wa.o.num + (TD.wa.kind === 'confirm' ? ': إنو انقبل طلبو وعم نحضّرو' : TD.wa.o.type === 'Delivery' ? ': إنو طلع للتوصيل' : ': إنو جاهز'),
+      'Order #' + TD.wa.o.num + (TD.wa.kind === 'confirm' ? ': it was accepted and is being prepared' : TD.wa.o.type === 'Delivery' ? ': it is on the way' : ': it is ready')) + '</p>' +
+    '<div class="paybtns"><button class="payb cash" data-wa="send">📲 ' + bi('ابعت واتساب', 'Send WhatsApp') + '</button><button class="payb whish" data-wa="skip">' + bi('تجاهل', 'Skip') + '</button></div></div></div>';
   // Done on an order not paid yet: how it was paid
   var pf = TD.payFor && TD.list.filter(function (x) { return x.key === TD.payFor })[0];
   if (pf) h += '<div class="paysheet" id="paySheet"><div class="paybox"><h3 class="display">' + bi('الطلب #' + pf.num + ': الحساب', 'Order #' + pf.num + ': payment') + '</h3>' +
@@ -1578,7 +1586,8 @@ function drawOrders() {
 }
 function hhmmNow() { return EB.hhmm() }
 // tickets sent to the kitchen whose second copy hasn't been printed yet: order key -> ticket
-var SECOND = {};
+// After Accept and Ready: ask before opening WhatsApp, so skipping it keeps the cashier in the app
+function askWhatsapp(o, kind) { if (o && o.phone) { TD.wa = {o: o, kind: kind}; } }
 function who(o) {
   var bits = (o.name ? '<b>' + esc(o.name) + '</b>' : '') + (o.phone ? '<span class="num ph">+' + esc(o.phone) + '</span>' : '');
   return (bits ? '<div class="ohead">' + bits + '</div>' : '') + (o.type === 'Delivery' && o.address ? '<div class="addr">📍 ' + esc(o.address) + '</div>' : '');
@@ -1601,7 +1610,7 @@ $('#ord').addEventListener('click', function (e) {
     // accepted: it joins the orders, and WhatsApp opens with the confirmation for the customer (the cashier taps send)
     if (b.dataset.accept) {
       EB.status(w, 'Accepted'); autoPrint(w); toast('انقبل الطلب #' + w.num, 'Order #' + w.num + ' accepted');
-      if (w.phone) whatsapp(w, 'confirm');
+      askWhatsapp(w, 'confirm');
     }
     else if (confirm(T('ترفض الطلب #' + w.num + '؟', 'Reject order #' + w.num + '?'))) {
       EB.status(w, 'Rejected');
@@ -1610,9 +1619,19 @@ $('#ord').addEventListener('click', function (e) {
     return drawOrders();
   }
   // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
-  if (b && b.dataset.second) { var sc = SECOND[b.dataset.second]; delete SECOND[b.dataset.second]; if (sc) printOrder(sc); return drawOrders() }
-  // print again (one copy): a ticket lost or a bag reprinted
-  if (b && b.dataset.print) { var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (pr) printOrder(pr); return }
+  // Print: one ticket each tap. An order not sent yet goes to the kitchen (Preparing) as it prints; items added since
+  // print on their own ticket (إضافة على الطلب) and go to the kitchen too; otherwise it's a reprint of the whole order.
+  if (b && b.dataset.print) {
+    var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (!pr) return;
+    var news = !pr.done && !pr.ready && pr.sent !== '-' ? EB.unsent(pr) : [];
+    if (!pr.done && !pr.ready && (pr.sent === '-' || news.length)) {
+      var so = EB.toKitchen(pr, hhmmNow()), tk = so;
+      if (news.length) { tk = JSON.parse(JSON.stringify(so)); tk.items = news; tk.extra = true; tk.total = news.reduce(function (a2, x) { return a2 + x.qty * x.price }, 0) }
+      markPrinted(so); printOrder(tk);
+      return drawOrders();
+    }
+    printOrder(pr); return;
+  }
   if (b && b.dataset.step) {
     var s = TD.list.filter(function (x) { return x.key === b.dataset.k })[0]; if (!s) return;
     if (b.dataset.step === 'kitchen') {
@@ -1621,20 +1640,19 @@ $('#ord').addEventListener('click', function (e) {
       var sentO = EB.toKitchen(s, hhmmNow());
       var tk = add ? JSON.parse(JSON.stringify(sentO)) : sentO;
       if (add) { tk.items = add; tk.extra = true; tk.total = add.reduce(function (a2, x) { return a2 + x.qty * x.price }, 0) }
-      markPrinted(sentO);
-      // one ticket now; the second when the cashier taps "Second copy" (one print at a time, so the printer cuts each one)
-      if (printerSet()) { printOrder(tk); SECOND[s.key] = tk }
+      markPrinted(sentO);   // no printer set up: sent without a ticket
       toast((add ? 'انبعت الجديد عالمطبخ #' : 'انبعت عالمطبخ #') + s.num, (add ? 'New items sent to the kitchen #' : 'Sent to the kitchen #') + s.num);
       return drawOrders();
     }
     if (b.dataset.step === 'ready') {
-      EB.ready(s, hhmmNow()); if (s.phone) whatsapp(s, 'ready');
+      EB.ready(s, hhmmNow()); askWhatsapp(s, 'ready');
       toast(s.type === 'Delivery' ? 'الطلب #' + s.num + ' طلع للتوصيل' : 'الطلب #' + s.num + ' جاهز', 'Order #' + s.num + (s.type === 'Delivery' ? ' out for delivery' : ' ready'));
     }
     if (b.dataset.step === 'done') { if (s.payment === 'Unpaid') { TD.payFor = s.key; return drawOrders() } EB.done(s, hhmmNow()) }
     if (b.dataset.step === 'back') { if (s.done) EB.done(s, ''); else EB.ready(s, '') }
     return drawOrders();
   }
+  if (b && b.dataset.wa) { var wa = TD.wa; TD.wa = null; if (wa && b.dataset.wa === 'send') whatsapp(wa.o, wa.kind); return drawOrders() }
   if (b && b.dataset.msg) { var u = TD.list.filter(function (x) { return x.key === b.dataset.msg })[0]; if (u) whatsapp(u, 'ready'); return }
   if (b && b.dataset.payhow) {
     var q = TD.list.filter(function (x) { return x.key === TD.payFor })[0], part = null;
@@ -2078,15 +2096,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=42"></script>
-<script src="hub.js?v=42"></script>
-<script src="marketing.js?v=42"></script>
-<script src="printer.js?v=42"></script>
-<script src="cashier.js?v=42"></script>
-<script src="income.js?v=42"></script>
-<script src="sandouk.js?v=42"></script>
-<script src="adjust.js?v=42"></script>
-<script src="website.js?v=42"></script>
-<script src="overview.js?v=42"></script>
+<script src="recipes.js?v=43"></script>
+<script src="hub.js?v=43"></script>
+<script src="marketing.js?v=43"></script>
+<script src="printer.js?v=43"></script>
+<script src="cashier.js?v=43"></script>
+<script src="income.js?v=43"></script>
+<script src="sandouk.js?v=43"></script>
+<script src="adjust.js?v=43"></script>
+<script src="website.js?v=43"></script>
+<script src="overview.js?v=43"></script>
 </body>
 </html>
