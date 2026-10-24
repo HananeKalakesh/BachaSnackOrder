@@ -122,6 +122,7 @@ section[hidden]{display:none}
 .actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:10px 4px 0}
 .has-photo .actions{padding:8px 6px 0}
 .price{font-weight:800;font-size:15px;letter-spacing:.01em;white-space:nowrap}
+.price .ll{display:block;font-size:11.5px;font-weight:600;opacity:.6;letter-spacing:0}
 .price bdi{font-weight:600;color:var(--muted)}
 .stepper{display:flex;align-items:center;gap:4px;background:var(--sand);border-radius:14px;padding:3px}
 .stepper button,.add{display:flex;align-items:center;justify-content:center;gap:5px;min-width:38px;padding:0 10px;height:40px;border:0;border-radius:12px;background:var(--green);color:#fff;font-size:20px;font-weight:700;line-height:1;cursor:pointer;touch-action:manipulation}
@@ -341,9 +342,9 @@ const CONFIG = {
   // cards with sizes (type 'o'): [label, item in the sheet, price until the sheet loads, sauces 's1' / 's2']
   options: {
     'Wings Meal': [['7 PCS', 'Half Wings Meal 7 PCS', 500000, 's1'], ['14 PCS', 'Wings Meal 14 PCS', 800000, 's2']],
-    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', 800000], ['1 KG', 'Shawarma Family Meal 1 KG', 1500000]],
-    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', 800000], ['1 KG', 'Tawouk Family Meal 1 KG', 1500000]],
-    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', 1000000], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
+    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', '$9'], ['1 KG', 'Shawarma Family Meal 1 KG', '$17']],
+    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', '$9'], ['1 KG', 'Tawouk Family Meal 1 KG', '$17']],
+    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', '$11'], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
   },
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
@@ -425,14 +426,14 @@ mealGrid: [
   ['Shawarma Meal', 700000, 'Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce']
 ],
 familyGrid: [
-  ['Escalope Family Meal 8 PCS', 1790000, 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Escalope Family Meal 8 PCS', '$20', 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Zinger Family Meal 20-22 PCS', '$25', 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Crispy Family Meal 20-22 PCS', '$25', 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
   ['Half & Half Family Meal 20-22 PCS', '$25', '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
-  ['Broasted Family Meal 10 PCS', 1500000, 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Shawarma Family Meal', 800000, 'Chicken shawarma and fries', 'o'],
-  ['Tawouk Family Meal', 800000, 'Tawouk chicken and fries', 'o'],
-  ['Fajita Family Meal', 1000000, 'Chicken fajita and fries', 'o'],
+  ['Broasted Family Meal 10 PCS', '$17', 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Shawarma Family Meal', '$9', 'Chicken shawarma and fries', 'o'],
+  ['Tawouk Family Meal', '$9', 'Tawouk chicken and fries', 'o'],
+  ['Fajita Family Meal', '$11', 'Chicken fajita and fries', 'o'],
   ['Wings Family Meal 1 KG', '$15', 'Chicken wings and fries'],
   ['Boneless Chicken Thighs Family Meal', '$10', 'Boneless chicken thighs and fries']
 ],
@@ -890,7 +891,7 @@ function card([name, price, desc, type]) {
     + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
     + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${esc(choiceText)}</div>` : ''}</div>`
-    + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${fmt(price)}${USD[name] ? ` <bdi dir="ltr">($${USD[name]})</bdi>` : ''}</div>${controls}</div></div>`;
+    + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${USD[name] ? `<bdi dir="ltr">$${USD[name]}</bdi><span class="ll">${fmt(price)}</span>` : fmt(price)}</div>${controls}</div></div>`;
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
 function render() {
@@ -1020,7 +1021,7 @@ function renderChoiceOptions() {
   }
   if (ty === 'o') {
     $('#choiceHint').textContent = t('Choose one.');
-    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label${o.sold ? ' class="off"' : ''}><input type="radio" name="opt" value="${esc(o.label)}"${o.sold ? ' disabled' : ''}> <span>${esc(optLabel(o.label))} — ${o.sold ? t('Not available') : fmt(o.price) + (o.usd ? ` <bdi dir="ltr">($${o.usd})</bdi>` : '')}</span></label>`).join('') +
+    $('#choiceOptions').innerHTML = OPTS[selectedChoice.name].map(o => `<label${o.sold ? ' class="off"' : ''}><input type="radio" name="opt" value="${esc(o.label)}"${o.sold ? ' disabled' : ''}> <span>${esc(optLabel(o.label))} — ${o.sold ? t('Not available') : o.usd ? `<bdi dir="ltr">$${o.usd}</bdi> (${fmt(o.price)})` : fmt(o.price)}</span></label>`).join('') +
       '<div id="optSauces"></div>';
   } else if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
