@@ -592,7 +592,7 @@ td.r,th.r{text-align:end}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=44"></script>
+<script src="https://hananekalakesh.github.io/BachaSnackOrder/app/core.js?v=45"></script>
 <script>
 // MENU: items on the order screen; MENU_ALL: every Menu row; SET: the Settings tab (rate, PIN, kitchen times, day end)
 var MENU = [], MENU_ALL = [], BUSY = null, SET = EB.settings(null), RATE = 89500, CATS = [], cart = {}, method = 'Unpaid';
@@ -1551,9 +1551,11 @@ function drawOrders() {
           '<button class="readyb" data-msg="' + esc(o.key) + '">📲 ' + bi('ابعت تحديث', 'Send update') + '</button>' +
           '<button class="backb" data-step="back" data-k="' + esc(o.key) + '">↩ ' + bi('رجّعو', 'Undo') + '</button>'
       // printing sends it to the kitchen (no printer set up: a plain Send to kitchen button)
-      : o.sent === '-' ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>'
+      : o.sent === '-' ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' +
+            '<button class="prtb" data-step="kitchen" data-k="' + esc(o.key) + '">➜ ' + bi('كمّل بلا طباعة', 'Go on without printing') + '</button>'
           : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت عالمطبخ', 'Send to kitchen') + '</button>')
-      : (fresh.length ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع الجديد', 'Print the new items') + '</button>'
+      : (fresh.length ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع الجديد', 'Print the new items') + '</button>' +
+            '<button class="prtb" data-step="kitchen" data-k="' + esc(o.key) + '">➜ ' + bi('كمّل بلا طباعة', 'Go on without printing') + '</button>'
           : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت الجديد عالمطبخ', 'Send the new items') + '</button>') : '') +
         '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
     var owes = o.payment === 'Unpaid' && o.done, later = o.payment === 'Unpaid' && !o.done;
@@ -2097,15 +2099,15 @@ $('#exp').addEventListener('click', function (e) {
 });
 
 </script>
-<script src="recipes.js?v=44"></script>
-<script src="hub.js?v=44"></script>
-<script src="marketing.js?v=44"></script>
-<script src="printer.js?v=44"></script>
-<script src="cashier.js?v=44"></script>
-<script src="income.js?v=44"></script>
-<script src="sandouk.js?v=44"></script>
-<script src="adjust.js?v=44"></script>
-<script src="website.js?v=44"></script>
-<script src="overview.js?v=44"></script>
+<script src="recipes.js?v=45"></script>
+<script src="hub.js?v=45"></script>
+<script src="marketing.js?v=45"></script>
+<script src="printer.js?v=45"></script>
+<script src="cashier.js?v=45"></script>
+<script src="income.js?v=45"></script>
+<script src="sandouk.js?v=45"></script>
+<script src="adjust.js?v=45"></script>
+<script src="website.js?v=45"></script>
+<script src="overview.js?v=45"></script>
 </body>
 </html>

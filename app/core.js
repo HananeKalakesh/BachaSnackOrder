@@ -145,6 +145,9 @@ var EB = (function () {
     var p = day.split('-'), h = num(String(time).slice(0, 2)), m = num(String(time).slice(3, 5));
     var d = new Date(+p[0], +p[1] - 1, +p[2], h, m);
     if (h < dayEnd) d.setDate(d.getDate() + 1);
+    // the night the clocks go back, one hour happens twice: take the second one when it has already come
+    var again = new Date(d.getTime() + 3600000);
+    if (again.getHours() === d.getHours() && again.getMinutes() === d.getMinutes() && again.getTime() <= EB.now() + 120000) d = again;
     return d.getTime();
   };
   EB.hhmm = function (t) { var d = new Date(t || EB.now()); return pad(d.getHours()) + ':' + pad(d.getMinutes()) };
