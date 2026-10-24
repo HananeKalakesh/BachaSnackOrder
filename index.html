@@ -560,9 +560,8 @@ const ADJ = {
   'add-patty': ['Add a mozzarella patty', 'زيد باتي موزاريلا']
 };
 /* Changes that cost extra are items of their own in the Menu tab (the shop charges them like any item): the price and
-   on/off come from there. 'bread-up' is charged when an Arabic-bread sandwich goes on sub bread or tortilla, only once the
-   Menu tab has a "Bread Change" row switched on. */
-const EXTRA = {'add-patty': {name: 'Extra Mozzarella Patty', price: 150000, on: true}, 'bread-up': {name: 'Bread Change', price: 0, on: false}};
+   on/off come from there. 'bread-up' ("Bread Change") is charged when an Arabic-bread sandwich goes on sub bread or tortilla. */
+const EXTRA = {'add-patty': {name: 'Extra Mozzarella Patty', price: 100000, on: true}, 'bread-up': {name: 'Bread Change', price: 50000, on: true}};
 // the bread each sandwich is made on (from the costing worksheet), so the other breads are offered
 const BREAD_OF = {'Shawarma Sandwich': 'arabic', 'Tawouk Sandwich': 'arabic', 'Chicken Kebab Sandwich': 'arabic', 'Broasted Sandwich': 'arabic',
   'Crispy Sandwich': 'sub', 'Escalope Sandwich': 'sub', 'Chicken Sub Sandwich': 'sub', 'Francisco Sandwich': 'sub', 'Mushroom Steak Sandwich': 'sub',
