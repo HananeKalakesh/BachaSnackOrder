@@ -126,7 +126,7 @@ function drawBoxCalc() {
   }
   if (hand.length) h += '<p class="offline">' + bi('في ربح للأصحاب مكتوب باليد بهاليوم (', 'Owners\' pay was already typed by hand for this day (') +
     '<b class="num">' + $usd(hand.reduce(function (a, p) { return a + p.lbp }, 0)) + '</b>' +
-    bi(')، ما رح ينزاد واحد تاني. امسحو من المصاريف إذا بدك الصندوق يسجّلو.', '), so no second one is added. Delete it in Money out if the cash box should record it.') + '</p>';
+    bi(')، ما رح ينزاد واحد تاني. امسحو من المصاريف إذا بدك الصندوق يسجّلو.', '), so no second one is added. Delete it in Expenses if the cash box should record it.') + '</p>';
   $('#bCalc').innerHTML = h;
 }
 
@@ -137,7 +137,7 @@ function drawSandouk() {
     (BX.err === 'OFFLINE' ? '<p class="offline">' + bi('ما في إنترنت: الصندوق بينحفظ وبينبعت لحالو.', 'No internet: the count is kept and sent by itself.') + '</p>'
       : BX.err ? '<p class="err">' + esc(BX.err) + '</p>' : '') +
     '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيبقى مع المطعم (الشيف بيدفع منو المصاريف). تاني يوم الجارور بيبلّش من صفر.',
-      'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest stays with the resto (the chef pays the expenses from it). The next day the drawer starts from zero.') + '</p>';
+      'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Expenses by itself); the rest stays with the resto (the chef pays the expenses from it). The next day the drawer starts from zero.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
   // the money with the resto: up to the last count + today's drawer = the total, with today split for the count
   h += restoCard();
