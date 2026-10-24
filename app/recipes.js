@@ -29,7 +29,7 @@ function recData() {
     var g = RGROUPS.filter(function (k) { return k[3].test(name) })[0];
     return {name: name, ar: String(x[1] || ''), unit: String(x[2] || 'g'), makes: Number(String(x[3]).replace(/[^0-9.]/g, '')) || 0,
       note: String(x[6] || ''), lines: lines[name] || [], group: g ? g[0] : 'other'};
-  }).filter(function (x) { return x.lines.length > 1 });
+  }).filter(function (x) { return x.lines.length > 1 && !/^NOT USED/i.test(x.note) });   // kept in the costing for reference only
 }
 
 function showRecipes() {
