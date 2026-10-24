@@ -364,7 +364,7 @@ td.r,th.r{text-align:end}
 .ghost.wide{width:100%}
 .achouse{display:flex;flex-wrap:wrap;gap:6px}.achouse span{background:var(--sand);border-radius:999px;padding:4px 10px;font-size:14px}
 .acfoot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}.acfoot p{width:100%;margin:0}
-#box .instore{text-align:center;padding:18px}#box .instore .usd{font-size:40px}
+#box .instore{text-align:center;padding:18px}#box .instore>.usd{font-size:40px}#box .instore .num{text-align:center!important}#box .kpis.rsplit{margin:12px 0 0;grid-template-columns:1fr 1fr;gap:8px}#box .kpis.rsplit.r3{grid-template-columns:repeat(3,minmax(0,1fr))}#box .rsplit .kpi{padding:12px 8px;border-radius:18px}#box .rsplit .usd{font-size:20px}#box .rsplit .ll{font-size:11px}
 .xamt > span.muted{align-self:center;min-width:76px;font-weight:700;white-space:nowrap}
 .cmodes{flex-wrap:wrap;margin:6px 0 4px}.ctable td{vertical-align:top}.ctable .hlink{font:inherit;font-weight:800;background:none;border:0;padding:0;color:inherit;cursor:pointer}
 .xform .wide{grid-column:1/-1}
@@ -1095,10 +1095,10 @@ function drawToday() {
 // Dashboard, top: the money with the chef, then cash box, income and expenses, then the profit in one box (owners + business)
 function dashMoney(sales, today) {
   // a device that still has yesterday's sandouk.js (GitHub keeps files up to 10 minutes) must still open the dashboard
-  var bxs = typeof boxes === 'function' ? boxes() : null, buys = purchases(), wait = '<b class="usd">…</b>', bal = typeof chefBalance === 'function' ? chefBalance() : null;
+  var bxs = typeof boxes === 'function' ? boxes() : null, buys = purchases(), wait = '<b class="usd">…</b>', bal = typeof chefBalance === 'function' ? chefBalance() : null, drw = typeof drawerToday === 'function' ? drawerToday() : null;
   var counted = bxs ? bxs.reduce(function (a, x) { return a + x.total }, 0) : 0, t = buys ? tally(buys) : null, other = incomeIn('2000-01-01', today);
   var h = '<div class="kpis four">' +
-    '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null ? wait : amount(bal)) + '<small class="ll">' + bi('لآخر عدّ، بلا جارور اليوم', 'up to the last count, without today\'s drawer') + '</small></div>' +
+    '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null || !drw ? wait : amount(bal + (drw.counted ? 0 : drw.sales))) + '<small class="ll">' + (bal == null || !drw || drw.counted ? bi('لآخر عدّ', 'up to the last count') : bi('لآخر عدّ ', 'last count ') + $usd(bal) + ' + ' + bi('اليوم ', 'today ') + $usd(drw.sales)) + '</small></div>' +
     '<div class="kpi" data-goview="box"><small>📦 ' + bi('الصندوق المعدود', 'Cash box counted') + '</small>' + (bxs ? amount(counted) : wait) + '<small class="ll">' + (bxs ? fmt(bxs.length) + ' ' + bi('ليلة', 'nights') : '') + '</small></div>' +
     '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
     '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';

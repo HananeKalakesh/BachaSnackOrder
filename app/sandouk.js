@@ -42,13 +42,33 @@ function chefBalance() {
   Object.keys(counted).forEach(function (d) { money += counted[d] });
   return inc.reduce(function (a, x) { return a + x.lbp }, 0) + money - buys.reduce(function (a, p) { return a + p.lbp }, 0);
 }
-// today's paid sales still in the drawer (0 once tonight's count is saved); null until the orders load
+// today's money not counted yet: paid sales split cash / Whish, and what is not paid. null until the orders load,
+// {counted: true} once tonight's count is saved (it is then in the resto's balance)
 function drawerToday() {
   if (!(SALES || EB.cached('sales'))) return null;
   var today = ymd(bizDate());
-  if ((boxes() || []).some(function (x) { return x.day === today })) return 0;
-  var d = EB.report(salesOrders(), today, today).days.filter(function (x) { return x.date === today })[0];
-  return d ? d.sales : 0;
+  if ((boxes() || []).some(function (x) { return x.day === today })) return {counted: true};
+  var r = EB.report(salesOrders(), today, today), d = r.days.filter(function (x) { return x.date === today })[0], m = r.summary;
+  return {sales: d ? d.sales : 0, cash: m.cashLbp, whish: m.whishLbp, unpaid: m.unpaidLbp, unpaidN: m.unpaidOrders};
+}
+function restoCard() {
+  var bal = chefBalance(), d = drawerToday();
+  var h = '<div class="card instore"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>';
+  if (bal == null || !d) return h + '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p></div>';
+  var today = d.counted ? 0 : d.sales;
+  h += amount(bal + today) + '<div class="kpis rsplit">' +
+    '<div class="kpi"><small>' + bi('لآخر عدّ', 'Up to the last count') + '</small>' + amount(bal) + '</div>' +
+    '<div class="kpi"><small>' + (d.counted ? bi('اليوم (انعدّ ✓)', 'Today (counted ✓)') : bi('اليوم بالجارور', 'Today in the drawer')) + '</small>' + amount(today) + '</div></div>';
+  if (!d.counted) {
+    h += '<div class="kpis rsplit r3">' +
+      '<div class="kpi"><small>💵 ' + bi('كاش', 'Cash') + '</small>' + amount(d.cash) + '</div>' +
+      '<div class="kpi"><small>📱 ' + bi('ويش', 'Whish') + '</small>' + amount(d.whish) + '</div>' +
+      '<div class="kpi"><small>⏳ ' + bi('مش مدفوع', 'Not paid') + (d.unpaidN ? ' (' + d.unpaidN + ')' : '') + '</small>' + amount(d.unpaid) + '</div></div>';
+    if (today) h += '<p class="muted note2">' + bi('بعد عدّ الليلة: ' + OWNERS_PCT + '٪ للأصحاب ', 'After tonight\'s count: owners\' ' + OWNERS_PCT + '% ') +
+      '<b class="num">' + $usd(Math.round(today * OWNERS_PCT / 100)) + '</b> · ' + bi('بيبقى مع المطعم ', 'the resto keeps ') +
+      '<b class="num">' + $usd(bal + today - Math.round(today * OWNERS_PCT / 100)) + '</b>' + bi(' (حسب الطلبات، العدّ هو اللي بيعتمد)', ' (from the orders; the count is what counts)') + '</p>';
+  }
+  return h + '<p class="muted note2">' + bi('كل الدخل والصناديق المعدودة ناقص كل المصاريف وربح الأصحاب، ومبيعات اليوم اللي لسا ما انعدّت. المش مدفوع مش محسوب.', 'All income and counted cash boxes minus every expense and the owners\' share, plus today\'s sales not counted yet. Not paid isn\'t included.') + '</p></div>';
 }
 function handOwners(day) {
   return (purchases() || []).filter(function (p) { return p.cat === 'Owners' && p.day === day && p.key.indexOf('own-') !== 0 });
@@ -101,12 +121,8 @@ function drawSandouk() {
     '<p class="muted xhint">' + bi('آخر الليل: عدّ الكاش بالجارور وشوف قدّيش بالويش. ' + OWNERS_PCT + '٪ للأصحاب (بينسجّل لحالو بالمصاريف)، والباقي بيروح للشيف للمصاريف. تاني يوم الجارور بيبلّش من صفر.',
       'At the end of the night: count the cash in the drawer and check Whish. ' + OWNERS_PCT + '% goes to the owners (recorded in Money out by itself); the rest goes to the chef for the payments. The next day the drawer starts from zero.') + '</p>';
   var mine = list && list.filter(function (x) { return x.day === today })[0];
-  // the money with the resto, apart from what is still in today's drawer
-  var bal = chefBalance(), drw = drawerToday();
-  h += '<div class="card instore"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null ? '<p class="muted">' + bi('عم يحمّل…', 'Loading…') + '</p>' : amount(bal)) +
-    (drw ? '<p class="muted note2">' + bi('ومبيعات اليوم بالجارور (لسا ما انعدّت): ', 'Today\'s sales in the drawer (not counted yet): ') + '<b class="num">' + $usd(drw) + '</b>' +
-      bi(' — بتنضاف بعد عدّ الليلة ناقص ' + OWNERS_PCT + '٪.', ' — added after tonight\'s count, minus ' + OWNERS_PCT + '%.') + '</p>' : '') +
-    '<p class="muted note2">' + bi('كل الدخل والصناديق المعدودة ناقص كل المصاريف وربح الأصحاب، لآخر عدّ.', 'All income and counted cash boxes minus every expense and the owners\' share, up to the last count.') + '</p></div>';
+  // the money with the resto: up to the last count + today's drawer = the total, with today split for the count
+  h += restoCard();
   h += '<div class="card addx"><div class="xform">' +
     '<input id="bDate" type="date" value="' + today + '">' +
     '<div class="xamt"><input id="bCash" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('كاش بالليرة', 'Cash in L.L.')) + '"><span class="muted">' + bi('كاش', 'Cash') + ' L.L.</span></div>' +
