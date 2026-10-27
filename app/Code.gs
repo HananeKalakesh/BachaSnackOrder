@@ -15,7 +15,6 @@
  *       until staff accept it in the app
  *   {action: 'files'}                 what is in the El Bash folder in Google Drive, by sub-folder
  *   {action: 'file', id}              one file from that folder as data (to share it, e.g. to a WhatsApp story)
- *   {action: 'copyAssets'}            copies the website's menu photos, logos and materials (stories, menus…) into the folder (new ones only)
  *   {action: 'write', ops: [...]}     done in order, together, under a lock
  *       {op: 'append', tab, rows: [{Header: value}], unique: 'Header'}
  *           adds rows; a header the tab doesn't have yet becomes a new column;
@@ -33,17 +32,15 @@ var SHEET_ID = '1c286Sjxb7svai2OF6fjNIKaPnI3dt7JhKH78UDtvdgI';  // El Bash – O
 var TABS = ['Orders', 'Order Items', 'Menu', 'Settings', 'Purchases', 'Ingredients', 'Recipes', 'Recipe Lines', 'Stock', 'Links'];
 var APP_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/app/';
 var FOLDER_ID = '1emJrOfqaE3bP1RGid38uyHoYBuPlB76R';  // the El Bash folder in Google Drive (menus, stories, logos, photos…)
-var SITE_URL = 'https://hananekalakesh.github.io/BachaSnackOrder/';
-// Where the website's files are copied in Drive: its menu photos, and the logos
-var COPY_TO = { menu: '1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk', brand: '1Gxub86ScNlnYfbhwqAl2bJRP4xRIGIMS' };
+var MENU_PHOTOS_ID = '1aq-gpsuNhII9uaaYYsRF_rNcz_hXYHbk';  // its "6 Menu photos" sub-folder, read by the website
 
 function book_() { return SpreadsheetApp.openById(SHEET_ID) }
 
 /** Run this once from the editor (choose allowDrive next to Run): Google asks to allow the script to use the El Bash
- *  folder in Drive and to fetch the website's files. Needed for the Marketing screen and "Copy to Drive". */
+ *  folder in Drive and to fetch the app's pages. Needed for the Marketing screen and the menu photos. */
 function allowDrive() {
   var name = DriveApp.getFolderById(FOLDER_ID).getName();
-  UrlFetchApp.fetch(SITE_URL + 'app/assets.json');
+  UrlFetchApp.fetch(APP_URL);
   Logger.log('All set: the script can use the "' + name + '" folder in Drive.');
 }
 
@@ -60,6 +57,8 @@ function doGet(e) {
     page = cache.get('page:' + file);
     if (!page) throw err;
   }
+  // its styles and scripts are files next to it on GitHub Pages: their full address, as this page lives elsewhere
+  page = page.replace(/(<(?:script|link)\b[^>]*?\b(?:src|href)=")(?![a-z]+:|\/\/|#)/gi, '$1' + APP_URL);
   return HtmlService.createHtmlOutput(page).setTitle(p.screen === 'kitchen' ? 'El Bash Kitchen' : 'El Bash Orders')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
 }
@@ -86,7 +85,6 @@ function handle_(req) {
   if (req.action === 'write') return write_(ss, req.ops || []);
   if (req.action === 'files') return files_();
   if (req.action === 'file') return file_(String(req.id || ''));
-  if (req.action === 'copyAssets') return copyAssets_();
   throw new Error('Unknown action');
 }
 
@@ -124,29 +122,6 @@ function file_(id) {
   if (!ok) throw new Error('Only files in the El Bash folder can be shared');
   if (f.getSize() > 30 * 1024 * 1024) throw new Error('This file is too big to share from the app (over 30 MB). Open it in Drive instead.');
   return { name: f.getName(), type: f.getMimeType(), data: Utilities.base64Encode(f.getBlob().getBytes()) };
-}
-
-/** Copies the files listed in app/assets.json into the Drive folders, skipping any already there: the menu photos and
- *  logos (menu, brand), and under "drive" any material by the name of its sub-folder of the El Bash folder
- *  (e.g. "2 Social media & stories"), so new materials only need a line in assets.json. */
-function copyAssets_() {
-  var list = JSON.parse(UrlFetchApp.fetch(SITE_URL + 'app/assets.json').getContentText()), added = 0, kept = 0;
-  var copy = function (folder, files) {
-    var have = {}, it = folder.getFiles();
-    while (it.hasNext()) { var f = it.next(); if (!f.isTrashed()) have[f.getName()] = true }
-    (files || []).forEach(function (x) {
-      if (have[x.name] || !/^[\w\/.-]+$/.test(x.path)) { kept++; return }
-      folder.createFile(UrlFetchApp.fetch(SITE_URL + x.path).getBlob().setName(x.name)); added++;
-    });
-  };
-  Object.keys(COPY_TO).forEach(function (group) { copy(DriveApp.getFolderById(COPY_TO[group]), list[group]) });
-  var root = DriveApp.getFolderById(FOLDER_ID);
-  Object.keys(list.drive || {}).forEach(function (name) {
-    var subs = root.getFoldersByName(name);
-    copy(subs.hasNext() ? subs.next() : root.createFolder(name), list.drive[name]);
-  });
-  CacheService.getScriptCache().remove('files');
-  return { added: added, kept: kept };
 }
 
 /** A value from the Settings tab, found by the start of its label in column A. */
@@ -359,7 +334,7 @@ function menuPhotos_() {
   if (hit) return JSON.parse(hit);
   var out = {}, when = {};
   try {
-    var it = DriveApp.getFolderById(COPY_TO.menu).getFiles();
+    var it = DriveApp.getFolderById(MENU_PHOTOS_ID).getFiles();
     while (it.hasNext()) {
       var f = it.next();
       if (!/^image\//.test(f.getMimeType())) continue;
@@ -376,11 +351,15 @@ function menuPhotos_() {
 }
 
 /** Every Menu row for the website: on = shown ("On order screen" ticked), soldOut = shown greyed as not available,
- *  usd = the $ price when there is one; and the
+ *  usd = the $ price when there is one, and what the website shows with it, each from its own column (by header):
+ *  desc / descAr ("Description", "Description (Arabic)"), card + size ("Card", "Size": rows sharing a card are one
+ *  card with a size to choose), sauces ("Sauces": fries, wings 1 or wings 1-2) and popular ("Popular" ticked); and the
  *  opening hours, day off and open-anyway dates from the Settings tab (rows starting "Opening hours", "Closed day",
  *  "Open anyway on"), which the website reads as it is. */
 function menu_() {
-  var ss = book_(), rows = ss.getSheetByName('Menu').getDataRange().getValues().slice(1), tz = ss.getSpreadsheetTimeZone();
+  var ss = book_(), all = ss.getSheetByName('Menu').getDataRange().getValues(), rows = all.slice(1), tz = ss.getSpreadsheetTimeZone();
+  var head = all[0].map(function (h) { return String(h).trim() });
+  var col = function (r, name) { var i = head.indexOf(name); return i < 0 || r[i] == null ? '' : String(r[i]).trim() };
   var raw = function (label) {   // the cell as typed: a date typed alone comes back as yyyy-mm-dd
     var v = ss.getSheetByName('Settings').getDataRange().getValues();
     for (var i = 0; i < v.length; i++) if (String(v[i][0]).indexOf(label) === 0) return v[i][1] instanceof Date ? Utilities.formatDate(v[i][1], tz, 'yyyy-MM-dd') : String(v[i][1]).trim();
@@ -390,6 +369,8 @@ function menu_() {
     hours: raw('Opening hours'), closedDay: raw('Closed day'), openDates: raw('Open anyway on'), photos: menuPhotos_(),
     items: rows.filter(function (r) { return r[1] }).map(function (r) {
     return { cat: String(r[0]), name: String(r[1]).trim(), ar: String(r[2]).trim(), usd: Number(String(r[3]).replace(/[^0-9.]/g, '')) || 0,
-      price: Number(r[4]) || 0, on: r[5] === true, soldOut: r[7] === true };
+      price: Number(r[4]) || 0, on: r[5] === true, soldOut: r[7] === true,
+      desc: col(r, 'Description'), descAr: col(r, 'Description (Arabic)'), card: col(r, 'Card'), size: col(r, 'Size'),
+      sauces: col(r, 'Sauces').toLowerCase(), popular: col(r, 'Popular') === 'true' };
   }) };
 }

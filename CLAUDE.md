@@ -33,13 +33,12 @@ link or say where it is:
 
 How:
 - **Docs, sheets, text:** create them directly in the sub-folder with the Google Drive / Docs / Sheets connector.
-- **Images and other files** (too big for the connector): commit the file to this repo (stories in `assets/stories/`, print menus in `assets/print/`,
-  with the HTML it was rendered from), and add it to `app/assets.json` under `"drive"`, keyed by the sub-folder's exact
-  name. Once the branch is merged and live, the script copies it into that sub-folder by itself within the hour
-  (`autoCopy` in `app/AutoCopy.gs`, an hourly trigger, runs `copyAssets_` in `app/Code.gs`); there is no button to tap.
-  It copies everything listed there that Drive doesn't have yet, so list a file under `"drive"` only once the owner
-  has approved saving it. It skips a name Drive already has: to replace a file, trash the old one in Drive first
-  (Drive connector `trash_file`). Check Drive within the hour and tell the owner when it's there.
+- **Images, PDFs and videos:** Drive is the master. Google Drive for desktop syncs the El Bash folder to
+  `G:\My Drive\El Bash` on the owner's PC: save the PNG/PDF straight into the right sub-folder there (overwrite to
+  replace, so no older copy stays) and it is in Drive and in the app's Marketing tab within a minute. Never commit
+  PNG/PDF materials to this repo; only the HTML a design is rendered from goes here (stories in `assets/stories/`,
+  print in `assets/print/`), as code. Render with headless Chrome:
+  `chrome.exe --headless=new --screenshot=<file.png> --window-size=1080,1920 <file.html>` for a story.
 - Name files so they read well in Drive, e.g. `Story – new hours (1-4 PM, 6-11 PM).png`.
 
 ## Rule: marketing materials send people to the website, not WhatsApp
@@ -55,5 +54,13 @@ Materials (stories, posts, flyers, the digital menu) are built in Arabic, with E
 title or slogan may lead in English when an Arabic line goes with it. Never make a page that is only in English.
 
 The one exception is the **printed A3 menu**: Arabic only (`Menu A3 – Arabic.pdf`), with every item on the Menu tab.
-Its design lives in `assets/print/menu-a3.html` (both languages); edit that, then `node assets/print/split-menu.cjs`
-makes `menu-a3-ar` (HTML, PDF, PNG).
+It builds itself from the Menu tab: after a price or item change, run
+`powershell -ExecutionPolicy Bypass -File assets\print\make-a3.ps1`; it fits the text and saves the PDF and PNG into
+"1 Menus & print" in Drive. Only its design (`assets/print/menu-a3.html`: header, hours, layout of the columns) is
+edited by hand; never type items or prices into it.
+
+## Rule: one item = one row of the Menu tab
+
+Name, Arabic name, price, on/off, sold out, description (English and Arabic), sizes (Card + Size), sauces to choose
+and Popular are columns of the Menu tab. The website, the app and the A3 all read them; nothing about an item is typed
+in this repo. To change an item, change its row (Sheets connector) and, for print, run `make-a3.ps1`.

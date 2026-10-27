@@ -1,8 +1,9 @@
 /* Keeps a copy of the app on the iPad so it opens without internet.
    Online, the newest files are used (and saved); offline, the saved copy. Orders themselves are not handled here:
    the app keeps unsent changes in its own outbox (core.js). */
-var CACHE = 'elbash-app-v53';
-var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'cashier.js', 'printer.js', 'income.js', 'sandouk.js', 'stock.js', 'adjust.js', 'website.js', 'overview.js', 'favicon-32.png', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
+var CACHE = 'elbash-app-v54';
+var FILES = ['./', 'index.html', 'kitchen.html', 'manage.html', 'app.css', 'order.js', 'views.js', 'sales.js', 'dashboard.js', 'unpaid.js', 'device.js',
+  'expenses.js', 'core.js', 'recipes.js', 'hub.js', 'marketing.js', 'cashier.js', 'printer.js', 'income.js', 'sandouk.js', 'stock.js', 'adjust.js', 'website.js', 'overview.js', 'favicon-32.png', 'manifest.webmanifest', 'kitchen.webmanifest', 'manage.webmanifest',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../assets/elbash/noar-green.svg'];
 
 self.addEventListener('install', function (e) {

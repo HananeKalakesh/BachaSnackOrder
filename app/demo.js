@@ -126,8 +126,9 @@ var EBDemo = (function () {
     buy(3, 'Utilities', 'Gas cylinder', 35, '$', '', 'Gas'); buy(5, 'Utilities', 'Water tank', 1800000, 'L.L.', '', 'Water'); buy(6, 'Utilities', 'Monthly', 25, '$', '', 'Internet');
     buy(4, 'Other', 'Cleaning products', 900000, 'L.L.'); buy(7, 'Equipment', 'New fryer', 450, '$', '', 'Machines'); buy(2, 'Equipment', 'Knives and tongs', 30, '$', '', 'Kitchen supplies');
 
-    var menuTab = [['Category', 'Item', 'Arabic name', 'Price ($)', 'Price (L.L.)', 'On order screen', 'Kitchen screen', 'Sold out']].concat(menu.items.map(function (m) {
-      return [m.cat, m.name, m.ar, m.usd ? '$' + m.usd : '', m.price || '', m.on, '', ''];
+    var menuTab = [['Category', 'Item', 'Arabic name', 'Price ($)', 'Price (L.L.)', 'On order screen', 'Kitchen screen', 'Sold out',
+      'Card', 'Size', 'Sauces', 'Description', 'Description (Arabic)', 'Popular']].concat(menu.items.map(function (m) {
+      return [m.cat, m.name, m.ar, m.usd ? '$' + m.usd : '', m.price || '', m.on, '', '', m.card || '', m.size || '', m.sauces || '', m.desc || '', m.descAr || '', !!m.popular];
     }));
     var settings = [['Settings', 'Value'], ['Demo sheet: nothing here is real.'], ['USD rate (L.L. per $1)', rate], ['PIN to lock the Sales screen', "'0000"], [''], [''], [''],
       ['Kitchen screen: minutes until an order turns yellow', 10], ['Kitchen screen: minutes until an order turns red', 20], ['Day ends at (hour, 0-12)', 2], ['App key', 'demo'], [''],

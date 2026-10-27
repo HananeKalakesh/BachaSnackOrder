@@ -91,8 +91,6 @@ var EB = (function () {
       return new File([bytes], r.name, {type: r.type});
     });
   };
-  // Copies the website's menu photos and logos into the Drive folder (new ones only)
-  EB.copyAssets = function () { return remote({action: 'copyAssets'}) };
   EB.rows = function (t) {
     return t ? t.rows.map(function (r) { var o = {}; t.head.forEach(function (h, i) { o[h] = r[i] }); return o }) : [];
   };
@@ -129,7 +127,9 @@ var EB = (function () {
   EB.menu = function (r) {
     var list = EB.rows(r && r.Menu).filter(function (m) { return str(m.Item) }).map(function (m) {
       return {cat: str(m.Category), name: str(m.Item), ar: str(m['Arabic name']), usd: num(m['Price ($)']), price: num(m['Price (L.L.)']),
-        on: m['On order screen'] === true, soldOut: m['Sold out'] === true, station: str(m['Kitchen screen'])};
+        on: m['On order screen'] === true, soldOut: m['Sold out'] === true, station: str(m['Kitchen screen']),
+        // what the menu website shows with it: the card it is a size of, its sauces to choose, its description
+        card: str(m['Card']), size: str(m['Size']), sauces: str(m['Sauces']).toLowerCase(), desc: str(m['Description'])};
     });
     changes(r && r.at).forEach(function (c) {
       var f = c.effect || {};

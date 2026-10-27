@@ -7,17 +7,17 @@ Served by GitHub Pages at https://hananekalakesh.github.io/BachaSnackOrder/app/ 
   off and the busy mode for the website), Kitchen (opens `kitchen.html`), Chef (today's stock, recipes without costs),
   Marketing (`marketing.js`: the El Bash Drive folder's photos and videos, shared to WhatsApp stories), Management (PIN, three tabs:
   Overview (`overview.js`: money in vs out, profit, where the money goes, month by month; its tiles open the screens), Money in (a switch between Sales, Not paid and Other income, `income.js`: money from before the app and capital) and Money out (expenses)) or Developer (PIN: `hub.js` home with every link and file, `recipes.js` with costs).
-  `manage.html` and `?app=manage` open Management, `?role=…` the others. `assets.json` lists the website files the
-  script copies into Drive (menu photos named by item, logos).
+  `manage.html` and `?app=manage` open Management, `?role=…` the others. Marketing shows what is in the El Bash
+  Drive folder (`files_()` in `Code.gs`); nothing is copied there from this repo.
+  The page itself is only the markup: its styles are `app.css`, and each screen its own script: `order.js` (the order
+  screen, ticket, saving), `views.js` (switching screens), `sales.js`, `dashboard.js`, `unpaid.js` (today's orders and
+  not paid), `device.js` (language, who uses the device), `expenses.js`. A new file goes into `sw.js` FILES too.
 - `kitchen.html`: the kitchen screen.
 - `core.js`: shared by all of them. `sw.js` keeps a copy on the iPad so the app opens without internet; unsent
   changes wait in an outbox (core.js).
 - `demo.js`: add `?demo` to any link (app, manage, kitchen, the menu website) to try everything on a pretend sheet
   kept on that device, with the real menu and made-up orders. It runs `Code.gs` itself in the browser; nothing
   reaches the real sheet.
-
-`AutoCopy.gs` sits next to `Code.gs` in the same Apps Script project: an hourly trigger (set up by running
-`startAutoCopy` once) copies the files listed in `assets.json` into the El Bash Drive folder, new ones only.
 
 `Code.gs` is the Apps Script behind the El Bash – Orders & Sales sheet. It reads the tabs, adds, changes or removes
 rows (protected by the app key in the Settings tab), and takes orders from the menu website. All the shop's rules

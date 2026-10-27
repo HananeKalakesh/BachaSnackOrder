@@ -1,19 +1,21 @@
 /* ---------- marketing: share the stories, videos and menu photos in the El Bash Drive folder ----------
-   On top the digital menu, then the A3 print menus as pictures (shared like the stories, with the PDF for printing). Then the stories, videos and menu photos from Drive as pictures: tap one,
+   On top the digital menu, then the print menus, stories, videos and menu photos from Drive as pictures: tap one,
    then Share, and the device's share menu opens with the file, where WhatsApp › My status posts it as a story. (A web
    page can't open the WhatsApp status screen itself; the share menu is the way in.) Then links to the other folders.
-   Approved designs reach Drive by themselves (autoCopy in AutoCopy.gs, every hour). */
+   Everything comes from the El Bash Drive folder: a file saved there shows here within a minute. */
 var MK = {files: null, err: '', open: null, ready: null, busy: false};
 var BRAND_DOC = 'https://docs.google.com/document/d/1lMnkcyG8Bqlgfk4NDgfgmmrKdpoi_uYrUHM_UFs9GsI/edit';
 function thumb(id, w) { return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w' + (w || 400) }
-// The printed A3 menu (Arabic only), from this website: shown and shared as a picture, with the PDF for printing
-var MK_PRINT = [['a3-ar', 'Menu A3 – Arabic', 'menu-a3-ar']].map(function (m) {
-  return {id: m[0], name: m[1] + '.png', type: 'image/png', src: SITE + 'assets/print/' + m[2] + '.png', pdf: SITE + 'assets/print/' + m[2] + '.pdf'};
-});
 function mkFile(id) {
-  var r = MK.files || EB.cachedFiles(), hit = MK_PRINT.filter(function (x) { return x.id === id })[0] || null;
+  var r = MK.files || EB.cachedFiles(), hit = null;
   (r && r.folders || []).forEach(function (f) { f.files.forEach(function (x) { if (x.id === id) hit = x }) });
   return hit;
+}
+// In the print folder only the pictures are shown; a PDF with the same name ("Menu A3 – Arabic.pdf") is their print link
+function mkPrint(files) {
+  var pdf = {}, base = function (n) { return n.replace(/\.[a-z0-9]+$/i, '') };
+  files.forEach(function (x) { if (x.type === 'application/pdf') pdf[base(x.name)] = x.url });
+  return files.filter(function (x) { return /^image\//.test(x.type) }).map(function (x) { if (pdf[base(x.name)]) x.pdf = pdf[base(x.name)]; return x });
 }
 
 function showMarket() {
@@ -31,15 +33,14 @@ function mkCard(x) {
     '<small>' + esc(x.name) + '</small></button>';
 }
 
-// The folders shown as pictures, in order: stories and posts, videos, menu photos. The others only as links.
-var MK_SHOW = [/stor|social/i, /video/i, /menu photo/i];
+// The folders shown as pictures, in order: print menus, stories and posts, videos, menu photos. The others only as links.
+var MK_SHOW = [/print/i, /stor|social/i, /video/i, /menu photo/i];
 function drawMarket() {
   var r = MK.files || EB.cachedFiles();
   var h = '<div class="shead"><h2 class="display">' + bi('الماركتنغ', 'Marketing') + '</h2></div>' +
     '<div class="hgrid mklinks">' +
     hubTile('📱', bi('المنيو الرقمي', 'Digital menu'), bi('ابعتو للزباين', 'Send it to customers'), SITE).replace('<button class="hcopy"', '<button class="hcopy" data-mkshare="' + SITE + '"') +
     '</div>' +
-    '<div class="hgroup"><h3 class="display">' + bi('المنيو A3', 'A3 menu') + '</h3><div class="mkgrid wide">' + MK_PRINT.map(mkCard).join('') + '</div></div>' +
     '<p class="mkhow">' + bi('اكبس على صورة أو فيديو، بعدين «شارك» واختار واتساب › الحالة. هيك بتنزل ستوري.', 'Tap a photo or video, then Share, and pick WhatsApp › My status to post it as a story.') + '</p>';
   if (MK.err === 'OFFLINE') h += '<p class="offline">' + bi('ما في إنترنت: هيدي الملفات من آخر مرة.', 'No internet: these are the files from last time.') + '</p>';
   var shown = function (name) { return MK_SHOW.some(function (re) { return re.test(name) }) };
@@ -48,8 +49,9 @@ function drawMarket() {
   } else {
     MK_SHOW.forEach(function (re) {
       r.folders.filter(function (f) { return f.name && re.test(f.name) }).forEach(function (f) {
+        var print = /print/i.test(f.name), files = print ? mkPrint(f.files) : f.files;
         h += '<div class="hgroup"><h3 class="display">' + folderLabel(f.name) + ' <a class="hlink" href="' + esc(f.url) + '" target="_blank" rel="noopener">' + bi('افتح ↗', 'Open ↗') + '</a></h3>' +
-          (f.files.length ? '<div class="mkgrid' + (/stor|social/i.test(f.name) ? ' tall' : '') + '">' + f.files.map(mkCard).join('') + '</div>' : '<p class="muted">' + bi('لسا فاضي', 'Empty for now') + '</p>') + '</div>';
+          (files.length ? '<div class="mkgrid' + (/stor|social/i.test(f.name) ? ' tall' : print ? ' wide' : '') + '">' + files.map(mkCard).join('') + '</div>' : '<p class="muted">' + bi('لسا فاضي', 'Empty for now') + '</p>') + '</div>';
       });
     });
   }
@@ -98,9 +100,8 @@ $('#market').addEventListener('click', function (ev) {
   if (b.dataset.mkclose) { MK.open = null; return drawMarket() }
   if (b.dataset.mkget) {
     MK.busy = true; drawMarket();
-    var id = b.dataset.mkget, pr = MK_PRINT.filter(function (x) { return x.id === id })[0];
-    // the A3 menus come from this website; the rest from Drive through the sheet's script
-    (pr ? fetch(pr.src).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob() }).then(function (bl) { return new File([bl], pr.name, {type: pr.type}) }) : EB.file(id)).then(function (f) { MK.busy = false; MK.ready = {id: id, file: f}; drawMarket() }, function (e) {
+    var id = b.dataset.mkget;
+    EB.file(id).then(function (f) { MK.busy = false; MK.ready = {id: id, file: f}; drawMarket() }, function (e) {
       MK.busy = false; drawMarket(); alert(T('ما قدرنا نجيب الملف: ', 'Could not get the file: ') + e.message);
     });
     return;
