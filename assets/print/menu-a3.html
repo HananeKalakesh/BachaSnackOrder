@@ -42,11 +42,14 @@ h3::after{content:'';flex:1;height:.35mm;background:#E6DDCC}
 .price,.chips i{font-variant-numeric:tabular-nums}
 .price{line-height:1.1;font-weight:800;color:#C8102E;white-space:nowrap;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
 .price small,.chips small{font-size:.8em;font-weight:700;color:#6B655C}
-.chips{display:grid;grid-template-columns:repeat(2,max-content);gap:.6mm 4mm;padding:0 0 var(--pad);padding-inline-start:3mm;font-size:calc(var(--f)*.86)}
-.chips span{white-space:nowrap;display:flex;align-items:baseline;gap:2mm}
-.chips b{background:#EFE6D6;color:#1F4A37;border-radius:99mm;padding:0 2.2mm;font-weight:800}
+.chips{display:flex;flex-direction:column;padding:0 0 var(--pad);padding-inline-start:4mm;font-size:calc(var(--f)*.9);line-height:1.15}
+.chips span{white-space:nowrap;display:flex;align-items:flex-end;gap:2.5mm;padding:calc(var(--pad)*.4) 0}
+.chips span::after{content:'';order:1;flex:1;min-width:3mm;border-bottom:.35mm dotted #1A1A1740;margin-bottom:.35em}
+.chips b{color:#4A453E;font-weight:700}
+.chips b::before{content:'\2013';margin-inline-end:1.5mm;color:#C9BFAE}
+.row:has(+ .chips) .dots{visibility:hidden}
 .chips em{font:700 .72em 'Plus Jakarta Sans';font-style:normal;color:#6B655C;margin-right:1.6mm;direction:ltr;unicode-bidi:isolate}
-.chips i{font-style:normal;font-weight:800;color:#C8102E;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
+.chips i{order:2;font-style:normal;font-weight:800;color:#C8102E;font-family:'Plus Jakarta Sans';direction:ltr;unicode-bidi:isolate}
 footer{display:flex;justify-content:space-between;align-items:center;gap:8mm;margin:2.5mm -12mm 0;padding:2.6mm 12mm;background:#C8102E;color:#fff;font-size:4.2mm;font-weight:800}
 footer .en{font-size:3.1mm;font-weight:600;opacity:.88;margin-right:2.5mm}
 footer .note{background:#F2B705;border-radius:99mm;padding:1.1mm 6mm;color:#1A1A17}
