@@ -19,7 +19,7 @@ if ($json -notmatch '"items"') { throw "The sheet didn't send the menu: $($json.
 [IO.File]::WriteAllText($data, "window.MENU_DATA = $json;", (New-Object Text.UTF8Encoding($false)))
 
 $page = 'file:///' + ((Join-Path $PSScriptRoot 'menu-a3.html') -replace '\\', '/')
-$common = @('--headless=new', '--disable-gpu', '--hide-scrollbars', "--user-data-dir=$work\profile", '--virtual-time-budget=20000')
+$common = @('--headless=new', '--disable-gpu', '--hide-scrollbars', '--disable-extensions', '--log-level=3', "--user-data-dir=$work\profile", '--virtual-time-budget=20000')
 try {
   Start-Process $chrome -Wait -ArgumentList ($common + @('--no-pdf-header-footer', "--print-to-pdf=$work\a3.pdf", $page))
   Start-Process $chrome -Wait -ArgumentList ($common + @('--window-size=1587,1123', '--force-device-scale-factor=3.12728', "--screenshot=$work\a3.png", $page))
