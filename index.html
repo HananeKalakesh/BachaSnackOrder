@@ -338,14 +338,15 @@ const CONFIG = {
   openDates: ['2026-10-19'],     // open anyway on these dates (Beirut time, YYYY-MM-DD), e.g. a test day
   hours: [['13:00', '16:00'], ['18:00', '24:00']], // opening hours each open day (Beirut time); past 24:00 = after midnight
   dayHours: {5: [['13:00', '16:00'], ['18:00', '24:30']], 6: [['13:00', '16:00'], ['18:00', '24:30']], 0: [['13:00', '16:00'], ['18:00', '24:30']]}, // other hours on some days (Fri, Sat, Sun)
+  shownHours: [['13:00', '16:00'], ['18:00', '23:00']], // the hours written on the page for customers, every open day; the later closing above is for the staff
   timeZone: 'Asia/Beirut',
   pieces: {4: 600000, 5: 700000, 6: 800000, 7: 900000}, // Crispy / Zinger meal price per number of pieces (until the sheet loads)
   // cards with sizes (type 'o'): [label, item in the sheet, price until the sheet loads, sauces 's1' / 's2']
   options: {
     'Wings Meal': [['7 PCS', 'Half Wings Meal 7 PCS', 500000, 's1'], ['14 PCS', 'Wings Meal 14 PCS', 800000, 's2']],
-    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', '$9'], ['1 KG', 'Shawarma Family Meal 1 KG', '$17']],
-    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', '$9'], ['1 KG', 'Tawouk Family Meal 1 KG', '$17']],
-    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', '$11'], ['1 KG', 'Fajita Family Meal 1 KG', '$20']]
+    'Shawarma Family Meal': [['1/2 KG', 'Shawarma Family Meal 1/2 KG', 800000], ['1 KG', 'Shawarma Family Meal 1 KG', 1500000]],
+    'Tawouk Family Meal': [['1/2 KG', 'Tawouk Family Meal 1/2 KG', 800000], ['1 KG', 'Tawouk Family Meal 1 KG', 1500000]],
+    'Fajita Family Meal': [['1/2 KG', 'Fajita Family Meal 1/2 KG', 1000000], ['1 KG', 'Fajita Family Meal 1 KG', 1800000]]
   },
   // Items and prices come from the Menu tab of the El Bash – Orders & Sales sheet, through the order screen's Apps Script.
   // Empty = use only the menu written in this page.
@@ -428,16 +429,16 @@ mealGrid: [
   ['Shawarma Meal', 700000, 'Shawarma chicken sandwich on tortilla bread cut into pieces, with fries, pickles and garlic sauce']
 ],
 familyGrid: [
-  ['Escalope Family Meal 8 PCS', '$20', 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Zinger Family Meal 20-22 PCS', '$25', 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Crispy Family Meal 20-22 PCS', '$25', 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Half & Half Family Meal 20-22 PCS', '$25', '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
-  ['Broasted Family Meal 10 PCS', '$17', 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
-  ['Shawarma Family Meal', '$9', 'Chicken shawarma and fries', 'o'],
-  ['Tawouk Family Meal', '$9', 'Tawouk chicken and fries', 'o'],
-  ['Fajita Family Meal', '$11', 'Chicken fajita and fries', 'o'],
-  ['Wings Family Meal 1 KG', '$15', 'Chicken wings and fries'],
-  ['Boneless Chicken Thighs Family Meal', '$10', 'Boneless chicken thighs and fries']
+  ['Escalope Family Meal 8 PCS', 1800000, 'Escalope chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Zinger Family Meal 20-22 PCS', 2300000, 'Zinger chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Crispy Family Meal 20-22 PCS', 2300000, 'Crispy chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Half & Half Family Meal 20-22 PCS', 2300000, '10-11 zinger pieces and 10-11 crispy pieces, with fries, garlic sauce, pickles and coleslaw'],
+  ['Broasted Family Meal 10 PCS', 1500000, 'Broasted chicken, fries, garlic sauce, pickles and coleslaw'],
+  ['Shawarma Family Meal', 800000, 'Chicken shawarma and fries', 'o'],
+  ['Tawouk Family Meal', 800000, 'Tawouk chicken and fries', 'o'],
+  ['Fajita Family Meal', 1000000, 'Chicken fajita and fries', 'o'],
+  ['Wings Family Meal 1 KG', 1400000, 'Chicken wings and fries'],
+  ['Boneless Chicken Thighs Family Meal', 900000, 'Boneless chicken thighs and fries']
 ],
 plateGrid: [
   ['Shawarma Plate', 700000, 'Shawarma chicken, fries, garlic sauce and pickles'],
@@ -503,7 +504,7 @@ ui: {'Extras':'إضافات','Adjust':'عدّل','Adjust the item':'عدّل ا�
   'Too many orders from this number. Please call or WhatsApp us.':'في طلبات كتير من هالرقم. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'We are very busy right now. Please call or WhatsApp us.':'نحنا كتير مشغولين هلّق. رجاءً اتصل فينا أو ابعتلنا عالواتساب.',
   'Some items are not available right now. Please remove them and send again.':'في أصناف مش متوفرة هلّق. رجاءً شيلها وابعت مرة تانية.',
-  "We're closed today ({d}). You can still browse the menu.":'مسكّرين اليوم ({d}). فيك تتصفّح المنيو.',"We're closed today. Please send your order another day.":'مسكّرين اليوم. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
+  "We're closed today ({d}). You can still browse the menu.":'مسكّرين اليوم ({d}). فيك تتصفّح المنيو.',"We're closed today. Please send your order another day.":'مسكّرين اليوم. رجاءً ابعت طلبك بيوم تاني.','Reorder last order':'اطلب نفس الطلب الماضي','Popular':'الأكثر طلباً','Close':'سكّر','Add one':'زيد واحد','Remove one':'نقّص واحد','Remove':'شيل','Choose options for':'اختار الخيارات لـ','Other Sandwiches':'ساندويشات تانية','Add':'ضيف','Most popular':'الأكثر طلباً','Almost done!':'خلصنا تقريباً!','WhatsApp will open with your order ready.':'رح يفتح واتساب والطلب مكتوب وجاهز.','Press the green send button ➤ in WhatsApp to send it to us.':'بس كبوس زر الإرسال الأخضر ➤ بواتساب ليوصلنا الطلب.','Open WhatsApp':'افتح واتساب','Back':'رجوع','Search the menu':'دوّر بالمنيو','Clear search':'امسح البحث','Call us':'اتصل فينا','New · Family Meals':'جديد · وجبات عائلية','1 KG Shawarma or Tawouk with fries':'كيلو شاورما أو طاووق مع بطاطا','No items match your search.':'ما في شي بهالاسم بالمنيو.','Open now · until {t}':'فاتحين هلّق · لـ {t}','Open now':'فاتحين هلّق','Closed now · opens at {t}':'مسكّرين هلّق · بنفتح الساعة {t}','Closed now · opens {d} at {t}':'مسكّرين هلّق · بنفتح {d} الساعة {t}','Closed today · opens {d} at {t}':'مسكّرين اليوم · بنفتح {d} الساعة {t}','tomorrow':'بكرا',"We're closed right now. You can still send your order and we'll reply when we open.":'نحنا مسكّرين هلّق. فيك تبعت طلبك ومنرد عليك أول ما نفتح.','Basha':'باشا','WhatsApp':'واتساب','Call':'اتصل','Added':'انضاف','in order':'بالطلب','Tap again to clear':'كبوس مرة تانية للمسح','Add a drink?':'بدك مشروب؟'},
 names: {'Small Fries Box':'علبة بطاطا صغيرة','Large Fries Box':'علبة بطاطا كبيرة','Small Fries Box with Sauce & Cheddar':'علبة بطاطا صغيرة مع صوص وتشيدر','Large Fries Box with Sauce & Cheddar':'علبة بطاطا كبيرة مع صوص وتشيدر','Loaded Fries':'لودد فرايز',
 'Mozzarella Sticks':'موزاريلا ستيكس','Onion Rings':'أونيون رينغز','Nuggets':'ناغتس','Mix Appetizer Box':'علبة ميكس مقبلات',
 'Crispy Meal':'وجبة كريسبي','Zinger Meal':'وجبة زنجر','Escalope Meal':'وجبة إسكالوب','Cordon Bleu Meal':'وجبة كوردون بلو','Wings Meal':'وجبة وينغز','Half Wings Meal':'نصف وجبة وينغز','Half Broasted Meal':'نصف وجبة بروستد','Chicken Quesadilla':'كيساديا دجاج','Tawouk Meal':'وجبة طاووق','Shawarma Meal':'وجبة شاورما',
@@ -773,14 +774,16 @@ function isClosedOn(d, date) { return CONFIG.closedDay != null && d === CONFIG.c
 function openStatus() {
   const {day, min, date} = beirutNow();
   if (!hoursFor(day).length) return null;
-  const until = b => t('Open now · until {t}').replace('{t}', timeText(b));
+  // the closing time customers see (shownHours, e.g. 11 PM); past it, while the staff are still open, no time is given
+  const until = ([a, b], m) => { const s = (CONFIG.shownHours || []).find(x => x[0] === a), end = s ? s[1] : b;
+    return mins(end) > m ? t('Open now · until {t}').replace('{t}', timeText(end)) : t('Open now') };
   // yesterday's evening still open after midnight
   const prev = (day + 6) % 7, late = !isClosedOn(prev, '') && hoursFor(prev).find(([a, b]) => mins(b) > 1440 && min < mins(b) - 1440);
-  if (late) return {open: true, text: until(late[1])};
+  if (late) return {open: true, text: until(late, min + 1440)};
   const closedDay = isClosedToday(), hours = hoursFor(day);
   if (!closedDay) {
     const now = hours.find(([a, b]) => min >= mins(a) && min < mins(b));
-    if (now) return {open: true, text: until(now[1])};
+    if (now) return {open: true, text: until(now, min)};
     const later = hours.find(([a]) => mins(a) > min);
     if (later) return {open: false, text: t('Closed now · opens at {t}').replace('{t}', timeText(later[0]))};
   }
@@ -828,11 +831,9 @@ function applyHours(sheet) {
 // "Daily 1 PM – 4 PM & 6 PM – 11 PM · Closed on Mondays"
 function hoursLine() {
   const fmt = list => list.map(([a, b]) => lang === 'ar' ? 'من ' + timeText(a) + ' لـ ' + timeText(b) : timeText(a) + ' – ' + timeText(b)).join(lang === 'ar' ? ' و' : ' & ');
-  const r = CONFIG.hours || [], other = {};
-  Object.keys(CONFIG.dayHours || {}).forEach(d => { if (+d !== CONFIG.closedDay) { const k = fmt(CONFIG.dayHours[d]); (other[k] = other[k] || []).push(+d) } });
-  const extra = Object.keys(other).map(k => (lang === 'ar' ? ' · ' + other[k].sort((a, b) => ((a + 2) % 7) - ((b + 2) % 7)).map(d => DAY_NAMES.ar[d]).join(' و') + ' ' : ' · ' + other[k].sort((a, b) => ((a + 2) % 7) - ((b + 2) % 7)).map(d => DAY_NAMES.en[d].slice(0, 3)).join(', ') + ' ') + k).join('');
+  const r = CONFIG.shownHours || CONFIG.hours || [];
   const off = CONFIG.closedDay == null ? '' : lang === 'ar' ? ' · مسكّرين يوم ' + DAY_NAMES.ar[CONFIG.closedDay] : ' · Closed on ' + DAY_NAMES.en[CONFIG.closedDay] + 's';
-  return r.length ? (lang === 'ar' ? 'كل يوم ' + fmt(r) : 'Daily ' + fmt(r)) + extra + off : '';
+  return r.length ? (lang === 'ar' ? 'كل يوم ' + fmt(r) : 'Daily ' + fmt(r)) + off : '';
 }
 function updateStatus() {
   $('#hoursLine').textContent = hoursLine();
