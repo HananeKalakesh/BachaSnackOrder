@@ -321,6 +321,42 @@
    {
     "name": "Story – marinated raw chicken.png",
     "path": "assets/stories/raw-chicken.png"
+   },
+   {
+    "name": "Story – Basha rules.png",
+    "path": "assets/stories/basha-rules.png"
+   },
+   {
+    "name": "Story – Chicken Quesadilla.png",
+    "path": "assets/stories/spotlight-chicken-quesadilla.png"
+   },
+   {
+    "name": "Story – Crunchy Burger.png",
+    "path": "assets/stories/spotlight-crunchy-burger.png"
+   },
+   {
+    "name": "Story – Fajita Sandwich.png",
+    "path": "assets/stories/spotlight-fajita-sandwich.png"
+   },
+   {
+    "name": "Story – Francisco Sandwich.png",
+    "path": "assets/stories/spotlight-francisco-sandwich.png"
+   },
+   {
+    "name": "Story – Mushroom Burger.png",
+    "path": "assets/stories/spotlight-mushroom-burger.png"
+   },
+   {
+    "name": "Story – Team Toum or Team Cocktail.png",
+    "path": "assets/stories/team-toum-or-cocktail.png"
+   },
+   {
+    "name": "Story – What kind of hungry.png",
+    "path": "assets/stories/what-kind-of-hungry.png"
+   },
+   {
+    "name": "Story – Wings Meal.png",
+    "path": "assets/stories/spotlight-wings-meal.png"
    }
   ],
   "1 Menus & print": [
