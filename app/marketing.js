@@ -6,8 +6,8 @@
 var MK = {files: null, err: '', open: null, ready: null, busy: false};
 var BRAND_DOC = 'https://docs.google.com/document/d/1lMnkcyG8Bqlgfk4NDgfgmmrKdpoi_uYrUHM_UFs9GsI/edit';
 function thumb(id, w) { return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w' + (w || 400) }
-// The printed A3 menus, from this website: shown and shared as pictures, with the PDF for printing
-var MK_PRINT = [['a3-ar', 'Menu A3 – Arabic', 'menu-a3-ar'], ['a3-en', 'Menu A3 – English', 'menu-a3-en']].map(function (m) {
+// The printed A3 menu (Arabic only), from this website: shown and shared as a picture, with the PDF for printing
+var MK_PRINT = [['a3-ar', 'Menu A3 – Arabic', 'menu-a3-ar']].map(function (m) {
   return {id: m[0], name: m[1] + '.png', type: 'image/png', src: SITE + 'assets/print/' + m[2] + '.png', pdf: SITE + 'assets/print/' + m[2] + '.pdf'};
 });
 function mkFile(id) {

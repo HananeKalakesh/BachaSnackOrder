@@ -54,6 +54,6 @@ WhatsApp: after an order is sent, the customer sends it on WhatsApp too, so the 
 Materials (stories, posts, flyers, the digital menu) are built in Arabic, with English as the smaller second line. A catchy
 title or slogan may lead in English when an Arabic line goes with it. Never make a page that is only in English.
 
-The one exception is the **printed A3 menu**: it is made as two separate files, one in Arabic and one in English, with
-the same design (`Menu A3 – Arabic.pdf` and `Menu A3 – English.pdf`). Its design lives in `assets/print/menu-a3.html`
-(both languages); edit that, then `node assets/print/split-menu.cjs` makes `menu-a3-ar` and `menu-a3-en` (HTML, PDF, PNG).
+The one exception is the **printed A3 menu**: Arabic only (`Menu A3 – Arabic.pdf`), with every item on the Menu tab.
+Its design lives in `assets/print/menu-a3.html` (both languages); edit that, then `node assets/print/split-menu.cjs`
+makes `menu-a3-ar` (HTML, PDF, PNG).
