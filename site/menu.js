@@ -103,7 +103,8 @@ const SAUCE_TYPE = {'fries': 's', 'wings 1': 's1', 'wings 1-2': 's2', 'drinks 1'
 /* ---------- offers (Menu tab category "Offers"): on sale only on CONFIG.offerDays ----------
    An offer's name says the week's sandwich after a dash ("Lunch Box – Zinger"). Offer cards show no photo (owner,
    2 Nov). Its drinks are chosen like sauces (Sauces column "drinks 1" or "drinks 2"). */
-function offerDay() { const n = beirutNow(); return (CONFIG.offerDays || []).includes(n.min < 120 ? (n.day + 6) % 7 : n.day) }   // the business day ends at 2 am
+// "?offers" in the link shows them any day, to preview them (owner)
+function offerDay() { if (/[?&]offers\b/.test(location.search)) return true; const n = beirutNow(); return (CONFIG.offerDays || []).includes(n.min < 120 ? (n.day + 6) % 7 : n.day) }   // the business day ends at 2 am
 const isOffer = name => GRID_OF_ITEM[name] === 'offerGrid';
 const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0])) : [];
 const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);

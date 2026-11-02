@@ -8,7 +8,7 @@ var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبل�
   'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات', 'Extras': 'إضافات', 'Drinks': 'مشروبات', 'Offers': 'العروض'};
 // Offers (Menu category "Offers") are sold only on these days of the business day (0=Sun … 6=Sat), like the website
 var OFFER_DAYS = [2, 3, 4];   // Tuesday, Wednesday, Thursday (owner, 2 Nov 2026)
-function offerDay() { return OFFER_DAYS.indexOf(bizDate().getDay()) >= 0 }
+function offerDay() { return /[?&]offers\b/.test(location.search) || OFFER_DAYS.indexOf(bizDate().getDay()) >= 0 }   // "?offers" in the link: any day, to preview them
 var PAY_AR = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع', Split: 'كاش + ويش', House: 'للبيت'};
 // Paid partly by Whish, the rest cash: asks the Whish part ($, or L.L. for a big number); null when cancelled or not a part
 function askSplit(o) {
