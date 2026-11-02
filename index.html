@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site/style.css?v=1">
+<link rel="stylesheet" href="site/style.css?v=2">
 </head>
 <body>
 <div class="wrap">
@@ -35,11 +35,12 @@
   <div id="closedBanner" class="closed-banner" role="status" hidden></div>
   <div id="busyBanner" class="closed-banner busy-banner" role="status" hidden></div>
 </header>
-<button id="promo" class="promo" type="button" data-target="family"><span><small data-t>New · Family Meals</small><b data-t>Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go"><bdi id="promoPrice">$9</bdi> <i>→</i></span></button>
-<nav aria-label="Menu sections"><div class="nav"><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
+<button id="promo" class="promo" type="button" data-target="family"><span><small id="promoKicker">New · Family Meals</small><b id="promoText">Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries</b></span><span class="go"><bdi id="promoPrice">$9</bdi> <i>→</i></span></button>
+<nav aria-label="Menu sections"><div class="nav"><button class="pill offer" data-target="offers" data-t hidden>Offers</button><button class="pill active" data-target="popular" data-t>Popular</button><button class="pill" data-target="fries" data-t>Appetizers</button><button class="pill" data-target="meals" data-t>Meals</button><button class="pill" data-target="family" data-t>Family Meals</button><button class="pill" data-target="plates" data-t>Plates</button><button class="pill" data-target="sandwiches" data-t>Sandwiches</button><button class="pill" data-target="burgers" data-t>Burgers</button><button class="pill" data-target="extras" data-t>Sauces &amp; Extras</button><button class="pill" data-target="drinks" data-t>Drinks</button></div></nav>
 <p id="noResults" class="noresults" hidden data-t>No items match your search.</p>
 <noscript><p class="note">Please turn on JavaScript to see the menu, or call us on 76 075 724.</p></noscript>
 <p id="menuMsg" class="note" hidden></p>
+<section id="offers"><div class="head"><h2 data-t>Midweek offers</h2></div><p class="offer-days" data-t>Tuesday, Wednesday and Thursday only · the drink is on us</p><div class="grid" id="offerGrid"></div></section>
 <section id="popular"><div class="head"><h2 data-t>Most popular</h2></div><div id="popularGrid"></div></section>
 <section id="fries"><div class="head"><h2 data-t>Appetizers</h2></div><div class="subhead" data-t>Fries</div><div class="grid" id="friesGrid"></div><div class="subhead" data-t>Other Appetizers</div><div class="grid" id="appetizerGrid"></div></section>
 <section id="meals"><div class="head"><h2 data-t>Meals</h2></div><div class="grid" id="mealGrid"></div></section>
@@ -92,10 +93,10 @@
   <div class="choice-actions"><button id="backSend" type="button" data-t>Back</button><button id="goWhatsApp" class="confirm" type="button" data-t>Open WhatsApp</button></div>
 </div>
 
-<script src="site/config.js?v=1"></script>
-<script src="site/text.js?v=1"></script>
-<script src="site/menu.js?v=1"></script>
-<script src="site/order.js?v=1"></script>
-<script src="site/start.js?v=1"></script>
+<script src="site/config.js?v=2"></script>
+<script src="site/text.js?v=2"></script>
+<script src="site/menu.js?v=2"></script>
+<script src="site/order.js?v=2"></script>
+<script src="site/start.js?v=2"></script>
 </body>
 </html>

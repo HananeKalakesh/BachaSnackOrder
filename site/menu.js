@@ -99,7 +99,14 @@ const PIECES = {};              // 'Crispy Meal' -> {4: price, 5: price, ...}, f
 const SOLD = new Set();         // cards sold out for now: shown greyed, "Not available"
 const POPULAR = [];             // cards tagged "★ Popular" (Popular ticked), in the sheet's order
 const piecesOf = name => PIECES[name] || {};
-const SAUCE_TYPE = {'fries': 's', 'wings 1': 's1', 'wings 1-2': 's2'};   // the Sauces column
+const SAUCE_TYPE = {'fries': 's', 'wings 1': 's1', 'wings 1-2': 's2', 'drinks 1': 'd1', 'drinks 2': 'd2'};   // the Sauces column
+/* ---------- offers (Menu tab category "Offers"): on sale only on CONFIG.offerDays ----------
+   An offer's name says the week's sandwich after a dash ("Lunch Box – Zinger"). Offer cards show no photo (owner,
+   2 Nov). Its drinks are chosen like sauces (Sauces column "drinks 1" or "drinks 2"). */
+function offerDay() { const n = beirutNow(); return (CONFIG.offerDays || []).includes(n.min < 120 ? (n.day + 6) % 7 : n.day) }   // the business day ends at 2 am
+const isOffer = name => GRID_OF_ITEM[name] === 'offerGrid';
+const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0])) : [];
+const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);
 // 'Crispy Meal 4 PCS' -> 'Crispy Meal', and the same in Arabic ('وجبة كريسبي 4 قطع', '… قطعتين', '… نص كيلو')
 const sizeLess = n => String(n).replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '');
 function applySheet(sheet) {
@@ -187,7 +194,7 @@ function priceOf(key) {
 }
 function basePrice(key) {
   const m = key.match(/^(.*?) \[(.*)\]$/), item = ITEMS[m ? m[1] : key];
-  if (!item || SOLD.has(item[0])) return null;
+  if (!item || SOLD.has(item[0]) || isOffer(item[0]) && !offerDay()) return null;
   if (item[3] === 'p') return m ? piecesOf(item[0])[parseInt(m[2])] || null : null;
   if (item[3] === 'o') { const o = m && optOf(item[0], m[2].split(', ')[0]); return o && !o.sold ? o.price : null }
   return item[1];
@@ -383,15 +390,15 @@ function card([name, price, desc, type]) {
   const pcs = type === 'p' ? Object.keys(piecesOf(name)) : [];
   const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label)).join(' ' + t('or') + ' ')
     : type === 'p' ? t('Choose') + ' ' + (pcs.length > 1 ? pcs[0] + ' ' + t('or') + ' ' : '') + optLabel(pcs[pcs.length - 1] + ' PCS')
-    : t({s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces'}[type] || '');
+    : t({s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces', d1: 'Choose your drink', d2: 'Choose 2 drinks'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
   const search = [name, inLang('ar', () => tName(name)), desc, inLang('ar', () => tDesc(desc))].join(' ').toLowerCase();
-  const pop = POPULAR.includes(name), src = CONFIG.photos[name];
+  const offer = isOffer(name), pop = POPULAR.includes(name), src = !offer && CONFIG.photos[name];
   const photo = src ? `<div class="ph"><img class="photo" src="${esc(src)}" alt="${label}" loading="lazy" width="640" height="640">${pop ? `<span class="stamp">★ ${t('Popular')}</span>` : ''}</div>` : '';
   const controls = sold ? `<span class="na">${t('Not available')}</span>` : choice
     ? `<button class="add" type="button" aria-haspopup="dialog" aria-label="${esc(t('Choose options for'))} ${label}">+<span class="word">${t('Add')}</span></button>`
     : `<div class="stepper"><button class="dec" type="button" aria-label="${esc(t('Remove one'))}: ${label}">−</button><span class="qty">0</span><button class="inc" type="button" aria-label="${esc(t('Add one'))}: ${label}">+<span class="word">${t('Add')}</span></button></div>`;
-  return `<div class="item${src ? ' has-photo' : ''}${choice ? ' choosable' : ''}${sold ? ' soldout' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
+  return `<div class="item${src ? ' has-photo' : ''}${offer ? ' offer' : ''}${choice ? ' choosable' : ''}${sold ? ' soldout' : ''}" data-name="${esc(name)}" data-price="${price}" data-type="${type || ''}" data-search="${esc(search)}">${photo}<div class="name">`
     + `<div class="title">${qty(label)}${icon}</div>`
     + `${desc ? `<div class="ingredients">${esc(tDesc(desc))}</div>` : ''}${pop && !src ? `<span class="tag pop">★ ${t('Popular')}</span>` : ''}`
     + `${choice ? `<span class="incart" hidden></span><div class="tag choose">${esc(choiceText)}</div>` : ''}</div>`
@@ -399,15 +406,30 @@ function card([name, price, desc, type]) {
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
 // the offer banner shows the lowest family meal price it talks about (Shawarma, Tawouk, Fajita), from the sheet
+// on an offer day it talks about the offers instead: the cheapest one, from the sheet
 function promoPrice() {
+  const p = $('#promo'), offers = offersNow();
+  if (!p) return;
+  if (offers.length) {
+    const low = offers.reduce((a, x) => x[1] < a[1] ? x : a, offers[0]), w = String(tName(low[0])).split(/\s+[–—-]\s+/)[1];   // the week's sandwich, in the page's language
+    p.dataset.target = 'offers'; p.classList.add('is-offer');
+    $('#promoKicker').textContent = t('Tue · Wed · Thu only');
+    $('#promoText').textContent = w ? t('Lunch Box: {s}, fries and a free drink').replace('{s}', w) : tName(low[0]);
+    $('#promoPrice').textContent = fmt(low[1]);
+    return;
+  }
+  p.dataset.target = 'family'; p.classList.remove('is-offer');
+  $('#promoKicker').textContent = t('New · Family Meals'); $('#promoText').textContent = t('Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries');
   const o = ['Shawarma Family Meal', 'Tawouk Family Meal', 'Fajita Family Meal'].flatMap(n => (OPTS[n] || []).filter(x => !x.sold));
-  if (!o.length || !$('#promoPrice')) return;
+  if (!o.length) return;
   const low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
   $('#promoPrice').textContent = low.usd ? '$' + low.usd : fmt(low.price);
 }
 function render() {
   promoPrice();
-  Object.entries(data).forEach(([id, items]) => {
+  const pill = $('.pill[data-target=offers]'); if (pill) pill.hidden = !offersNow().length;
+  Object.entries(data).forEach(([id, all]) => {
+    const items = id === 'offerGrid' ? offersNow() : all;
     const avail = items.filter(it => !SOLD.has(it[0])), sold = items.filter(it => SOLD.has(it[0]));   // not available last
     const sorted = [...avail.filter(it => CONFIG.photos[it[0]]), ...avail.filter(it => !CONFIG.photos[it[0]]), ...sold];
     $('#' + id).innerHTML = `<div class="pgrid">${sorted.map(card).join('')}</div>`;

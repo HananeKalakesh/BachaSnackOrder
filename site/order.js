@@ -36,7 +36,7 @@ function cart() {
 // Suggest drinks in the cart when the order has none
 function upsell() {
   const drinks = data.drinkGrid.filter(([n]) => !SOLD.has(n));
-  if (!drinks.length || data.drinkGrid.some(([n]) => order[n])) return '';
+  if (!drinks.length || data.drinkGrid.some(([n]) => order[n]) || Object.keys(order).some(k => isOffer(itemOf(splitAdj(k).base)))) return '';   // an offer has its drinks
   return `<div class="upsell"><p>🥤 ${t('Add a drink?')}</p><div>${drinks.map(([n, p]) => `<button type="button" data-act="drink" data-key="${esc(n)}">+ ${esc(tName(n))} · ${fmt(p)}</button>`).join('')}</div></div>`;
 }
 // Short "Added" message + cart button bump after adding from the menu
@@ -80,7 +80,7 @@ function renderChoiceOptions() {
   const ty = selectedChoice.type, box = (v, label) => `<label><input type="checkbox" value="${esc(v)}"> <span>${label}</span></label>`;
   if (ty !== 'adj') $('#choiceFor').textContent = tName(selectedChoice.name);
   $('#choiceErr').textContent = '';
-  $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : ty === 'o' ? 'Choose the size' : 'Choose your sauces');
+  $('#choiceTitle').textContent = t(ty === 'p' ? 'Choose number of pieces' : ty === 'o' ? 'Choose the size' : ty === 'd1' ? 'Choose your drink' : ty === 'd2' ? 'Choose 2 drinks' : 'Choose your sauces');
   selectedChoice.sauce = '';
   $('#confirmChoice').textContent = t(ty === 'adj' ? 'Done' : 'Add to order');
   $('#choiceOptions').classList.toggle('chipset', ty === 'adj');
@@ -103,6 +103,10 @@ function renderChoiceOptions() {
   } else if (ty === 'p') {
     $('#choiceHint').textContent = t('Choose one.');
     $('#choiceOptions').innerHTML = Object.entries(piecesOf(selectedChoice.name)).map(([n, pr]) => `<label><input type="radio" name="pcs" value="${n}"> <span>${n} ${pcsWord(n)} — ${fmt(pr)}</span></label>`).join('');
+  } else if (ty === 'd1' || ty === 'd2') {   // an offer's free drinks: one list per drink, so two of the same can be chosen
+    $('#choiceHint').textContent = t(ty === 'd1' ? 'The drink is on us.' : 'The drinks are on us.');
+    const list = n => drinkList().map(d => `<label><input type="radio" name="drk${n}" value="${esc(d)}"> <span>${esc(tName(d))}</span></label>`).join('');
+    $('#choiceOptions').innerHTML = ty === 'd1' ? list(1) : `<p class="choice-sub">${t('Drink 1')}</p>${list(1)}<p class="choice-sub">${t('Drink 2')}</p>${list(2)}`;
   } else if (ty === 's') {
     $('#choiceHint').textContent = t('Select one or more sauces.');
     $('#choiceOptions').innerHTML = SAUCES.fries.map(v => box(v, tSauce(v))).join('');
@@ -154,6 +158,12 @@ $('#confirmChoice').onclick = () => {
     const n = checked[0].value;
     add(selectedChoice.name + ' [' + n + ' PCS]', piecesOf(selectedChoice.name)[n]);
     added(selectedChoice.name + ' [' + n + ' PCS]');
+  } else if (/^d[12]$/.test(selectedChoice.type)) {
+    const two = selectedChoice.type === 'd2', drinks = [1, 2].slice(0, two ? 2 : 1).map(n => ($$(`#choiceModal input[name=drk${n}]:checked`)[0] || {}).value);
+    if (!drinks.every(Boolean)) return err(two ? 'Please choose 2 drinks.' : 'Please choose your drink.');
+    const key = selectedChoice.name + ' [' + drinks.join(', ') + ']';
+    add(key, selectedChoice.price);
+    added(key);
   } else {
     if (!checked.length) return err(selectedChoice.type === 's1' ? 'Please choose 1 sauce.' : 'Please choose at least one sauce.');
     const key = selectedChoice.name + ' [' + checked.map(x => x.value).join(', ') + ']';
@@ -314,7 +324,7 @@ $('#backSend').onclick = () => { $('#sendModal').classList.remove('open'); $('.s
 $$('.pill').forEach(btn => btn.onclick = () => document.getElementById(btn.dataset.target).scrollIntoView({behavior: 'smooth'}));
 const secs = $$('section'), navEl = $('.nav');
 function spy() {
-  let cur = secs[0];
+  let cur = secs.find(sec => !sec.hidden) || secs[0];
   secs.forEach(sec => { if (!sec.hidden && sec.getBoundingClientRect().top <= 110) cur = sec });
   if (innerHeight + scrollY >= document.body.scrollHeight - 4) cur = secs[secs.length - 1];
   $$('.pill').forEach(p => {

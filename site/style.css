@@ -123,6 +123,20 @@ section[hidden]{display:none}
 #popular .item{scroll-snap-align:start}
 #popular .stamp{display:none}
 @media (min-width:700px){#popular .pgrid{grid-auto-columns:minmax(230px,1fr)}}
+/* offers (Tue–Thu): a red panel, the one place red fills a section; its cards stay paper with a red price and button */
+.pill.offer{background:var(--red);color:#fff}
+.pill.offer.active{background:var(--red);box-shadow:0 0 0 3px var(--mustard)}
+.pill[hidden]{display:none}
+#offers{margin:22px 16px 0;padding:22px 14px 16px;border-radius:28px;background:var(--red);color:#fff;scroll-margin-top:70px;background-image:repeating-linear-gradient(135deg,transparent 0 28px,rgba(255,255,255,.04) 28px 56px)}
+#offers .head{margin-bottom:4px}
+#offers h2{color:#fff}
+.offer-days{margin:0 0 14px;font-weight:700;font-size:14px;color:var(--mustard)}
+.item.offer{background:var(--paper);color:var(--ink)}
+.item.offer .ingredients{-webkit-line-clamp:4;color:var(--body)}
+.item.offer .price{color:var(--red);font-size:17px}
+.item.offer .add{background:var(--red)}
+.item.offer .add:hover{background:#A70D26}
+.item.offer .tag.choose{color:var(--red)}
 
 /* send-to-WhatsApp modal */
 .send-modal{max-width:min(400px,calc(100vw - 30px));text-align:center}

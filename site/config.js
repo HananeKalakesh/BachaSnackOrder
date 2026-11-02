@@ -50,13 +50,16 @@ const CONFIG = {
     'Cheddar Cup (Small)': 'photos/cheddar-cup-small.jpg',
     'Coleslaw': 'photos/coleslaw.jpg'
   },
+  // Offers (Menu tab category "Offers") are on sale only on these days (Beirut business day: 0=Sun … 6=Sat);
+  // the other days the Offers section, its pill and its banner are hidden
+  offerDays: [2, 3, 4],          // Tuesday, Wednesday, Thursday (owner, 2 Nov 2026)
   cartHours: 24,                 // a saved cart is kept for this many hours
   usdRate: 89500                 // L.L. per $1, used for items priced in $ (e.g. '$15')
 };
 
 /* Sauces offered in the choice popup.
    type 's' = any number of SAUCES.fries · 's1' = 1 of SAUCES.wings · 's2' = 1 or 2 of SAUCES.wings · 'p' = pick number of pieces
-   · 'o' = pick a size (then its sauces, if it has any) */
+   · 'o' = pick a size (then its sauces, if it has any) · 'd1' / 'd2' = pick 1 or 2 drinks (the Drinks on the menu) */
 const SAUCES = {
   fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'],
   wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce']
@@ -68,7 +71,7 @@ const SAUCES = {
    Card + Size: rows with the same Card are one card with a size to choose ("Crispy Meal" 4…7 PCS, "Wings Meal" 7 or
    14 PCS, "Shawarma Family Meal" ½ or 1 KG). The page reads it through the Apps Script and keeps the last copy on the
    phone, so it opens offline too. A card here is [name, price, description, choice type]. */
-const GRID_OF = {'Fries': 'friesGrid', 'Appetizers': 'appetizerGrid', 'Meals': 'mealGrid', 'Family Meals': 'familyGrid', 'Plates': 'plateGrid',
+const GRID_OF = {'Offers': 'offerGrid', 'Fries': 'friesGrid', 'Appetizers': 'appetizerGrid', 'Meals': 'mealGrid', 'Family Meals': 'familyGrid', 'Plates': 'plateGrid',
   'Chicken Sandwiches': 'sandwichChickenGrid', 'Beef Sandwiches': 'sandwichBeefGrid', 'Other Sandwiches': 'sandwichOtherGrid',
   'Chicken Burgers': 'burgerChickenGrid', 'Beef Burgers': 'burgerBeefGrid', 'Sauces & Extras': 'sauceGrid', 'Drinks': 'drinkGrid'};
 const data = {};

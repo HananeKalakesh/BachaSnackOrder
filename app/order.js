@@ -5,7 +5,10 @@ function bizDate() { return new Date(EB.now() - DAY_END * 3600000) }
 var PKEY = 'elbash-pos-pin', LKEY = 'elbash-pos-lang';
 var CAT_AR = {'All': 'الكل', 'Fries': 'بطاطا', 'Appetizers': 'مقبلات', 'Meals': 'وجبات', 'Family Meals': 'وجبات عائلية', 'Plates': 'صحون',
   'Chicken Sandwiches': 'ساندويشات دجاج', 'Beef Sandwiches': 'ساندويشات لحمة', 'Other Sandwiches': 'ساندويشات تانية',
-  'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات', 'Extras': 'إضافات', 'Drinks': 'مشروبات'};
+  'Chicken Burgers': 'برغر دجاج', 'Beef Burgers': 'برغر لحمة', 'Sauces & Extras': 'صوصات', 'Extras': 'إضافات', 'Drinks': 'مشروبات', 'Offers': 'العروض'};
+// Offers (Menu category "Offers") are sold only on these days of the business day (0=Sun … 6=Sat), like the website
+var OFFER_DAYS = [2, 3, 4];   // Tuesday, Wednesday, Thursday (owner, 2 Nov 2026)
+function offerDay() { return OFFER_DAYS.indexOf(bizDate().getDay()) >= 0 }
 var PAY_AR = {Cash: 'كاش', Whish: 'ويش', Unpaid: 'ما دفع', Split: 'كاش + ويش', House: 'للبيت'};
 // Paid partly by Whish, the rest cash: asks the Whish part ($, or L.L. for a big number); null when cancelled or not a part
 function askSplit(o) {
@@ -21,7 +24,7 @@ var MUSTARD = ['#F2B705', '#1A1A17', '#FDF1CC'], RED = ['#C8102E', '#FFFFFF', '#
   INK = ['#1A1A17', '#FAF5EC', '#E9E7E2'], SAND = ['#EFE6D6', '#1A1A17', '#F6EFE2'];
 var CAT_COLOR = {'Fries': MUSTARD, 'Appetizers': MUSTARD, 'Meals': RED, 'Family Meals': RED, 'Plates': RED,
   'Chicken Sandwiches': GREEN, 'Beef Sandwiches': GREEN, 'Other Sandwiches': GREEN, 'Chicken Burgers': INK, 'Beef Burgers': INK,
-  'Sauces & Extras': SAND, 'Extras': MUSTARD, 'Drinks': SAND};
+  'Sauces & Extras': SAND, 'Extras': MUSTARD, 'Drinks': SAND, 'Offers': RED};
 function catColor(c) { return CAT_COLOR[c] || SAND }
 function catVars(c) { var k = catColor(c); return '--c:' + k[0] + ';--f:' + k[1] + ';--t:' + k[2] }
 // Words the colored section header already says are left off the menu buttons (the ticket keeps full names)
@@ -59,7 +62,7 @@ EB.onChange = function () { showNet(); if ($('#ordersView').style.display === 'b
 // Four fixed columns: sides with sauces and drinks under them, meals, family meals and burgers, sandwiches.
 // A section not listed here joins the column with the fewest items.
 var LAYOUT = [['Fries', 'Appetizers', 'Sauces & Extras', 'Drinks'], ['Meals', 'Plates', 'Extras'], ['Family Meals', 'Chicken Burgers', 'Beef Burgers'],
-  ['Chicken Sandwiches', 'Beef Sandwiches', 'Other Sandwiches']];
+  ['Offers', 'Chicken Sandwiches', 'Beef Sandwiches', 'Other Sandwiches']];
 var PAIRED = ['Sauces & Extras', 'Extras', 'Drinks'];  // short names: two buttons per row
 /* Other sales: two buttons that aren't menu items, priced when tapped. Marinated chicken (raw, sold to cook at home)
    goes into the sales under its own category, apart from the shop's food; Other is anything not on the menu
@@ -70,11 +73,12 @@ var OPEN_CAT = {'Marinated Chicken': 'mar', 'Other': 'oth'};
 var CUSTOM = {}, customN = 0;   // cart key ("c1") -> {name, ar, cat, price, usd, note, kind}
 CAT_AR[OPEN_SEC] = 'مبيعات تانية'; CAT_COLOR[OPEN_SEC] = GREEN; PAIRED.push(OPEN_SEC); LAYOUT[1].push(OPEN_SEC);
 // Items that come with sauces to choose, the same as on the website: [sauces, fewest, most]
-var SAUCES = {fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'], wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce']};
-// from each item's Sauces in the Menu tab (fries, wings 1, wings 1-2), filled with the menu (useMenu)
-var CHOICE = {}, CHOICE_OF = {'fries': ['fries', 1, 4], 'wings 1': ['wings', 1, 1], 'wings 1-2': ['wings', 1, 2]};
+// drinks: an offer's free drinks, the Drinks on the menu (filled with the menu); the same drink can be chosen twice
+var SAUCES = {fries: ['Cocktail Sauce', 'Ketchup', 'Barbecue Sauce', 'Cheddar Sauce'], wings: ['Buffalo Sauce', 'Barbecue Sauce', 'Honey Mustard Sauce'], drinks: []};
+// from each item's Sauces in the Menu tab (fries, wings 1, wings 1-2, drinks 1, drinks 2), filled with the menu (useMenu)
+var CHOICE = {}, CHOICE_OF = {'fries': ['fries', 1, 4], 'wings 1': ['wings', 1, 1], 'wings 1-2': ['wings', 1, 2], 'drinks 1': ['drinks', 1, 1], 'drinks 2': ['drinks', 2, 2]};
 var SAUCE_AR = {'Cocktail Sauce': 'كوكتيل', 'Ketchup': 'كاتشاب', 'Barbecue Sauce': 'باربكيو', 'Cheddar Sauce': 'تشيدر', 'Buffalo Sauce': 'بوفالو', 'Honey Mustard Sauce': 'هني ماستارد'};
-function sauceList(list) { return bi(list.map(function (s) { return SAUCE_AR[s] || s }).join('، '), list.map(function (s) { return s.replace(/ Sauce$/, '') }).join(', ')) }
+function sauceList(list) { return bi(list.map(function (s) { return SAUCE_AR[s] || arName(s) }).join('، '), list.map(function (s) { return s.replace(/ Sauce$/, '') }).join(', ')) }
 
 // The menu and settings this iPad last loaded show straight away (also offline), then the sheet's newest copy
 function loadMenu() {
@@ -112,6 +116,7 @@ function useMenu(r) {
     if (i >= 0) moved[i + (p[1] ? '|' + p[1] : '')] = cart[k];
   });
   MENU = next; cart = moved;
+  SAUCES.drinks = MENU.filter(function (m) { return m.cat === 'Drinks' && m.on }).map(function (m) { return m.name });
   CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) }); CATS.push(OPEN_SEC);
   renderGrid(); renderCart();
 }
@@ -135,10 +140,10 @@ function section(c) {
   var h = '<div class="sec' + (PAIRED.indexOf(c) >= 0 ? ' paired' : '') + '" style="' + catVars(c) + '"><h3 class="display">' + bi(CAT_AR[c] || c, c) + '</h3><div class="rows">';
   MENU.forEach(function (it, i) {
     if (it.cat !== c) return;
-    var q = qtyOf(i);
-    h += '<button class="tile' + (q ? ' has' : '') + (it.soldOut ? ' out' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
+    var q = qtyOf(i), off = c === 'Offers' && !offerDay();   // an offer on another day: greyed, says its days
+    h += '<button class="tile' + (q ? ' has' : '') + (it.soldOut || off ? ' out' : '') + '" data-i="' + i + '">' + (q ? '<span class="q">' + q + '</span>' : '') +
       '<b>' + bi(trim(it.ar || it.name, c, 0), trim(it.name, c, 1)) + '</b>' +
-      (it.soldOut ? '<span class="gone">' + bi('نفد', 'Sold out') + '</span>' : '<span class="pr num">' + (it.usd ? '$' + usdTxt(it.usd) : short(it.price)) + '</span>') + '</button>';
+      (it.soldOut ? '<span class="gone">' + bi('نفد', 'Sold out') + '</span>' : off ? '<span class="gone">' + bi('تلاتا – خميس', 'Tue – Thu') + '</span>' : '<span class="pr num">' + (it.usd ? '$' + usdTxt(it.usd) : short(it.price)) + '</span>') + '</button>';
   });
   return h + '</div></div>';
 }
@@ -178,6 +183,7 @@ $('#grid').addEventListener('click', function (e) {
   if (b.dataset.open) return askOpen(b.dataset.open);
   var i = +b.dataset.i, it = MENU[i];
   if (it.soldOut) return toast('نفد ' + esc(it.ar || it.name), it.name + ' is sold out');
+  if (it.cat === 'Offers' && !offerDay()) return toast('العرض بس التلاتا والأربعا والخميس', 'This offer is on Tuesday to Thursday only');
   if (CHOICE[it.name]) return askSauces(i);
   add(String(i));
 });
@@ -189,21 +195,25 @@ function askSauces(i) {
   var rule = CHOICE[MENU[i].name];
   picking = {i: i, chosen: []};
   $('#shT').innerHTML = bi(MENU[i].ar || MENU[i].name, MENU[i].name);
-  $('#shH').innerHTML = rule[2] === 1 ? bi('اختار صوص واحد', 'Choose 1 sauce') : rule[2] === 2 ? bi('اختار صوص أو تنين', 'Choose 1 or 2 sauces') : bi('اختار صوص أو أكتر', 'Choose one or more sauces');
+  $('#shH').innerHTML = rule[0] === 'drinks' ? (rule[2] === 1 ? bi('اختار المشروب (علينا)', 'Choose the drink (free)') : bi('اختار مشروبين (علينا)', 'Choose 2 drinks (free)'))
+    : rule[2] === 1 ? bi('اختار صوص واحد', 'Choose 1 sauce') : rule[2] === 2 ? bi('اختار صوص أو تنين', 'Choose 1 or 2 sauces') : bi('اختار صوص أو أكتر', 'Choose one or more sauces');
   drawSauces();
   $('#sheet').hidden = false;
 }
 function drawSauces() {
   var rule = CHOICE[MENU[picking.i].name];
   $('#shC').innerHTML = SAUCES[rule[0]].map(function (s) {
-    return '<button class="chip' + (picking.chosen.indexOf(s) >= 0 ? ' on' : '') + '" data-s="' + esc(s) + '">' + sauceList([s]) + '</button>';
+    var n = picking.chosen.filter(function (x) { return x === s }).length;
+    return '<button class="chip' + (n ? ' on' : '') + '" data-s="' + esc(s) + '">' + sauceList([s]) + (n > 1 ? ' ×' + n : '') + '</button>';
   }).join('');
   $('#shOk').disabled = picking.chosen.length < rule[1];
 }
 $('#shC').addEventListener('click', function (e) {
   var b = e.target.closest('.chip'); if (!b) return;
-  var s = b.dataset.s, max = CHOICE[MENU[picking.i].name][2], at = picking.chosen.indexOf(s);
-  if (at >= 0) picking.chosen.splice(at, 1);
+  var rule = CHOICE[MENU[picking.i].name], s = b.dataset.s, max = rule[2], at = picking.chosen.indexOf(s);
+  // drinks: each tap is one drink (tap twice for two of the same); when all are chosen, a tap starts again
+  if (rule[0] === 'drinks') picking.chosen = picking.chosen.length < max ? picking.chosen.concat([s]) : [s];
+  else if (at >= 0) picking.chosen.splice(at, 1);
   else if (max === 1) picking.chosen = [s];
   else if (picking.chosen.length < max) picking.chosen.push(s);
   drawSauces();
@@ -211,7 +221,8 @@ $('#shC').addEventListener('click', function (e) {
 $('#shX').addEventListener('click', function () { $('#sheet').hidden = true; picking = null });
 $('#sheet').addEventListener('click', function (e) { if (e.target.id === 'sheet') { $('#sheet').hidden = true; picking = null } });
 $('#shOk').addEventListener('click', function () {
-  var list = SAUCES[CHOICE[MENU[picking.i].name][0]].filter(function (s) { return picking.chosen.indexOf(s) >= 0 });  // menu order, so equal choices share a line
+  var all = SAUCES[CHOICE[MENU[picking.i].name][0]];   // menu order, so equal choices share a line
+  var list = picking.chosen.slice().sort(function (a, b) { return all.indexOf(a) - all.indexOf(b) });
   $('#sheet').hidden = true; add(picking.i + '|' + list.join('+')); picking = null;
 });
 
