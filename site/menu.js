@@ -111,10 +111,10 @@ const isOffer = name => GRID_OF_ITEM[name] === 'offerGrid';
 const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0])) : [];
 const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);
 // 'Crispy Meal 4 PCS' -> 'Crispy Meal', and the same in Arabic ('وجبة كريسبي 4 قطع', '… قطعتين', '… نص كيلو')
-// 'علبة بطاطا صغيرة مع صوص وتشيدر' -> 'علبة بطاطا مع صوص وتشيدر' (a Small / Large size)
-const sizeLess = n => String(n).replace(/\s*\(\d+\s*(قطعة|قطع)\)$/, '').replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '');
+// 'علبة بطاطا صغيرة مع صوص وتشيدر' -> 'علبة بطاطا مع صوص وتشيدر' (a Small / Large size); 'كوب تشيدر (صغير)' -> 'كوب تشيدر'
+const sizeLess = n => String(n).replace(/\s*\(\d+\s*(قطعة|قطع)\)$/, '').replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '').replace(/\s*\((صغير|كبير)\)$/, '');
 // sizes written as words in the Size column
-const SIZE_AR = {'Small': 'صغيرة', 'Large': 'كبيرة'};
+const SIZE_AR = {'Small': 'صغيرة', 'Large': 'كبيرة', 'Small cup': 'كوب صغير', 'Large cup': 'كوب كبير'};   // صغيرة for علبة, كوب for the sauces
 function applySheet(sheet) {
   // a copy from before the sheet had a Card column (kept on the phone) can't build the page
   if (!sheet || !Array.isArray(sheet.items) || !sheet.items.length || !('card' in sheet.items[0])) return false;

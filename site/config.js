@@ -52,6 +52,7 @@ const CONFIG = {
     'Cocktail Sauce': 'photos/cocktail-sauce.jpg',
     'Garlic Sauce': 'photos/garlic-sauce.jpg',
     'Cheddar Cup (Small)': 'photos/cheddar-cup-small.jpg',
+    'Cheddar Cup': 'photos/cheddar-cup-small.jpg',
     'Coleslaw': 'photos/coleslaw.jpg'
   },
   // Offers (Menu tab category "Offers") are on sale only on these days (Beirut business day: 0=Sun … 6=Sat);
