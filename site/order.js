@@ -121,11 +121,13 @@ $('#choiceOptions').onchange = e => {   // limit how many sauces can be ticked
     one(/^bread-/); one(/spicy/);
     return;
   }
-  if (e.target.name === 'opt') {          // a size with sauces (wings): its sauces under it
+  if (e.target.name === 'opt') {          // a size with sauces (wings, the fries boxes with sauce): its sauces under it
     const o = optOf(selectedChoice.name, e.target.value), box = (v, label) => `<label><input type="checkbox" value="${esc(v)}"> <span>${label}</span></label>`;
     selectedChoice.sauce = o.sauce;
-    $('#optSauces').innerHTML = o.sauce ? `<p class="choice-sub">${esc(t(o.sauce === 's1' ? 'Choose 1 sauce.' : 'Choose 1 or 2 sauces.'))}</p>` +
-      SAUCES.wings.map(v => box(v, tSauce(v) + (v === 'Buffalo Sauce' ? ' 🌶️' : ''))).join('') : '';
+    $('#optSauces').innerHTML = !o.sauce ? '' : o.sauce === 's'
+      ? `<p class="choice-sub">${esc(t('Select one or more sauces.'))}</p>` + SAUCES.fries.map(v => box(v, tSauce(v))).join('')
+      : `<p class="choice-sub">${esc(t(o.sauce === 's1' ? 'Choose 1 sauce.' : 'Choose 1 or 2 sauces.'))}</p>` +
+        SAUCES.wings.map(v => box(v, tSauce(v) + (v === 'Buffalo Sauce' ? ' 🌶️' : ''))).join('');
   }
   const ty = selectedChoice && (selectedChoice.sauce || selectedChoice.type), max = ty === 's2' ? 2 : ty === 's1' ? 1 : 99;
   const boxes = $$('#choiceOptions input[type=checkbox]'), n = boxes.filter(b => b.checked).length;

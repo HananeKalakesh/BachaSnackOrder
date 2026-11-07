@@ -84,7 +84,7 @@ function adjWords(key, l) {   // the changes in words, in l ('en' or 'ar', defau
 // "1/2 KG" -> "½ KG" / "نص كيلو", "7 PCS" -> "7 قطع"
 function optLabel(l) {
   const m = String(l).match(/^(\d+(?:\/\d+)?)\s*(PCS|KG)$/i);
-  if (!m) return l;
+  if (!m) return lang === 'ar' && SIZE_AR[l] || l;
   if (/KG/i.test(m[2])) return m[1] === '1/2' ? (lang === 'ar' ? 'نص كيلو' : '½ KG') : m[1] + ' ' + unitWord('KG', m[1]);
   return m[1] + ' ' + pcsWord(m[1]);
 }
@@ -109,7 +109,10 @@ const isOffer = name => GRID_OF_ITEM[name] === 'offerGrid';
 const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0])) : [];
 const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);
 // 'Crispy Meal 4 PCS' -> 'Crispy Meal', and the same in Arabic ('وجبة كريسبي 4 قطع', '… قطعتين', '… نص كيلو')
-const sizeLess = n => String(n).replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '');
+// 'علبة بطاطا صغيرة مع صوص وتشيدر' -> 'علبة بطاطا مع صوص وتشيدر' (a Small / Large size)
+const sizeLess = n => String(n).replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '');
+// sizes written as words in the Size column
+const SIZE_AR = {'Small': 'صغيرة', 'Large': 'كبيرة'};
 function applySheet(sheet) {
   // a copy from before the sheet had a Card column (kept on the phone) can't build the page
   if (!sheet || !Array.isArray(sheet.items) || !sheet.items.length || !('card' in sheet.items[0])) return false;
@@ -167,7 +170,8 @@ function applyPhotos(sheet) {
   if (!sheet || !sheet.photos) return;
   const norm = n => String(n).replace(/\s+\d+(?:[-/]\d+)?\s*(pcs|pc|kg)$/i, '').trim().toLowerCase();
   Object.values(data).flat().forEach(it => {
-    const id = sheet.photos[norm(it[0])];
+    // a card of sizes without a photo of its own ("Fries Box"): its first size's ("Small Fries Box")
+    const id = sheet.photos[norm(it[0])] || (OPTS[it[0]] || []).map(o => sheet.photos[norm(o.item)]).find(Boolean);
     if (id) CONFIG.photos[it[0]] = 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w640';
   });
 }
@@ -354,7 +358,7 @@ function tKeyBase(k) {
   if (lang !== 'ar') return k;
   const m = k.match(/^(.*?)\s*\[(.*)\]$/);
   if (!m) return tName(k);
-  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG$/i.test(x) ? optLabel(x) : tSauce(x) }).join('، ');
+  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG$/i.test(x) ? optLabel(x) : SIZE_AR[x] || tSauce(x) }).join('، ');
   return tName(m[1]) + ' [' + inner + ']';
 }
 function tDesc(d) {

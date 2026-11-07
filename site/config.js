@@ -28,6 +28,8 @@ const CONFIG = {
     'Crispy Meal': 'photos/crispy-meal.jpg',
     'Mozzarella Patty Burger': 'photos/mozzarella-patty-burger.jpg',
     'Small Fries Box': 'photos/small-fries-box.jpg',
+    'Fries Box': 'photos/small-fries-box.jpg',
+    'Fries Box with Sauce & Cheddar': 'photos/small-cheddar-fries.jpg',
     'Large Fries Box with Sauce & Cheddar': 'photos/large-cheddar-fries.jpg',
     'Loaded Fries': 'photos/loaded-fries.jpg',
     'Mozzarella Sticks 6 PCS': 'photos/mozzarella-sticks.jpg',
