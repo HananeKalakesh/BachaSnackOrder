@@ -395,7 +395,8 @@ function qty(s) { return String(s).replace(/(\d+(?:-\d+)?\s*(?:PCS|PC|KG|KGS|ق�
 function card([name, price, desc, type]) {
   const sold = SOLD.has(name), pick = type === 'p' || type === 'o', choice = !!type && !sold, label = esc(tName(name));
   const pcs = type === 'p' ? Object.keys(piecesOf(name)) : [];
-  const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label)).join(' ' + t('or') + ' ')
+  // the card's hint leaves out a size's pieces ("½ KG or 1 KG"); the choice itself shows them ("½ KG (14 PCS)")
+  const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label.replace(/\s*\(\d+\s*PCS\)$/i, ''))).join(' ' + t('or') + ' ')
     : type === 'p' ? t('Choose') + ' ' + (pcs.length > 1 ? pcs[0] + ' ' + t('or') + ' ' : '') + optLabel(pcs[pcs.length - 1] + ' PCS')
     : t({s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces', d1: 'Choose your drink', d2: 'Choose 2 drinks'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';

@@ -39,6 +39,7 @@ const CONFIG = {
     'Small Fries Box with Sauce & Cheddar': 'photos/small-cheddar-fries.jpg',
     'Mushroom Burger': 'photos/mushroom-burger.jpg',
     'Wings Meal': 'photos/wings-meal.jpg',
+    'Half Wings Meal 7 PCS': 'photos/wings-meal.jpg',
     'Half Broasted Meal 5 PCS': 'photos/half-broasted-meal.jpg',
     'Nuggets 5 PCS': 'photos/nuggets.jpg',
     'Mix Appetizer Box': 'photos/mix-appetizer-box.jpg',
