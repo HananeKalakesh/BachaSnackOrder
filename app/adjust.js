@@ -52,6 +52,18 @@ function adjDesc(name) {
   if (/meal/i.test(g) && /garlic/.test(d) && !/sandwich/i.test(d)) out.push('cocktail-not-garlic');
   return out;
 }
+// a paid change's ticket line -> the change words that bring it ('Bread Change' -> ['على فرنجي', 'على تورتيلا'])
+function adjPaidFor(name) {
+  if (name === ADJ_PAID['add-patty']) return [ADJ['add-patty'][1]];
+  if (name === ADJ_PAID['bread-up']) return [ADJ['bread-sub'][1], ADJ['bread-tortilla'][1]];
+  return null;
+}
+// the price a change adds to this item (0 when free): the patty, and sub bread or tortilla on an Arabic-bread sandwich
+function adjPrice(name, c) {
+  var paid = c === 'add-patty' ? ADJ_PAID['add-patty'] : (c === 'bread-sub' || c === 'bread-tortilla') && ADJ_BREAD[name] === 'arabic' ? ADJ_PAID['bread-up'] : '';
+  var i = paid ? adjMenuIndex(paid) : -1;
+  return i >= 0 ? MENU[i].price : 0;
+}
 function adjMenuIndex(name) { for (var i = 0; i < MENU.length; i++) if (MENU[i].name === name && !MENU[i].soldOut) return i; return -1 }
 var ADJ_WORDS = {}; Object.keys(ADJ).forEach(function (c) { ADJ_WORDS[ADJ[c][1]] = c });
 // a ticket line's sauces split into real sauces, change codes and a free note ('ملاحظة: …')
@@ -65,7 +77,7 @@ function adjSplit(sauces) {
 var ADJ_ON = null;   // {key, codes: [], all: true}
 function askAdjust(key) {
   var l = lineOf(key), opts = adjOptions(l.it.name), cur = adjSplit(l.sauces);
-  ADJ_ON = {key: key, codes: cur.codes.slice(), opts: opts, all: true};
+  ADJ_ON = {key: key, name: l.it.name, codes: cur.codes.slice(), opts: opts, all: true};
   $('#ajT').innerHTML = bi(l.it.ar || l.it.name, l.it.name);
   $('#ajNote').value = cur.note;
   $('#ajQty').innerHTML = cart[key] > 1 ? '<button class="chip' + (ADJ_ON.all ? '' : ' on') + '" data-one="1">' + bi('واحد بس', 'Only one') + '</button><button class="chip' + (ADJ_ON.all ? ' on' : '') + '" data-one="0">' + bi('الـ ' + cart[key] + ' كلّن', 'All ' + cart[key]) + '</button>' : '';
@@ -77,7 +89,8 @@ function drawAdjust() {
   $('#ajC').innerHTML = o.opts.length ? ADJ_GROUPS.map(function (g) {
     var mine = o.opts.filter(function (c) { return g[2].test(c) }); if (!mine.length) return '';
     return '<div class="ajg"><b>' + bi(g[0], g[1]) + '</b><div class="chips">' + mine.map(function (c) {
-      return '<button class="chip' + (o.codes.indexOf(c) >= 0 ? ' on' : '') + '" data-c="' + c + '">' + bi(ADJ[c][1], ADJ[c][0]) + '</button>' }).join('') + '</div></div>';
+      var p = adjPrice(o.name, c), plus = p ? ' +' + short(p) : '';   // a paid change says its price on the button
+      return '<button class="chip' + (o.codes.indexOf(c) >= 0 ? ' on' : '') + '" data-c="' + c + '">' + bi(ADJ[c][1] + plus, ADJ[c][0] + plus) + '</button>' }).join('') + '</div></div>';
   }).join('') : '<p class="muted">' + bi('ما في تغييرات جاهزة لهالصنف: اكتب ملاحظة.', 'No ready changes for this item: write a note.') + '</p>';
   $('#ajQty').querySelectorAll('[data-one]').forEach(function (b) { b.classList.toggle('on', (b.dataset.one === '0') === o.all) });
 }

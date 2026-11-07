@@ -130,6 +130,19 @@ function lineOf(k) {
   if (CUSTOM[k]) return {i: -1, it: CUSTOM[k], sauces: CUSTOM[k].note ? ['✎ ' + CUSTOM[k].note] : []};
   var p = String(k).split('|'); return {i: +p[0], it: MENU[+p[0]], sauces: p[1] ? p[1].split('+') : []};
 }
+// The ticket lines in order. A paid change (Bread Change, Extra Mozzarella Patty) goes right under the item it was
+// chosen for, so the cashier, the sheet and the printed ticket show the 50,000 next to its sandwich (a plain menu
+// index key would otherwise always come first). adjPaidFor is in adjust.js.
+function cartKeys() {
+  var rest = [], paid = [];
+  Object.keys(cart).forEach(function (k) { var l = lineOf(k); (!CUSTOM[k] && l.it && !l.sauces.length && adjPaidFor(l.it.name) ? paid : rest).push(k) });
+  paid.forEach(function (k) {
+    var words = adjPaidFor(lineOf(k).it.name), at = -1;
+    rest.forEach(function (r, j) { if (lineOf(r).sauces.some(function (s) { return words.indexOf(s) >= 0 })) at = j });
+    rest.splice(at < 0 ? rest.length : at + 1, 0, k);
+  });
+  return rest;
+}
 function qtyOf(i) { var q = 0; for (var k in cart) if (lineOf(k).i === i) q += cart[k]; return q }
 
 function section(c) {
@@ -260,7 +273,7 @@ $('#opOk').addEventListener('click', function () {
 function usdTxt(v) { return String(Math.round(v * 100) / 100) }
 function total() { var t = 0; for (var k in cart) t += cart[k] * lineOf(k).it.price; return t }
 function renderCart() {
-  var keys = Object.keys(cart);
+  var keys = cartKeys();
   $('#lines').innerHTML = keys.length ? keys.map(function (k) {
     var l = lineOf(k), it = l.it;
     return '<div class="line" style="' + catVars(it.cat) + '"><i></i><span class="n">' + bi(it.ar || it.name, it.name) +
@@ -347,7 +360,7 @@ function showNet() {
   $('#net').innerHTML = n ? bi(n + ' ناطر ينبعت', n + (n > 1 ? ' changes' : ' change') + ' waiting to send') : '';
 }
 function cartItems() {
-  return Object.keys(cart).map(function (k) {
+  return cartKeys().map(function (k) {
     var l = lineOf(k);
     return {name: l.it.name, ar: l.it.ar, cat: l.it.cat, station: l.it.station || '', qty: cart[k], price: l.it.price, sauces: l.sauces};
   });
