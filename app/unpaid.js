@@ -156,7 +156,7 @@ function drawOrders() {
       : o.sent === '-' ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' +
             '<button class="prtb" data-step="kitchen" data-k="' + esc(o.key) + '">➜ ' + bi('كمّل بلا طباعة', 'Go on without printing') + '</button>'
           : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت عالمطبخ', 'Send to kitchen') + '</button>')
-      : (fresh.length ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع الطلب مع الجديد', 'Print the order with the new items') + '</button>' +
+      : (fresh.length ? (PRN.can() ? '<button class="stepb go" data-print="' + esc(o.key) + '">🖨 ' + bi('اطبع', 'Print') + '</button>' +
             '<button class="prtb" data-step="kitchen" data-k="' + esc(o.key) + '">➜ ' + bi('كمّل بلا طباعة', 'Go on without printing') + '</button>'
           : '<button class="stepb go" data-step="kitchen" data-k="' + esc(o.key) + '">👨‍🍳 ' + bi('ابعت الجديد عالمطبخ', 'Send the new items') + '</button>') : '') +
         '<button class="stepb" data-step="ready" data-k="' + esc(o.key) + '">' + (del ? '🛵 ' + bi('طلع للتوصيل', 'Out for delivery') : '✅ ' + bi('جاهز للاستلام', 'Ready for pickup')) + '</button>';
@@ -245,16 +245,13 @@ $('#ord').addEventListener('click', function (e) {
   }
   // the stages: ready (a website order's customer gets the WhatsApp message straight away), done, or one step back
   // Print: one ticket each tap, always the whole order. An order not sent yet goes to the kitchen (Preparing) as it
-  // prints; after a change (items added or changed), the whole order prints again with the new lines marked ★ جديد,
-  // and they go to the kitchen too; otherwise it's a reprint.
+  // prints; after items were added or changed, they go to the kitchen too as the whole order prints again.
   if (b && b.dataset.print) {
     var pr = TD.list.filter(function (x) { return x.key === b.dataset.print })[0]; if (!pr) return;
     var news = !pr.done && !pr.ready && pr.sent !== '-' ? EB.unsent(pr) : [];
     if (!pr.done && !pr.ready && (pr.sent === '-' || news.length)) {
-      var so = EB.toKitchen(pr, hhmmNow()), tk = so;
-      // the same lines in the same order as pr: each one's quantity the kitchen didn't have yet
-      if (news.length) { tk = JSON.parse(JSON.stringify(so)); tk.extra = true; tk.items.forEach(function (x, j) { var w = pr.items[j], n = w ? w.qty - (w.sentQty == null ? w.qty : w.sentQty) : 0; if (n > 0) x.fresh = n }) }
-      markPrinted(so); printOrder(tk);
+      var so = EB.toKitchen(pr, hhmmNow());
+      markPrinted(so); printOrder(so);
       return drawOrders();
     }
     printOrder(pr); return;

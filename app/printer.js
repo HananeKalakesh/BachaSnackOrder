@@ -146,12 +146,6 @@ var PRN = (function () {
         y += Math.round(size * (opt.lh || 1.3));
       });
     }
-    // white on black, on the right: marks a new line on a changed order
-    function tag(t) {
-      var yy = y + 2, f = '800 24px ' + AR; g.font = f; var w = g.measureText(t).width + 20;
-      ops.push(function () { g.fillStyle = '#000'; g.fillRect(W - M - w, yy, w, 34); g.font = f; g.textAlign = 'center'; g.direction = 'rtl'; g.fillStyle = '#fff'; g.fillText(t, W - M - w / 2, yy + 26) });
-      y += 40;
-    }
     function rule(thick) { var yy = y + 6; ops.push(function () { g.fillStyle = '#000'; g.fillRect(M, yy, W - 2 * M, thick || 2) }); y += 14 }
     // Arabic only, to keep the ticket short
     var kind = o.type === 'Delivery' ? 'توصيل' : o.type === 'Pickup' ? 'استلام' : '';
@@ -163,8 +157,6 @@ var PRN = (function () {
     y += 6;
     text((o.web ? '🌐 من الموقع · ' : '') + o.day + '  ' + o.time, EN, 22, 'center', W / 2);
     if (kind) text(kind, AR, 28, 'center', W / 2, {bold: true});
-    // after a change: the whole order again, the new lines marked
-    if (o.extra) text('طلب معدّل · الجديد معلّم', AR, 28, 'center', W / 2, {bold: true, rtl: true});
     if (o.name || o.phone) text([o.name, o.phone ? '+' + o.phone : ''].filter(Boolean).join(' · '), AR, 26, 'center', W / 2, {bold: true});
     if (o.type === 'Delivery' && o.address) text('📍 ' + o.address, AR, 24, 'right', W - M, {rtl: true});
     rule(2);
@@ -174,7 +166,6 @@ var PRN = (function () {
       text(x.qty + ' × ' + (x.ar || x.name), AR, 30, 'right', W - M, {bold: true, rtl: true, max: W - 2 * M - room});
       if (price) ops.push(function () { g.font = '700 22px ' + EN; g.textAlign = 'left'; g.direction = 'ltr'; g.fillStyle = '#000'; g.fillText(price, M, yy) });
       if (x.sauces && x.sauces.length) text('+ ' + x.sauces.map(function (s) { return SAUCES_AR[s] || s }).join(' + '), AR, 24, 'right', W - M, {rtl: true});
-      if (x.fresh) tag('★ جديد' + (x.fresh < x.qty ? ' (' + x.fresh + ')' : ''));   // added since the last ticket
       y += 4;
     });
     if (o.note) { rule(2); text('ملاحظة: ' + o.note, AR, 26, 'right', W - M, {bold: true, rtl: true}) }
