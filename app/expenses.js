@@ -11,6 +11,8 @@ var EXP_CATS = [
   ['Salaries', 'رواتب', ['', ''], 'running', [['Staff', 'موظفين'], ['Cleaning', 'تنظيف']]],
   ['Utilities', 'فواتير', ['', ''], 'running', [['Gas', 'غاز'], ['Water', 'مي'], ['Internet', 'إنترنت']]],
   ['Other', 'غير ذلك', ['', ''], 'running'],
+  // money short when the resto's money is counted, with no known reason: a loss, taken off the month's profit (owners only)
+  ['Missing', 'ناقص', ['مصاري ناقصة لمّا انعدّت مصاري المطعم، وما منعرف وين راحت: بتنقص من ربح الشهر', 'money short when the resto\'s money was counted, not known where it went: taken off the month\'s profit'], 'running'],
   ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]],
   // what the owners take each week as their pay: shown apart, after the profit
   ['Owners', 'ربح', ['اللي بياخدو أصحاب المحل كل جمعة كمعاش', 'what the owners take each week as their pay'], 'owners']];
@@ -23,6 +25,7 @@ var EXP_GROUPS = [
   ['pack', 'تغليف ولوازم', 'Packaging & supplies', '#F2B705', [['Packaging', '', 'تغليف (علب، أكياس)', 'Packaging (boxes, bags)'], ['Ingredients', 'Supplies', 'تنظيف ولوازم (كفوف…)', 'Cleaning & supplies (gloves…)']]],
   ['staff', 'رواتب', 'Salaries', '#C8102E', [['Salaries', 'Staff', 'رواتب موظفين', 'Staff salaries'], ['Salaries', 'Cleaning', 'راتب تنظيف', 'Cleaning salary']]],
   ['bills', 'فواتير وغيرها', 'Bills & other', '#E0707C', [['Utilities', 'Gas', 'غاز', 'Gas'], ['Utilities', 'Water', 'مي', 'Water'], ['Utilities', 'Internet', 'إنترنت', 'Internet'], ['Other', '', 'غير ذلك', 'Other']]],
+  ['missing', 'ناقص', 'Missing', '#4A4540', [['Missing', '', 'مصاري ناقصة', 'Money missing']]],
   ['equip', 'معدّات', 'Equipment', '#6B655C', [['Equipment', 'Machines', 'آلات', 'Machines'], ['Equipment', 'Kitchen supplies', 'أدوات مطبخ', 'Kitchen supplies']]],
   ['owners', 'ربح الأصحاب', 'Owners', '#8C5A00', [['Owners', '', 'ربح الأصحاب', 'Owners\' pay']]]];
 function expGroup(p) {
@@ -175,12 +178,12 @@ function drawExpenses() {
 function expForm(CHEF) {
   var c = EX.cat ? catOf(EX.cat) : null;
   var h = '<div class="shead"><h2 class="display">' + (EX.edit ? bi('عدّل المصروف', 'Edit expense') : bi('زيد مصروف', 'Add an expense')) + '</h2></div>' + expNote() +
-    '<div class="card addx">' + EXP_GROUPS.filter(function (g) { return !CHEF || g[0] !== 'owners' }).map(function (g) {
+    '<div class="card addx">' + EXP_GROUPS.filter(function (g) { return !CHEF || g[0] !== 'owners' && g[0] !== 'missing' }).map(function (g) {
       return '<div class="xgrp"><small style="color:' + g[3] + '">' + bi(g[1], g[2]) + '</small><div class="xcats">' + g[4].map(function (k) {
         var on = EX.cat === k[0] && (EX.sub || '') === k[1];
         return '<button class="xcat' + (on ? ' on' : '') + '" data-xpick="' + esc(k[0] + '|' + k[1]) + '" style="--c:' + g[3] + '">' + bi(k[2], k[3]) + '</button>' }).join('') + '</div></div>';
     }).join('') +
-    (c && c[2][0] && (c[3] === 'investment' || c[3] === 'owners') ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
+    (c && c[2][0] && (c[3] === 'investment' || c[3] === 'owners' || c[0] === 'Missing') ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
     '<div class="xform"><input id="xItem" placeholder="' + esc(T('شو اشتريت؟ (مثلاً: 10 كيلو صدر دجاج)', 'What did you buy? (e.g. 10 kg chicken breast)')) + '" maxlength="80">' +
     '<div class="xamt"><input id="xAmount" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('المبلغ', 'Amount')) + '">' +
     '<div class="xcur"><button data-xcur="$" class="' + (EX.cur === '$' ? 'on' : '') + '">$</button><button data-xcur="L.L." class="' + (EX.cur === 'L.L.' ? 'on' : '') + '">L.L.</button></div></div>' +
