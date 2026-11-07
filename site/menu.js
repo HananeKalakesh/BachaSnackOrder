@@ -83,6 +83,8 @@ function adjWords(key, l) {   // the changes in words, in l ('en' or 'ar', defau
 }
 // "1/2 KG" -> "½ KG" / "نص كيلو", "7 PCS" -> "7 قطع"
 function optLabel(l) {
+  const w = String(l).match(/^(.*?)\s*\((\d+)\s*PCS\)$/i);   // a weight with its pieces: "1/2 KG (14 PCS)" -> "نص كيلو (14 قطعة)"
+  if (w) return optLabel(w[1]) + ' (' + w[2] + ' ' + pcsWord(w[2]) + ')';
   const m = String(l).match(/^(\d+(?:\/\d+)?)\s*(PCS|KG)$/i);
   if (!m) return lang === 'ar' && SIZE_AR[l] || l;
   if (/KG/i.test(m[2])) return m[1] === '1/2' ? (lang === 'ar' ? 'نص كيلو' : '½ KG') : m[1] + ' ' + unitWord('KG', m[1]);
@@ -110,7 +112,7 @@ const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0]
 const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);
 // 'Crispy Meal 4 PCS' -> 'Crispy Meal', and the same in Arabic ('وجبة كريسبي 4 قطع', '… قطعتين', '… نص كيلو')
 // 'علبة بطاطا صغيرة مع صوص وتشيدر' -> 'علبة بطاطا مع صوص وتشيدر' (a Small / Large size)
-const sizeLess = n => String(n).replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '');
+const sizeLess = n => String(n).replace(/\s*\(\d+\s*(قطعة|قطع)\)$/, '').replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '');
 // sizes written as words in the Size column
 const SIZE_AR = {'Small': 'صغيرة', 'Large': 'كبيرة'};
 function applySheet(sheet) {
@@ -358,7 +360,7 @@ function tKeyBase(k) {
   if (lang !== 'ar') return k;
   const m = k.match(/^(.*?)\s*\[(.*)\]$/);
   if (!m) return tName(k);
-  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG$/i.test(x) ? optLabel(x) : SIZE_AR[x] || tSauce(x) }).join('، ');
+  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG(\s*\(\d+\s*PCS\))?$/i.test(x) ? optLabel(x) : SIZE_AR[x] || tSauce(x) }).join('، ');
   return tName(m[1]) + ' [' + inner + ']';
 }
 function tDesc(d) {
