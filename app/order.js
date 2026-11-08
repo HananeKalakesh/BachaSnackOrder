@@ -334,7 +334,7 @@ function updateSave() {
 
 /* ---------- changing a saved order: it opens here, on the order screen ---------- */
 var EDIT = null;  // {day, num} while a saved order is open for changes
-function editOrder(o) {
+function editOrder(o, back) {   // back: the screen to return to (Today's orders, or Sales in Management)
   cart = {}; CUSTOM = {}; var gone = [];
   o.items.forEach(function (x) {
     var i = -1; MENU.forEach(function (it, k) { if (it.name === x.name) i = k });
@@ -347,12 +347,12 @@ function editOrder(o) {
     var key = String(i) + (x.sauces.length ? '|' + x.sauces.join('+') : '');
     cart[key] = (cart[key] || 0) + x.qty;
   });
-  EDIT = {day: o.day, num: o.num, order: o}; fee = o.fee || 0;
+  EDIT = {day: o.day, num: o.num, order: o, back: back || 'orders'}; fee = o.fee || 0;
   $('#note').value = o.note || ''; $('#cname').value = o.name || ''; setKind(o.type || ''); setMethod(o.payment);
   showView('order'); renderGrid(); renderCart();
   if (gone.length) alert(T('هالأصناف مش عالمنيو هلّق، رح تنشال إذا حفظت: ', 'These items are no longer on the menu and will be removed if you save: ') + gone.join(', '));
 }
-$('#editCancel').addEventListener('click', function () { EDIT = null; resetOrder(); showView('orders') });
+$('#editCancel').addEventListener('click', function () { var to = EDIT ? EDIT.back : 'orders'; EDIT = null; resetOrder(); showView(to) });
 
 /* ---------- saving: the order goes into the outbox and reaches the sheet as soon as it can ---------- */
 function showNet() {
@@ -378,7 +378,7 @@ $('#save').addEventListener('click', function () {
     if (!o.rate) o.rate = RATE;
     EB.update(o);
     toast('انحفظ التعديل على الطلب #' + o.num, 'Order #' + o.num + ' updated');
-    EDIT = null; resetOrder(); showView('orders');
+    var to = EDIT.back; EDIT = null; resetOrder(); showView(to);
     return;
   }
   var now = EB.now(), day = EB.bizDay(DAY_END, now), time = EB.hhmm(now), n = nextNum(day);

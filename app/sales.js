@@ -90,12 +90,80 @@ function dayBody(D) {
   }
   h += '<h4>' + bi('الطلبات', 'Orders') + '</h4><table><tr><th>#</th><th>' + bi('الأصناف', 'Items') + '</th><th class="r">' + bi('المجموع', 'Total') + '</th><th></th></tr>' +
     D.orders.map(function (o) {
-      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + t12(o.time) + '</div></td><td>' + bi(itemsAr(o.items), o.items) + '<div><span class="pill ' + o.payment + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + '</span>' +
-        (o.paidLater ? ' <small class="muted">' + bi('انْدفع ', 'paid on ') + dayName(o.paidLater) + '</small>' : '') + '</div></td>' +
-        '<td class="r">' + amount(o.total) + '</td><td><button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></td></tr>';
+      return '<tr><td><b class="num">' + o.num + '</b><div class="muted num">' + t12(o.time) + '</div></td><td>' + orderWho(o) + bi(itemsAr(o.items), o.items) +
+        '<div><button class="pill paychg ' + esc(o.payment) + '" data-spay="' + esc(o.key) + '" title="' + esc(T('غيّر طريقة الدفع', 'Change the payment')) + '">' + bi(PAY_AR[o.payment] || o.payment, o.payment) + ' ✎</button>' +
+        (o.paidLater ? ' <small class="muted">' + bi('انْدفع ', 'paid on ') + dayName(o.paidLater) + '</small>' : '') +
+        (o.disc ? ' <small class="muted">🏷️ ' + bi('خصم ', 'discount ') + '<span class="num">' + $usd(o.disc) + '</span>' + (o.discWhy ? ' · ' + esc(o.discWhy) : '') + '</small>' : '') + '</div></td>' +
+        '<td class="r">' + amount(o.total) + '</td><td><div class="sacts"><button class="sedit" data-sedit="' + esc(o.key) + '">✎ ' + bi('عدّل', 'Edit') + '</button>' +
+        '<button class="del" data-d="' + o.date + '" data-n="' + o.num + '">' + bi('امسح', 'Delete') + '</button></div></td></tr>';
     }).join('') + '</table>';
   return h;
 }
+
+// the customer's name (and pickup / delivery) above the items of an order in a day's list
+function orderWho(o) {
+  var t = o.type === 'Delivery' ? bi('توصيل', 'Delivery') : o.type === 'Pickup' ? bi('استلام', 'Pickup') : '';
+  return o.name || t ? '<div class="swho">' + (o.name ? '<b>' + esc(o.name) + '</b>' : '') + (t ? ' <small class="muted">' + t + '</small>' : '') + '</div>' : '';
+}
+
+/* Changing an order from Sales (Management): its payment (a mistake, Whish that was cash, a discount, paid later)
+   in a sheet like the cashier's, or its items, name and note on the order screen (✎ Edit, back here after saving) */
+var SP = {key: '', disc: false, when: 'today'};
+function salesOrder(key) { return salesOrders().filter(function (o) { return o.key === key })[0] }
+function salesChanged() { S.years = {}; S.months = {}; S.days = {}; S.all = {}; drawSales() }
+function drawSalesPay() {
+  var box = $('#salesPay');
+  if (!box) { box = document.createElement('div'); box.id = 'salesPay'; box.className = 'paysheet'; document.body.appendChild(box); box.addEventListener('click', salesPayClick); box.addEventListener('input', salesPayInput) }
+  var q = SP.key && salesOrder(SP.key);
+  if (!q) { box.hidden = true; box.innerHTML = ''; return }
+  var owed = q.payment === 'Unpaid' || q.payment === 'House', today = EB.bizDay(DAY_END);
+  box.hidden = false;
+  box.innerHTML = '<div class="paybox"><h3 class="display">' + bi('الطلب #' + q.num + ': غيّر الدفع', 'Order #' + q.num + ': change the payment') + '</h3>' +
+    '<p class="muted">' + dayName(q.day) + (q.name ? ' · <b>' + esc(q.name) + '</b>' : '') + ' · ' + bi('هلّق: ', 'now: ') + '<b>' + bi(PAY_AR[q.payment] || q.payment, q.payment) + '</b>' + (q.disc ? ' · ' + bi('خصم ', 'discount ') + $usd(q.disc) : '') + '</p>' +
+    '<p>' + bi('كيف انْدفع؟', 'How was it paid?') + ' <b class="num">' + $usd(q.total) + '</b> <small class="muted num">' + ll(q.total) + '</small></p>' +
+    (owed && q.day !== today ? '<div class="xcur swhen"><button data-swhen="day" class="' + (SP.when === 'day' ? 'on' : '') + '">' + bi('انْدفع بنفس اليوم', 'Paid that day') + '</button>' +
+      '<button data-swhen="today" class="' + (SP.when === 'today' ? 'on' : '') + '">' + bi('انْدفع اليوم', 'Paid today') + '</button></div>' : '') +
+    (SP.disc ? '<div class="discbox"><b>🏷️ ' + bi('خصم', 'Discount') + '</b><input id="sDiscPaid" inputmode="decimal" value="' + (q.disc ? q.total - q.disc : '') + '" placeholder="' + esc(T('قدّيش دفعو؟ ($ أو ليرة) أو خصم متل 10%', 'How much did they pay? ($ or L.L.) or a discount like 10%')) + '">' +
+      '<input id="sDiscWhy" maxlength="40" value="' + (q.disc ? esc(q.discWhy || '') : '') + '" placeholder="' + esc(T('ليش؟ (عيلة، صاحب…) اختياري', 'Why? (family, friend…) optional')) + '"><div id="sDiscShow" class="muted"></div></div>'
+      : '<button class="splitl" data-sdisc="1">🏷️ ' + bi('في خصم', 'There\'s a discount') + '</button>') +
+    '<div class="paybtns"><button class="payb cash" data-show="Cash">' + bi('كاش', 'Cash') + '</button><button class="payb whish" data-show="Whish">' + bi('ويش', 'Whish') + '</button></div>' +
+    '<button class="splitl" data-show="Split">' + bi('جزء كاش وجزء ويش', 'Part cash, part Whish') + '</button>' +
+    '<button class="splitl" data-show="House">🏠 ' + bi('للبيت (ما بينحسب مبيعات)', 'House (not a sale)') + '</button>' +
+    '<button class="ghost" data-show="Unpaid">' + bi('ما دفع', 'Not paid') + '</button> <button class="ghost" data-show="cancel">' + bi('رجوع', 'Back') + '</button></div>';
+}
+function salesPayInput(e) {
+  if (e.target.id !== 'sDiscPaid') return;
+  var q = salesOrder(SP.key); if (!q) return;
+  var d = discOf(q, e.target.value);
+  $('#sDiscShow').innerHTML = d ? bi('خصم ', 'Discount ') + '<b class="num">' + $usd(d) + '</b> · ' + bi('بيدفعو ', 'they pay ') + '<b class="num">' + $usd(q.total - d) + '</b> <span class="num">' + ll(q.total - d) + '</span>'
+    : d === null ? '<span class="owe">' + bi('لازم يكون أقل من الحساب', 'Must be less than the total') + '</span>' : '';
+}
+function salesPayClick(e) {
+  var b = e.target.closest('button');
+  if (!b) { if (e.target.id === 'salesPay') { SP.key = ''; drawSalesPay() } return }   // a tap outside the box closes it
+  if (b.dataset.swhen) { SP.when = b.dataset.swhen; return drawSalesPay() }
+  if (b.dataset.sdisc) { SP.disc = true; drawSalesPay(); var di = $('#sDiscPaid'); if (di) di.focus(); return }
+  var how = b.dataset.show; if (!how) return;
+  var q = salesOrder(SP.key), part = null, disc = 0, why = '';
+  if (!q || how === 'cancel') { SP.key = ''; return drawSalesPay() }
+  if (SP.disc && ['Cash', 'Whish', 'Split'].indexOf(how) >= 0) {
+    disc = discOf(q, $('#sDiscPaid').value); why = $('#sDiscWhy').value.trim();
+    if (disc == null) { $('#sDiscShow').innerHTML = '<span class="owe">' + bi('اكتب قدّيش دفعو (أقل من الحساب) أو نسبة الخصم', 'Type what they paid (less than the total) or the discount %') + '</span>'; return }
+  }
+  if (how === 'Split' && (part = askSplit({total: q.total - disc})) == null) return;
+  SP.key = ''; drawSalesPay();
+  if (how === q.payment && disc === (q.disc || 0) && (how !== 'Split' || part === q.whish)) return;
+  // a paid order keeps the day it was paid on; one not paid before counts on its own day or today, as chosen
+  var owed = q.payment === 'Unpaid' || q.payment === 'House';
+  EB.paid(q, how, owed ? (SP.when === 'day' ? q.day : EB.bizDay(DAY_END)) : q.paidLater || q.day, part, disc, why);
+  toast('#' + q.num + ': ' + (PAY_AR[how] || how), '#' + q.num + ': ' + how);
+  salesChanged();
+}
+$('#rep').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b || S.locked) return;
+  if (b.dataset.spay) { SP = {key: b.dataset.spay, disc: !!(salesOrder(b.dataset.spay) || {}).disc, when: 'today'}; return drawSalesPay() }
+  if (b.dataset.sedit) { var o = salesOrder(b.dataset.sedit); if (o) editOrder(o, 'report') }
+});
 
 // Orders from earlier days paid in this period: their money counts here, on the day it was paid
 function laterBody(D) {

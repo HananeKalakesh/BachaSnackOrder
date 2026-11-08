@@ -272,7 +272,7 @@ var EB = (function () {
   function orderCells(o) {
     var nopay = o.payment === 'Unpaid' || o.payment === 'House', usd = nopay ? 0 : o.paidUsd || 0;   // House: food for the owners' house, no money
     return {'Items': o.text, 'Item count': o.items.reduce(function (a, x) { return a + x.qty }, 0), 'Order total (L.L.)': o.total,
-      'Payment': o.payment, 'Paid ($)': usd, 'Paid (L.L.)': nopay ? 0 : Math.max(0, o.total - usd * o.rate),
+      'Payment': o.payment, 'Paid ($)': usd, 'Paid (L.L.)': nopay ? 0 : Math.max(0, o.total - (o.disc || 0) - usd * o.rate),   // a discount given stays after a change
       'Note': o.note, 'Name': o.name, 'Pickup / Delivery': o.type,
       'Kitchen sent': o.sent === '-' ? '-' : o.sent ? "'" + o.sent : '', 'Delivery fee (L.L.)': o.fee || ''};
   }
@@ -407,7 +407,7 @@ var EB = (function () {
       laterOrders: 0, laterLbp: 0, marinatedLbp: 0, discOrders: 0, discLbp: 0};   // marinated chicken: raw chicken sold, in the sales but apart from the shop's food
     var days = {}, items = {}, orders = [], later = [];
     var day = function (d) { return days[d] = days[d] || {date: d, orders: 0, sales: 0} };
-    var row = function (o) { return {num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, type: o.type, paidLater: o.paidLater} };
+    var row = function (o) { return {key: o.key, num: o.num, date: o.day, time: o.time, at: o.at, items: o.text, total: o.total, payment: o.payment, name: o.name, phone: o.phone, type: o.type, paidLater: o.paidLater, disc: o.disc || 0, discWhy: o.discWhy || ''} };
     list.forEach(function (o) {
       if (!o.live) return;
       var placed = o.day >= from && o.day <= to, paidOn = o.payment === 'Unpaid' || o.payment === 'House' ? '' : o.paidLater || o.day, paid = paidOn >= from && paidOn <= to;
