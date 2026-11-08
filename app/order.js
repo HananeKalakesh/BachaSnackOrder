@@ -52,6 +52,11 @@ function askKey(wrong) {
   if (k) { EB.key(k); start() }
 }
 EB.onKey = function () { askKey(true) };
+// The sheet gave a saved order the next free number (a website order took this one at the same moment)
+EB.onRenumber = function (old, n) {
+  toast('رقم الطلب صار #' + n + ' (طلب من الموقع أخد #' + old + ')', 'Order #' + old + ' is now #' + n + ' (a website order took #' + old + ')');
+  if (typeof drawOrders === 'function' && TD.loaded) drawOrders();
+};
 EB.onError = function (change, e) {
   var f = change.effect || {};
   alert(T('الشيت ما قبل هالتغيير: ', 'The sheet refused this change: ') + (e.message || e) + (f.order ? '\n\n#' + f.order.num + ' · ' + f.order.text : ''));
@@ -382,7 +387,8 @@ $('#save').addEventListener('click', function () {
     return;
   }
   var now = EB.now(), day = EB.bizDay(DAY_END, now), time = EB.hhmm(now), n = nextNum(day);
-  o = {key: day + '#' + n, num: n, day: day, time: time, at: EB.at(day, time, DAY_END), uid: now.toString(36) + Math.random().toString(36).slice(2, 7),
+  var uid = now.toString(36) + Math.random().toString(36).slice(2, 7);
+  o = {key: uid, num: n, day: day, time: time, at: EB.at(day, time, DAY_END), uid: uid,
     items: items.map(function (x) { x.sentQty = 0; return x }), text: EB.text(items), total: t, payment: method, paidUsd: 0, rate: RATE, received: method === 'Unpaid' ? 0 : t,
     note: $('#note').value.trim(), name: $('#cname').value.trim(), type: kind, done: '', sent: '-', fee: kind === 'Delivery' ? fee : 0};
   EB.save(o);   // it waits in Today's orders until "Send to kitchen" (which prints the two tickets)
