@@ -196,11 +196,25 @@ function write_(ss, ops) {
 
 function apply_(ss, ops) {
   {
-    var tz = ss.getSpreadsheetTimeZone(), results = ops.map(function (op) {
+    var tz = ss.getSpreadsheetTimeZone(), renum = {}, results = ops.map(function (op) {
       var sh = sheet_(ss, op.tab);
+      // only when that row is (still) there, e.g. an order's items after a change: not for an order deleted meanwhile
+      if (op.needs && !matches_(sheet_(ss, op.needs.tab), op.needs.where || {}, tz).length) return { skipped: true };
       if (op.op === 'append') {
         var rows = op.rows || [];
         if (!rows.length) return { added: 0 };
+        // an order typed at the till takes the next free number of its day: a website order (or another iPad) may
+        // have taken the one the till picked in the meantime; its items follow (same Ref)
+        if (op.number) rows.forEach(function (r) {
+          if (op.tab === 'Orders') {
+            var free = freeNum_(sh, r['Date'], r['Order #'], r['Ref'], tz);
+            if (free !== Number(r['Order #'])) { renum[r['Ref']] = free; r['Order #'] = free }
+          } else if (r['Ref']) {
+            // the items take the number their order has in the sheet (also when the order was saved by an earlier try)
+            if (!(r['Ref'] in renum)) renum[r['Ref']] = numOfRef_(ss, r['Ref']);
+            if (renum[r['Ref']]) r['Order #'] = renum[r['Ref']];
+          }
+        });
         var names = [];
         rows.forEach(function (r) { Object.keys(r).forEach(function (n) { if (names.indexOf(n) < 0) names.push(n) }) });
         var cols = columns_(sh, names, true);
@@ -215,7 +229,9 @@ function apply_(ss, ops) {
           return line;
         });
         sh.getRange(start, 1, grid.length, width).setValues(grid);
-        return { added: grid.length };
+        var out = { added: grid.length };
+        if (op.number && op.tab === 'Orders' && renum[rows[0]['Ref']]) out.num = renum[rows[0]['Ref']];
+        return out;
       }
       if (op.op === 'update') {
         var set = op.set || {}, setCols = columns_(sh, Object.keys(set), true), hit = matches_(sh, op.where || {}, tz);
@@ -233,6 +249,30 @@ function apply_(ss, ops) {
     SpreadsheetApp.flush();
     return { results: results };
   }
+}
+
+/** The Order # of the Orders row with this Ref (the latest 500 rows), or 0. */
+function numOfRef_(ss, ref) {
+  var sh = ss.getSheetByName('Orders'), last = sh.getLastRow(); if (last < 2) return 0;
+  var head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function (h) { return String(h).trim() });
+  var cN = head.indexOf('Order #'), cR = head.indexOf('Ref'), from = Math.max(2, last - 499), n = 0;
+  sh.getRange(from, 1, last - from + 1, head.length).getValues().forEach(function (r) { if (String(r[cR]) === String(ref)) n = Number(r[cN]) || 0 });
+  return n;
+}
+
+/** The number an order can take on its day: the one asked for when no other order (another Ref) has it, else the
+ *  day's highest + 1. */
+function freeNum_(sh, day, want, ref, tz) {
+  var last = sh.getLastRow(); if (last < 2) return Number(want);
+  var head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function (h) { return String(h).trim() });
+  var cN = head.indexOf('Order #'), cD = head.indexOf('Date'), cR = head.indexOf('Ref');
+  var from = Math.max(2, last - 499), v = sh.getRange(from, 1, last - from + 1, head.length).getValues(), top = 0, taken = false;
+  v.forEach(function (r) {
+    if (r[cN] === '' || String(cell_(r[cD], tz)) !== String(day)) return;
+    top = Math.max(top, Number(r[cN]) || 0);
+    if (Number(r[cN]) === Number(want) && String(r[cR]) !== String(ref)) taken = true;
+  });
+  return taken ? top + 1 : Number(want);
 }
 
 /* ---------- orders from the menu website ---------- */

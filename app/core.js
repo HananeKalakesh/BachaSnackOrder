@@ -159,7 +159,8 @@ var EB = (function () {
     EB.rows(r && r.Orders).forEach(function (o) {
       if (str(o['Order #']) === '' || !str(o.Date)) return;
       var day = str(o.Date).slice(0, 10), time = str(o.Time).slice(0, 5), n = num(o['Order #']);
-      var x = {key: day + '#' + n, num: n, day: day, time: time, at: EB.at(day, time, dayEnd),
+      // an order is known by its Ref: two orders could end up with the same number (a website order and the till at once)
+      var x = {key: str(o.Ref) || day + '#' + n, num: n, day: day, time: time, at: EB.at(day, time, dayEnd),
         total: num(o['Order total (L.L.)']), payment: str(o.Payment) || 'Cash', paidUsd: num(o['Paid ($)']), rate: num(o['USD rate']),
         received: num(o['Paid total (L.L.)']), note: str(o.Note), uid: str(o.Ref), name: str(o.Name), type: str(o['Pickup / Delivery']),
         done: str(o['Kitchen done']), text: str(o.Items), items: [],
@@ -177,10 +178,10 @@ var EB = (function () {
         // a discount (family, friends…): the order keeps its menu total, the money received is the total minus this
         disc: num(o['Discount (L.L.)']), discWhy: str(o['Discount note'])};
       x.live = live(x);
-      byKey[x.key] = x; list.push(x);
+      byKey[x.key] = x; byKey[day + '#' + n] = byKey[day + '#' + n] || x; list.push(x);
     });
     EB.rows(r && r['Order Items']).forEach(function (it) {
-      var o = byKey[str(it.Date).slice(0, 10) + '#' + num(it['Order #'])]; if (!o) return;
+      var o = byKey[str(it.Ref)] || byKey[str(it.Date).slice(0, 10) + '#' + num(it['Order #'])]; if (!o) return;
       var m = info[str(it.Item)] || {};
       // marinated chicken and Other lines aren't menu items: they show on the kitchen screen too
       var oc = /^(Marinated Chicken|Other)$/.test(str(it.Category));
@@ -215,7 +216,9 @@ var EB = (function () {
     if (flushing) return;
     var q = outbox().filter(function (c) { return !held(c) }); if (!q.length) return;
     flushing = true;
-    remote({action: 'write', ops: q[0].ops}).then(function () {
+    remote({action: 'write', ops: q[0].ops}).then(function (r) {
+      var n = r && r.results && r.results[0] && r.results[0].num;
+      if (n) renumbered(q[0], n);
       drop(q[0].id); remember(q[0]); flushing = false; changed(); EB.flush();
     }, function (e) {
       flushing = false;
@@ -233,6 +236,13 @@ var EB = (function () {
   };
   setInterval(EB.flush, 15000);
   addEventListener('online', EB.flush);
+  // The sheet gave a saved order another number (its own was taken): the copies on this iPad follow, and the screens say so
+  function renumbered(c, n) {
+    var key = c.effect && c.effect.key, old = c.effect && c.effect.order && c.effect.order.num;
+    var fix = function (x) { if (x.effect && x.effect.key === key && x.effect.order) x.effect.order.num = n; return x };
+    fix(c); put('eb-outbox', outbox().map(fix)); put('eb-sent', (get('eb-sent') || []).map(fix));
+    if (EB.onRenumber) EB.onRenumber(old, n);
+  }
   // Changes already sent, kept for two days: a copy loaded before a change was sent doesn't know about it yet
   function remember(c) {
     var keep = (get('eb-sent') || []).filter(function (x) { return Date.now() - x.sent < 2 * 864e5 }).slice(-300);
@@ -246,7 +256,7 @@ var EB = (function () {
     changes(readAt).forEach(function (c) {
       var f = c.effect || {}, i = -1;
       if ((f.kind || '') !== (kind || '')) return;
-      list.forEach(function (o, k) { if (o.key === f.key) i = k });
+      list.forEach(function (o, k) { if (o.key === f.key || f.key === o.day + '#' + o.num && f.key.indexOf('#') > 0) i = k });   // the second: changes kept from before orders were known by their Ref
       if (f.t === 'save' && i < 0) list.push(JSON.parse(JSON.stringify(f.order)));
       if (f.t === 'edit' && i >= 0) { var done = list[i].done, ready = list[i].ready; list[i] = JSON.parse(JSON.stringify(f.order)); list[i].done = done; list[i].ready = ready }
       if (f.t === 'done' && i >= 0) list[i].done = f.done;
@@ -276,7 +286,8 @@ var EB = (function () {
       'Note': o.note, 'Name': o.name, 'Pickup / Delivery': o.type,
       'Kitchen sent': o.sent === '-' ? '-' : o.sent ? "'" + o.sent : '', 'Delivery fee (L.L.)': o.fee || ''};
   }
-  function where(o) { return {'Date': o.day, 'Order #': o.num} }
+  // the order's own rows: by its Ref (unique), so a change never reaches another order with the same number
+  function where(o) { return o.uid ? {'Ref': o.uid} : {'Date': o.day, 'Order #': o.num} }
   // "2 × Loaded Fries — Ketchup + Cheddar Sauce, 1 × Pepsi"
   EB.text = function (items) {
     return items.map(function (x) { return x.qty + ' × ' + x.name + (x.sauces.length ? ' — ' + x.sauces.join(' + ') : '') }).join(', ');
@@ -285,12 +296,13 @@ var EB = (function () {
     var row = orderCells(o);
     row['Order #'] = o.num; row['Date'] = o.day; row['Time'] = "'" + o.time; row['USD rate'] = o.rate; row['Ref'] = o.uid;
     row['Paid total (L.L.)'] = F_PAID; row['Difference (L.L.)'] = F_DIFF;
-    EB.send([{op: 'append', tab: 'Orders', rows: [row], unique: 'Ref'}, {op: 'append', tab: 'Order Items', rows: itemRows(o), unique: 'Ref'}],
+    // number: the sheet gives it the next free number if a website order took this one meanwhile (flush tells the screens)
+    EB.send([{op: 'append', tab: 'Orders', rows: [row], unique: 'Ref', number: true}, {op: 'append', tab: 'Order Items', rows: itemRows(o), unique: 'Ref', number: true}],
       {t: 'save', key: o.key, order: o});
   };
   EB.update = function (o) {
     EB.send([{op: 'update', tab: 'Orders', where: where(o), set: orderCells(o)}, {op: 'remove', tab: 'Order Items', where: where(o)},
-      {op: 'append', tab: 'Order Items', rows: itemRows(o)}], {t: 'edit', key: o.key, order: o});
+      {op: 'append', tab: 'Order Items', rows: itemRows(o), needs: {tab: 'Orders', where: where(o)}}], {t: 'edit', key: o.key, order: o});
   };
   // Send to the kitchen: the whole order, or the lines added since; it then shows on the kitchen screen
   // A website order just accepted: not in the kitchen yet, like an order typed at the till (Print sends it)
