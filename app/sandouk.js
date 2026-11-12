@@ -27,6 +27,38 @@ function boxSales(day) {
   var s = EB.report(salesOrders(), day, day).summary;
   return {cash: s.cashLbp, whish: s.whishLbp};
 }
+/* Checks on a count, so a missing 000 can't be saved by mistake (the L.L. typed as 2240 instead of 2,240,000).
+   hard: can't be saved. soft: saved only after a second tap on Save. */
+var USD_MAX = 3000;
+function boxCheck(v, s) {
+  var out = [], ll3 = function (n) { return fmt(n) + ' ل.ل' };
+  [['bCash', v.cashLbp, 'كاش', 'Cash'], ['bWhish', v.whish, 'ويش', 'Whish']].forEach(function (f) {
+    var n = f[1]; if (!n) return;
+    if (n < 1000 || n % 1000) out.push({id: f[0], hard: true,
+      ar: f[2] + ' بالليرة ' + ll3(n) + ': ناقصو أصفار؟ المبلغ بالليرة لازم يكون بالآلاف' + (n < 100000 ? '، مثلاً ' + ll3(n * 1000) : ''),
+      en: f[3] + ' L.L. ' + fmt(n) + ': missing zeros? L.L. amounts are in thousands' + (n < 100000 ? ', e.g. ' + fmt(n * 1000) : '')});
+    else if (n < 100000) out.push({id: f[0],
+      ar: f[2] + ' بالليرة بس ' + ll3(n) + ' (' + $usd(n) + ')؟ تأكد ما ناقصو أصفار', en: f[3] + ' L.L. only ' + fmt(n) + ' (' + $usd(n) + ')? Check no zeros are missing'});
+  });
+  [['bUsd', v.cashUsd, 'كاش', 'Cash'], ['bWhishUsd', v.whishUsd, 'ويش', 'Whish']].forEach(function (f) {
+    if (f[1] > USD_MAX) out.push({id: f[0], hard: true, ar: f[2] + ' بالدولار $' + fmt(f[1]) + ': كأنو انكتب بالليرة. حطّو بخانة الـL.L.',
+      en: f[3] + ' $' + fmt(f[1]) + ': looks like L.L. Put it in the L.L. box'});
+  });
+  // far from what the orders say: probably a typo, so ask once more
+  if (s && !out.some(function (o) { return o.hard })) {
+    var gap = function (counted, orders, id, ar, en) {
+      var d = counted - orders; if (Math.abs(d) < 10 * RATE) return;
+      out.push({id: id, ar: ar + ' ' + (d > 0 ? 'أكتر' : 'أقل') + ' من الطلبات بـ' + $usd(Math.abs(d)) + '. راجع العدّ والأصفار',
+        en: en + ' is ' + $usd(Math.abs(d)) + (d > 0 ? ' more' : ' less') + ' than the orders. Check the count and the zeros'});
+    };
+    gap(Math.round(v.cashLbp + v.cashUsd * RATE), s.cash, 'bCash', 'الكاش', 'Cash');
+    gap(Math.round(v.whish + v.whishUsd * RATE), s.whish, 'bWhish', 'الويش', 'Whish');
+  }
+  return out;
+}
+function boxVals() {
+  return {cashLbp: Number($('#bCash').value) || 0, cashUsd: Number($('#bUsd').value) || 0, whish: Number($('#bWhish').value) || 0, whishUsd: Number($('#bWhishUsd').value) || 0};
+}
 function boxCalc(cashLbp, cashUsd, whish, whishUsd) {
   var total = Math.round(cashLbp + cashUsd * RATE + whish + (whishUsd || 0) * RATE), owners = Math.round(total * OWNERS_PCT / 100);
   return {total: total, owners: owners, left: total - owners};
@@ -138,6 +170,9 @@ function drawBoxCalc() {
   if (hand.length) h += '<p class="offline">' + bi('في ربح للأصحاب مكتوب باليد بهاليوم (', 'Owners\' pay was already typed by hand for this day (') +
     '<b class="num">' + $usd(hand.reduce(function (a, p) { return a + p.lbp }, 0)) + '</b>' +
     bi(')، ما رح ينزاد واحد تاني. امسحو من المصاريف إذا بدك الصندوق يسجّلو.', '), so no second one is added. Delete it in Expenses if the cash box should record it.') + '</p>';
+  var chk = boxCheck(boxVals(), s);
+  ['bCash', 'bUsd', 'bWhish', 'bWhishUsd'].forEach(function (id) { $('#' + id).closest('label').classList.toggle('bad', chk.some(function (o) { return o.id === id && o.hard })) });
+  if (chk.length) h = chk.map(function (o) { return '<p class="' + (o.hard ? 'err' : 'offline') + ' cwarn">⚠️ ' + bi(o.ar, o.en) + '</p>' }).join('') + h;
   $('#bCalc').innerHTML = h;
 }
 
@@ -201,7 +236,7 @@ function boxFill(x) {
 
 $('#box').addEventListener('input', function (e) {
   if (e.target.id === 'bDate') { var x = (boxes() || []).filter(function (b) { return b.day === e.target.value })[0]; if (x) boxFill(x) }
-  if (/^b(Cash|Usd|Whish|WhishUsd|Date)$/.test(e.target.id)) drawBoxCalc();
+  if (/^b(Cash|Usd|Whish|WhishUsd|Date)$/.test(e.target.id)) { $('#bErr').innerHTML = ''; drawBoxCalc() }
 });
 $('#box').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b || BX.locked) return;
@@ -210,6 +245,11 @@ $('#box').addEventListener('click', function (e) {
     var err = function (ar, en) { $('#bErr').innerHTML = bi(ar, en) };
     if (!/^\d{4}-\d\d-\d\d$/.test(day)) return err('اختار التاريخ', 'Choose the date');
     if (cashLbp < 0 || cashUsd < 0 || whish < 0 || whishUsd < 0 || !(cashLbp + cashUsd + whish + whishUsd > 0)) return err('اكتب قدّيش في كاش وويش', 'Enter the cash and Whish amounts');
+    var chk = boxCheck({cashLbp: cashLbp, cashUsd: cashUsd, whish: whish, whishUsd: whishUsd}, boxSales(day)), hard = chk.filter(function (o) { return o.hard })[0];
+    if (hard) { BX.sure = ''; return err(hard.ar, hard.en) }
+    var sig = [day, cashLbp, cashUsd, whish, whishUsd].join('|');
+    if (chk.length && BX.sure !== sig) { BX.sure = sig; return err(chk[0].ar + '. إذا صح، اضغط احفظ مرة تانية', chk[0].en + '. If it is right, tap Save again') }
+    BX.sure = '';
     var c = boxCalc(cashLbp, cashUsd, whish, whishUsd), key = 'sd-' + day, had = (boxes() || []).filter(function (x) { return x.key === key })[0];
     var x = {key: key, day: day, cashLbp: cashLbp, cashUsd: cashUsd, whish: whish, whishUsd: whishUsd, total: c.total, pct: OWNERS_PCT, owners: c.owners, left: c.left, note: $('#bNote').value.trim()};
     var cells = {'Date': day, 'Cash (L.L.)': cashLbp, 'Cash ($)': cashUsd, 'Whish (L.L.)': whish, 'Whish ($)': whishUsd, 'Total (L.L.)': c.total, 'Owners %': OWNERS_PCT,

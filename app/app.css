@@ -355,6 +355,7 @@ td.r,th.r{text-align:end}
 #box .cin input{border:0;background:transparent;width:100%;min-width:0;font-size:20px;padding:10px 0;margin:0;font-family:inherit}#box .count #bNote{margin-top:10px}
 #box .ccalc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}#box .ccalc>div{background:var(--input);border-radius:16px;padding:10px;text-align:center}#box .ccalc small{display:block;font-weight:700}#box .ccalc b{font-size:20px}#box .ccalc .ll{font-size:11px;color:var(--muted)}
 #box .cdiff{margin-top:10px}
+#box .cin label.bad{box-shadow:inset 0 0 0 2px var(--red)}#box .cwarn{margin:10px 0 0;font-size:14px}
 #box .rhero>.num,#box .rchip .num,#box .ccalc .num,#box .rafter .num{text-align:center!important;display:block}#box .req .num{display:inline}#box .count .xhint{font-size:13px;margin:6px 0 0}
 #box .count input[type=date],#box .count #bNote{border:0;background:var(--input);border-radius:14px;padding:10px 14px;font:inherit;font-size:15px;color:var(--ink,#1A1A17);width:100%;box-sizing:border-box}#box .count .chead input[type=date]{width:auto}
 @media (max-width:900px){#box .tgrid{grid-template-columns:1fr}}
