@@ -81,13 +81,13 @@ function adjWords(key, l) {   // the changes in words, in l ('en' or 'ar', defau
   const a = splitAdj(key), ar = (l || lang) === 'ar';
   return a.codes.map(c => ADJ[c][ar ? 1 : 0]).concat(a.note ? [a.note] : []);
 }
-// "1/2 KG" -> "½ KG" / "نص كيلو", "7 PCS" -> "7 قطع"
+// "1/2 KG" -> "½ KG" / "نصف كيلو", "1 KG" -> "1 KG" / "كيلو", "7 PCS" -> "7 قطع"
 function optLabel(l) {
   const w = String(l).match(/^(.*?)\s*\((\d+(?:-\d+)?)\s*PCS\)$/i);   // a weight with its pieces: "1/2 KG (14 PCS)" -> "نص كيلو (14 قطعة)", "1 KG (20-22 PCS)" too
   if (w) return optLabel(w[1]) + ' (' + w[2] + ' ' + pcsWord(w[2]) + ')';
   const m = String(l).match(/^(\d+(?:\/\d+)?)\s*(PCS|KG)$/i);
   if (!m) return lang === 'ar' && SIZE_AR[l] || l;
-  if (/KG/i.test(m[2])) return m[1] === '1/2' ? (lang === 'ar' ? 'نص كيلو' : '½ KG') : m[1] + ' ' + unitWord('KG', m[1]);
+  if (/KG/i.test(m[2])) return m[1] === '1/2' ? (lang === 'ar' ? 'نصف كيلو' : '½ KG') : lang === 'ar' && m[1] === '1' ? 'كيلو' : m[1] + ' ' + unitWord('KG', m[1]);   // Arabic: نصف كيلو / كيلو (owner, 15 Nov)
   return m[1] + ' ' + pcsWord(m[1]);
 }
 
@@ -112,7 +112,7 @@ const offersNow = () => offerDay() ? data.offerGrid.filter(it => !SOLD.has(it[0]
 const drinkList = () => data.drinkGrid.filter(([n]) => !SOLD.has(n)).map(([n]) => n);
 // 'Crispy Meal 4 PCS' -> 'Crispy Meal', and the same in Arabic ('وجبة كريسبي 4 قطع', '… قطعتين', '… نص كيلو')
 // 'علبة بطاطا صغيرة مع صوص وتشيدر' -> 'علبة بطاطا مع صوص وتشيدر' (a Small / Large size); 'كوب تشيدر (صغير)' -> 'كوب تشيدر'
-const sizeLess = n => String(n).replace(/\s*\(\d+\s*(قطعة|قطع)\)$/, '').replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نص كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '').replace(/\s*\((صغير|كبير)\)$/, '');
+const sizeLess = n => String(n).replace(/\s*\(\d+\s*(قطعة|قطع)\)$/, '').replace(/\s+(\d+(?:[-\/]\d+)?\s*\S+|قطعتين|نصف? كيلو)$/, '').replace(/\s+(صغيرة|كبيرة)(?=\s|$)/, '').replace(/\s*\((صغير|كبير)\)$/, '');
 // sizes written as words in the Size column
 const SIZE_AR = {'Small': 'صغيرة', 'Large': 'كبيرة', 'Small cup': 'كوب صغير', 'Large cup': 'كوب كبير'};   // صغيرة for علبة, كوب for the sauces
 function applySheet(sheet) {
