@@ -83,7 +83,7 @@ function adjWords(key, l) {   // the changes in words, in l ('en' or 'ar', defau
 }
 // "1/2 KG" -> "½ KG" / "نص كيلو", "7 PCS" -> "7 قطع"
 function optLabel(l) {
-  const w = String(l).match(/^(.*?)\s*\((\d+)\s*PCS\)$/i);   // a weight with its pieces: "1/2 KG (14 PCS)" -> "نص كيلو (14 قطعة)"
+  const w = String(l).match(/^(.*?)\s*\((\d+(?:-\d+)?)\s*PCS\)$/i);   // a weight with its pieces: "1/2 KG (14 PCS)" -> "نص كيلو (14 قطعة)", "1 KG (20-22 PCS)" too
   if (w) return optLabel(w[1]) + ' (' + w[2] + ' ' + pcsWord(w[2]) + ')';
   const m = String(l).match(/^(\d+(?:\/\d+)?)\s*(PCS|KG)$/i);
   if (!m) return lang === 'ar' && SIZE_AR[l] || l;
@@ -360,7 +360,7 @@ function tKeyBase(k) {
   if (lang !== 'ar') return k;
   const m = k.match(/^(.*?)\s*\[(.*)\]$/);
   if (!m) return tName(k);
-  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG(\s*\(\d+\s*PCS\))?$/i.test(x) ? optLabel(x) : SIZE_AR[x] || tSauce(x) }).join('، ');
+  const inner = m[2].split(/\s*,\s*/).map(x => { const p = x.match(/^(\d+(?:-\d+)?)\s*PCS$/i); return p ? p[1] + ' ' + pcsWord(p[1]) : /^\d+(\/\d+)?\s*KG(\s*\(\d+(?:-\d+)?\s*PCS\))?$/i.test(x) ? optLabel(x) : SIZE_AR[x] || tSauce(x) }).join('، ');
   return tName(m[1]) + ' [' + inner + ']';
 }
 function tDesc(d) {
@@ -396,7 +396,7 @@ function card([name, price, desc, type]) {
   const sold = SOLD.has(name), pick = type === 'p' || type === 'o', choice = !!type && !sold, label = esc(tName(name));
   const pcs = type === 'p' ? Object.keys(piecesOf(name)) : [];
   // the card's hint leaves out a size's pieces ("½ KG or 1 KG"); the choice itself shows them ("½ KG (14 PCS)")
-  const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label.replace(/\s*\(\d+\s*PCS\)$/i, ''))).join(' ' + t('or') + ' ')
+  const choiceText = type === 'o' ? t('Choose') + ' ' + OPTS[name].map(o => optLabel(o.label.replace(/\s*\(\d+(?:-\d+)?\s*PCS\)$/i, ''))).join(' ' + t('or') + ' ')
     : type === 'p' ? t('Choose') + ' ' + (pcs.length > 1 ? pcs[0] + ' ' + t('or') + ' ' : '') + optLabel(pcs[pcs.length - 1] + ' PCS')
     : t({s2: 'Choose 1 or 2 sauces', s1: 'Choose 1 sauce', s: 'Choose your sauces', d1: 'Choose your drink', d2: 'Choose 2 drinks'}[type] || '');
   const icon = /zinger|hausa|buffalo/i.test(name) ? ' 🌶️' : /grilled chicken (plate|sandwich)|vegetable steak/i.test(name) ? ' 🥗' : '';
