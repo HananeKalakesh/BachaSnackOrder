@@ -413,25 +413,18 @@ function card([name, price, desc, type]) {
     + `<div class="actions"><div class="price">${pick ? t('From') + ' ' : ''}${USD[name] ? `<bdi dir="ltr">$${USD[name]}</bdi><span class="ll">${fmt(price)}</span>` : fmt(price)}</div>${controls}</div></div>`;
 }
 // All items show as cards, two per row; items with a photo come first so rows line up
-// the offer banner shows the lowest family meal price it talks about (Shawarma, Tawouk, Fajita), from the sheet
-// on an offer day it talks about the offers instead: the cheapest one, from the sheet
+// the banner shows only on an offer day (CONFIG.offerDays): the Lunch Box, at the cheapest offer's price, from the sheet;
+// the other days it is hidden (owner, 20 Nov 2026: no more family meals banner)
 function promoPrice() {
   const p = $('#promo'), offers = offersNow();
   if (!p) return;
-  if (offers.length) {
-    const low = offers.reduce((a, x) => x[1] < a[1] ? x : a, offers[0]), w = String(tName(low[0])).split(/\s+[–—-]\s+/)[1];   // the week's sandwich, in the page's language
-    p.dataset.target = 'offers'; p.classList.add('is-offer');
-    $('#promoKicker').textContent = t('Tue · Wed · Thu only');
-    $('#promoText').textContent = w ? t('Lunch Box: {s}, fries and a free drink').replace('{s}', w) : tName(low[0]);
-    $('#promoPrice').textContent = fmt(low[1]);
-    return;
-  }
-  p.dataset.target = 'family'; p.classList.remove('is-offer');
-  $('#promoKicker').textContent = t('New · Family Meals'); $('#promoText').textContent = t('Shawarma, Tawouk or Fajita: ½ KG or 1 KG with fries');
-  const o = ['Shawarma Family Meal', 'Tawouk Family Meal', 'Fajita Family Meal'].flatMap(n => (OPTS[n] || []).filter(x => !x.sold));
-  if (!o.length) return;
-  const low = o.reduce((a, x) => x.price < a.price ? x : a, o[0]);
-  $('#promoPrice').textContent = low.usd ? '$' + low.usd : fmt(low.price);
+  p.hidden = !offers.length || !!$('#search').value.trim();
+  if (!offers.length) return;
+  const low = offers.reduce((a, x) => x[1] < a[1] ? x : a, offers[0]), w = String(tName(low[0])).split(/\s+[–—-]\s+/)[1];   // the week's sandwich, in the page's language
+  p.dataset.target = 'offers'; p.classList.add('is-offer');
+  $('#promoKicker').textContent = t('Tue · Wed · Thu only');
+  $('#promoText').textContent = w ? t('Lunch Box: {s}, fries and a free drink').replace('{s}', w) : tName(low[0]);
+  $('#promoPrice').textContent = fmt(low[1]);
 }
 function render() {
   promoPrice();
@@ -458,7 +451,7 @@ function filterMenu() {
   $$('section').forEach(sec => sec.hidden = !sec.querySelector('.item:not([hidden])'));
   if (q) $('#popular').hidden = true;   // avoid showing popular items twice in results
   $('#noResults').hidden = !q || !!$('.item:not([hidden])');
-  $('#promo').hidden = !!q;
+  $('#promo').hidden = !!q || !offersNow().length;
   $('#clearSearch').hidden = !q;
 }
 $('#search').addEventListener('input', () => { filterMenu(); spy() });
