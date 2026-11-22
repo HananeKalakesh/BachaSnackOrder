@@ -125,10 +125,22 @@ function useMenu(r) {
   CATS = []; MENU.forEach(function (it) { if (CATS.indexOf(it.cat) < 0) CATS.push(it.cat) }); CATS.push(OPEN_SEC);
   renderGrid(); renderCart();
 }
-// The last 400 orders (enough for today and numbering), kept on the iPad too
-var RECENT = null;
-function loadRecent() { return EB.read('recent', {'Orders': 400, 'Order Items': 2500}).then(function (r) { RECENT = r; return r }) }
-function knownOrders() { var r = RECENT || EB.cached('recent'); return EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r && r.at) }
+// The last 150 orders and their lines: enough for today, yesterday (the stock), numbering and the website orders.
+// Not paid and Sales load their own. Kept on the tablet too. One load at a time: on slow Wi-Fi they used to pile up.
+var RECENT = null, recentP = null;
+function loadRecent() {
+  return recentP || (recentP = EB.read('recent', {'Orders': 150, 'Order Items': 600}).then(function (r) { RECENT = r; recentP = null; return r },
+    function (e) { recentP = null; throw e }));
+}
+// Building the orders from the rows is the heaviest work on the tablet, and every tap, refresh and screen asked for it
+// again. It is built again only when something changed: a new load, the menu, or a change made on this tablet.
+var KNOWN = {}, SAVED_RECENT;
+function knownOrders() {
+  var r = RECENT || SAVED_RECENT || (SAVED_RECENT = EB.cached('recent')), stamp = EB.stamp();
+  if (!(KNOWN.list && KNOWN.r === r && KNOWN.menu === MENU_ALL && KNOWN.dayEnd === DAY_END && KNOWN.stamp === stamp))
+    KNOWN = {r: r, menu: MENU_ALL, dayEnd: DAY_END, stamp: stamp, list: EB.withPending(EB.orders(r, MENU_ALL, DAY_END), r && r.at)};
+  return KNOWN.list;
+}
 function nextNum(day) { var n = 0; knownOrders().forEach(function (o) { if (o.day === day && o.num > n) n = o.num }); return n + 1 }
 /* The cart is {key: qty}; the key is the item's index in MENU, plus "|sauce+sauce" when sauces were chosen */
 function lineOf(k) {

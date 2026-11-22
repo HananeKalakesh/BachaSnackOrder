@@ -31,12 +31,19 @@ var EB = (function () {
     } else if (run && run.api) {
       p = new Promise(function (ok, fail) { run.withSuccessHandler(ok).withFailureHandler(function (e) { fail(offline(e && e.message)) }).api(req) });
     } else {
-      p = fetch(API, {method: 'POST', body: JSON.stringify(req)}).then(function (r) {
+      // a request that hangs (weak Wi-Fi) is given up after a while and tried again, so it can't hold up the outbox
+      // until the app is closed; a change sent twice is safe: the sheet skips an order it already has (unique Ref)
+      var ctl = window.AbortController ? new AbortController() : null, wait = req.action === 'write' ? 45000 : 30000;
+      var timer = ctl && setTimeout(function () { ctl.abort() }, wait);
+      p = fetch(API, {method: 'POST', body: JSON.stringify(req), signal: ctl ? ctl.signal : undefined}).then(function (r) {
         if (!r.ok) throw offline('HTTP ' + r.status);
         return r.text();
-      }, function (e) { throw offline(e.message) }).then(function (t) {
+      }).then(function (t) {
         // not data (e.g. Google's sign-in or permission page): kept and tried again, like no internet, so nothing is lost
         try { return JSON.parse(t) } catch (e) { throw offline('The sheet link did not answer properly. Check that the Apps Script is deployed and allowed.') }
+      }).then(function (r) { clearTimeout(timer); return r }, function (e) {
+        clearTimeout(timer);   // no answer, a cut connection or too slow: always "offline", so the change stays and is tried again
+        throw e && e.offline ? e : offline(e && e.name === 'AbortError' ? 'The sheet took too long to answer' : e && e.message);
       });
     }
     return p.then(function (r) {
@@ -249,6 +256,8 @@ var EB = (function () {
     keep.push({sent: Date.now(), effect: c.effect}); put('eb-sent', keep);
   }
   // The changes a copy loaded at readAt doesn't have yet: those sent since then, and those still in the outbox
+  // A cheap fingerprint of the changes not yet in a loaded copy: when it is the same, a list built before is still right
+  EB.stamp = function () { try { return (localStorage.getItem(PRE + 'eb-outbox') || '') + '|' + (localStorage.getItem(PRE + 'eb-sent') || '') } catch (e) { return String(Math.random()) } };
   function changes(readAt) { return (get('eb-sent') || []).filter(function (x) { return x.sent > (readAt || 0) }).concat(outbox()) }
   // Apply them to a list of orders (applying a change the list already has does nothing, so the order doesn't matter)
   // kind keeps lists apart: orders have none, purchases are 'purchase'
