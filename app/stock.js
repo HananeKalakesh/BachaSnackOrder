@@ -123,5 +123,5 @@ $('#stock').addEventListener('click', function (e) {
 // the cashier and the chef keep the stock fresh (every 5 minutes) for the warning
 if (ROLE === 'cashier' || ROLE === 'chef') {
   setTimeout(function () { if (EB.key()) stockLoad(drawLowBar) }, 4000);
-  setInterval(function () { if (EB.key()) stockLoad(drawLowBar) }, 5 * 60000);
+  setInterval(function () { if (EB.key() && !document.hidden) stockLoad(drawLowBar) }, 5 * 60000);
 }

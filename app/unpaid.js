@@ -340,10 +340,12 @@ function checkWeb() {
   seenWeb = {}; waiting.forEach(function (o) { seenWeb[o.key] = 1 });
   if (fresh.length && ROLE === 'cashier') { chime(); toast('🌐 طلب جديد من الموقع', 'New website order'); arrivePrint(fresh) }
 }
+// Screen off or the app in the background: no refreshing (it only slowed the tablet); back on, it refreshes at once
 function poll() {
-  if (EB.pending().length || !EB.key() || ROLE !== 'cashier') return;
+  if (document.hidden || EB.pending().length || !EB.key() || ROLE !== 'cashier') return;
   loadRecent().then(function () { checkWeb(); if ($('#ordersView').style.display === 'block') drawOrders() }, function () {});
 }
 setInterval(poll, 15000);
-setInterval(function () { if ($('#ordersView').style.display === 'block' && TD.loaded) drawOrders() }, 30000);
+setInterval(function () { if (!document.hidden && $('#ordersView').style.display === 'block' && TD.loaded) drawOrders() }, 30000);
+document.addEventListener('visibilitychange', function () { if (!document.hidden) { EB.flush(); poll() } });
 

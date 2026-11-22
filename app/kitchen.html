@@ -165,15 +165,20 @@ function show(r, fresh) {
   render(news);
   if (news.length && fresh) chime();
 }
+// one load at a time (on slow Wi-Fi they used to pile up), and none while the screen is off
+var loading = null;
 function load() {
-  return EB.read('kitchen', {'Orders': 150, 'Order Items': 1200}).then(function (r) {
-    $('#net').innerHTML = ''; show(r, true);
+  if (document.hidden) return Promise.resolve();
+  return loading || (loading = EB.read('kitchen', {'Orders': 150, 'Order Items': 600}).then(function (r) {
+    loading = null; $('#net').innerHTML = ''; show(r, true);
   }, function (e) {
+    loading = null;
     if (e.badKey) return askKey(true);
     $('#net').innerHTML = bi('ما في اتصال. عم نحاول من جديد…', 'No connection. Trying again…');
     var c = EB.cached('kitchen'); if (c) show(c, false);
-  });
+  }));
 }
+document.addEventListener('visibilitychange', function () { if (!document.hidden) load() });
 function askKey(wrong) {
   var k = prompt((wrong ? T('المفتاح غلط. ', 'That key is wrong. ') : '') +
     T('اكتب مفتاح التطبيق (بصفحة Settings بالشيت، سطر App key)', 'Enter the app key (Settings tab of the sheet, row "App key")'), '');
