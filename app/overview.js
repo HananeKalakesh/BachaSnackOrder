@@ -66,6 +66,7 @@ function drawOverview() {
       row(EXP_COLOR.running, 'موظفين وفواتير', 'Staff & bills', g.running) + row('#8FBF9F', 'ربح', 'Profit', Math.max(0, profit)) + '</div>' +
       '<p class="muted note2">' + bi('النسبة من اللي دخل. الأكل المشترى مش دايماً انباع بنفس الفترة.', 'Shares of the money in. Food bought isn\'t always sold in the same period.') + '</p>'
       : '<p class="muted">–</p>') +
+    (t.back ? '<p class="note2">' + bi('رد رأس مال للأصحاب (مش مصروف): ', 'Capital paid back to the owners (not a cost): ') + '<b class="num">' + $usd(t.back) + '</b></p>' : '') +
     (t.invest || t.owners ? '<p class="note2">' + (t.invest ? bi('معدّات (استثمار، مش محسوبة): ', 'Equipment (investment, not counted): ') + '<b class="num">' + $usd(t.invest) + '</b>' : '') +
       (t.invest && t.owners ? ' · ' : '') + (t.owners ? bi('ربح للأصحاب: ', 'Owners\' pay: ') + '<b class="num">' + $usd(t.owners) + '</b> · ' +
         bi('بيبقى بالمحل ', 'left in the business ') + '<b class="num' + (profit - t.owners < 0 ? ' owe' : '') + '">' + $usd(profit - t.owners) + '</b>' : '') + '</p>' : '') + '</div>';

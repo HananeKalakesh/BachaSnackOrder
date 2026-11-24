@@ -13,7 +13,9 @@ var EXP_CATS = [
   ['Other', 'غير ذلك', ['', ''], 'running'],
   ['Equipment', 'معدّات', ['استثمار، مش من مصروف الشهر', 'an investment, not the month\'s running costs'], 'investment', [['Machines', 'آلات'], ['Kitchen supplies', 'أدوات مطبخ']]],
   // what the owners take each week as their pay: shown apart, after the profit
-  ['Owners', 'ربح', ['اللي بياخدو أصحاب المحل كل جمعة كمعاش', 'what the owners take each week as their pay'], 'owners']];
+  ['Owners', 'ربح', ['اللي بياخدو أصحاب المحل كل جمعة كمعاش', 'what the owners take each week as their pay'], 'owners'],
+  // capital given back to the owners from the resto's money: comes off the money with the resto, not a cost and not profit
+  ['Capital back', 'رد رأس مال', ['رجعة من رأس المال للأصحاب: بتنقص من مصاري المطعم، بس مش مصروف ولا ربح', 'capital paid back to the owners: it leaves the resto\'s money, but is not a cost or profit'], 'capital']];
 /* Expense groups: the calendar and the dashboard show these general groups; a day's details show the categories and
    their types. The add form shows every choice at once (category + type in one tap), under its group.
    [key, Arabic, English, colour, [[category, type, Arabic, English]…]] */
@@ -24,7 +26,8 @@ var EXP_GROUPS = [
   ['staff', 'رواتب', 'Salaries', '#C8102E', [['Salaries', 'Staff', 'رواتب موظفين', 'Staff salaries'], ['Salaries', 'Cleaning', 'راتب تنظيف', 'Cleaning salary']]],
   ['bills', 'فواتير وغيرها', 'Bills & other', '#E0707C', [['Utilities', 'Gas', 'غاز', 'Gas'], ['Utilities', 'Water', 'مي', 'Water'], ['Utilities', 'Internet', 'إنترنت', 'Internet'], ['Other', '', 'غير ذلك', 'Other']]],
   ['equip', 'معدّات', 'Equipment', '#6B655C', [['Equipment', 'Machines', 'آلات', 'Machines'], ['Equipment', 'Kitchen supplies', 'أدوات مطبخ', 'Kitchen supplies']]],
-  ['owners', 'ربح الأصحاب', 'Owners', '#8C5A00', [['Owners', '', 'ربح الأصحاب', 'Owners\' pay']]]];
+  ['owners', 'ربح الأصحاب', 'Owners', '#8C5A00', [['Owners', '', 'ربح الأصحاب', 'Owners\' pay']]],
+  ['capital', 'رأس المال', 'Capital', '#3A5BA0', [['Capital back', '', 'رد رأس مال للأصحاب', 'Capital paid back']]]];
 function expGroup(p) {
   var hit = null;
   EXP_GROUPS.forEach(function (g) { g[4].forEach(function (c) { if (!hit && c[0] === p.cat && (c[1] === (p.sub || '') || !c[1] && !p.sub)) hit = g }) });
@@ -41,7 +44,7 @@ function groupBars(list, none, cats) {
   var gs = EXP_GROUPS.filter(function (g) { return by[g[0]] }).sort(function (a, b) { return by[b[0]] - by[a[0]] }), max = gs.length ? by[gs[0][0]] : 1;
   return '<div class="card"><h3 class="display">' + bi('حسب النوع', 'By group') + '</h3>' + (gs.length ? gs.map(function (g) {
     var v = by[g[0]];
-    return '<div class="seller"><div class="tn">' + bi(g[1], g[2]) + (g[0] === 'equip' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : '') +
+    return '<div class="seller"><div class="tn">' + bi(g[1], g[2]) + (g[0] === 'equip' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : g[0] === 'capital' ? ' <small class="muted">' + bi('مش مصروف', 'not a cost') + '</small>' : '') +
       '<span class="tq num">' + $usd(v) + ' <small class="muted">' + Math.round(v / (all || 1) * 100) + '%</small></span></div>' +
       '<div class="tb"><i style="width:' + Math.max(3, v / max * 100) + '%;background:' + g[3] + '"></i></div><small class="ll num">' + ll(v) + '</small>' +
       (cats ? '<div class="xsplit">' + Object.keys(inG[g[0]]).sort(function (a, b) { return inG[g[0]][b] - inG[g[0]][a] }).map(function (k) {
@@ -51,7 +54,7 @@ function groupBars(list, none, cats) {
 // A purchase's label: the category, and its type when it has one (e.g. Utilities · Gas)
 function subOf(c, name) { return (c[4] || []).filter(function (x) { return x[0] === name })[0] }
 function expLabel(c, sub) { var t = subOf(c, sub); return t ? bi(c[1] + ' · ' + t[1], c[0] + ' · ' + t[0]) : bi(c[1], c[0]) }
-var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C', owners: '#8C5A00'};
+var EXP_COLOR = {food: '#1F4A37', packaging: '#F2B705', running: '#C8102E', investment: '#6B655C', owners: '#8C5A00', capital: '#3A5BA0'};
 var EX = {mode: 'add', sel: '', y: 0, m: 0, cat: '', sub: '', cur: '$', data: null, err: '', locked: false, edit: null};
 function catOf(name) { return EXP_CATS.filter(function (c) { return c[0] === name })[0] || EXP_CATS[8] }
 
@@ -90,10 +93,10 @@ function showExpenses() {
 
 // Totals for a list of purchases: running costs (taken off the profit), equipment (an investment, apart), by category and type
 function tally(list) {
-  var t = {spent: 0, invest: 0, owners: 0, byCat: {}, bySub: {}, count: list.length};
+  var t = {spent: 0, invest: 0, owners: 0, back: 0, byCat: {}, bySub: {}, count: list.length};
   list.forEach(function (p) {
     var g = catOf(p.cat)[3];
-    if (g === 'investment') t.invest += p.lbp; else if (g === 'owners') t.owners += p.lbp; else t.spent += p.lbp;
+    if (g === 'investment') t.invest += p.lbp; else if (g === 'owners') t.owners += p.lbp; else if (g === 'capital') t.back += p.lbp; else t.spent += p.lbp;
     t.byCat[p.cat] = (t.byCat[p.cat] || 0) + p.lbp;
     if (subOf(catOf(p.cat), p.sub)) { var bs = t.bySub[p.cat] = t.bySub[p.cat] || {}; bs[p.sub] = (bs[p.sub] || 0) + p.lbp }
   });
@@ -101,10 +104,10 @@ function tally(list) {
 }
 // Bars by category, biggest first, with each category's types under it
 function catBars(t, none) {
-  var cats = Object.keys(t.byCat).sort(function (a, b) { return t.byCat[b] - t.byCat[a] }), max = cats.length ? t.byCat[cats[0]] : 1, all = t.spent + t.invest + t.owners || 1;
+  var cats = Object.keys(t.byCat).sort(function (a, b) { return t.byCat[b] - t.byCat[a] }), max = cats.length ? t.byCat[cats[0]] : 1, all = t.spent + t.invest + t.owners + t.back || 1;
   return '<div class="card"><h3 class="display">' + bi('حسب النوع', 'By category') + '</h3>' + (cats.length ? cats.map(function (k) {
     var cc = catOf(k), v = t.byCat[k];
-    return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + (cc[3] === 'investment' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : '') +
+    return '<div class="seller"><div class="tn">' + bi(cc[1], cc[0]) + (cc[3] === 'investment' ? ' <small class="muted">' + bi('استثمار', 'investment') + '</small>' : cc[3] === 'capital' ? ' <small class="muted">' + bi('مش مصروف', 'not a cost') + '</small>' : '') +
       '<span class="tq num">' + $usd(v) + ' <small class="muted">' + Math.round(v / all * 100) + '%</small></span></div>' +
       '<div class="tb"><i style="width:' + Math.max(3, v / max * 100) + '%;background:' + EXP_COLOR[cc[3]] + '"></i></div><small class="ll num">' + ll(v) + '</small>' +
       (t.bySub[k] ? '<div class="xsplit">' + Object.keys(t.bySub[k]).sort(function (a, b) { return t.bySub[k][b] - t.bySub[k][a] }).map(function (s) {
@@ -167,7 +170,7 @@ function drawExpenses() {
   var latest = list.filter(function (p) { return !CHEF || p.day === today && p.cat !== 'Owners' }).sort(function (a, b) { return a.day < b.day ? 1 : a.day > b.day ? -1 : (a.key < b.key ? 1 : -1) }).slice(0, CHEF ? 50 : 10);
   if (CHEF) tt = tally(latest);
   h += '<div class="card"><div class="chead"><h3 class="display">' + (CHEF ? bi('مصاريف اليوم', 'Today\'s expenses') : bi('آخر المصاريف', 'Latest expenses')) + '</h3>' +
-    '<span class="tot">' + bi('اليوم: ', 'Today: ') + '<b class="num">' + $usd(tt.spent + tt.invest + tt.owners) + '</b></span></div>' + purchaseTable(latest, true) + '</div>';
+    '<span class="tot">' + bi('اليوم: ', 'Today: ') + '<b class="num">' + $usd(tt.spent + tt.invest + tt.owners + tt.back) + '</b></span></div>' + purchaseTable(latest, true) + '</div>';
   $('#exp').innerHTML = h;
 }
 
@@ -180,7 +183,7 @@ function expForm(CHEF) {
         var on = EX.cat === k[0] && (EX.sub || '') === k[1];
         return '<button class="xcat' + (on ? ' on' : '') + '" data-xpick="' + esc(k[0] + '|' + k[1]) + '" style="--c:' + g[3] + '">' + bi(k[2], k[3]) + '</button>' }).join('') + '</div></div>';
     }).join('') +
-    (c && c[2][0] && (c[3] === 'investment' || c[3] === 'owners') ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
+    (c && c[2][0] && (c[3] === 'investment' || c[3] === 'owners' || c[3] === 'capital') ? '<p class="muted xhint">' + bi(c[2][0], c[2][1]) + '</p>' : '') +
     '<div class="xform"><input id="xItem" placeholder="' + esc(T('شو اشتريت؟ (مثلاً: 10 كيلو صدر دجاج)', 'What did you buy? (e.g. 10 kg chicken breast)')) + '" maxlength="80">' +
     '<div class="xamt"><input id="xAmount" type="number" inputmode="decimal" min="0" step="any" placeholder="' + esc(T('المبلغ', 'Amount')) + '">' +
     '<div class="xcur"><button data-xcur="$" class="' + (EX.cur === '$' ? 'on' : '') + '">$</button><button data-xcur="L.L." class="' + (EX.cur === 'L.L.' ? 'on' : '') + '">L.L.</button></div></div>' +
@@ -215,7 +218,7 @@ function expCalendar(list) {
     var day = month.filter(function (p) { return p.day === EX.sel }), dt = tally(day);
     h += '<section class="dayx" id="xDayCard"><div class="shead"><h2 class="display">' + dayName(EX.sel) + '</h2>' +
       '<button class="today" data-xclose="1">' + bi('سكّر', 'Close') + '</button></div>' +
-      '<div class="kpis"><div class="kpi hero"><small>' + bi('مصاريف اليوم', 'Spent this day') + '</small>' + amount(dt.spent + dt.invest + dt.owners) + '<small class="ll">' + fmt(day.length) + ' ' + bi('مصروف', 'expenses') + '</small></div>' +
+      '<div class="kpis"><div class="kpi hero"><small>' + bi('مصاريف اليوم', 'Spent this day') + '</small>' + amount(dt.spent + dt.invest + dt.owners + dt.back) + '<small class="ll">' + fmt(day.length) + ' ' + bi('مصروف', 'expenses') + '</small></div>' +
       '<div class="kpi"><small>' + bi('مبيعات اليوم', 'Sales this day') + '</small>' + (salesIn(EX.sel, EX.sel) == null ? '<b class="usd">…</b>' : amount(salesIn(EX.sel, EX.sel))) + '</div></div>' +
       '<div class="cols"><div class="card"><h3 class="display">' + bi('المصاريف', 'Expenses') + '</h3>' + purchaseTable(day, false) + '</div><div>' + catBars(dt, bi('ما في مصاريف بهاليوم', 'No expenses on this day')) + '</div></div></section>';
   }

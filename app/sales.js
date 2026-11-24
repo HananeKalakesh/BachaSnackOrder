@@ -273,7 +273,7 @@ function dashMoney(sales, today) {
     '<div class="kpi hero" data-goview="box"><small>🏪 ' + bi('مع المطعم هلّق', 'With the resto now') + '</small>' + (bal == null || !drw ? wait : amount(bal + (drw.counted ? 0 : drw.sales))) + '<small class="ll">' + (bal == null || !drw || drw.counted ? bi('لآخر عدّ', 'up to the last count') : bi('لآخر عدّ ', 'last count ') + $usd(bal) + ' + ' + bi('اليوم ', 'today ') + $usd(drw.sales)) + '</small></div>' +
     '<div class="kpi own"><small>💰 ' + bi('أخدو الأصحاب', 'Taken by the owners') + '</small>' + (t ? amount(t.owners) : wait) + '<small class="ll">' + (bxs ? bi(OWNERS_PCT + '٪ من ' + fmt(bxs.length) + ' صندوق معدود', OWNERS_PCT + '% of ' + fmt(bxs.length) + ' counted cash boxes') : '') + '</small></div>' +
     '<div class="kpi"><small>📈 ' + bi('الدخل', 'Income') + '</small>' + amount(sales + other) + (other ? '<small class="ll">' + bi('منها دخل تاني ', 'incl. other income ') + '<span class="num">' + $usd(other) + '</span></small>' : '') + '</div>' +
-    '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && t.invest ? '<small class="ll">' + bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span></small>' : '') + '</div></div>';
+    '<div class="kpi owedk" data-goview="exp"><small>📉 ' + bi('المصاريف', 'Expenses') + '</small>' + (t ? amount(t.spent) : wait) + (t && (t.invest || t.back) ? '<small class="ll">' + (t.invest ? bi('ومعدّات ', '+ equipment ') + '<span class="num">' + $usd(t.invest) + '</span>' : '') + (t.invest && t.back ? ' · ' : '') + (t.back ? bi('ورد رأس مال ', '+ capital back ') + '<span class="num">' + $usd(t.back) + '</span>' : '') + '</small>' : '') + '</div></div>';
   // no profit card: the money with the resto is the real number (owner, 24 Oct); discounts given, as a note
   var disc = (SALES || EB.cached('sales')) ? EB.report(salesOrders(), '2000-01-01', today).summary.discLbp : 0;
   if (disc) h += '<p class="muted note2">🏷️ ' + bi('خصومات من الأول ', 'Discounts since the start ') + '<b class="num">' + $usd(disc) + '</b> ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>';
@@ -291,12 +291,17 @@ function profitBox(sales, t, other, now, today) {
     part('own', '💰', 'أخدو الأصحاب', 'Taken by the owners', own, pw) + part('keep', '🏪', 'ربح المطعم', 'The resto\'s profit', rest, 100 - pw) + '</div>' +
     '<div class="split"><i class="cash" style="width:' + (100 - pw) + '%"></i><i class="own" style="width:' + pw + '%"></i></div>';
   if (now != null) {
-    var gap = now - (rest + put - t.invest);
+    var gap = now - (rest + put - t.invest - t.back);
     h += '<p class="pbeq">🏪 ' + bi('مع المطعم هلّق ', 'With the resto now ') + '<b class="num">' + $usd(now) + '</b> = ' + bi('ربح المطعم ', 'its profit ') + '<b class="num">' + $usd(rest) + '</b>' +
       (put ? ' + ' + bi('رأس المال ومصاري البداية ', 'capital & starting money ') + '<b class="num">' + $usd(put) + '</b>' : '') +
       (t.invest ? ' − ' + bi('المعدّات ', 'equipment ') + '<b class="num">' + $usd(t.invest) + '</b>' : '') +
+      (t.back ? ' − ' + bi('رأس المال اللي رجع ', 'capital paid back ') + '<b class="num">' + $usd(t.back) + '</b>' : '') +
       (Math.abs(gap) >= RATE ? (gap > 0 ? ' + ' : ' − ') + bi('فرق الصناديق المعدودة ', 'cash box differences ') + '<b class="num">' + $usd(Math.abs(gap)) + '</b>' : '') + '</p>';
   }
+  // capital put in (Capital, not the starting money) against what has been paid back so far
+  var cap = (incomes() || []).filter(function (x) { return x.src === 'Capital' }).reduce(function (a, x) { return a + x.lbp }, 0);
+  if (cap || t.back) h += '<p class="pbeq">🏦 ' + bi('رأس المال ', 'Capital put in ') + '<b class="num">' + $usd(cap) + '</b> · ' + bi('رجع للأصحاب ', 'paid back ') + '<b class="num">' + $usd(t.back) + '</b> · ' +
+    bi('باقي ', 'still owed ') + '<b class="num' + (cap - t.back > 0 ? ' owe' : '') + '">' + $usd(Math.max(0, cap - t.back)) + '</b></p>';
   if (disc) h += '<p class="pbeq muted">🏷️ ' + bi('خصومات من الأول ', 'Discounts since the start ') + '<b class="num">' + $usd(disc) + '</b> ' + bi('(مش محسوبة بالمبيعات)', '(not in the sales)') + '</p>';
   return h + '</div>';
 }
